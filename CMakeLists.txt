@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED (VERSION 2.8)
-PROJECT (GS CXX)
+PROJECT (gr-isatec CXX)
 SET (CMAKE_CXX_FLAGS "-std=c++11 -pthread -Wall -Werror -march=core-avx2 -mtune=core-avx2 -O3 -fvisibility=hidden -fvisibility-inlines-hidden -fomit-frame-pointer")
 
 INCLUDE_DIRECTORIES ("include")
