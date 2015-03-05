@@ -1,6 +1,6 @@
 /*!
- * @file			SymbolGenerator_gr.cpp
- * @brief		Defines the GNU Radio Symbol Generator
+ * @file			SymbolGenerator_impl.cpp
+ * @brief		Defines the "Random Symbol Generator" GNU Radio block implementation
  * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
  * @date			Feb 18, 2015
  * @copyright	Copyright &copy; 2014 Eddie Carle &lt;eddie@isatec.ca&gt;.

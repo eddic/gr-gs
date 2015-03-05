@@ -1,29 +1,28 @@
 /*!
  * @file			GuidedScrambler.h
- * @brief		Declares the GNU Radio Guided Scrambler
+ * @brief		Defines the gr::Isatec::Descrambler GNU Radio block
  * @author		Eddie Carle &lt;eddie@Isatec.ca&gt;
- * @date			February 10, 2015
- * @copyright	Copyright &copy; 2014 Eddie Carle &lt;eddie@Isatec.ca&gt;.
- * 				This project is released under the GNU General Public License
- * 				Version 3.
+ * @date			March 8, 2015
+ * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
+ *					under the GNU General Public License Version 3.
  */
 
-/* Copyright (C) 2015 Eddie Carle <eddie@Isatec.ca>
+/* Copyright (C) 2015 %Isatec Inc.
  * 
- * This file is part of The Guided Scrambling Simulator.
+ * This file is part of the %Isatec GNU Radio Module
  *
- * The Guided Scrambling Simulator is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
- * 
- * The Guided Scrambling Simulator is distributed in the hope that it will be
+ * The %Isatec GNU Radio Module is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * The %Isatec GNU Radio Module is distributed in the hope that it will be
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
  * Public License for more details.
- *                                                                           
+ *                                                                          
  * You should have received a copy of the GNU General Public License along with
- * The Guided Scrambling Simulator.  If not, see <http://www.gnu.org/licenses/>.
+ * The %Isatec GNU Radio Module.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef GUIDEDSCRAMBLER_H
@@ -33,15 +32,15 @@
 #include "gr-isatec/config.h"
 #include <gnuradio/block.h>
 
-//! GNU Radio Stuff
+//! GNU Radio Namespace
 namespace gr
 {
-	//! Contains all GNU Radio classes for the Isatec out-of-tree module
+	//! Contains all blocks for the %Isatec GNU Radio Module
 	namespace Isatec
 	{
-		//! Performs guided scrambling operations in GNU radio applications.
+		//! "Guided Scrambler" GNU Radio block
 		/*!
-		 * @date		February 10, 2015
+		 * @date		March 3, 2015
 		 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
 		 */
 		class Isatec_API GuidedScrambler: virtual public gr::block
@@ -49,7 +48,7 @@ namespace gr
 		public:
 			//! Access field size
 			/*!
-			 * @return	Field Size
+			 * @return	Field size as the <em>n</em> in GF(<em>n</em>)
 			 * @date		Jan 29, 2015
 			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
@@ -57,16 +56,21 @@ namespace gr
 
 			//! Set fieldSize
 			/*!
-			 * @param	[in] size Desired field size
-			 * @date		Jan 29, 2015
-			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
+			 * Note that not all field sizes are supported. Only powers of two are
+			 * supported within the range of 2 to
+			 * gr::Isatec::GuidedScrambling::maxFieldSize.
+			 *
+			 * @param	[in] size Desired field size as the <em>n</em> in
+			 * 						 GF(<em>n</em>)
+			 * @date		March 3, 2015
+			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual void set_fieldSize(const unsigned int size) =0;
 
 			//! Access codeword length
 			/*!
 			 * @return	Codeword Length
-			 * @date		Jan 29, 2015
+			 * @date		March 3, 2015
 			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual unsigned int codewordLength() const =0;
@@ -74,7 +78,7 @@ namespace gr
 			//! Set codeword length
 			/*!
 			 * @param	[in] length Desired codeword length
-			 * @date		Jan 29, 2015
+			 * @date		March 3, 2015
 			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual void set_codewordLength(const unsigned int length) =0;
@@ -82,7 +86,7 @@ namespace gr
 			//! Access augmenting length
 			/*!
 			 * @return	Augmenting Length
-			 * @date		Jan 29, 2015
+			 * @date		March 3, 2015
 			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual unsigned int augmentingLength() const =0;
@@ -90,7 +94,7 @@ namespace gr
 			//! Set augmenting length
 			/*!
 			 * @param	[in] length Desired augmenting length
-			 * @date		Jan 29, 2015
+			 * @date		March 3, 2015
 			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual void set_augmentingLength(const unsigned int length) =0;
@@ -98,7 +102,7 @@ namespace gr
 			//! Access continuous encoding setting
 			/*!
 			 * @return	True if set to continuous encoding, false if block encoding
-			 * @date		Jan 29, 2015
+			 * @date		March 3, 2015
 			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual bool continuous() const =0;
@@ -107,7 +111,7 @@ namespace gr
 			/*!
 			 * @param	[in] continuous Set to true for continuous encoding, false for
 			 *				block encoding
-			 * @date		Jan 29, 2015
+			 * @date		March 3, 2015
 			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual void set_continuous(bool continuous) =0;
@@ -115,7 +119,7 @@ namespace gr
 			//! Access constellation
 			/*!
 			 * @return	Constant reference to constellation vector
-			 * @date		Jan 29, 2015
+			 * @date		March 3, 2015
 			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual const std::vector<std::complex<float>>& constellation() const =0;
@@ -124,7 +128,7 @@ namespace gr
 			/*!
 			 * @param	[in] constellation This is a direct mapping of symbols (as
 			 *				vector indices) to constellation points.
-			 * @date		Jan 29, 2015
+			 * @date		March 3, 2015
 			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual void set_constellation(const std::vector<std::complex<float>>& constellation) =0;
@@ -132,15 +136,15 @@ namespace gr
 			//! Access selection method
 			/*!
 			 * @return	Selection Method
-			 * @date		Jan 29, 2015
+			 * @date		March 3, 2015
 			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual const std::string& selectionMethod() const =0;
 
 			//! List selection methods
 			/*!
-			 * @return	Selection Method
-			 * @date		Feb 20, 2015
+			 * @return	Vector of selection method names
+			 * @date		March 3, 2015
 			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			static const std::vector<std::string>& selectionMethods();
@@ -148,44 +152,69 @@ namespace gr
 			//! Set selection method
 			/*!
 			 * @param	[in] method Desired selection method
-			 * @date		Jan 29, 2015
+			 * @date		March 3, 2015
 			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual void set_selectionMethod(const std::string& method) =0;
 
 			//! Access divider word
 			/*!
-			 * @return	Divisor Word
-			 * @date		Jan 29, 2015
+			 * @return	Divider word (polynomial)
+			 * @date		March 3, 2015
 			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual const std::vector<Symbol>& divider() const =0;
 
-			//! Set divider polynomial
+			//! Set divider word
 			/*!
-			 * @param	[in] divider Desired divider polynomial
-			 * @date		Jan 29, 2015
+			 * @param	[in] divider Desired divider word (polynomial)
+			 * @date		March 3, 2015
 			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual void set_divider(const std::vector<Symbol>& divider) =0;
 
 			//! Access number of concurrent scrambling threads
 			/*!
-			 * @return	Number of concurrent scrambling threads
-			 * @date		Jan 29, 2015
+			 * @return	Number of concurrent threads running in this block
+			 * @date		March 3, 2015
 			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual unsigned int threads() const =0;
 
-			//! Set maximum number of concurrent scrambling threads
+			//! Set number of concurrent scrambling threads
 			/*!
+			 * Use this function to control how many "child" threads are used for
+			 * the guided scrambling process. There can not be more threads than
+			 * there are concurrent scrambling operations to be executed. This
+			 * means that there is an upper bound to this regardless of the value
+			 * provided. If you'd like the block to decide an optimal number of
+			 * threads pass the value 0.
+			 *
 			 * @param	[in] number Desired number of concurrent scrambling threads
-			 * @date		Jan 29, 2015
+			 * @date		March 3, 2015
 			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual void set_threads(unsigned int number) =0;
 
+			//! Shared pointer to this
 			typedef boost::shared_ptr<GuidedScrambler> sptr;
+
+			//! Manufacture a guided scrambler with some default options
+			/*!
+			 * This initializes the guided scrambler with the following parameters:
+			 *  - codeword length = 12
+			 *  - augmenting length = 3
+			 *  - selection method = MSW
+			 *  - continuous encoding = true
+			 *  - maximum threads = optimal
+			 *  - divider = 1 0 0 1 (\f$x^3+1\f$)
+			 *  - field size = 4
+			 *  - constellation = (1,0) (0,1) (0,-1) (-1,0)
+			 *
+			 * @return	Shared pointer to newly allocated guided scrambler
+			 * @date		March 3, 2015
+			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 */
 			static sptr make();
 		};
 	}

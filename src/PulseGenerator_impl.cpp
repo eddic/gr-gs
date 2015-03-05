@@ -1,29 +1,28 @@
 /*!
- * @file			PulseGenerator_gr.cpp
- * @brief		Defines the GNU Radio Symbol Generator
+ * @file			PulseGenerator_impl.cpp
+ * @brief		Declares the "Pulse Generator" GNU Radio block implementation
  * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date			Feb 21, 2015
- * @copyright	Copyright &copy; 2014 Eddie Carle &lt;eddie@isatec.ca&gt;.
- * 				This project is released under the GNU General Public License
- * 				Version 3.
+ * @date			March 5, 2015
+ * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
+ *					under the GNU General Public License Version 3.
  */
 
-/* Copyright (C) 2015 Eddie Carle <eddie@isatec.ca>
+/* Copyright (C) 2015 %Isatec Inc.
  * 
- * This file is part of The Guided Scrambling Simulator.
+ * This file is part of the %Isatec GNU Radio Module
  *
- * The Guided Scrambling Simulator is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
- * 
- * The Guided Scrambling Simulator is distributed in the hope that it will be
+ * The %Isatec GNU Radio Module is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * The %Isatec GNU Radio Module is distributed in the hope that it will be
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
  * Public License for more details.
- *                                                                           
+ *                                                                          
  * You should have received a copy of the GNU General Public License along with
- * The Guided Scrambling Simulator.  If not, see <http://www.gnu.org/licenses/>.
+ * The %Isatec GNU Radio Module.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "PulseGenerator_impl.hpp"
@@ -34,89 +33,89 @@
 #include <deque>
 #include <mutex>
 
-const std::vector<std::complex<float>>& gr::Isatec::PulseGenerator_impl::constellation() const
+const std::vector<std::complex<float>>& gr::Isatec::Implementations::PulseGenerator_impl::constellation() const
 {
 	std::lock_guard<std::mutex> lock(m_mutex);
 	return m_constellation;
 }
 
-void gr::Isatec::PulseGenerator_impl::set_constellation(const std::vector<std::complex<float>>& constellation)
+void gr::Isatec::Implementations::PulseGenerator_impl::set_constellation(const std::vector<std::complex<float>>& constellation)
 {
 	std::lock_guard<std::mutex> lock(m_mutex);
 	m_constellation = constellation;
 }
 
-double gr::Isatec::PulseGenerator_impl::baudRate() const
+double gr::Isatec::Implementations::PulseGenerator_impl::baudRate() const
 {
 	std::lock_guard<std::mutex> lock(m_mutex);
 	return m_baudRate;
 }
 
-void gr::Isatec::PulseGenerator_impl::set_baudRate(const double baudRate)
+void gr::Isatec::Implementations::PulseGenerator_impl::set_baudRate(const double baudRate)
 {
 	std::lock_guard<std::mutex> lock(m_mutex);
 	m_baudRate = baudRate;
 	m_valid=false;
 }
 
-unsigned int gr::Isatec::PulseGenerator_impl::numberOfTaps() const
+unsigned int gr::Isatec::Implementations::PulseGenerator_impl::numberOfTaps() const
 {
 	std::lock_guard<std::mutex> lock(m_mutex);
 	return m_numberOfTaps;
 }
 
-void gr::Isatec::PulseGenerator_impl::set_numberOfTaps(const unsigned int numberOfTaps)
+void gr::Isatec::Implementations::PulseGenerator_impl::set_numberOfTaps(const unsigned int numberOfTaps)
 {
 	std::lock_guard<std::mutex> lock(m_mutex);
 	m_numberOfTaps = numberOfTaps;
 	m_valid=false;
 }
 
-double gr::Isatec::PulseGenerator_impl::alpha() const
+double gr::Isatec::Implementations::PulseGenerator_impl::alpha() const
 {
 	std::lock_guard<std::mutex> lock(m_mutex);
 	return m_alpha;
 }
 
-void gr::Isatec::PulseGenerator_impl::set_alpha(const double alpha)
+void gr::Isatec::Implementations::PulseGenerator_impl::set_alpha(const double alpha)
 {
 	std::lock_guard<std::mutex> lock(m_mutex);
 	m_alpha = alpha;
 	m_valid=false;
 }
 
-unsigned int gr::Isatec::PulseGenerator_impl::shape() const
+unsigned int gr::Isatec::Implementations::PulseGenerator_impl::shape() const
 {
 	std::lock_guard<std::mutex> lock(m_mutex);
 	return m_shape;
 }
 
-void gr::Isatec::PulseGenerator_impl::set_shape(const unsigned int shape)
+void gr::Isatec::Implementations::PulseGenerator_impl::set_shape(const unsigned int shape)
 { 
 	std::lock_guard<std::mutex> lock(m_mutex);
 	m_shape=shape;
 }
 
-void gr::Isatec::PulseGenerator_impl::enable_tags(const bool enable)
+void gr::Isatec::Implementations::PulseGenerator_impl::enable_tags(const bool enable)
 {
 	std::lock_guard<std::mutex> lock(m_mutex);
 	m_tag = enable;
 }
 
-float gr::Isatec::PulseGenerator_impl::phase() const
+float gr::Isatec::Implementations::PulseGenerator_impl::phase() const
 {
 	std::lock_guard<std::mutex> lock(m_mutex);
 	return m_phase;
 }
 
-void gr::Isatec::PulseGenerator_impl::set_phase(const float phase)
+void gr::Isatec::Implementations::PulseGenerator_impl::set_phase(const float phase)
 {
 	std::lock_guard<std::mutex> lock(m_mutex);
 	m_phase = phase;
 	m_currentPhase = 0;
 }
 
-int gr::Isatec::PulseGenerator_impl::work(int noutput_items,
+int gr::Isatec::Implementations::PulseGenerator_impl::work(int noutput_items,
 		gr_vector_const_void_star &input_items,
 		gr_vector_void_star &output_items)
 {
@@ -215,12 +214,16 @@ int gr::Isatec::PulseGenerator_impl::work(int noutput_items,
 	return noutput_items;
 }
 
-gr::Isatec::PulseGenerator_impl::PulseGenerator_impl(unsigned int samplesPerSymbol):
+gr::Isatec::Implementations::PulseGenerator_impl::PulseGenerator_impl(unsigned int samplesPerSymbol):
 	gr::sync_interpolator("Pulse Generator",
 		io_signature::make(1,1,sizeof(Symbol)),
 		io_signature::make(1,1,sizeof(std::complex<float>)),
 		samplesPerSymbol),
 	m_samplesPerSymbol(samplesPerSymbol),
+	m_constellation(defaultConstellation(4)),
+	m_baudRate(100e3),
+	m_numberOfTaps(1024),
+	m_alpha(0.5),
 	m_phase(0),
 	m_currentPhase(0),
 	m_shape(0),
@@ -231,7 +234,7 @@ gr::Isatec::PulseGenerator_impl::PulseGenerator_impl(unsigned int samplesPerSymb
 
 gr::Isatec::PulseGenerator::sptr gr::Isatec::PulseGenerator::make(unsigned int samplesPerSymbol)
 {
-	return gnuradio::get_initial_sptr(new PulseGenerator_impl(samplesPerSymbol));
+	return gnuradio::get_initial_sptr(new Implementations::PulseGenerator_impl(samplesPerSymbol));
 }
 
 const std::vector<std::string>& gr::Isatec::PulseGenerator::shapes()

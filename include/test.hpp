@@ -26,7 +26,7 @@
  * The Guided Scrambling Simulator.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//! GNU Radio Stuff
+//! GNU Radio Namespace
 namespace gr
 {
 	//! Contains all GNU Radio classes for the Isatec out-of-tree module

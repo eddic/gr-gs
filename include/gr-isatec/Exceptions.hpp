@@ -1,5 +1,5 @@
 /*!
- * @file			GuidedScrambler.hpp
+ * @file			Exceptions.hpp
  * @brief		Defines the gr::Isatec::GuidedScrambling::Exceptions namespace
  * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
  * @date			Jan 17, 2015
@@ -34,7 +34,7 @@
 #include "gr-isatec/config.h"
 #include "gr-isatec/api.h"
 
-//! GNU Radio Stuff
+//! GNU Radio Namespace
 namespace gr
 {
 	//! Contains all GNU Radio classes for the Isatec out-of-tree module

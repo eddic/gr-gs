@@ -1,29 +1,28 @@
 /*!
  * @file			ScramblerGroup.hpp
- * @brief		Defines the gr::Isatec::GuidedScrambling::ScramblerGroup class
+ * @brief		Declares the gr::Isatec::GuidedScrambling::ScramblerGroup class
  * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date			Jan 21, 2015
- * @copyright	Copyright &copy; 2014 Eddie Carle &lt;eddie@isatec.ca&gt;.
- * 				This project is released under the GNU General Public License
- * 				Version 3.
+ * @date			March 3, 2015
+ * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
+ *					under the GNU General Public License Version 3.
  */
 
-/* Copyright (C) 2015 Eddie Carle <eddie@isatec.ca>
+/* Copyright (C) 2015 %Isatec Inc.
  * 
- * This file is part of The Guided Scrambling Simulator.
+ * This file is part of the %Isatec GNU Radio Module
  *
- * The Guided Scrambling Simulator is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
- * 
- * The Guided Scrambling Simulator is distributed in the hope that it will be
+ * The %Isatec GNU Radio Module is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * The %Isatec GNU Radio Module is distributed in the hope that it will be
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
  * Public License for more details.
- *                                                                           
+ *                                                                          
  * You should have received a copy of the GNU General Public License along with
- * The Guided Scrambling Simulator.  If not, see <http://www.gnu.org/licenses/>.
+ * The %Isatec GNU Radio Module.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef SCRAMBLERGROUP_HPP
@@ -36,22 +35,22 @@
 #include "Scrambler.hpp"
 #include "Analyzer.hpp"
 
-//! GNU Radio Stuff
+//! GNU Radio Namespace
 namespace gr
 {
-	//! Contains all GNU Radio classes for the Isatec out-of-tree module
+	//! Contains all blocks for the %Isatec GNU Radio Module
 	namespace Isatec
 	{
-		//! Contains all classes for performing guided scrambling operations.
+		//! Contains elements needed for the GuidedScrambler and Descrambler blocks
 		namespace GuidedScrambling
 		{
-			//! Performs a group of scramble operations.
+			//! A group of scramble operations.
 			/*!
-			 * This class simply allows us to group numerous Scramble object into a
+			 * This class simply allows us to group numerous Scrambler object into a
 			 * single execution group. The intention is for each group to be given is own
 			 * thread to allow for concurrent scrambling.
 			 
-			 * @date		Jan 21, 2015
+			 * @date		March 8, 2015
 			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			class ScramblerGroup
@@ -80,7 +79,7 @@ namespace gr
 				 * 			really the length of the divider word minus one;
 				 * @param	[in] method The desired analysis method to use.
 				 * @param	[in] fieldSize Desired field size
-				 * @date		Jan 21, 2015
+				 * @date		March 8, 2015
 				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				void configure(
@@ -102,7 +101,7 @@ namespace gr
 				 * this should be used with the remainder() of the winning scrambler.
 				 *
 				 * Note that in order to improve efficiency of operation this function
-				 * does not perform length/bounds checks on the input Word parameters. It
+				 * does not perform length/bounds checks on the input parameters words. It
 				 * is up to the calling function to ensure the parameters are correctly
 				 * sized.
 				 *
@@ -120,7 +119,7 @@ namespace gr
 				 *				the analysis with.
 				 * @param	[in] constellation This is a direct mapping of symbols (as
 				 *				vector indices) to constellation points.
-				 * @date		Jan 21, 2015
+				 * @date		March 8, 2015
 				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				void scramble(
@@ -166,7 +165,7 @@ namespace gr
 				/*!
 				 * @param	[inout] args Collection of non-constant arguments
 				 * @param	[in] cargs Collection of constant arguments
-				 * @date		Jan 17, 2015
+				 * @date		March 8, 2015
 				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				void handler(HandlerArguments& args, const HandlerConstArguments& cargs);
@@ -174,10 +173,10 @@ namespace gr
 				//! See winning scrambler
 				/*!
 				 * The output of this function becomes valid after a completed call to the
-				 * child ScramblerGroup::scramble() function.
+				 * scramble() function.
 				 *
 				 * @return	Constant pointer to winning scrambler
-				 * @date		Jan 21, 2015
+				 * @date		March 8, 2015
 				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				const Scrambler* winner() const

@@ -2,28 +2,27 @@
  * @file			Word.hpp
  * @brief		Defines the gr::Isatec::GuidedScrambling::Word class.
  * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date			Jan 24, 2015
- * @copyright	Copyright &copy; 2014 Eddie Carle &lt;eddie@isatec.ca&gt;.
- * 				This project is released under the GNU General Public License
- * 				Version 3.
+ * @date			March 3, 2015
+ * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
+ *					under the GNU General Public License Version 3.
  */
 
-/* Copyright (C) 2015 Eddie Carle <eddie@isatec.ca>
+/* Copyright (C) 2015 %Isatec Inc.
  * 
- * This file is part of The Guided Scrambling Simulator.
+ * This file is part of the %Isatec GNU Radio Module
  *
- * The Guided Scrambling Simulator is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
- * 
- * The Guided Scrambling Simulator is distributed in the hope that it will be
+ * The %Isatec GNU Radio Module is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * The %Isatec GNU Radio Module is distributed in the hope that it will be
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
  * Public License for more details.
- *                                                                           
+ *                                                                          
  * You should have received a copy of the GNU General Public License along with
- * The Guided Scrambling Simulator.  If not, see <http://www.gnu.org/licenses/>.
+ * The %Isatec GNU Radio Module.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef WORD_HPP
@@ -36,21 +35,18 @@
 
 #include "gr-isatec/config.h"
 
-//! GNU Radio Stuff
+//! GNU Radio Namespace
 namespace gr
 {
-	//! Contains all GNU Radio classes for the Isatec out-of-tree module
+	//! Contains all blocks for the %Isatec GNU Radio Module
 	namespace Isatec
 	{
-		//! Contains all classes for performing guided scrambling operations.
+		//! Contains elements needed for the GuidedScrambler and Descrambler blocks
 		namespace GuidedScrambling
 		{
-			//! Get a default constellation pattern for a field size
-			std::vector<std::complex<float>> defaultConstellation(unsigned int fieldSize);
-
 			//! Handles Galois Field words.
 			/*!
-			 * @date		Jan 21, 2015
+			 * @date		March 3, 2015
 			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			namespace Word
@@ -84,7 +80,7 @@ namespace gr
 				 *				things will happen.
 				 * @param	[in] continuous If set to true, the remainder word is updated
 				 *				with the new remainder.
-				 * @date		Jan 21, 2015
+				 * @date		March 3, 2015
 				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				template<typename Field>
@@ -117,7 +113,7 @@ namespace gr
 				 * @param	[inout] remainder Input and output remainder of division
 				 *				operation. This size (length) of this word \a must equal the
 				 *				size of the divider minus one or bad things will happen.
-				 * @date		Jan 21, 2015
+				 * @date		March 3, 2015
 				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				template<typename Field>
@@ -134,7 +130,7 @@ namespace gr
 				 * @param	[in] word Input word.
 				 * @return	Double quote enclosed sequence of space separated numeric symbol
 				 *				representations.
-				 * @date		Jan 21, 2015
+				 * @date		March 3, 2015
 				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				inline std::string to_string(const std::vector<Symbol>& word)
@@ -147,7 +143,6 @@ namespace gr
 					return output;
 				}
 
-
 				//! Randomize symbols in word
 				/*!
 				 * Calling this function will not affect the size (length) of the word. It
@@ -159,7 +154,7 @@ namespace gr
 				 *
 				 * @tparam	GF Field Type.
 				 * @param	[in] word Input word.
-				 * @date		Jan 21, 2015
+				 * @date		March 3, 2015
 				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				template<typename Field>

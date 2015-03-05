@@ -1,29 +1,28 @@
 /*!
  * @file			Scrambler.hpp
- * @brief		Defines the gr::Isatec::GuidedScrambler::Scrambler class
+ * @brief		Declares the gr::Isatec::GuidedScrambler::Scrambler class
  * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date			Jan 21, 2015
- * @copyright	Copyright &copy; 2014 Eddie Carle &lt;eddie@isatec.ca&gt;.
- * 				This project is released under the GNU General Public License
- * 				Version 3.
+ * @date			March 3, 2015
+ * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
+ *					under the GNU General Public License Version 3.
  */
 
-/* Copyright (C) 2014 Eddie Carle <eddie@isatec.ca>
+/* Copyright (C) 2015 %Isatec Inc.
  * 
- * This file is part of The Guided Scrambling Simulator.
+ * This file is part of the %Isatec GNU Radio Module
  *
- * The Guided Scrambling Simulator is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
- * 
- * The Guided Scrambling Simulator is distributed in the hope that it will be
+ * The %Isatec GNU Radio Module is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * The %Isatec GNU Radio Module is distributed in the hope that it will be
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
  * Public License for more details.
- *                                                                           
+ *                                                                          
  * You should have received a copy of the GNU General Public License along with
- * The Guided Scrambling Simulator.  If not, see <http://www.gnu.org/licenses/>.
+ * The %Isatec GNU Radio Module.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef SCRAMBLER_HPP
@@ -37,21 +36,21 @@
 #include "gr-isatec/config.h"
 #include "Analyzer.hpp"
 
-//! GNU Radio Stuff
+//! GNU Radio Namespace
 namespace gr
 {
-	//! Contains all GNU Radio classes for the Isatec out-of-tree module
+	//! Contains all blocks for the %Isatec GNU Radio Module
 	namespace Isatec
 	{
-		//! Contains all classes for performing guided scrambling operations
+		//! Contains elements needed for the GuidedScrambler and Descrambler blocks
 		namespace GuidedScrambling
 		{
-			//! Performs a single scramble operation.
+			//! For performing a single scramble operation.
 			/*!
 			 * The intention is for these scramblers to be grouped into ScramblerGroup
 			 * objects for the purpose of keeping them in execution groups.
 			 *
-			 * @date		Jan 21, 2015
+			 * @date		March 3, 2015
 			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			class Scrambler
@@ -75,7 +74,7 @@ namespace gr
 				 * 			really the length of the divisor word minus one;
 				 * @param	[in] method The desired analysis method to use.
 				 * @param	[in] fieldSize Desired field size
-				 * @date		Jan 21, 2015
+				 * @date		March 3, 2015
 				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				void configure(
@@ -89,7 +88,7 @@ namespace gr
 				//! Perform the actual scramble operation
 				/*!
 				 * Note that in order to improve efficiency of operation this function
-				 * does not perform length/bounds checks on the input Word parameters. It
+				 * does not perform length/bounds checks on the input word parameters. It
 				 * is up to the calling function to ensure the parameters are correctly
 				 * sized.
 				 *
@@ -98,7 +97,7 @@ namespace gr
 				 * @param	[in] input Input to be scrambled. The size of this word
 				 * 			\a must equal length-augmentingLength (both set in
 				 * 			configure()).
-				 * @date		Jan 21, 2015
+				 * @date		March 3, 2015
 				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				void scramble(
@@ -128,7 +127,7 @@ namespace gr
 				 *
 				 * @param	[in] remainder Input remainder word. The size of this word
 				 * 			\a must equal remainderLength (set in configure()).
-				 * @date		Jan 21, 2015
+				 * @date		March 3, 2015
 				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				void setRemainder(const std::vector<Symbol>& remainder)
@@ -144,7 +143,7 @@ namespace gr
 				 *
 				 * Use this to see the resulting remainder from a scramble operation.
 				 *
-				 * @date		Jan 21, 2015
+				 * @date		March 3, 2015
 				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				const std::vector<Symbol>& remainder() const
@@ -159,7 +158,7 @@ namespace gr
 				 *
 				 * Use this to see the result of a call to scramble().
 				 *
-				 * @date		Jan 21, 2015
+				 * @date		March 3, 2015
 				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				const std::vector<Symbol>& output() const
@@ -176,7 +175,7 @@ namespace gr
 				 * us to see the actual input word (including the augmenting portion) used
 				 * in the last call to scramble().
 				 *
-				 * @date		Jan 21, 2015
+				 * @date		March 3, 2015
 				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				const std::vector<Symbol>& dividend() const
@@ -190,7 +189,7 @@ namespace gr
 				 *				the analysis with.
 				 * @param	[in] constellation This is a direct mapping of symbols (as
 				 *				vector indices) to constellation points.
-				 * @date		Jan 21, 2015
+				 * @date		March 3, 2015
 				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				void analyze(
@@ -206,7 +205,7 @@ namespace gr
 				 * analyze() function.
 				 *
 				 * @return	Constant reference to Feedback object.
-				 * @date		Jan 21, 2015
+				 * @date		March 3, 2015
 				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				const Analyzer::Feedback& feedback() const
@@ -222,7 +221,7 @@ namespace gr
 				 *
 				 * @return	Floating point representation of the codeword's selection
 				 *				analysis. Lower is better.
-				 * @date		Jan 21, 2015
+				 * @date		March 3, 2015
 				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				float analysis() const
@@ -231,15 +230,15 @@ namespace gr
 				}
 
 			protected:
-				std::vector<Symbol> m_dividend; //!< Actual input to scramble operation
-				std::vector<Symbol> m_output; //!< Output resulting from scramble operation
-				std::vector<Symbol> m_remainder; //!< Remainder word used in scramble operation
+				std::vector<Symbol> m_dividend; //!< Actual input to division operation
+				std::vector<Symbol> m_output; //!< Output resulting from division operation
+				std::vector<Symbol> m_remainder; //!< Remainder word used in division operation
 				std::unique_ptr<Analyzer> m_analyzer; //!< Analyzer object
 				std::function<void(
 						const std::vector<Symbol>& dividend,
 						const std::vector<Symbol>& divider,
 						std::vector<Symbol>& quotient,
-						std::vector<Symbol>& remainder)> m_divide;
+						std::vector<Symbol>& remainder)> m_divide; //!< Divide function we'll be using
 			};
 		}
 	}

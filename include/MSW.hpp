@@ -1,29 +1,28 @@
 /*!
  * @file			MSW.hpp
- * @brief		Defines the gr::Isatec::GuidedScrambling::MSW class
+ * @brief		Declares the gr::Isatec::GuidedScrambling::MSW class
  * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date			Jan 20, 2015
- * @copyright	Copyright &copy; 2014 Eddie Carle &lt;eddie@isatec.ca&gt;.
- * 				This project is released under the GNU General Public License
- * 				Version 3.
+ * @date			March 3, 2015
+ * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
+ *					under the GNU General Public License Version 3.
  */
 
-/* Copyright (C) 2015 Eddie Carle <eddie@isatec.ca>
+/* Copyright (C) 2015 %Isatec Inc.
  * 
- * This file is part of The Guided Scrambling Simulator.
+ * This file is part of the %Isatec GNU Radio Module
  *
- * The Guided Scrambling Simulator is free software: you can redistribute it
- * and/or modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
- * 
- * The Guided Scrambling Simulator is distributed in the hope that it will be
+ * The %Isatec GNU Radio Module is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * The %Isatec GNU Radio Module is distributed in the hope that it will be
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
  * Public License for more details.
- *                                                                           
+ *                                                                          
  * You should have received a copy of the GNU General Public License along with
- * The Guided Scrambling Simulator.  If not, see <http://www.gnu.org/licenses/>.
+ * The %Isatec GNU Radio Module.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef MSW_HPP
@@ -33,10 +32,10 @@
 
 #include "Analyzer.hpp"
 
-//! GNU Radio Stuff
+//! GNU Radio Namespace
 namespace gr
 {
-	//! Contains all GNU Radio classes for the Isatec out-of-tree module
+	//! Contains all blocks for the %Isatec GNU Radio Module
 	namespace Isatec
 	{
 		//! Contains all classes for performing guided scrambling operations
@@ -44,7 +43,7 @@ namespace gr
 		{
 			//! Performs %MSW (mean squared weight) analysis of a codeword
 			/*!
-			 * @date		Jan 20, 2015
+			 * @date		March 3, 2015
 			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			class MSW: public Analyzer
@@ -55,7 +54,7 @@ namespace gr
 				 * Here is where we store and pass on the RDS (running digital sum) value
 				 * remaining at the end of the analysis.
 				 *
-				 * @date		Jan 16, 2015
+				 * @date		March 3, 2015
 				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				class Feedback: public Analyzer::Feedback
@@ -64,7 +63,7 @@ namespace gr
 					//! Clone %MSW feedback data
 					/*!
 					 * @return	Pointer to dynamically allocated %MSW Feedback copy.
-					 * @date		Jan 16, 2015
+					 * @date		March 3, 2015
 					 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 					 */
 					Analyzer::Feedback* clone() const;
@@ -77,7 +76,7 @@ namespace gr
 				//! Perform %MSW analysis on a codeword
 				/*!
 				 * This actually performs the %MSW analysis on the passed codeword using
-				 * the feedback required. After calling this function the feedback() and
+				 * the feedback provided. After calling this function the feedback() and
 				 * analysis() accessors become valid.
 				 *
 				 * @param	[in] codeword The codeword to perform analysis on.
@@ -85,7 +84,7 @@ namespace gr
 				 *				the analysis with.
 				 * @param	[in] constellation This is a direct mapping of symbols (as
 				 *				vector indices) to constellation points.
-				 * @date		Jan 20, 2015
+				 * @date		March 3, 2015
 				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				void analyze(
@@ -99,7 +98,7 @@ namespace gr
 				 * analyze() function.
 				 *
 				 * @return	Constant reference to internal Feedback object.
-				 * @date		Jan 16, 2015
+				 * @date		March 3, 2015
 				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				const Analyzer::Feedback& feedback() const;
@@ -112,7 +111,7 @@ namespace gr
 				 *
 				 * @return	Floating point representation of the codeword's %MSW
 				 *				analysis. Lower is better.
-				 * @date		Jan 16, 2015
+				 * @date		March 3, 2015
 				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				float analysis() const;
