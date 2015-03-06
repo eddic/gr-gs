@@ -1,6 +1,6 @@
 /*!
  * @file			GuidedScrambler_impl.hpp
- * @brief		Declares the gr::Isatec::GuideScrambling::GuidedScrambler_impl class
+ * @brief		Declares the "Guided Scrambler" GNU Radio block implementation
  * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
  * @date			March 3, 2015
  * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
@@ -43,7 +43,7 @@ namespace gr
 		//! Contains elements needed for the GuidedScrambler and Descrambler blocks
 		namespace GuidedScrambling
 		{
-			//! Guided Scrambler GNU Radio block implementation
+			//! "Guided Scrambler" GNU Radio block implementation
 			/*!
 			 * This class allows us to perform guided scrambling in an efficient multi
 			 * threaded fashion

@@ -2,7 +2,7 @@
  * @file			SymbolGenerator_impl.hpp
  * @brief		Declares the "Random Symbol Generator" GNU Radio block implementation
  * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date			March 5, 2015
+ * @date			March 6, 2015
  * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
  *					under the GNU General Public License Version 3.
  */
@@ -35,39 +35,43 @@ namespace gr
 	//! Contains all blocks for the %Isatec GNU Radio Module
 	namespace Isatec
 	{
-		//! "Random Symbol Generator" GNU Radio block implementation
-		/*!
-		 * Implements gr::Isatec::SymbolGenerator
-		 *
-		 * @date		March 5, 2015
-		 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
-		 */
-		class SymbolGenerator_impl: public SymbolGenerator
+		//! Contains all block implementation too trivial for their own namespace
+		namespace Implementations
 		{
-		public:
-			const std::vector<double>& weightings() const;
-			void set_weightings(const std::vector<double>& weightings);
-
-			//! GNU Radio work function
-			int work(int noutput_items,
-					gr_vector_const_void_star &input_items,
-					gr_vector_void_star &output_items);
-
-			//! Initialize a random symbol generator with a default weightings
+			//! "Random Symbol Generator" GNU Radio block implementation
 			/*!
-			 * This symbol generator is initialized to a state where the "0" symbol
-			 * is outputted with 100\% probability.
+			 * Implements gr::Isatec::SymbolGenerator
 			 *
-			 * @return	Shared pointer to newly allocated random symbol generator
 			 * @date		March 5, 2015
 			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
-			SymbolGenerator_impl();
+			class SymbolGenerator_impl: public SymbolGenerator
+			{
+			public:
+				const std::vector<double>& weightings() const;
+				void set_weightings(const std::vector<double>& weightings);
 
-		private:
-			std::vector<double> m_weightings; //!< Our symbol weightings
-			std::default_random_engine m_generator; //!< Our random number generator
-			std::discrete_distribution<Symbol> m_distribution; //!< Our distribution
-		};
+				//! GNU Radio work function
+				int work(int noutput_items,
+						gr_vector_const_void_star &input_items,
+						gr_vector_void_star &output_items);
+
+				//! Initialize a random symbol generator with a default weightings
+				/*!
+				 * This symbol generator is initialized to a state where the "0" symbol
+				 * is outputted with 100\% probability.
+				 *
+				 * @return	Shared pointer to newly allocated random symbol generator
+				 * @date		March 5, 2015
+				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 */
+				SymbolGenerator_impl();
+
+			private:
+				std::vector<double> m_weightings; //!< Our symbol weightings
+				std::default_random_engine m_generator; //!< Our random number generator
+				std::discrete_distribution<Symbol> m_distribution; //!< Our distribution
+			};
+		}
 	}
 }

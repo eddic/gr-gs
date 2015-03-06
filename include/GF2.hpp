@@ -43,7 +43,7 @@ namespace gr
 		//! Contains elements needed for the GuidedScrambler and Descrambler blocks
 		namespace GuidedScrambling
 		{
-			//! Handling Galois Field (2) symbols.
+			//! Handles Galois Field (2) symbols.
 			/*!
 			 * This class can contain a Galois Field (2) symbol.  The class allows for
 			 * some basic arithmetic operations needed to perform scrambling.

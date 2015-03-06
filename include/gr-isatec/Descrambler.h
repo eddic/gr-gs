@@ -1,6 +1,6 @@
 /*!
  * @file			Descrambler.h
- * @brief		Defines the gr::Isatec::Descrambler GNU Radio block
+ * @brief		Declares the Guided Scrambling "Descrambler" GNU Radio block
  * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
  * @date			March 3, 2015
  * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released

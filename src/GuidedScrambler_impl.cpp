@@ -1,6 +1,6 @@
 /*!
- * @file			GuidedScrambler_impl.hpp
- * @brief		Defines the gr::Isatec::GuideScrambling::GuidedScrambler_impl class
+ * @file			GuidedScrambler_impl.cpp
+ * @brief		Defines the "Guided Scrambler" GNU Radio block implementation
  * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
  * @date			March 3, 2015
  * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released

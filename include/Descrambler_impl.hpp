@@ -1,6 +1,6 @@
 /*!
  * @file			Descrambler_impl.hpp
- * @brief		Declares the gr::Isatec::GuideScrambling::Descrambler_impl class
+ * @brief		Declares the Guided Scrambling "Descrambler" GNU Radio block implementation
  * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
  * @date			March 3, 2015
  * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released

@@ -1,6 +1,6 @@
 /*!
  * @file			Scrambler.cpp
- * @brief		Defines the gr::Isatec::GuidedScrambler::Scrambler class
+ * @brief		Defines the gr::Isatec::GuidedScrambling::Scrambler class
  * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
  * @date			March 3, 2015
  * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
