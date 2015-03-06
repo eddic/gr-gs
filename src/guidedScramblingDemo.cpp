@@ -1,9 +1,46 @@
-#include "gui.hpp"
+/*!
+ * @file			guidedScramblingDemo.hpp
+ * @brief		Defines the Guided Scrambling demo application
+ * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
+ * @date			March 6, 2015
+ * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
+ *					under the GNU General Public License Version 3.
+ */
+
+/* Copyright (C) 2015 %Isatec Inc.
+ * 
+ * This file is part of the %Isatec GNU Radio Module
+ *
+ * The %Isatec GNU Radio Module is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * The %Isatec GNU Radio Module is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+ * Public License for more details.
+ *                                                                          
+ * You should have received a copy of the GNU General Public License along with
+ * The %Isatec GNU Radio Module.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include "guidedScramblingDemo.hpp"
+
+int main(int argc, char *argv[])
+{
+	QApplication app(argc, argv);
+	gr::Isatec::Applications::GuidedScramblingDemo demo;
+
+	demo.show();
+
+	return app.exec();
+}
 
 #include <sstream>
 #include <cmath>
 
-Gui::Gui():
+gr::Isatec::Applications::GuidedScramblingDemo::GuidedScramblingDemo():
 	m_top(gr::make_top_block("Guided Scrambler")),
 	m_fft(gr::qtgui::freq_sink_c::make(
 			4096,
@@ -151,17 +188,7 @@ Gui::Gui():
 	}
 }
 
-int main(int argc, char *argv[])
-{
-	QApplication app(argc, argv);
-	Gui gui;
-
-	gui.show();
-
-	return app.exec();
-}
-
-Gui::~Gui()
+gr::Isatec::Applications::GuidedScramblingDemo::~GuidedScramblingDemo()
 {
 	if(m_running)
 	{
@@ -171,7 +198,7 @@ Gui::~Gui()
 	}
 }
 
-void Gui::start()
+void gr::Isatec::Applications::GuidedScramblingDemo::start()
 {
 	if(m_running)
 	{
@@ -188,7 +215,7 @@ void Gui::start()
 	}
 }
 
-void Gui::fieldSize()
+void gr::Isatec::Applications::GuidedScramblingDemo::fieldSize()
 {
 	m_guidedScrambler->set_fieldSize(std::pow(2,m_ui.fieldSize->value()));
 	scrambler();
@@ -196,21 +223,21 @@ void Gui::fieldSize()
 	weightings();
 }
 
-void Gui::codewordLength()
+void gr::Isatec::Applications::GuidedScramblingDemo::codewordLength()
 {
 	m_guidedScrambler->set_codewordLength(m_ui.codewordLength->value());
 	if(m_guidedScrambler->codewordLength() <= m_guidedScrambler->augmentingLength())
 		m_ui.augmentingLength->setValue(m_guidedScrambler->codewordLength()-1);
 }
 
-void Gui::augmentingLength()
+void gr::Isatec::Applications::GuidedScramblingDemo::augmentingLength()
 {
 	m_guidedScrambler->set_augmentingLength(m_ui.augmentingLength->value());
 	if(m_guidedScrambler->codewordLength() <= m_guidedScrambler->augmentingLength())
 		m_ui.codewordLength->setValue(m_guidedScrambler->augmentingLength()+1);
 }
 
-void Gui::scrambler()
+void gr::Isatec::Applications::GuidedScramblingDemo::scrambler()
 {
 	std::istringstream ss(m_ui.scrambler->text().toStdString());
 	std::vector<gr::Isatec::Symbol> polynomial;
@@ -233,17 +260,17 @@ void Gui::scrambler()
 		m_ui.scramblerLabel->setStyleSheet("QLabel { color: red; }");
 }
 
-void Gui::selectionMethod()
+void gr::Isatec::Applications::GuidedScramblingDemo::selectionMethod()
 {
 	m_guidedScrambler->set_selectionMethod(m_ui.selectionMethod->currentText().toStdString());
 }
 
-void Gui::blockEncoding()
+void gr::Isatec::Applications::GuidedScramblingDemo::blockEncoding()
 {
 	m_guidedScrambler->set_continuous(!m_ui.blockEncoding->isChecked());
 }
 
-void Gui::constellation()
+void gr::Isatec::Applications::GuidedScramblingDemo::constellation()
 {
 	std::istringstream ss(m_ui.constellation->text().toStdString());
 	std::vector<std::complex<float>> array;
@@ -266,7 +293,7 @@ void Gui::constellation()
 		m_ui.constellationLabel->setStyleSheet("QLabel { color: red; }");
 }
 
-void Gui::baudRate()
+void gr::Isatec::Applications::GuidedScramblingDemo::baudRate()
 {
 	m_throttle->set_sample_rate(1e3*m_ui.baudRate->value()*m_ui.samplesPerSymbol->value());
 	m_eye->set_samp_rate(1e3*m_ui.baudRate->value()*m_ui.samplesPerSymbol->value());
@@ -275,12 +302,12 @@ void Gui::baudRate()
 	frequency();
 }
 
-void Gui::frequency()
+void gr::Isatec::Applications::GuidedScramblingDemo::frequency()
 {
 	m_fft->set_frequency_range(1e6*m_ui.frequency->value(), 2e3*m_ui.baudRate->value()*m_ui.samplesPerSymbol->value());
 }
 
-void Gui::samplesPerSymbol()
+void gr::Isatec::Applications::GuidedScramblingDemo::samplesPerSymbol()
 {
 	pause();
 
@@ -301,7 +328,7 @@ void Gui::samplesPerSymbol()
 	unpause();
 }
 
-void Gui::weightings()
+void gr::Isatec::Applications::GuidedScramblingDemo::weightings()
 {
 	std::istringstream ss(m_ui.weightings->text().toStdString());
 	std::vector<double> array;
@@ -324,7 +351,7 @@ void Gui::weightings()
 	m_symbolGenerator->set_weightings(array);
 }
 
-void Gui::pause()
+void gr::Isatec::Applications::GuidedScramblingDemo::pause()
 {
 	if(m_pauses==0)
 	{
@@ -338,7 +365,7 @@ void Gui::pause()
 	++m_pauses;
 }
 
-void Gui::unpause()
+void gr::Isatec::Applications::GuidedScramblingDemo::unpause()
 {
 	if(m_pauses==1)
 	{
@@ -351,7 +378,7 @@ void Gui::unpause()
 	--m_pauses;
 }
 
-void Gui::bypass()
+void gr::Isatec::Applications::GuidedScramblingDemo::bypass()
 {
 	pause();
 
@@ -372,7 +399,7 @@ void Gui::bypass()
 	unpause();
 }
 
-void Gui::pulseShape()
+void gr::Isatec::Applications::GuidedScramblingDemo::pulseShape()
 {
 	m_pulseGenerator->set_shape(m_ui.pulseShape->checkedId());
 	if(m_pulseGenerator->shape()>0)
@@ -387,24 +414,24 @@ void Gui::pulseShape()
 	}
 }
 
-void Gui::excessBandwidth()
+void gr::Isatec::Applications::GuidedScramblingDemo::excessBandwidth()
 {
 	m_pulseGenerator->set_alpha(m_ui.excessBandwidth->value());
 }
 
-void Gui::taps()
+void gr::Isatec::Applications::GuidedScramblingDemo::taps()
 {
 	m_pulseGenerator->set_numberOfTaps(m_ui.taps->value());
 }
 
-void Gui::noise()
+void gr::Isatec::Applications::GuidedScramblingDemo::noise()
 {
 	const int& value = m_ui.noise->value();
 	const int& maximum = m_ui.noise->maximum();
 	m_noise->set_amplitude(value==0?0:5*std::pow(10,(-1+double(value)/maximum)*5));
 }
 
-void Gui::phase()
+void gr::Isatec::Applications::GuidedScramblingDemo::phase()
 {
 	m_pulseGenerator->set_phase(m_ui.phase->value()*pi/180.0);
 }

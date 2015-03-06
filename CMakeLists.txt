@@ -62,25 +62,25 @@ FIND_PACKAGE(Gnuradio "3.7.6")
 IF(Qt4_FOUND AND Gnuradio_FOUND)
 	# Guided Scrambling demonstration
 
-	QT4_WRAP_CPP(guidedScrambler_HEADERS_MOC "include/gui.hpp")
-	QT4_WRAP_UI(guidedScrambler_FORMS_HEADERS "ui/gs.ui")
+	QT4_WRAP_CPP(guidedScramblerDemo_HEADERS_MOC "include/guidedScramblingDemo.hpp")
+	QT4_WRAP_UI(guidedScramblerDemo_FORMS_HEADERS "ui/guidedScramblingDemo.ui")
 	INCLUDE(${QT_USE_FILE})
 	ADD_DEFINITIONS(${QT_DEFINITIONS})
-	ADD_EXECUTABLE(guidedScrambler
-		"src/gui.cpp"
-		${guidedScrambler_HEADERS_MOC}
-		${guidedScrambler_FORMS_HEADERS})
-	TARGET_INCLUDE_DIRECTORIES ( guidedScrambler PRIVATE
+	ADD_EXECUTABLE(guidedScramblerDemo
+		"src/guidedScramblingDemo.cpp"
+		${guidedScramblerDemo_HEADERS_MOC}
+		${guidedScramblerDemo_FORMS_HEADERS})
+	TARGET_INCLUDE_DIRECTORIES ( guidedScramblerDemo PRIVATE
 		"${CMAKE_CURRENT_BINARY_DIR}"
 		"${Boost_INCLUDE_DIRS}"
 		"${GNURADIO_RUNTIME_INCLUDE_DIRS}"
 		"${GNURADIO_ALL_INCLUDE_DIRS}")
-	TARGET_LINK_LIBRARIES ( guidedScrambler PUBLIC
+	TARGET_LINK_LIBRARIES ( guidedScramblerDemo PUBLIC
 		gnuradio-isatec
 		"${Boost_LIBRARIES}"
 		"${GNURADIO_ALL_LIBRARIES}"
 		"${QT_LIBRARIES}")
-	ADD_DEPENDENCIES ( guidedScrambler gnuradio-isatec)
+	ADD_DEPENDENCIES ( guidedScramblerDemo gnuradio-isatec)
 ENDIF()
 
 # Documentation
@@ -94,6 +94,6 @@ IF(DOXYGEN_FOUND)
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 		COMMENT "Generating API documentation with Doxygen" VERBATIM
 		)
-	INSTALL (DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/doc/html" DESTINATION
-		share/gr-isatec/doc)
+	INSTALL (DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/doc" DESTINATION
+		share/gr-isatec)
 ENDIF(DOXYGEN_FOUND)
