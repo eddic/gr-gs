@@ -34,7 +34,7 @@ gr::Isatec::GuidedScrambling::Analyzer::Feedback* gr::Isatec::GuidedScrambling::
 }
 
 gr::Isatec::GuidedScrambling::MSW::Feedback::Feedback():
-	RDS(std::complex<float>(STARTINGRDS))
+	RDS(startingRDS)
 {}
 
 void gr::Isatec::GuidedScrambling::MSW::analyze(const std::vector<Symbol>& codeword, const Analyzer::Feedback& feedback, const std::vector<std::complex<float>>& constellation)

@@ -41,8 +41,6 @@
 #  define Isatec_API __GR_ATTR_IMPORT
 #endif
 
-#define STARTINGRDS 1,0
-
 //! GNU Radio Namespace
 namespace gr
 {
@@ -61,6 +59,9 @@ namespace gr
 		//! Contains all Guided Scrambling classes.
 		namespace GuidedScrambling
 		{
+			//! Starting RDS for codeword analysis
+			const std::complex<float> startingRDS={1,0};
+
 			//! Maximum field size defined
 			const unsigned int maxFieldSize=4;
 		}
