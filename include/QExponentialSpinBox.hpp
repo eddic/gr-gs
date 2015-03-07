@@ -66,7 +66,7 @@ namespace gr
 					QSpinBox(parent),
 					m_base(base)
 				{
-					this->setMinimum(1);
+					this->setMinimum(0);
 				}
 
 				//! Set exponent base
@@ -88,20 +88,29 @@ namespace gr
 				}
 
 				//! From QSpinBox
+				/*!
+				 * @return	The logarithm (using the base) of the integer represented
+				 * 			by the passed string value. If the result is non-integer
+				 * 			a -1 is returned.
+				 * @date		March 6, 2015
+				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 */
 				int valueFromText(const QString & text) const
 				{
-					const unsigned int desired = std::abs(std::stoi(text.toStdString()));
-					unsigned int value=0;
-					unsigned int power;
-					do
-						power=std::pow(m_base,value++);
-					while(power < desired);
-					--value;
+					const int desired = std::abs(std::stoi(text.toStdString()));
+					if(desired>=1)
+					{
+						int value=0;
+						int power;
+						do
+							power=std::pow(m_base,value++);
+						while(power < desired);
+						--value;
 
-					if(power == desired)
-						return value;
-					else
-						return 0;
+						if(power == desired)
+							return value;
+					}
+					return -1;
 				}
 
 			private:

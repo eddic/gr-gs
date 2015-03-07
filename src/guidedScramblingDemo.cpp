@@ -132,6 +132,7 @@ gr::Isatec::Applications::GuidedScramblingDemo::GuidedScramblingDemo():
 		while(power < gr::Isatec::GuidedScrambling::maxFieldSize);
 		--value;
 
+		m_ui.fieldSize->setMinimum(1);
 		m_ui.fieldSize->setMaximum(value);
 	}
 
