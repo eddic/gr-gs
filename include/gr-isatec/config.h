@@ -44,28 +44,28 @@
 //! GNU Radio Namespace
 namespace gr
 {
-	//! Contains all GNU Radio classes for the Isatec out-of-tree module
-	namespace Isatec
-	{
-		//! Pi
-		const double pi = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089;
+   //! Contains all GNU Radio classes for the Isatec out-of-tree module
+   namespace Isatec
+   {
+      //! Pi
+      const double pi = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089;
 
-		//! Get a default constellation pattern for a field size
-		Isatec_API std::vector<std::complex<float>> defaultConstellation(unsigned int fieldSize);
+      //! Get a default constellation pattern for a field size
+      Isatec_API std::vector<std::complex<float>> defaultConstellation(unsigned int fieldSize);
 
-		//! Type to use for representation of symbols
-		typedef uint8_t Symbol;
+      //! Type to use for representation of symbols
+      typedef uint8_t Symbol;
 
-		//! Contains all Guided Scrambling classes.
-		namespace GuidedScrambling
-		{
-			//! Starting RDS for codeword analysis
-			const std::complex<float> startingRDS={1,0};
+      //! Contains all Guided Scrambling classes.
+      namespace GuidedScrambling
+      {
+         //! Starting RDS for codeword analysis
+         const std::complex<float> startingRDS={1,0};
 
-			//! Maximum field size defined
-			const unsigned int maxFieldSize=4;
-		}
-	}
+         //! Maximum field size defined
+         const unsigned int maxFieldSize=4;
+      }
+   }
 }
 
 #endif

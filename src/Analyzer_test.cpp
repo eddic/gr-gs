@@ -37,42 +37,42 @@
 
 int gr::Isatec::GuidedScrambling::Tests::Analyzer_test()
 {
-	std::cout << "\n*** Initiating gr::Isatec::GuidedScrambling::Analyzer unit tests ***\n\n";
+   std::cout << "\n*** Initiating gr::Isatec::GuidedScrambling::Analyzer unit tests ***\n\n";
 
-	std::cout << "Testing GF2 MSW analysis... ";
-	{
-		std::cout.flush();
+   std::cout << "Testing GF2 MSW analysis... ";
+   {
+      std::cout.flush();
 
-		const std::vector<Symbol> codeword({1,1,0,1,0,1,1,1,0,1,0,0,1,1,1,1,1,1,0});
+      const std::vector<Symbol> codeword({1,1,0,1,0,1,1,1,0,1,0,0,1,1,1,1,1,1,0});
 
-		std::unique_ptr<Analyzer> analyzer(manufactureAnalyzer(0));
-		analyzer->analyze(codeword, analyzer->feedback(), defaultConstellation(2));
+      std::unique_ptr<Analyzer> analyzer(manufactureAnalyzer(0));
+      analyzer->analyze(codeword, analyzer->feedback(), defaultConstellation(2));
 
-		if(analyzer->analysis() != 481)
-		{
-			std::cout << "failed!" << std::endl;
-			return 1;
-		}
+      if(analyzer->analysis() != 481)
+      {
+         std::cout << "failed!" << std::endl;
+         return 1;
+      }
 
-		std::cout << "success." << std::endl;
-	}
+      std::cout << "success." << std::endl;
+   }
 
-	std::cout << "Testing GF4 MSW analysis... ";
-	{
-		std::cout.flush();
+   std::cout << "Testing GF4 MSW analysis... ";
+   {
+      std::cout.flush();
 
-		const std::vector<Symbol> codeword({3,1,1,1,0,0,1,1,3,2,2,3,3,3,1,1,2,3,3,1,0,2,3});
-		std::unique_ptr<Analyzer> analyzer(manufactureAnalyzer(0));
-		analyzer->analyze(codeword, analyzer->feedback(), defaultConstellation(4));
+      const std::vector<Symbol> codeword({3,1,1,1,0,0,1,1,3,2,2,3,3,3,1,1,2,3,3,1,0,2,3});
+      std::unique_ptr<Analyzer> analyzer(manufactureAnalyzer(0));
+      analyzer->analyze(codeword, analyzer->feedback(), defaultConstellation(4));
 
-		if(analyzer->analysis() != 429)
-		{
-			std::cout << "failed!" << std::endl;
-			return 1;
-		}
+      if(analyzer->analysis() != 429)
+      {
+         std::cout << "failed!" << std::endl;
+         return 1;
+      }
 
-		std::cout << "success." << std::endl;
-	}
+      std::cout << "success." << std::endl;
+   }
 
-	return 0;
+   return 0;
 }

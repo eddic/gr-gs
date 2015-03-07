@@ -30,41 +30,41 @@
 
 const std::vector<double>& gr::Isatec::Implementations::SymbolGenerator_impl::weightings() const
 {
-	return m_weightings;
+   return m_weightings;
 }
 
 void gr::Isatec::Implementations::SymbolGenerator_impl::set_weightings(const std::vector<double>& weightings)
 {
-	m_weightings = weightings;
+   m_weightings = weightings;
 
-	std::discrete_distribution<Symbol> distribution(
-			m_weightings.begin(),
-			m_weightings.end());
-	m_distribution.param(distribution.param());
+   std::discrete_distribution<Symbol> distribution(
+         m_weightings.begin(),
+         m_weightings.end());
+   m_distribution.param(distribution.param());
 }
 
 int gr::Isatec::Implementations::SymbolGenerator_impl::work(int noutput_items,
-		gr_vector_const_void_star &input_items,
-		gr_vector_void_star &output_items)
+      gr_vector_const_void_star &input_items,
+      gr_vector_void_star &output_items)
 {
-	Symbol* const start = reinterpret_cast<Symbol*>(output_items[0]);
-	Symbol* const end = start+noutput_items;
+   Symbol* const start = reinterpret_cast<Symbol*>(output_items[0]);
+   Symbol* const end = start+noutput_items;
 
-	for(auto output=start; output != end; ++output)
-		*output = m_distribution(m_generator);
+   for(auto output=start; output != end; ++output)
+      *output = m_distribution(m_generator);
 
-	return noutput_items;
+   return noutput_items;
 }
 
 gr::Isatec::Implementations::SymbolGenerator_impl::SymbolGenerator_impl():
-	gr::sync_block("Symbol Generator",
-		io_signature::make(0,0,0),
-		io_signature::make(1,1,sizeof(Symbol))),
-	m_generator(1984)
+   gr::sync_block("Symbol Generator",
+      io_signature::make(0,0,0),
+      io_signature::make(1,1,sizeof(Symbol))),
+   m_generator(1984)
 {
 }
 
 gr::Isatec::SymbolGenerator::sptr gr::Isatec::SymbolGenerator::make()
 {
-	return gnuradio::get_initial_sptr(new Implementations::SymbolGenerator_impl());
+   return gnuradio::get_initial_sptr(new Implementations::SymbolGenerator_impl());
 }

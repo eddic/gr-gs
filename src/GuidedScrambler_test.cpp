@@ -36,143 +36,143 @@
 
 int gr::Isatec::GuidedScrambling::Tests::GuidedScrambler_test()
 {
-	std::cout << "\n*** Initiating gr::Isatec::GuidedScrambling::GuidedScrambler_impl unit tests ***\n\n";
+   std::cout << "\n*** Initiating gr::Isatec::GuidedScrambling::GuidedScrambler_impl unit tests ***\n\n";
 
-	std::cout << "Testing random block scrambling->descrambling cycle in GF2 with gr::Isatec::GuidedScrambling::GuidedScrambler_impl... ";
-	{
-		std::cout.flush();
+   std::cout << "Testing random block scrambling->descrambling cycle in GF2 with gr::Isatec::GuidedScrambling::GuidedScrambler_impl... ";
+   {
+      std::cout.flush();
 
-		GuidedScrambler_impl scrambler;
-		scrambler.set_continuous(false);
-		scrambler.set_fieldSize(2);
-		scrambler.set_constellation(defaultConstellation(2));
+      GuidedScrambler_impl scrambler;
+      scrambler.set_continuous(false);
+      scrambler.set_fieldSize(2);
+      scrambler.set_constellation(defaultConstellation(2));
 
-		Descrambler_impl descrambler;
-		descrambler.set_fieldSize(scrambler.fieldSize());
-		descrambler.set_augmentingLength(scrambler.augmentingLength());
-		descrambler.set_codewordLength(scrambler.codewordLength());
-		descrambler.set_continuous(scrambler.continuous());
-		descrambler.set_multiplier(scrambler.divider());
+      Descrambler_impl descrambler;
+      descrambler.set_fieldSize(scrambler.fieldSize());
+      descrambler.set_augmentingLength(scrambler.augmentingLength());
+      descrambler.set_codewordLength(scrambler.codewordLength());
+      descrambler.set_continuous(scrambler.continuous());
+      descrambler.set_multiplier(scrambler.divider());
 
-		std::vector<Symbol> input(scrambler.codewordLength()-scrambler.augmentingLength());
-		Word::randomize<GF2>(input);
+      std::vector<Symbol> input(scrambler.codewordLength()-scrambler.augmentingLength());
+      Word::randomize<GF2>(input);
 
-		for(unsigned int i=0; i<64; ++i)
-		{
-			Word::randomize<GF2>(input);
-			const std::vector<Symbol>& output = scrambler.scramble(input);
-			descrambler.descramble(output);
-			if(descrambler.output() != input)
-			{
-				std::cout << "failed!" << std::endl;
-				return 1;
-			}
-		}
+      for(unsigned int i=0; i<64; ++i)
+      {
+         Word::randomize<GF2>(input);
+         const std::vector<Symbol>& output = scrambler.scramble(input);
+         descrambler.descramble(output);
+         if(descrambler.output() != input)
+         {
+            std::cout << "failed!" << std::endl;
+            return 1;
+         }
+      }
 
-		std::cout << "success." << std::endl;
-	}
+      std::cout << "success." << std::endl;
+   }
 
-	std::cout << "Testing random continuous scrambling->descrambling cycle in GF2 with gr::Isatec::GuidedScrambling::GuidedScrambler_impl... ";
-	{
-		std::cout.flush();
+   std::cout << "Testing random continuous scrambling->descrambling cycle in GF2 with gr::Isatec::GuidedScrambling::GuidedScrambler_impl... ";
+   {
+      std::cout.flush();
 
-		GuidedScrambler_impl scrambler;
-		scrambler.set_continuous(true);
-		scrambler.set_fieldSize(2);
-		scrambler.set_constellation(defaultConstellation(2));
+      GuidedScrambler_impl scrambler;
+      scrambler.set_continuous(true);
+      scrambler.set_fieldSize(2);
+      scrambler.set_constellation(defaultConstellation(2));
 
-		Descrambler_impl descrambler;
-		descrambler.set_fieldSize(scrambler.fieldSize());
-		descrambler.set_augmentingLength(scrambler.augmentingLength());
-		descrambler.set_codewordLength(scrambler.codewordLength());
-		descrambler.set_continuous(scrambler.continuous());
-		descrambler.set_multiplier(scrambler.divider());
+      Descrambler_impl descrambler;
+      descrambler.set_fieldSize(scrambler.fieldSize());
+      descrambler.set_augmentingLength(scrambler.augmentingLength());
+      descrambler.set_codewordLength(scrambler.codewordLength());
+      descrambler.set_continuous(scrambler.continuous());
+      descrambler.set_multiplier(scrambler.divider());
 
-		std::vector<Symbol> input(scrambler.codewordLength()-scrambler.augmentingLength());
-		Word::randomize<GF2>(input);
+      std::vector<Symbol> input(scrambler.codewordLength()-scrambler.augmentingLength());
+      Word::randomize<GF2>(input);
 
-		for(unsigned int i=0; i<64; ++i)
-		{
-			Word::randomize<GF2>(input);
-			const std::vector<Symbol>& output = scrambler.scramble(input);
-			descrambler.descramble(output);
-			if(descrambler.output() != input)
-			{
-				std::cout << "failed!" << std::endl;
-				return 1;
-			}
-		}
+      for(unsigned int i=0; i<64; ++i)
+      {
+         Word::randomize<GF2>(input);
+         const std::vector<Symbol>& output = scrambler.scramble(input);
+         descrambler.descramble(output);
+         if(descrambler.output() != input)
+         {
+            std::cout << "failed!" << std::endl;
+            return 1;
+         }
+      }
 
-		std::cout << "success.\n";
-	}
+      std::cout << "success.\n";
+   }
 
-	std::cout << "Testing random block scrambling->descrambling cycle in GF4 with gr::Isatec::GuidedScrambling::GuidedScrambler_impl... ";
-	{
-		std::cout.flush();
+   std::cout << "Testing random block scrambling->descrambling cycle in GF4 with gr::Isatec::GuidedScrambling::GuidedScrambler_impl... ";
+   {
+      std::cout.flush();
 
-		GuidedScrambler_impl scrambler;
-		scrambler.set_continuous(false);
-		scrambler.set_constellation(defaultConstellation(4));
-		scrambler.set_fieldSize(4);
+      GuidedScrambler_impl scrambler;
+      scrambler.set_continuous(false);
+      scrambler.set_constellation(defaultConstellation(4));
+      scrambler.set_fieldSize(4);
 
-		Descrambler_impl descrambler;
-		descrambler.set_fieldSize(scrambler.fieldSize());
-		descrambler.set_augmentingLength(scrambler.augmentingLength());
-		descrambler.set_codewordLength(scrambler.codewordLength());
-		descrambler.set_continuous(scrambler.continuous());
-		descrambler.set_multiplier(scrambler.divider());
+      Descrambler_impl descrambler;
+      descrambler.set_fieldSize(scrambler.fieldSize());
+      descrambler.set_augmentingLength(scrambler.augmentingLength());
+      descrambler.set_codewordLength(scrambler.codewordLength());
+      descrambler.set_continuous(scrambler.continuous());
+      descrambler.set_multiplier(scrambler.divider());
 
-		std::vector<Symbol> input(scrambler.codewordLength()-scrambler.augmentingLength());
-		Word::randomize<GF4>(input);
+      std::vector<Symbol> input(scrambler.codewordLength()-scrambler.augmentingLength());
+      Word::randomize<GF4>(input);
 
-		for(unsigned int i=0; i<64; ++i)
-		{
-			Word::randomize<GF4>(input);
-			const std::vector<Symbol>& output = scrambler.scramble(input);
-			descrambler.descramble(output);
-			if(descrambler.output() != input)
-			{
-				std::cout << "failed!" << std::endl;
-				return 1;
-			}
-		}
+      for(unsigned int i=0; i<64; ++i)
+      {
+         Word::randomize<GF4>(input);
+         const std::vector<Symbol>& output = scrambler.scramble(input);
+         descrambler.descramble(output);
+         if(descrambler.output() != input)
+         {
+            std::cout << "failed!" << std::endl;
+            return 1;
+         }
+      }
 
-		std::cout << "success.\n";
-	}
+      std::cout << "success.\n";
+   }
 
-	std::cout << "Testing random continuous scrambling->descrambling cycle in GF4 with gr::Isatec::GuidedScrambling::GuidedScrambler_impl... ";
-	{
-		std::cout.flush();
+   std::cout << "Testing random continuous scrambling->descrambling cycle in GF4 with gr::Isatec::GuidedScrambling::GuidedScrambler_impl... ";
+   {
+      std::cout.flush();
 
-		GuidedScrambler_impl scrambler;
-		scrambler.set_continuous(true);
-		scrambler.set_constellation(defaultConstellation(4));
-		scrambler.set_fieldSize(4);
+      GuidedScrambler_impl scrambler;
+      scrambler.set_continuous(true);
+      scrambler.set_constellation(defaultConstellation(4));
+      scrambler.set_fieldSize(4);
 
-		Descrambler_impl descrambler;
-		descrambler.set_fieldSize(scrambler.fieldSize());
-		descrambler.set_augmentingLength(scrambler.augmentingLength());
-		descrambler.set_codewordLength(scrambler.codewordLength());
-		descrambler.set_continuous(scrambler.continuous());
-		descrambler.set_multiplier(scrambler.divider());
+      Descrambler_impl descrambler;
+      descrambler.set_fieldSize(scrambler.fieldSize());
+      descrambler.set_augmentingLength(scrambler.augmentingLength());
+      descrambler.set_codewordLength(scrambler.codewordLength());
+      descrambler.set_continuous(scrambler.continuous());
+      descrambler.set_multiplier(scrambler.divider());
 
-		std::vector<Symbol> input(scrambler.codewordLength()-scrambler.augmentingLength());
-		Word::randomize<GF4>(input);
+      std::vector<Symbol> input(scrambler.codewordLength()-scrambler.augmentingLength());
+      Word::randomize<GF4>(input);
 
-		for(unsigned int i=0; i<64; ++i)
-		{
-			Word::randomize<GF4>(input);
-			const std::vector<Symbol>& output = scrambler.scramble(input);
-			descrambler.descramble(output);
-			if(descrambler.output() != input)
-			{
-				std::cout << "failed!" << std::endl;
-				return 1;
-			}
-		}
+      for(unsigned int i=0; i<64; ++i)
+      {
+         Word::randomize<GF4>(input);
+         const std::vector<Symbol>& output = scrambler.scramble(input);
+         descrambler.descramble(output);
+         if(descrambler.output() != input)
+         {
+            std::cout << "failed!" << std::endl;
+            return 1;
+         }
+      }
 
-		std::cout << "success.\n";
-	}
+      std::cout << "success.\n";
+   }
 
-	return 0;
+   return 0;
 }

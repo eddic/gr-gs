@@ -28,63 +28,63 @@
 //! GNU Radio Namespace
 namespace gr
 {
-	//! Contains all blocks for the %Isatec GNU Radio Module
-	namespace Isatec
-	{
-		//! Contains elements needed for the GuidedScrambler and Descrambler blocks
-		namespace GuidedScrambling
-		{
-			//! Contains all GuidedScrambling unit tests
-			namespace Tests
-			{
-				//! Fully tests all components of gr::Isatec::GuidedScrambling::Word
-				/*!
-				 * @return  Zero on success, non-zero on fail.
-				 * @date    Jan 21, 2015
-				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-				 */
-				int Word_test();
+   //! Contains all blocks for the %Isatec GNU Radio Module
+   namespace Isatec
+   {
+      //! Contains elements needed for the GuidedScrambler and Descrambler blocks
+      namespace GuidedScrambling
+      {
+         //! Contains all GuidedScrambling unit tests
+         namespace Tests
+         {
+            //! Fully tests all components of gr::Isatec::GuidedScrambling::Word
+            /*!
+             * @return  Zero on success, non-zero on fail.
+             * @date    Jan 21, 2015
+             * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+             */
+            int Word_test();
 
-				//! Fully tests gr::Isatec::GuidedScrambling::Analyzer
-				/*!
-				 * @return  Zero on success, non-zero on fail.
-				 * @date    Jan 21, 2015
-				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-				 */
-				int Analyzer_test();
+            //! Fully tests gr::Isatec::GuidedScrambling::Analyzer
+            /*!
+             * @return  Zero on success, non-zero on fail.
+             * @date    Jan 21, 2015
+             * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+             */
+            int Analyzer_test();
 
-				//! Fully tests gr::Isatec::GuidedScrambling::Descrambler_impl
-				/*!
-				 * @return  Zero on success, non-zero on fail.
-				 * @date    Jan 21, 2015
-				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-				 */
-				int Descrambler_test();
+            //! Fully tests gr::Isatec::GuidedScrambling::Descrambler_impl
+            /*!
+             * @return  Zero on success, non-zero on fail.
+             * @date    Jan 21, 2015
+             * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+             */
+            int Descrambler_test();
 
-				//! Fully tests gr::Isatec::GuidedScrambling::Scrambler
-				/*!
-				 * @return  Zero on success, non-zero on fail.
-				 * @date    Jan 21, 2015
-				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-				 */
-				int Scrambler_test();
+            //! Fully tests gr::Isatec::GuidedScrambling::Scrambler
+            /*!
+             * @return  Zero on success, non-zero on fail.
+             * @date    Jan 21, 2015
+             * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+             */
+            int Scrambler_test();
 
-				//! Fully tests gr::Isatec::GuidedScrambling::ScramblerGroup
-				/*!
-				 * @return  Zero on success, non-zero on fail.
-				 * @date    Jan 21, 2015
-				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-				 */
-				int ScramblerGroup_test();
+            //! Fully tests gr::Isatec::GuidedScrambling::ScramblerGroup
+            /*!
+             * @return  Zero on success, non-zero on fail.
+             * @date    Jan 21, 2015
+             * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+             */
+            int ScramblerGroup_test();
 
-				//! Fully tests gr::Isatec::GuidedScrambling::GuidedScrambler_impl
-				/*!
-				 * @return  Zero on success, non-zero on fail.
-				 * @date    Jan 21, 2015
-				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-				 */
-				int GuidedScrambler_test();
-			}
-		}
-	}
+            //! Fully tests gr::Isatec::GuidedScrambling::GuidedScrambler_impl
+            /*!
+             * @return  Zero on success, non-zero on fail.
+             * @date    Jan 21, 2015
+             * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+             */
+            int GuidedScrambler_test();
+         }
+      }
+   }
 }

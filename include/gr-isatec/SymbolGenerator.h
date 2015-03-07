@@ -36,61 +36,61 @@
 //! GNU Radio Namespace
 namespace gr
 {
-	//! Contains all blocks for the %Isatec GNU Radio Module
-	namespace Isatec
-	{
-		//! "Random Symbol Generator" GNU Radio block
-		/*!
-		 * This block simply allows us to generate a random stream of uncorrelated
-		 * symbols with discretely defined probability weightings. All we do is
-		 * pass a vector of doubles where the double describes the weighting of
-		 * the symbol as represented by the index of said vector. Thus a weighting
-		 * vector of {1,1,1,2} would produce symbol values {0,1,2,3} with
-		 * respective probabilities of {0.2, 0.2, 0.2, 0.4}.
-		 *
-		 * @date    March 5, 2015
-		 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-		 */
-		class Isatec_API SymbolGenerator: virtual public gr::sync_block
-		{
-		public:
-			//! Access weightings
-			/*!
-			 * See the gr::Isatec::SymbolGenerator class description for more
-			 * information on what the vector means.
-			 *
-			 * @return  Weighting weightings
-			 * @date    March 5, 2015
-			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-			 */
-			virtual const std::vector<double>& weightings() const =0;
+   //! Contains all blocks for the %Isatec GNU Radio Module
+   namespace Isatec
+   {
+      //! "Random Symbol Generator" GNU Radio block
+      /*!
+       * This block simply allows us to generate a random stream of uncorrelated
+       * symbols with discretely defined probability weightings. All we do is
+       * pass a vector of doubles where the double describes the weighting of
+       * the symbol as represented by the index of said vector. Thus a weighting
+       * vector of {1,1,1,2} would produce symbol values {0,1,2,3} with
+       * respective probabilities of {0.2, 0.2, 0.2, 0.4}.
+       *
+       * @date    March 5, 2015
+       * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+       */
+      class Isatec_API SymbolGenerator: virtual public gr::sync_block
+      {
+      public:
+         //! Access weightings
+         /*!
+          * See the gr::Isatec::SymbolGenerator class description for more
+          * information on what the vector means.
+          *
+          * @return  Weighting weightings
+          * @date    March 5, 2015
+          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+          */
+         virtual const std::vector<double>& weightings() const =0;
 
-			//! Set weightings
-			/*!
-			 * See the gr::Isatec::SymbolGenerator class description for more
-			 * information on what the vector means.
-			 *
-			 * @param   [in] weightings Desired symbol weightings
-			 * @date    Feb 18, 2015
-			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-			 */
-			virtual void set_weightings(const std::vector<double>& weightings) =0;
+         //! Set weightings
+         /*!
+          * See the gr::Isatec::SymbolGenerator class description for more
+          * information on what the vector means.
+          *
+          * @param   [in] weightings Desired symbol weightings
+          * @date    Feb 18, 2015
+          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+          */
+         virtual void set_weightings(const std::vector<double>& weightings) =0;
 
-			//! Shared pointer to this
-			typedef boost::shared_ptr<SymbolGenerator> sptr;
+         //! Shared pointer to this
+         typedef boost::shared_ptr<SymbolGenerator> sptr;
 
-			//! Manufacture a random symbol generator with a default weightings
-			/*!
-			 * This symbol generator is initialized to a state where the "0" symbol
-			 * is outputted with 100\% probability.
-			 *
-			 * @return  Shared pointer to newly allocated random symbol generator
-			 * @date    March 5, 2015
-			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-			 */
-			static sptr make();
-		};
-	}
+         //! Manufacture a random symbol generator with a default weightings
+         /*!
+          * This symbol generator is initialized to a state where the "0" symbol
+          * is outputted with 100\% probability.
+          *
+          * @return  Shared pointer to newly allocated random symbol generator
+          * @date    March 5, 2015
+          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+          */
+         static sptr make();
+      };
+   }
 }
 
 #endif

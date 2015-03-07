@@ -37,73 +37,73 @@
 //! GNU Radio Namespace
 namespace gr
 {
-	//! Contains all GNU Radio classes for the Isatec out-of-tree module
-	namespace Isatec
-	{
-		//! Contains all classes for performing guided scrambling operations.
-		namespace GuidedScrambling
-		{
-			//! Contains all exceptions related to guided scrambling
-			namespace Exceptions
-			{
-				class Isatec_API BadScrambleInput: public std::exception
-				{
-					const char* what() const throw()
-					{
-						return "gr::Isatec::GuidedScrambling: Got an input word that is the wrong length";
-					}
-				};
+   //! Contains all GNU Radio classes for the Isatec out-of-tree module
+   namespace Isatec
+   {
+      //! Contains all classes for performing guided scrambling operations.
+      namespace GuidedScrambling
+      {
+         //! Contains all exceptions related to guided scrambling
+         namespace Exceptions
+         {
+            class Isatec_API BadScrambleInput: public std::exception
+            {
+               const char* what() const throw()
+               {
+                  return "gr::Isatec::GuidedScrambling: Got an input word that is the wrong length";
+               }
+            };
 
-				class Isatec_API AugmentingCodewordLengthMismatch: public std::exception
-				{
-					const char* what() const throw()
-					{
-						return "gr::Isatec::GuidedScrambling: Told to operate with a codeword size not larger than the augmenting size";
-					}
-				};
+            class Isatec_API AugmentingCodewordLengthMismatch: public std::exception
+            {
+               const char* what() const throw()
+               {
+                  return "gr::Isatec::GuidedScrambling: Told to operate with a codeword size not larger than the augmenting size";
+               }
+            };
 
-				class Isatec_API AugmentingLengthTooSmall: public std::exception
-				{
-					const char* what() const throw()
-					{
-						return "gr::Isatec::GuidedScrambling: Told to operate with an augmenting size less than 1";
-					}
-				};
+            class Isatec_API AugmentingLengthTooSmall: public std::exception
+            {
+               const char* what() const throw()
+               {
+                  return "gr::Isatec::GuidedScrambling: Told to operate with an augmenting size less than 1";
+               }
+            };
 
-				class Isatec_API DivisorLengthTooSmall: public std::exception
-				{
-					const char* what() const throw()
-					{
-						return "gr::Isatec::GuidedScrambling: Told to operate with a divider word of length less than 2";
-					}
-				};
+            class Isatec_API DivisorLengthTooSmall: public std::exception
+            {
+               const char* what() const throw()
+               {
+                  return "gr::Isatec::GuidedScrambling: Told to operate with a divider word of length less than 2";
+               }
+            };
 
-				class Isatec_API BadSelectionMethod: public std::exception
-				{
-					const char* what() const throw()
-					{
-						return "gr::Isatec::GuidedScrambling: Told to operate with a constellation size other than the field size";
-					}
-				};
+            class Isatec_API BadSelectionMethod: public std::exception
+            {
+               const char* what() const throw()
+               {
+                  return "gr::Isatec::GuidedScrambling: Told to operate with a constellation size other than the field size";
+               }
+            };
 
-				class Isatec_API BadInputLength: public std::exception
-				{
-					const char* what() const throw()
-					{
-						return "gr::Isatec::GuidedScrambling: Told to operate with an input word not of length codeword size - augmenting size";
-					}
-				};
+            class Isatec_API BadInputLength: public std::exception
+            {
+               const char* what() const throw()
+               {
+                  return "gr::Isatec::GuidedScrambling: Told to operate with an input word not of length codeword size - augmenting size";
+               }
+            };
 
-				class Isatec_API BadFieldSize: public std::exception
-				{
-					const char* what() const throw()
-					{
-						return "gr::Isatec::GuidedScrambling: Told to operate with an invalid field size";
-					}
-				};
-			}
-		}
-	}
+            class Isatec_API BadFieldSize: public std::exception
+            {
+               const char* what() const throw()
+               {
+                  return "gr::Isatec::GuidedScrambling: Told to operate with an invalid field size";
+               }
+            };
+         }
+      }
+   }
 }
 
 #endif
