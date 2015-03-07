@@ -1,5 +1,5 @@
 /*!
- * @file			guidedScramblingDemo.hpp
+ * @file			guidedScramblingDemo.cpp
  * @brief		Defines the Guided Scrambling demo application
  * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
  * @date			March 6, 2015
