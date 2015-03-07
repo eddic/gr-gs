@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1059</width>
+    <width>1458</width>
     <height>666</height>
    </rect>
   </property>
@@ -110,7 +110,7 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QExponentialSpinBox" name="fieldSize">
+         <widget class="gr::Isatec::Widgets::QExponentialSpinBox" name="fieldSize">
           <property name="minimum">
            <number>1</number>
           </property>
@@ -481,7 +481,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QExponentialSpinBox</class>
+   <class>gr::Isatec::Widgets::QExponentialSpinBox</class>
    <extends>QSpinBox</extends>
    <header>QExponentialSpinBox.hpp</header>
   </customwidget>
