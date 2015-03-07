@@ -32,7 +32,6 @@
 #include <exception>
 
 #include "gr-isatec/config.h"
-#include "gr-isatec/api.h"
 
 //! GNU Radio Namespace
 namespace gr
