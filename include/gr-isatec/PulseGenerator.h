@@ -28,7 +28,6 @@
 #ifndef PULSEGENERATOR_H
 #define PULSEGENERATOR_H
 
-#include "gr-isatec/api.h"
 #include "gr-isatec/config.h"
 
 #include <gnuradio/sync_interpolator.h>

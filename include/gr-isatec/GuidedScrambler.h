@@ -28,7 +28,6 @@
 #ifndef GUIDEDSCRAMBLER_H
 #define GUIDEDSCRAMBLER_H
 
-#include "gr-isatec/api.h"
 #include "gr-isatec/config.h"
 #include <gnuradio/block.h>
 

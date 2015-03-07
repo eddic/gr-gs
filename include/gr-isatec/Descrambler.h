@@ -32,7 +32,6 @@
 #include <functional>
 
 #include "gr-isatec/config.h"
-#include "gr-isatec/api.h"
 #include <gnuradio/block.h>
 
 //! GNU Radio Namespace

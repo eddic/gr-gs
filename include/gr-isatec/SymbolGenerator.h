@@ -28,7 +28,6 @@
 #ifndef SYMBOLGENERATOR_H
 #define SYMBOLGENERATOR_H
 
-#include "gr-isatec/api.h"
 #include "gr-isatec/config.h"
 #include <gnuradio/sync_block.h>
 
