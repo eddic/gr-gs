@@ -43,14 +43,15 @@
 
 #define STARTINGRDS 1,0
 
-const double pi = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089;
-
 //! GNU Radio Namespace
 namespace gr
 {
 	//! Contains all GNU Radio classes for the Isatec out-of-tree module
 	namespace Isatec
 	{
+		//! Pi
+		const double pi = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089;
+
 		//! Get a default constellation pattern for a field size
 		Isatec_API std::vector<std::complex<float>> defaultConstellation(unsigned int fieldSize);
 
