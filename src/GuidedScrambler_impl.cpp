@@ -1,14 +1,14 @@
 /*!
- * @file			GuidedScrambler_impl.cpp
- * @brief		Defines the "Guided Scrambler" GNU Radio block implementation
- * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date			March 3, 2015
- * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
- *					under the GNU General Public License Version 3.
+ * @file       GuidedScrambler_impl.cpp
+ * @brief      Defines the "Guided Scrambler" GNU Radio block implementation
+ * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
+ * @date       March 3, 2015
+ * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
+ *             under the GNU General Public License Version 3.
  */
 
 /* Copyright (C) 2015 %Isatec Inc.
- * 
+ *
  * This file is part of the %Isatec GNU Radio Module
  *
  * The %Isatec GNU Radio Module is free software: you can redistribute it and/or
@@ -20,7 +20,7 @@
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
  * Public License for more details.
- *                                                                          
+ *
  * You should have received a copy of the GNU General Public License along with
  * The %Isatec GNU Radio Module.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -96,7 +96,7 @@ const std::vector<gr::Isatec::Symbol>& gr::Isatec::GuidedScrambling::GuidedScram
 
 	if(input.size() != m_codewordLength-m_augmentingLength)
 		throw Exceptions::BadInputLength();
-	
+
 	m_cargs.input = &input;
 	m_args.count = m_groups;
 	std::unique_lock<std::mutex> countLock(m_args.countMutex);

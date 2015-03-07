@@ -1,14 +1,14 @@
 /*!
- * @file			Descrambler_impl.hpp
- * @brief		Declares the Guided Scrambling "Descrambler" GNU Radio block implementation
- * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date			March 3, 2015
- * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
- *					under the GNU General Public License Version 3.
+ * @file       Descrambler_impl.hpp
+ * @brief      Declares the Guided Scrambling "Descrambler" GNU Radio block implementation
+ * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
+ * @date       March 3, 2015
+ * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
+ *             under the GNU General Public License Version 3.
  */
 
 /* Copyright (C) 2015 %Isatec Inc.
- * 
+ *
  * This file is part of the %Isatec GNU Radio Module
  *
  * The %Isatec GNU Radio Module is free software: you can redistribute it and/or
@@ -20,7 +20,7 @@
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
  * Public License for more details.
- *                                                                          
+ *
  * You should have received a copy of the GNU General Public License along with
  * The %Isatec GNU Radio Module.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -45,8 +45,8 @@ namespace gr
 		{
 			//! Guided Scrambling "Descrambler" GNU Radio block implementation
 			/*!
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			class Descrambler_impl: public Descrambler
 			{
@@ -60,8 +60,8 @@ namespace gr
 				 *  - continuous encoding = true
 				 *  - field size = 4
 				 *
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				Descrambler_impl();
 
@@ -93,10 +93,10 @@ namespace gr
 				 * are correctly sized. After calling this function the output() and
 				 * product() accessors become valid.
 				 *
-				 * @param	[in] input Input code word to be descrambled. The size of
-				 * 						  this word \a must equal the codeword length.
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @param   [in] input Input code word to be descrambled. The size of
+				 *                     this word \a must equal the codeword length.
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				void descramble(const std::vector<Symbol>& input);
 
@@ -122,11 +122,11 @@ namespace gr
 				std::vector<Symbol>::iterator m_codewordIt; //!< Codeword buffer write position
 				std::vector<Symbol> m_product; //!< The actual product of multiplication
 				std::vector<Symbol>::const_iterator m_productIt; //!< Output sourceword read position
-				std::vector<Symbol> m_remainder;	//!< The multiplication remainder
+				std::vector<Symbol> m_remainder; //!< The multiplication remainder
 
 				unsigned int m_codewordLength; //!< The codeword length
 				unsigned int m_augmentingLength; //!< The length of the augmenting portion of the codeword
-				std::vector<Symbol> m_multiplier;	//!< The multiplier used to descramble
+				std::vector<Symbol> m_multiplier;   //!< The multiplier used to descramble
 				bool m_continuous; //!< True if we're doing continuous multiplication
 
 				bool m_valid; //!< Indicates whether or not we need to initialize everything

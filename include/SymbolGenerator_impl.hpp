@@ -1,14 +1,14 @@
 /*!
- * @file			SymbolGenerator_impl.hpp
- * @brief		Declares the "Random Symbol Generator" GNU Radio block implementation
- * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date			March 6, 2015
- * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
- *					under the GNU General Public License Version 3.
+ * @file       SymbolGenerator_impl.hpp
+ * @brief      Declares the "Random Symbol Generator" GNU Radio block implementation
+ * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
+ * @date       March 6, 2015
+ * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
+ *             under the GNU General Public License Version 3.
  */
 
 /* Copyright (C) 2015 %Isatec Inc.
- * 
+ *
  * This file is part of the %Isatec GNU Radio Module
  *
  * The %Isatec GNU Radio Module is free software: you can redistribute it and/or
@@ -20,7 +20,7 @@
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
  * Public License for more details.
- *                                                                          
+ *
  * You should have received a copy of the GNU General Public License along with
  * The %Isatec GNU Radio Module.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -42,8 +42,8 @@ namespace gr
 			/*!
 			 * Implements gr::Isatec::SymbolGenerator
 			 *
-			 * @date		March 5, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @date    March 5, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			class SymbolGenerator_impl: public SymbolGenerator
 			{
@@ -61,9 +61,9 @@ namespace gr
 				 * This symbol generator is initialized to a state where the "0" symbol
 				 * is outputted with 100\% probability.
 				 *
-				 * @return	Shared pointer to newly allocated random symbol generator
-				 * @date		March 5, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @return  Shared pointer to newly allocated random symbol generator
+				 * @date    March 5, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				SymbolGenerator_impl();
 

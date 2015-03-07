@@ -1,14 +1,14 @@
 /*!
- * @file			QExponentialSpinBox.hpp
- * @brief		Defines an exponential QT spin box
- * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date			March 6, 2015
- * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
- *					under the GNU General Public License Version 3.
+ * @file       QExponentialSpinBox.hpp
+ * @brief      Defines an exponential QT spin box
+ * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
+ * @date       March 6, 2015
+ * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
+ *             under the GNU General Public License Version 3.
  */
 
 /* Copyright (C) 2015 %Isatec Inc.
- * 
+ *
  * This file is part of the %Isatec GNU Radio Module
  *
  * The %Isatec GNU Radio Module is free software: you can redistribute it and/or
@@ -20,7 +20,7 @@
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
  * Public License for more details.
- *                                                                          
+ *
  * You should have received a copy of the GNU General Public License along with
  * The %Isatec GNU Radio Module.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -44,8 +44,8 @@ namespace gr
 			 * value as the result of a base raised to the power of said value. The
 			 * base defaults to 2 but can be set with setBase().
 			 *
-			 * @date		March 6, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @date    March 6, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			class QExponentialSpinBox: public QSpinBox
 			{
@@ -57,10 +57,10 @@ namespace gr
 				 * source word.  It is up to the calling function to ensure the
 				 * parameters are correctly sized.
 				 *
-				 * @param	[in] parent Parent widget for destruction purposes.
-				 * @param	[in] base Base of exponent.
-				 * @date		March 6, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @param   [in] parent Parent widget for destruction purposes.
+				 * @param   [in] base Base of exponent.
+				 * @date    March 6, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				QExponentialSpinBox(QWidget* parent=0, unsigned int base=2):
 					QSpinBox(parent),
@@ -71,9 +71,9 @@ namespace gr
 
 				//! Set exponent base
 				/*!
-				 * @param	[in] base Base of exponent.
-				 * @date		March 6, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @param   [in] base Base of exponent.
+				 * @date    March 6, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				void setBase(unsigned int base)
 				{
@@ -89,11 +89,11 @@ namespace gr
 
 				//! From QSpinBox
 				/*!
-				 * @return	The logarithm (using the base) of the integer represented
-				 * 			by the passed string value. If the result is non-integer
-				 * 			a -1 is returned.
-				 * @date		March 6, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @return  The logarithm (using the base) of the integer represented
+				 *          by the passed string value. If the result is non-integer
+				 *          a -1 is returned.
+				 * @date    March 6, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				int valueFromText(const QString & text) const
 				{

@@ -1,10 +1,10 @@
 /*!
- * @file			GuidedScrambler.h
- * @brief		Declares the "Guided Scrambler" GNU Radio block
- * @author		Eddie Carle &lt;eddie@Isatec.ca&gt;
- * @date			March 8, 2015
- * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
- *					under the GNU General Public License Version 3.
+ * @file       GuidedScrambler.h
+ * @brief      Declares the "Guided Scrambler" GNU Radio block
+ * @author     Eddie Carle &lt;eddie@Isatec.ca&gt;
+ * @date       March 8, 2015
+ * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
+ *             under the GNU General Public License Version 3.
  */
 
 /* Copyright (C) 2015 %Isatec Inc.
@@ -39,17 +39,17 @@ namespace gr
 	{
 		//! "Guided Scrambler" GNU Radio block
 		/*!
-		 * @date		March 3, 2015
-		 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
+		 * @date    March 3, 2015
+		 * @author  Eddie Carle &lt;eddie@Isatec.ca&gt;
 		 */
 		class Isatec_API GuidedScrambler: virtual public gr::block
 		{
 		public:
 			//! Access field size
 			/*!
-			 * @return	Field size as the <em>n</em> in GF(<em>n</em>)
-			 * @date		Jan 29, 2015
-			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
+			 * @return  Field size as the <em>n</em> in GF(<em>n</em>)
+			 * @date    Jan 29, 2015
+			 * @author  Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual unsigned int fieldSize() const =0;
 
@@ -59,124 +59,124 @@ namespace gr
 			 * supported within the range of 2 to
 			 * gr::Isatec::GuidedScrambling::maxFieldSize.
 			 *
-			 * @param	[in] size Desired field size as the <em>n</em> in
-			 * 						 GF(<em>n</em>)
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @param   [in] size Desired field size as the <em>n</em> in
+			 *                    GF(<em>n</em>)
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual void set_fieldSize(const unsigned int size) =0;
 
 			//! Access codeword length
 			/*!
-			 * @return	Codeword Length
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
+			 * @return  Codeword Length
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual unsigned int codewordLength() const =0;
 
 			//! Set codeword length
 			/*!
-			 * @param	[in] length Desired codeword length
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
+			 * @param   [in] length Desired codeword length
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual void set_codewordLength(const unsigned int length) =0;
 
 			//! Access augmenting length
 			/*!
-			 * @return	Augmenting Length
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
+			 * @return  Augmenting Length
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual unsigned int augmentingLength() const =0;
 
 			//! Set augmenting length
 			/*!
-			 * @param	[in] length Desired augmenting length
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
+			 * @param   [in] length Desired augmenting length
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual void set_augmentingLength(const unsigned int length) =0;
 
 			//! Access continuous encoding setting
 			/*!
-			 * @return	True if set to continuous encoding, false if block encoding
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
+			 * @return  True if set to continuous encoding, false if block encoding
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual bool continuous() const =0;
 
 			//! Set continuous or block enconding
 			/*!
-			 * @param	[in] continuous Set to true for continuous encoding, false for
-			 *				block encoding
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
+			 * @param   [in] continuous Set to true for continuous encoding, false for
+			 *          block encoding
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual void set_continuous(bool continuous) =0;
 
 			//! Access constellation
 			/*!
-			 * @return	Constant reference to constellation vector
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
+			 * @return  Constant reference to constellation vector
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual const std::vector<std::complex<float>>& constellation() const =0;
 
 			//! Set constellation
 			/*!
-			 * @param	[in] constellation This is a direct mapping of symbols (as
-			 *				vector indices) to constellation points.
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
+			 * @param   [in] constellation This is a direct mapping of symbols (as
+			 *          vector indices) to constellation points.
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual void set_constellation(const std::vector<std::complex<float>>& constellation) =0;
 
 			//! Access selection method
 			/*!
-			 * @return	Selection Method
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
+			 * @return  Selection Method
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual const std::string& selectionMethod() const =0;
 
 			//! List selection methods
 			/*!
-			 * @return	Vector of selection method names
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
+			 * @return  Vector of selection method names
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			static const std::vector<std::string>& selectionMethods();
 
 			//! Set selection method
 			/*!
-			 * @param	[in] method Desired selection method
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
+			 * @param   [in] method Desired selection method
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual void set_selectionMethod(const std::string& method) =0;
 
 			//! Access divider word
 			/*!
-			 * @return	Divider word (polynomial)
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
+			 * @return  Divider word (polynomial)
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual const std::vector<Symbol>& divider() const =0;
 
 			//! Set divider word
 			/*!
-			 * @param	[in] divider Desired divider word (polynomial)
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
+			 * @param   [in] divider Desired divider word (polynomial)
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual void set_divider(const std::vector<Symbol>& divider) =0;
 
 			//! Access number of concurrent scrambling threads
 			/*!
-			 * @return	Number of concurrent threads running in this block
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
+			 * @return  Number of concurrent threads running in this block
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual unsigned int threads() const =0;
 
@@ -189,9 +189,9 @@ namespace gr
 			 * provided. If you'd like the block to decide an optimal number of
 			 * threads pass the value 0.
 			 *
-			 * @param	[in] number Desired number of concurrent scrambling threads
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@Isatec.ca&gt;
+			 * @param   [in] number Desired number of concurrent scrambling threads
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@Isatec.ca&gt;
 			 */
 			virtual void set_threads(unsigned int number) =0;
 
@@ -210,9 +210,9 @@ namespace gr
 			 *  - field size = 4
 			 *  - constellation = (1,0) (0,1) (0,-1) (-1,0)
 			 *
-			 * @return	Shared pointer to newly allocated guided scrambler
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @return  Shared pointer to newly allocated guided scrambler
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			static sptr make();
 		};

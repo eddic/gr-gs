@@ -1,14 +1,14 @@
 /*!
- * @file			ScramblerGroup.hpp
- * @brief		Declares the gr::Isatec::GuidedScrambling::ScramblerGroup class
- * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date			March 3, 2015
- * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
- *					under the GNU General Public License Version 3.
+ * @file       ScramblerGroup.hpp
+ * @brief      Declares the gr::Isatec::GuidedScrambling::ScramblerGroup class
+ * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
+ * @date       March 3, 2015
+ * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
+ *             under the GNU General Public License Version 3.
  */
 
 /* Copyright (C) 2015 %Isatec Inc.
- * 
+ *
  * This file is part of the %Isatec GNU Radio Module
  *
  * The %Isatec GNU Radio Module is free software: you can redistribute it and/or
@@ -20,7 +20,7 @@
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
  * Public License for more details.
- *                                                                          
+ *
  * You should have received a copy of the GNU General Public License along with
  * The %Isatec GNU Radio Module.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -49,9 +49,9 @@ namespace gr
 			 * This class simply allows us to group numerous Scrambler object into a
 			 * single execution group. The intention is for each group to be given is own
 			 * thread to allow for concurrent scrambling.
-			 
-			 * @date		March 8, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+
+			 * @date    March 8, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			class ScramblerGroup
 			{
@@ -68,19 +68,19 @@ namespace gr
 				 * scramblers to used augmenting portions defined by 2,3,4 and 5, you
 				 * would set indexStart=2 and indexEnd=6.
 				 *
-				 * @param	[in] length Length of codeword.
-				 * @param	[in] indexStart Starting index of the scrambler group. This is
-				 *				used to set the augmenting portion of the input words.
-				 * @param	[in] indexEnd Ending index of the scrambler group. This is
-				 *				used to set the augmenting portion of the input words.
-				 * @param	[in] augmentingLength Length of augmenting segment of the
-				 * 			codewords.
-				 * @param	[in] remainderLength Length of the remainder words. This is
-				 * 			really the length of the divider word minus one;
-				 * @param	[in] method The desired analysis method to use.
-				 * @param	[in] fieldSize Desired field size
-				 * @date		March 8, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @param   [in] length Length of codeword.
+				 * @param   [in] indexStart Starting index of the scrambler group. This is
+				 *          used to set the augmenting portion of the input words.
+				 * @param   [in] indexEnd Ending index of the scrambler group. This is
+				 *          used to set the augmenting portion of the input words.
+				 * @param   [in] augmentingLength Length of augmenting segment of the
+				 *          codewords.
+				 * @param   [in] remainderLength Length of the remainder words. This is
+				 *          really the length of the divider word minus one;
+				 * @param   [in] method The desired analysis method to use.
+				 * @param   [in] fieldSize Desired field size
+				 * @date    March 8, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				void configure(
 						const unsigned int length,
@@ -105,22 +105,22 @@ namespace gr
 				 * is up to the calling function to ensure the parameters are correctly
 				 * sized.
 				 *
-				 * @param	[in] divider Input dividing word. The size of this word
-				 * 			\a must equal remainderLength (set in configure())+1.
-				 * @param	[in] input Input to be scrambled. The size of this word
-				 * 			\a must equal length-augmentingLength (both set in
-				 * 			configure()).
-				 * @param	[in] remainder Input remainder word. The size of this word
-				 * 			\a must equal remainderLength (set in configure()). Note that
-				 * 			this should be a \a copy of the winning remainder in the
-				 * 			continuous case. If the winning remainder is used directly bad
-				 * 			things will likely happen.
-				 * @param	[in] feedback The feedback from the winning codeword to start
-				 *				the analysis with.
-				 * @param	[in] constellation This is a direct mapping of symbols (as
-				 *				vector indices) to constellation points.
-				 * @date		March 8, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @param   [in] divider Input dividing word. The size of this word
+				 *          \a must equal remainderLength (set in configure())+1.
+				 * @param   [in] input Input to be scrambled. The size of this word
+				 *          \a must equal length-augmentingLength (both set in
+				 *          configure()).
+				 * @param   [in] remainder Input remainder word. The size of this word
+				 *          \a must equal remainderLength (set in configure()). Note that
+				 *          this should be a \a copy of the winning remainder in the
+				 *          continuous case. If the winning remainder is used directly bad
+				 *          things will likely happen.
+				 * @param   [in] feedback The feedback from the winning codeword to start
+				 *          the analysis with.
+				 * @param   [in] constellation This is a direct mapping of symbols (as
+				 *          vector indices) to constellation points.
+				 * @date    March 8, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				void scramble(
 						const std::vector<Symbol>& divider,
@@ -163,10 +163,10 @@ namespace gr
 
 				//! Handler function for scrambler group thread
 				/*!
-				 * @param	[inout] args Collection of non-constant arguments
-				 * @param	[in] cargs Collection of constant arguments
-				 * @date		March 8, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @param   [inout] args Collection of non-constant arguments
+				 * @param   [in] cargs Collection of constant arguments
+				 * @date    March 8, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				void handler(HandlerArguments& args, const HandlerConstArguments& cargs);
 
@@ -175,9 +175,9 @@ namespace gr
 				 * The output of this function becomes valid after a completed call to the
 				 * scramble() function.
 				 *
-				 * @return	Constant pointer to winning scrambler
-				 * @date		March 8, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @return  Constant pointer to winning scrambler
+				 * @date    March 8, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				const Scrambler* winner() const
 				{

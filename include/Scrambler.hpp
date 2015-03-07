@@ -1,14 +1,14 @@
 /*!
- * @file			Scrambler.hpp
- * @brief		Declares the gr::Isatec::GuidedScrambling::Scrambler class
- * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date			March 3, 2015
- * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
- *					under the GNU General Public License Version 3.
+ * @file       Scrambler.hpp
+ * @brief      Declares the gr::Isatec::GuidedScrambling::Scrambler class
+ * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
+ * @date       March 3, 2015
+ * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
+ *             under the GNU General Public License Version 3.
  */
 
 /* Copyright (C) 2015 %Isatec Inc.
- * 
+ *
  * This file is part of the %Isatec GNU Radio Module
  *
  * The %Isatec GNU Radio Module is free software: you can redistribute it and/or
@@ -20,7 +20,7 @@
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
  * Public License for more details.
- *                                                                          
+ *
  * You should have received a copy of the GNU General Public License along with
  * The %Isatec GNU Radio Module.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -50,8 +50,8 @@ namespace gr
 			 * The intention is for these scramblers to be grouped into ScramblerGroup
 			 * objects for the purpose of keeping them in execution groups.
 			 *
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			class Scrambler
 			{
@@ -65,17 +65,17 @@ namespace gr
 				 * The augmenting portion of the input words will be set using the index
 				 * value passed as a parameter.
 				 *
-				 * @param	[in] length Length of codeword.
-				 * @param	[in] index Index of scrambler in the full set (not the group).
-				 * 			This is used to set the augmenting portion of the input word.
-				 * @param	[in] augmentingLength Length of augmenting segment of the
-				 * 			codeword.
-				 * @param	[in] remainderLength Length of the remainder word. This is
-				 * 			really the length of the divisor word minus one;
-				 * @param	[in] method The desired analysis method to use.
-				 * @param	[in] fieldSize Desired field size
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @param   [in] length Length of codeword.
+				 * @param   [in] index Index of scrambler in the full set (not the group).
+				 *          This is used to set the augmenting portion of the input word.
+				 * @param   [in] augmentingLength Length of augmenting segment of the
+				 *          codeword.
+				 * @param   [in] remainderLength Length of the remainder word. This is
+				 *          really the length of the divisor word minus one;
+				 * @param   [in] method The desired analysis method to use.
+				 * @param   [in] fieldSize Desired field size
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				void configure(
 						const unsigned int length,
@@ -92,13 +92,13 @@ namespace gr
 				 * is up to the calling function to ensure the parameters are correctly
 				 * sized.
 				 *
-				 * @param	[in] divider Input dividing word. The size of this word
-				 * 			\a must equal remainderLength (set in configure())+1.
-				 * @param	[in] input Input to be scrambled. The size of this word
-				 * 			\a must equal length-augmentingLength (both set in
-				 * 			configure()).
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @param   [in] divider Input dividing word. The size of this word
+				 *          \a must equal remainderLength (set in configure())+1.
+				 * @param   [in] input Input to be scrambled. The size of this word
+				 *          \a must equal length-augmentingLength (both set in
+				 *          configure()).
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				void scramble(
 						const std::vector<Symbol>& divider,
@@ -109,7 +109,7 @@ namespace gr
 							m_dividend,
 							divider,
 							m_output,
-							m_remainder);					
+							m_remainder);
 				}
 
 				//! Set the remainder register
@@ -125,10 +125,10 @@ namespace gr
 				 * does not perform length/bounds checks on the input Word. It is up to
 				 * the calling function to ensure the remainder is correctly sized.
 				 *
-				 * @param	[in] remainder Input remainder word. The size of this word
-				 * 			\a must equal remainderLength (set in configure()).
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @param   [in] remainder Input remainder word. The size of this word
+				 *          \a must equal remainderLength (set in configure()).
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				void setRemainder(const std::vector<Symbol>& remainder)
 				{
@@ -143,8 +143,8 @@ namespace gr
 				 *
 				 * Use this to see the resulting remainder from a scramble operation.
 				 *
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				const std::vector<Symbol>& remainder() const
 				{
@@ -158,15 +158,15 @@ namespace gr
 				 *
 				 * Use this to see the result of a call to scramble().
 				 *
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				const std::vector<Symbol>& output() const
 				{
 					return m_output;
 				}
 
-				//! Accessor for the input dividend used 
+				//! Accessor for the input dividend used
 				/*!
 				 * This becomes valid upon completion of a call to the scramble()
 				 * function.
@@ -175,8 +175,8 @@ namespace gr
 				 * us to see the actual input word (including the augmenting portion) used
 				 * in the last call to scramble().
 				 *
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				const std::vector<Symbol>& dividend() const
 				{
@@ -185,12 +185,12 @@ namespace gr
 
 				//! Perform analysis on output codeword
 				/*!
-				 * @param	[in] feedback The feedback from the winning codeword to start
-				 *				the analysis with.
-				 * @param	[in] constellation This is a direct mapping of symbols (as
-				 *				vector indices) to constellation points.
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @param   [in] feedback The feedback from the winning codeword to start
+				 *          the analysis with.
+				 * @param   [in] constellation This is a direct mapping of symbols (as
+				 *          vector indices) to constellation points.
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				void analyze(
 						const Analyzer::Feedback& feedback,
@@ -204,9 +204,9 @@ namespace gr
 				 * The output of this function becomes valid after a completed call to the
 				 * analyze() function.
 				 *
-				 * @return	Constant reference to Feedback object.
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @return  Constant reference to Feedback object.
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				const Analyzer::Feedback& feedback() const
 				{
@@ -219,10 +219,10 @@ namespace gr
 				 * analyze() function. In this context a lower analysis means a better
 				 * codeword.
 				 *
-				 * @return	Floating point representation of the codeword's selection
-				 *				analysis. Lower is better.
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @return  Floating point representation of the codeword's selection
+				 *          analysis. Lower is better.
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				float analysis() const
 				{

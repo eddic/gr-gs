@@ -1,11 +1,11 @@
 /*!
- * @file			config.h
- * @brief		Defines some basic parameters for the module
- * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date			March 6, 2015
- * @copyright	Copyright &copy; 2014 Eddie Carle &lt;eddie@isatec.ca&gt;.
- * 				This project is released under the GNU General Public License
- * 				Version 3.
+ * @file       config.h
+ * @brief      Defines some basic parameters for the module
+ * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
+ * @date       March 6, 2015
+ * @copyright  Copyright &copy; 2014 Eddie Carle &lt;eddie@isatec.ca&gt;.
+ *             This project is released under the GNU General Public License
+ *             Version 3.
  */
 
 /* Copyright (C) 2015 %Isatec Inc.

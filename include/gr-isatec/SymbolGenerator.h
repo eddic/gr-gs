@@ -1,10 +1,10 @@
 /*!
- * @file			SymbolGenerator.h
- * @brief		Declares the "Random Symbol Generator" GNU Radio block
- * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date			March 5, 2015
- * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
- *					under the GNU General Public License Version 3.
+ * @file       SymbolGenerator.h
+ * @brief      Declares the "Random Symbol Generator" GNU Radio block
+ * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
+ * @date       March 5, 2015
+ * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
+ *             under the GNU General Public License Version 3.
  */
 
 /* Copyright (C) 2015 %Isatec Inc.
@@ -48,8 +48,8 @@ namespace gr
 		 * vector of {1,1,1,2} would produce symbol values {0,1,2,3} with
 		 * respective probabilities of {0.2, 0.2, 0.2, 0.4}.
 		 *
-		 * @date		March 5, 2015
-		 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+		 * @date    March 5, 2015
+		 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 		 */
 		class Isatec_API SymbolGenerator: virtual public gr::sync_block
 		{
@@ -59,9 +59,9 @@ namespace gr
 			 * See the gr::Isatec::SymbolGenerator class description for more
 			 * information on what the vector means.
 			 *
-			 * @return	Weighting weightings
-			 * @date		March 5, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @return  Weighting weightings
+			 * @date    March 5, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual const std::vector<double>& weightings() const =0;
 
@@ -70,9 +70,9 @@ namespace gr
 			 * See the gr::Isatec::SymbolGenerator class description for more
 			 * information on what the vector means.
 			 *
-			 * @param	[in] weightings Desired symbol weightings
-			 * @date		Feb 18, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @param   [in] weightings Desired symbol weightings
+			 * @date    Feb 18, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual void set_weightings(const std::vector<double>& weightings) =0;
 
@@ -84,9 +84,9 @@ namespace gr
 			 * This symbol generator is initialized to a state where the "0" symbol
 			 * is outputted with 100\% probability.
 			 *
-			 * @return	Shared pointer to newly allocated random symbol generator
-			 * @date		March 5, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @return  Shared pointer to newly allocated random symbol generator
+			 * @date    March 5, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			static sptr make();
 		};

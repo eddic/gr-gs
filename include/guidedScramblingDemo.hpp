@@ -1,14 +1,14 @@
 /*!
- * @file			guidedScramblingDemo.hpp
- * @brief		Declares the Guided Scrambling demo application
- * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date			March 6, 2015
- * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
- *					under the GNU General Public License Version 3.
+ * @file       guidedScramblingDemo.hpp
+ * @brief      Declares the Guided Scrambling demo application
+ * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
+ * @date       March 6, 2015
+ * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
+ *             under the GNU General Public License Version 3.
  */
 
 /* Copyright (C) 2015 %Isatec Inc.
- * 
+ *
  * This file is part of the %Isatec GNU Radio Module
  *
  * The %Isatec GNU Radio Module is free software: you can redistribute it and/or
@@ -20,7 +20,7 @@
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
  * Public License for more details.
- *                                                                          
+ *
  * You should have received a copy of the GNU General Public License along with
  * The %Isatec GNU Radio Module.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -57,8 +57,8 @@ namespace gr
 			 * This application demonstrates the spectral capabilities of the
 			 * GuidedScrambler block.
 			 *
-			 * @date		March 6, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @date    March 6, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			class GuidedScramblingDemo: public QDialog
 			{

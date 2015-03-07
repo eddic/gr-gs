@@ -1,14 +1,14 @@
 /*!
- * @file			GuidedScrambler_impl.hpp
- * @brief		Declares the "Guided Scrambler" GNU Radio block implementation
- * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date			March 3, 2015
- * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
- *					under the GNU General Public License Version 3.
+ * @file       GuidedScrambler_impl.hpp
+ * @brief      Declares the "Guided Scrambler" GNU Radio block implementation
+ * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
+ * @date       March 3, 2015
+ * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
+ *             under the GNU General Public License Version 3.
  */
 
 /* Copyright (C) 2015 %Isatec Inc.
- * 
+ *
  * This file is part of the %Isatec GNU Radio Module
  *
  * The %Isatec GNU Radio Module is free software: you can redistribute it and/or
@@ -20,7 +20,7 @@
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
  * Public License for more details.
- *                                                                          
+ *
  * You should have received a copy of the GNU General Public License along with
  * The %Isatec GNU Radio Module.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -48,8 +48,8 @@ namespace gr
 			 * This class allows us to perform guided scrambling in an efficient multi
 			 * threaded fashion
 			 *
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			class GuidedScrambler_impl: public GuidedScrambler
 			{
@@ -90,12 +90,12 @@ namespace gr
 				 * source word.  It is up to the calling function to ensure the
 				 * parameters are correctly sized.
 				 *
-				 * @param	[in] input Input source word. The length of this source
-				 * 						  word \a must equal the codeword length minus
-				 * 						  the augmenting length.
-				 * @return	Constant reference code word.
-				 * @date		March 8, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @param   [in] input Input source word. The length of this source
+				 *                     word \a must equal the codeword length minus
+				 *                     the augmenting length.
+				 * @return  Constant reference code word.
+				 * @date    March 8, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				const std::vector<Symbol>& scramble(const std::vector<Symbol>& input);
 
@@ -111,8 +111,8 @@ namespace gr
 				 *  - field size = 4
 				 *  - constellation = (1,0) (0,1) (0,-1) (-1,0)
 				 *
-				 * @date		March 5, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @date    March 5, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				GuidedScrambler_impl();
 

@@ -1,14 +1,14 @@
 /*!
- * @file			Analyzer.hpp
- * @brief		Declares the gr::Isatec::GuidedScrambling::Analyzer class
- * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date			March 3, 2015
- * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
- *					under the GNU General Public License Version 3.
+ * @file       Analyzer.hpp
+ * @brief      Declares the gr::Isatec::GuidedScrambling::Analyzer class
+ * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
+ * @date       March 3, 2015
+ * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
+ *             under the GNU General Public License Version 3.
  */
 
 /* Copyright (C) 2015 %Isatec Inc.
- * 
+ *
  * This file is part of the %Isatec GNU Radio Module
  *
  * The %Isatec GNU Radio Module is free software: you can redistribute it and/or
@@ -20,7 +20,7 @@
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
  * Public License for more details.
- *                                                                          
+ *
  * You should have received a copy of the GNU General Public License along with
  * The %Isatec GNU Radio Module.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -48,8 +48,8 @@ namespace gr
 			 * This class should be derived from to implement different codeword
 			 * selection methods.
 			 *
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			class Analyzer
 			{
@@ -66,8 +66,8 @@ namespace gr
 				 * analyzer to all the next ones. One simply needs to define the
 				 * clone() function to to allow the feedback data to be copied.
 				 *
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				class Feedback
 				{
@@ -79,9 +79,9 @@ namespace gr
 					 * dynamically allocated child object. The caller shall be responsible
 					 * for it's disposal of course.
 					 *
-					 * @return	Pointer to dynamically allocated Feedback copy child.
-					 * @date		March 3, 2015
-					 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+					 * @return  Pointer to dynamically allocated Feedback copy child.
+					 * @date    March 3, 2015
+					 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 					 */
 					virtual Feedback* clone() const =0;
 
@@ -99,13 +99,13 @@ namespace gr
 				 * integer value than the size of the constellation vector we will
 				 * have a segmentation fault.
 				 *
-				 * @param	[in] codeword The codeword to perform analysis on.
-				 * @param	[in] feedback The feedback from the winning codeword to start
-				 *				the analysis with.
-				 * @param	[in] constellation This is a direct mapping of symbols (as
-				 *				vector indices) to constellation points.
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @param   [in] codeword The codeword to perform analysis on.
+				 * @param   [in] feedback The feedback from the winning codeword to start
+				 *          the analysis with.
+				 * @param   [in] constellation This is a direct mapping of symbols (as
+				 *          vector indices) to constellation points.
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				virtual void analyze(
 						const std::vector<Symbol>& codeword,
@@ -117,9 +117,9 @@ namespace gr
 				 * The output of this function becomes valid after a completed call to the
 				 * analyze() function.
 				 *
-				 * @return	Constant reference to internal Feedback object.
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @return  Constant reference to internal Feedback object.
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				virtual const Feedback& feedback() const =0;
 
@@ -129,10 +129,10 @@ namespace gr
 				 * analyze() function. In this context a lower analysis means a better
 				 * codeword.
 				 *
-				 * @return	Floating point representation of the codeword's selection
-				 *				analysis. Lower value wins.
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @return  Floating point representation of the codeword's selection
+				 *          analysis. Lower value wins.
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				virtual float analysis() const =0;
 			};
@@ -143,10 +143,10 @@ namespace gr
 			 * returns a pointer to it. It is the responsibility of the caller to
 			 * clean up when finished.
 			 *
-			 * @param	[in] method The desired analysis method to allocate
-			 * @return	Pointer to newly allocated Analyzer object
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @param   [in] method The desired analysis method to allocate
+			 * @return  Pointer to newly allocated Analyzer object
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			Analyzer* manufactureAnalyzer(const unsigned int method);
 
@@ -156,10 +156,10 @@ namespace gr
 			 * returns a pointer to it. It is the responsibility of the caller to
 			 * clean up when finished.
 			 *
-			 * @param	[in] method The desired analysis method to base off of
-			 * @return	Pointer Newly created Feedback object
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @param   [in] method The desired analysis method to base off of
+			 * @return  Pointer Newly created Feedback object
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			Analyzer::Feedback* manufactureFeedback(const unsigned int method);
 		}

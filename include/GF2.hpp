@@ -1,14 +1,14 @@
 /*!
- * @file			GF2.hpp
- * @brief		Defines the gr::Isatec::GuidedScrambling::GF2 class.
- * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date			March 3, 2015
- * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
- *					under the GNU General Public License Version 3.
+ * @file       GF2.hpp
+ * @brief      Defines the gr::Isatec::GuidedScrambling::GF2 class.
+ * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
+ * @date       March 3, 2015
+ * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
+ *             under the GNU General Public License Version 3.
  */
 
 /* Copyright (C) 2015 %Isatec Inc.
- * 
+ *
  * This file is part of the %Isatec GNU Radio Module
  *
  * The %Isatec GNU Radio Module is free software: you can redistribute it and/or
@@ -20,7 +20,7 @@
  * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
  * Public License for more details.
- *                                                                          
+ *
  * You should have received a copy of the GNU General Public License along with
  * The %Isatec GNU Radio Module.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -51,8 +51,8 @@ namespace gr
 			 * Be aware that no checks occur to ensure that the integer values actually
 			 * represent valid symbols. Should they not, the behaviour is undefined.
 			 *
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			class GF2
 			{
@@ -62,9 +62,9 @@ namespace gr
 
 				//! Initialize symbol from it's integer representation
 				/*!
-				 * @param	[in] x Source integer.
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @param   [in] x Source integer.
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				GF2(const Symbol x):
 					m_data(x)
@@ -72,10 +72,10 @@ namespace gr
 
 				//! Perform Galois Field (2) addition
 				/*!
-				 * @param	[in] x Right hand summand.
-				 * @return	Galois Field (2) sum of *this and argument.
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @param   [in] x Right hand summand.
+				 * @return  Galois Field (2) sum of *this and argument.
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				GF2 operator+(const GF2 x) const
 				{
@@ -84,10 +84,10 @@ namespace gr
 
 				//! Perform Galois Field (2) subtraction
 				/*!
-				 * @param	[in] x Subtrahend in subtraction operation.
-				 * @return	Galois Field (2) difference of *this and the argument
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @param   [in] x Subtrahend in subtraction operation.
+				 * @return  Galois Field (2) difference of *this and the argument
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				GF2 operator-(const GF2 x) const
 				{
@@ -96,9 +96,9 @@ namespace gr
 
 				//! Perform Galois Field (2) negation
 				/*!
-				 * @return	The Galois Field (2) additive inverse of *this
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @return  The Galois Field (2) additive inverse of *this
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				GF2 operator-() const
 				{
@@ -107,10 +107,10 @@ namespace gr
 
 				//! Perform Galois Field (2) multiplication
 				/*!
-				 * @param	[in] x Multiplier in multiplication operation.
-				 * @return	Galois Field (2) product of *this and the argument
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @param   [in] x Multiplier in multiplication operation.
+				 * @return  Galois Field (2) product of *this and the argument
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				GF2 operator*(const GF2 x) const
 				{
@@ -119,10 +119,10 @@ namespace gr
 
 				//! Perform Galois Field (2) division
 				/*!
-				 * @param	[in] x Divider in division operation.
-				 * @return	Galois Field (2) quotient of *this and the argument
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @param   [in] x Divider in division operation.
+				 * @return  Galois Field (2) quotient of *this and the argument
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				GF2 operator/(const GF2 x) const
 				{
@@ -135,9 +135,9 @@ namespace gr
 				 * nor can it's statistics by controlled. It is intended entirely
 				 * for debug and testing purposes.
 				 *
-				 * @return	Randomly generated Galois Field (2) symbol.
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @return  Randomly generated Galois Field (2) symbol.
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				static GF2 random()
 				{
@@ -148,9 +148,9 @@ namespace gr
 
 				//! Access internal Symbol
 				/*!
-				 * @return	Internal Symbol
-				 * @date		March 3, 2015
-				 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+				 * @return  Internal Symbol
+				 * @date    March 3, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 				 */
 				operator Symbol() const
 				{
@@ -158,7 +158,7 @@ namespace gr
 				}
 
 			private:
-				Symbol m_data;	//!> Internal symbol representation.
+				Symbol m_data; //!> Internal symbol representation.
 			};
 		}
 	}

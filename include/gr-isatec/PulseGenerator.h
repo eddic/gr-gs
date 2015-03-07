@@ -1,10 +1,10 @@
 /*!
- * @file			PulseGenerator.h
- * @brief		Declares the "Pulse Generator" GNU Radio block
- * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date			March 8, 2015
- * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
- *					under the GNU General Public License Version 3.
+ * @file       PulseGenerator.h
+ * @brief      Declares the "Pulse Generator" GNU Radio block
+ * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
+ * @date       March 8, 2015
+ * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
+ *             under the GNU General Public License Version 3.
  */
 
 /* Copyright (C) 2015 %Isatec Inc.
@@ -61,26 +61,26 @@ namespace gr
 		 * See the members functions for further information on the parameters and
 		 * their meaning.
 		 *
-		 * @date		March 3, 2015
-		 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+		 * @date    March 3, 2015
+		 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 		 */
 		class Isatec_API PulseGenerator: virtual public gr::sync_interpolator
 		{
 		public:
 			//! Access symbol to constellation mapping vector
 			/*!
-			 * @return	Constant reference to symbol to constellation mapping
-			 * 			vector
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @return  Constant reference to symbol to constellation mapping
+			 *          vector
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual const std::vector<std::complex<float>>& constellation() const =0;
 
 			//! Set symbol to constellation mapping vector
 			/*!
-			 * @param	[in] constellation Desired symbol to constellation mapping vector
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @param   [in] constellation Desired symbol to constellation mapping vector
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual void set_constellation(const std::vector<std::complex<float>>& constellation) =0;
 
@@ -90,9 +90,9 @@ namespace gr
 			 * root-raised-cosine pulse shaping. It has no effect on rectangular
 			 * pulses.
 			 *
-			 * @return	Currently set baud rate
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @return  Currently set baud rate
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual double baudRate() const =0;
 
@@ -102,9 +102,9 @@ namespace gr
 			 * root-raised-cosine pulse shaping. It has no effect on rectangular
 			 * pulses.
 			 *
-			 * @param	[in] baudRate Desired baud rate
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @param   [in] baudRate Desired baud rate
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual void set_baudRate(const double baudRate) =0;
 
@@ -114,9 +114,9 @@ namespace gr
 			 * root-raised-cosine pulse shaping. It has no effect on rectangular
 			 * pulses.
 			 *
-			 * @return	Currently set number of taps
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @return  Currently set number of taps
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual unsigned int numberOfTaps() const =0;
 
@@ -131,9 +131,9 @@ namespace gr
 			 * latency and computing resource usage. A good start might be 1024 or
 			 * 2048.
 			 *
-			 * @param	[in] numberOfTaps Desired number of taps
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @param   [in] numberOfTaps Desired number of taps
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual void set_numberOfTaps(const unsigned int numberOfTaps) =0;
 
@@ -143,9 +143,9 @@ namespace gr
 			 * root-raised-cosine pulse shaping. It has no effect on rectangular
 			 * pulses.
 			 *
-			 * @return	Currently set excess bandwidth factor
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @return  Currently set excess bandwidth factor
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual double alpha() const =0;
 
@@ -157,9 +157,9 @@ namespace gr
 			 *
 			 * Note that this value should be in the range of [0,1]
 			 *
-			 * @param	[in] alpha Desired excess bandwidth factor
-			 * @date		March 5, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @param   [in] alpha Desired excess bandwidth factor
+			 * @date    March 5, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual void set_alpha(const double alpha) =0;
 
@@ -168,9 +168,9 @@ namespace gr
 			 * Use this integer as an index in the vector returned by shapes() to
 			 * find a corresponding textual description of the pulse shape.
 			 *
-			 * @return	Currently set pulse shape
-			 * @date		March 5, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @return  Currently set pulse shape
+			 * @date    March 5, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual unsigned int shape() const =0;
 
@@ -180,9 +180,9 @@ namespace gr
 			 * textual description of the pulse shape in the vector returned by
 			 * shapes().
 			 *
-			 * @param	[in] shape Desired pulse shape
-			 * @date		March 5, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @param   [in] shape Desired pulse shape
+			 * @date    March 5, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual void set_shape(const unsigned int shape) =0;
 
@@ -194,9 +194,9 @@ namespace gr
 			 * spots for eye pattern viewing. Don't enable this if you don't need
 			 * it as it will add unnecessary, yet significant, overhead.
 			 *
-			 * @param	[in] enable True to enable, false to disable
-			 * @date		March 5, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @param   [in] enable True to enable, false to disable
+			 * @date    March 5, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual void enable_tags(const bool enable) =0;
 
@@ -205,9 +205,9 @@ namespace gr
 			 * This value indicates the amount that the constellation pattern
 			 * should be "rotated" every symbol.
 			 *
-			 * @return	Currently set symbol phase shift
-			 * @date		March 5, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @return  Currently set symbol phase shift
+			 * @date    March 5, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual float phase() const =0;
 
@@ -222,9 +222,9 @@ namespace gr
 			 * If you don't already know what this is you likely do not want this
 			 * to be any value except zero as it will likely mess things up.
 			 *
-			 * @param	[in] phase Desired symbol phase shift
-			 * @date		March 5, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @param   [in] phase Desired symbol phase shift
+			 * @date    March 5, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual void set_phase(const float phase) =0;
 
@@ -242,18 +242,18 @@ namespace gr
 			 *  - pulse shape = rectangular
 			 *  - tagging = disabled
 			 *
-			 * @param	samplesPerSymbol Amount of samples to generator per symbol
-			 * @return	Shared pointer to newly allocated pulse generator
-			 * @date		March 5, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @param   samplesPerSymbol Amount of samples to generator per symbol
+			 * @return  Shared pointer to newly allocated pulse generator
+			 * @date    March 5, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			static sptr make(unsigned int samplesPerSymbol=1);
 
 			//! Get a vector of pulse shape names
 			/*!
-			 * @return	Reference to constant vector of pulse shape names.
-			 * @date		March 5, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @return  Reference to constant vector of pulse shape names.
+			 * @date    March 5, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			static const std::vector<std::string>& shapes();
 		};

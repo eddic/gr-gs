@@ -1,10 +1,10 @@
 /*!
- * @file			Descrambler.h
- * @brief		Declares the Guided Scrambling "Descrambler" GNU Radio block
- * @author		Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date			March 3, 2015
- * @copyright	Copyright &copy; 2015 %Isatec Inc.  This project is released
- *					under the GNU General Public License Version 3.
+ * @file       Descrambler.h
+ * @brief      Declares the Guided Scrambling "Descrambler" GNU Radio block
+ * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
+ * @date       March 3, 2015
+ * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
+ *             under the GNU General Public License Version 3.
  */
 
 /* Copyright (C) 2015 %Isatec Inc.
@@ -42,17 +42,17 @@ namespace gr
 	{
 		//! Guided Scrambling "Descrambler" GNU Radio block
 		/*!
-		 * @date		March 3, 2015
-		 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+		 * @date    March 3, 2015
+		 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 		 */
 		class Isatec_API Descrambler: virtual public gr::block
 		{
 		public:
 			//! Access field size
 			/*!
-			 * @return	Field size as the <em>n</em> in GF(<em>n</em>)
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @return  Field size as the <em>n</em> in GF(<em>n</em>)
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual unsigned int fieldSize() const =0;
 
@@ -62,75 +62,75 @@ namespace gr
 			 * supported within the range of 2 to
 			 * gr::Isatec::GuidedScrambling::maxFieldSize.
 			 *
-			 * @param	[in] size Desired field size as the <em>n</em> in
-			 * 						 GF(<em>n</em>)
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @param   [in] size Desired field size as the <em>n</em> in
+			 *                    GF(<em>n</em>)
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual void set_fieldSize(const unsigned int size) =0;
 
 			//! Access codeword length
 			/*!
-			 * @return	Codeword Length
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @return  Codeword Length
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual unsigned int codewordLength() const =0;
 
 			//! Set codeword length
 			/*!
-			 * @param	[in] length Desired codeword length
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @param   [in] length Desired codeword length
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual void set_codewordLength(const unsigned int length) =0;
 
 			//! Access augmenting length
 			/*!
-			 * @return	Augmenting Length
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @return  Augmenting Length
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual unsigned int augmentingLength() const =0;
 
 			//! Set augmenting length
 			/*!
-			 * @param	[in] length Desired augmenting length
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @param   [in] length Desired augmenting length
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual void set_augmentingLength(const unsigned int length) =0;
 
 			//! Access continuous encoding setting
 			/*!
-			 * @return	True if set to continuous encoding, false if block encoding
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @return  True if set to continuous encoding, false if block encoding
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual bool continuous() const =0;
 
 			//! Set continuous or block enconding
 			/*!
-			 * @param	[in] continuous Set to true for continuous encoding, false for
-			 *				block encoding
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @param   [in] continuous Set to true for continuous encoding, false for
+			 *          block encoding
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual void set_continuous(bool continuous) =0;
 
 			//! Access multiplier word
 			/*!
-			 * @return	Multiplier word (polynomial)
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @return  Multiplier word (polynomial)
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual const std::vector<Symbol>& multiplier() const =0;
 
 			//! Set multiplier polynomial
 			/*!
-			 * @param	[in] multiplier Desired multiplier word (polynomial)
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @param   [in] multiplier Desired multiplier word (polynomial)
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			virtual void set_multiplier(const std::vector<Symbol>& multiplier) =0;
 
@@ -146,9 +146,9 @@ namespace gr
 			 *  - continuous encoding = true
 			 *  - field size = 4
 			 *
-			 * @return	Shared pointer to newly allocated descrambler
-			 * @date		March 3, 2015
-			 * @author	Eddie Carle &lt;eddie@isatec.ca&gt;
+			 * @return  Shared pointer to newly allocated descrambler
+			 * @date    March 3, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
 			 */
 			static sptr make();
 		};
