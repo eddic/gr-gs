@@ -38,6 +38,7 @@
 #include <gnuradio/blocks/throttle.h>
 #include <gnuradio/blocks/add_cc.h>
 #include <gnuradio/analog/noise_source_c.h>
+#include <gnuradio/uhd/usrp_sink.h>
 #include "gr-isatec/GuidedScrambler.h"
 #include "gr-isatec/SymbolGenerator.h"
 #include "gr-isatec/PulseGenerator.h"
@@ -77,6 +78,7 @@ namespace gr
             gr::Isatec::GuidedScrambler::sptr m_guidedScrambler; //!< Our guided scrambler block
             gr::Isatec::SymbolGenerator::sptr m_symbolGenerator; //!< The random symbol generator block
             gr::Isatec::PulseGenerator::sptr m_pulseGenerator; //!< The pulse shaping block
+            gr::uhd::usrp_sink::sptr m_usrp; //!< Our physical output device
 
             bool m_running; //!< True if the flow graph is running, false otherwise
 
