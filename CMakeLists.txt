@@ -62,25 +62,25 @@ FIND_PACKAGE(Gnuradio "3.7.6")
 IF(Qt4_FOUND AND Gnuradio_FOUND)
 	# Guided Scrambling demonstration
 
-	QT4_WRAP_CPP(guidedScramblerDemo_HEADERS_MOC "include/guidedScramblingDemo.hpp")
-	QT4_WRAP_UI(guidedScramblerDemo_FORMS_HEADERS "ui/guidedScramblingDemo.ui")
+	QT4_WRAP_CPP(guidedScramblingDemo_HEADERS_MOC "include/guidedScramblingDemo.hpp")
+	QT4_WRAP_UI(guidedScramblingDemo_FORMS_HEADERS "ui/guidedScramblingDemo.ui")
 	INCLUDE(${QT_USE_FILE})
 	ADD_DEFINITIONS(${QT_DEFINITIONS})
-	ADD_EXECUTABLE(guidedScramblerDemo
+	ADD_EXECUTABLE(guidedScramblingDemo
 		"src/guidedScramblingDemo.cpp"
-		${guidedScramblerDemo_HEADERS_MOC}
-		${guidedScramblerDemo_FORMS_HEADERS})
-	TARGET_INCLUDE_DIRECTORIES ( guidedScramblerDemo PRIVATE
+		${guidedScramblingDemo_HEADERS_MOC}
+		${guidedScramblingDemo_FORMS_HEADERS})
+	TARGET_INCLUDE_DIRECTORIES ( guidedScramblingDemo PRIVATE
 		"${CMAKE_CURRENT_BINARY_DIR}"
 		"${Boost_INCLUDE_DIRS}"
 		"${GNURADIO_RUNTIME_INCLUDE_DIRS}"
 		"${GNURADIO_ALL_INCLUDE_DIRS}")
-	TARGET_LINK_LIBRARIES ( guidedScramblerDemo PUBLIC
+	TARGET_LINK_LIBRARIES ( guidedScramblingDemo PUBLIC
 		gnuradio-isatec
 		"${Boost_LIBRARIES}"
 		"${GNURADIO_ALL_LIBRARIES}"
 		"${QT_LIBRARIES}")
-	ADD_DEPENDENCIES ( guidedScramblerDemo gnuradio-isatec)
+	ADD_DEPENDENCIES ( guidedScramblingDemo gnuradio-isatec)
 ENDIF()
 
 # Documentation
