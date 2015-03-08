@@ -89,6 +89,8 @@ gr::Isatec::Applications::GuidedScramblingDemo::GuidedScramblingDemo():
       m_constellation->set_line_style(0, 1);
       m_constellation->set_line_marker(0, 0);
       m_constellation->set_line_label(0, "Baseband Signal");
+      m_constellation->set_y_axis(-1, 1);
+      m_constellation->set_x_axis(-1, 1);
       m_ui.constellationPatternLayout->addWidget(m_constellation->qwidget());
    }
 
@@ -107,6 +109,7 @@ gr::Isatec::Applications::GuidedScramblingDemo::GuidedScramblingDemo():
       //m_eye->set_update_time(1);
       m_eye->enable_tags(0, false);
       m_eye->enable_tags(1, false);
+      m_eye->set_y_axis(-1, 1);
       m_ui.eyePatternLayout->addWidget(m_eye->qwidget());
    }
 
