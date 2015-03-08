@@ -30,11 +30,13 @@
 
 const std::vector<double>& gr::Isatec::Implementations::SymbolGenerator_impl::weightings() const
 {
+   std::lock_guard<std::mutex> lock(m_mutex);
    return m_weightings;
 }
 
 void gr::Isatec::Implementations::SymbolGenerator_impl::set_weightings(const std::vector<double>& weightings)
 {
+   std::lock_guard<std::mutex> lock(m_mutex);
    m_weightings = weightings;
 
    std::discrete_distribution<Symbol> distribution(
@@ -49,6 +51,8 @@ int gr::Isatec::Implementations::SymbolGenerator_impl::work(int noutput_items,
 {
    Symbol* const start = reinterpret_cast<Symbol*>(output_items[0]);
    Symbol* const end = start+noutput_items;
+
+   std::lock_guard<std::mutex> lock(m_mutex);
 
    for(auto output=start; output != end; ++output)
       *output = m_distribution(m_generator);
@@ -73,6 +77,7 @@ gr::Isatec::SymbolGenerator::sptr gr::Isatec::SymbolGenerator::make()
 
 unsigned int gr::Isatec::Implementations::SymbolGenerator_impl::count()
 {
+   std::lock_guard<std::mutex> lock(m_mutex);
    const unsigned int count=m_count;
    m_count=0;
    return count;

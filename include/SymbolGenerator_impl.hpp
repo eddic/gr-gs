@@ -28,6 +28,7 @@
 #include "gr-isatec/SymbolGenerator.h"
 
 #include <random>
+#include <mutex>
 
 //! GNU Radio Namespace
 namespace gr
@@ -69,6 +70,7 @@ namespace gr
             SymbolGenerator_impl();
 
          private:
+            mutable std::mutex m_mutex; //!< Always practice safe threading
             unsigned int m_count; //!< How many symbols have we generated?
             std::vector<double> m_weightings; //!< Our symbol weightings
             std::default_random_engine m_generator; //!< Our random number generator
