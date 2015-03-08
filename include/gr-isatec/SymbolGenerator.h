@@ -2,7 +2,7 @@
  * @file       SymbolGenerator.h
  * @brief      Declares the "Random Symbol Generator" GNU Radio block
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       March 5, 2015
+ * @date       March 8, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -48,7 +48,7 @@ namespace gr
        * vector of {1,1,1,2} would produce symbol values {0,1,2,3} with
        * respective probabilities of {0.2, 0.2, 0.2, 0.4}.
        *
-       * @date    March 5, 2015
+       * @date    March 8, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
       class Isatec_API SymbolGenerator: virtual public gr::sync_block
@@ -75,6 +75,18 @@ namespace gr
           * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
           */
          virtual void set_weightings(const std::vector<double>& weightings) =0;
+
+         //! Get symbol count
+         /*!
+          * This function returns the total amount of symbols that have been
+          * generated since the last call to this method. This means that every
+          * time you call this function it resets the counter to zero.
+          *
+          * @return  Total amount of symbols since last call
+          * @date    March 8, 2015
+          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+          */
+         virtual unsigned int count() =0;
 
          //! Shared pointer to this
          typedef boost::shared_ptr<SymbolGenerator> sptr;

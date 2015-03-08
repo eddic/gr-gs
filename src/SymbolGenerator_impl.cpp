@@ -53,6 +53,7 @@ int gr::Isatec::Implementations::SymbolGenerator_impl::work(int noutput_items,
    for(auto output=start; output != end; ++output)
       *output = m_distribution(m_generator);
 
+   m_count += noutput_items;
    return noutput_items;
 }
 
@@ -60,6 +61,7 @@ gr::Isatec::Implementations::SymbolGenerator_impl::SymbolGenerator_impl():
    gr::sync_block("Symbol Generator",
       io_signature::make(0,0,0),
       io_signature::make(1,1,sizeof(Symbol))),
+   m_count(0),
    m_generator(1984)
 {
 }
@@ -67,4 +69,11 @@ gr::Isatec::Implementations::SymbolGenerator_impl::SymbolGenerator_impl():
 gr::Isatec::SymbolGenerator::sptr gr::Isatec::SymbolGenerator::make()
 {
    return gnuradio::get_initial_sptr(new Implementations::SymbolGenerator_impl());
+}
+
+unsigned int gr::Isatec::Implementations::SymbolGenerator_impl::count()
+{
+   const unsigned int count=m_count;
+   m_count=0;
+   return count;
 }

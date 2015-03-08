@@ -2,7 +2,7 @@
  * @file       SymbolGenerator_impl.hpp
  * @brief      Declares the "Random Symbol Generator" GNU Radio block implementation
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       March 6, 2015
+ * @date       March 8, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -42,7 +42,7 @@ namespace gr
          /*!
           * Implements gr::Isatec::SymbolGenerator
           *
-          * @date    March 5, 2015
+          * @date    March 8, 2015
           * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
           */
          class SymbolGenerator_impl: public SymbolGenerator
@@ -50,6 +50,7 @@ namespace gr
          public:
             const std::vector<double>& weightings() const;
             void set_weightings(const std::vector<double>& weightings);
+            unsigned int count();
 
             //! GNU Radio work function
             int work(int noutput_items,
@@ -68,6 +69,7 @@ namespace gr
             SymbolGenerator_impl();
 
          private:
+            unsigned int m_count; //!< How many symbols have we generated?
             std::vector<double> m_weightings; //!< Our symbol weightings
             std::default_random_engine m_generator; //!< Our random number generator
             std::discrete_distribution<Symbol> m_distribution; //!< Our distribution
