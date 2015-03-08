@@ -2,7 +2,7 @@
  * @file       guidedScramblingDemo.hpp
  * @brief      Declares the Guided Scrambling demo application
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       March 6, 2015
+ * @date       March 8, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -58,7 +58,7 @@ namespace gr
           * This application demonstrates the spectral capabilities of the
           * GuidedScrambler block.
           *
-          * @date    March 6, 2015
+          * @date    March 8, 2015
           * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
           */
          class GuidedScramblingDemo: public QDialog
@@ -109,6 +109,9 @@ namespace gr
             void taps(); //!< Update the amount of tapes used in pulse generation
             void noise(); //!< Update the noise amplitude
             void phase(); //!< Update the symbol phase shift applied in the pulse generator
+
+            void usrp(); //!< Reconfigure the USRP
+            void gain(); //!< Reconfigure the USRP gain
          };
       }
    }

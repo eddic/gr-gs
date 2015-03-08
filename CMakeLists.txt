@@ -59,7 +59,8 @@ TARGET_LINK_LIBRARIES ( guidedScramblingTest PUBLIC
 FIND_PACKAGE(Qt4)
 SET(GR_REQUIRED_COMPONENTS QTGUI BLOCKS ANALOG UHD)
 FIND_PACKAGE(Gnuradio "3.7.6")
-IF(Qt4_FOUND AND Gnuradio_FOUND)
+FIND_PACKAGE(UHD)
+IF(Qt4_FOUND AND Gnuradio_FOUND AND UHD_FOUND)
 	# Guided Scrambling demonstration
 
 	QT4_WRAP_CPP(guidedScramblingDemo_HEADERS_MOC "include/guidedScramblingDemo.hpp")
@@ -73,12 +74,14 @@ IF(Qt4_FOUND AND Gnuradio_FOUND)
 	TARGET_INCLUDE_DIRECTORIES ( guidedScramblingDemo PRIVATE
 		"${CMAKE_CURRENT_BINARY_DIR}"
 		"${Boost_INCLUDE_DIRS}"
+		"${UHD_INCLUDE_DIRS}"
 		"${GNURADIO_RUNTIME_INCLUDE_DIRS}"
 		"${GNURADIO_ALL_INCLUDE_DIRS}")
 	TARGET_LINK_LIBRARIES ( guidedScramblingDemo PUBLIC
 		gnuradio-isatec
 		"${Boost_LIBRARIES}"
 		"${GNURADIO_ALL_LIBRARIES}"
+		"${UHD_LIBRARIES}"
 		"${QT_LIBRARIES}")
 	ADD_DEPENDENCIES ( guidedScramblingDemo gnuradio-isatec)
 ENDIF()

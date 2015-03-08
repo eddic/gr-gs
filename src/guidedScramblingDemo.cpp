@@ -2,7 +2,7 @@
  * @file       guidedScramblingDemo.cpp
  * @brief      Defines the Guided Scrambling demo application
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       March 6, 2015
+ * @date       March 8, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -189,6 +189,10 @@ gr::Isatec::Applications::GuidedScramblingDemo::GuidedScramblingDemo():
       QObject::connect(m_ui.taps, SIGNAL(valueChanged(int)), this, SLOT(taps()));
       QObject::connect(m_ui.noise, SIGNAL(valueChanged(int)), this, SLOT(noise()));
       QObject::connect(m_ui.phase, SIGNAL(valueChanged(double)), this, SLOT(phase()));
+      QObject::connect(m_ui.usrp, SIGNAL(clicked()), this, SLOT(usrp()));
+      QObject::connect(m_ui.antenna, SIGNAL(textChanged(const QString&)), this, SLOT(usrp()));
+      QObject::connect(m_ui.subdevice, SIGNAL(textChanged(const QString&)), this, SLOT(usrp()));
+      QObject::connect(m_ui.gain, SIGNAL(valueChanged(double)), this, SLOT(gain()));
    }
 }
 
@@ -303,12 +307,16 @@ void gr::Isatec::Applications::GuidedScramblingDemo::baudRate()
    m_eye->set_samp_rate(1e3*m_ui.baudRate->value()*m_ui.samplesPerSymbol->value());
    m_eye->set_nsamps(m_ui.samplesPerSymbol->value()*16);
    m_pulseGenerator->set_baudRate(1e3*m_ui.baudRate->value());
+   if(m_usrp)
+      m_usrp->set_samp_rate(1e3*m_ui.baudRate->value()*m_ui.samplesPerSymbol->value());
    frequency();
 }
 
 void gr::Isatec::Applications::GuidedScramblingDemo::frequency()
 {
    m_fft->set_frequency_range(1e6*m_ui.frequency->value(), 2e3*m_ui.baudRate->value()*m_ui.samplesPerSymbol->value());
+   if(m_usrp)
+      m_usrp->set_center_freq(1e6*m_ui.frequency->value());
 }
 
 void gr::Isatec::Applications::GuidedScramblingDemo::samplesPerSymbol()
@@ -438,4 +446,70 @@ void gr::Isatec::Applications::GuidedScramblingDemo::noise()
 void gr::Isatec::Applications::GuidedScramblingDemo::phase()
 {
    m_pulseGenerator->set_phase(m_ui.phase->value()*pi/180.0);
+}
+
+void gr::Isatec::Applications::GuidedScramblingDemo::usrp()
+{
+   pause();
+   if(m_usrp)
+   {
+      if(!m_usrp.unique())
+         m_top->disconnect(m_usrp);
+      m_usrp.reset();
+   }
+   if(!m_fft.unique())
+      m_top->disconnect(m_fft);
+   if(!m_constellation.unique())
+      m_top->disconnect(m_constellation);
+   if(!m_eye.unique())
+      m_top->disconnect(m_eye);
+   if(!m_throttle.unique())
+      m_top->disconnect(m_throttle);
+
+   bool throttle=true;
+   if(m_ui.usrp->isChecked())
+   {
+      try
+      {
+         m_usrp = gr::uhd::usrp_sink::make(::uhd::device_addr_t(m_ui.address->text().toStdString()), ::uhd::stream_args_t("fc32", "sc16"));
+         m_usrp->set_subdev_spec(m_ui.subdevice->text().toStdString());
+         m_usrp->set_antenna(m_ui.antenna->text().toStdString());
+         m_usrp->set_center_freq(1e6*m_ui.frequency->value());
+         m_usrp->set_samp_rate(1e3*m_ui.baudRate->value()*m_ui.samplesPerSymbol->value());
+
+         m_ui.gain->setMinimum(m_usrp->get_gain_range().start());
+         m_ui.gain->setMaximum(m_usrp->get_gain_range().stop());
+
+         m_usrp->set_gain(m_ui.gain->value());
+
+         m_throttle = false;
+      }
+      catch(...)
+      {
+         m_usrp.reset();
+         m_ui.usrp->setChecked(false);
+      }
+      if(!throttle)
+      {
+         m_top->connect(m_adder, 0, m_fft, 0);
+         m_top->connect(m_adder, 0, m_constellation, 0);
+         m_top->connect(m_adder, 0, m_eye, 0);
+         m_top->connect(m_adder, 0, m_usrp, 0);
+      }
+   }
+
+   if(throttle)
+   {
+      m_top->connect(m_adder, 0, m_throttle, 0);
+      m_top->connect(m_throttle, 0, m_fft, 0);
+      m_top->connect(m_throttle, 0, m_constellation, 0);
+      m_top->connect(m_throttle, 0, m_eye, 0);
+   }
+   unpause();
+}
+
+void gr::Isatec::Applications::GuidedScramblingDemo::gain()
+{
+   if(m_usrp)
+      m_usrp->set_gain(m_ui.gain->value());
 }
