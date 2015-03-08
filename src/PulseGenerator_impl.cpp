@@ -2,7 +2,7 @@
  * @file       PulseGenerator_impl.cpp
  * @brief      Declares the "Pulse Generator" GNU Radio block implementation
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       March 5, 2015
+ * @date       March 7, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -30,9 +30,6 @@
 #include <gnuradio/io_signature.h>
 #include <gnuradio/filter/firdes.h>
 
-#include <deque>
-#include <mutex>
-
 const std::vector<std::complex<float>>& gr::Isatec::Implementations::PulseGenerator_impl::constellation() const
 {
    std::lock_guard<std::mutex> lock(m_mutex);
@@ -43,6 +40,7 @@ void gr::Isatec::Implementations::PulseGenerator_impl::set_constellation(const s
 {
    std::lock_guard<std::mutex> lock(m_mutex);
    m_constellation = constellation;
+   m_valid=false;
 }
 
 double gr::Isatec::Implementations::PulseGenerator_impl::baudRate() const
@@ -84,6 +82,19 @@ void gr::Isatec::Implementations::PulseGenerator_impl::set_alpha(const double al
    m_valid=false;
 }
 
+float gr::Isatec::Implementations::PulseGenerator_impl::amplitude() const
+{
+   std::lock_guard<std::mutex> lock(m_mutex);
+   return m_amplitude;
+}
+
+void gr::Isatec::Implementations::PulseGenerator_impl::set_amplitude(const float amplitude)
+{
+   std::lock_guard<std::mutex> lock(m_mutex);
+   m_amplitude = amplitude;
+   m_valid=false;
+}
+
 unsigned int gr::Isatec::Implementations::PulseGenerator_impl::shape() const
 {
    std::lock_guard<std::mutex> lock(m_mutex);
@@ -122,12 +133,36 @@ int gr::Isatec::Implementations::PulseGenerator_impl::work(int noutput_items,
    std::lock_guard<std::mutex> lock(m_mutex);
    if(!m_valid)
    {
-      m_taps = gr::filter::firdes::root_raised_cosine(
-            m_samplesPerSymbol,
-            m_baudRate*m_samplesPerSymbol,
-            m_baudRate,
-            m_alpha,
-            m_numberOfTaps);
+      // Build the FIR taps
+      {
+         m_taps = gr::filter::firdes::root_raised_cosine(
+               1,
+               m_baudRate*m_samplesPerSymbol,
+               m_baudRate,
+               m_alpha,
+               m_numberOfTaps);
+
+         std::vector<float> corrections(m_samplesPerSymbol, 0);
+         for(unsigned int i=0; i<m_taps.size(); ++i)
+            corrections[i%m_samplesPerSymbol] += std::abs(m_taps[i]);
+         const float correction = *std::max_element(corrections.begin(), corrections.end());
+
+         for(auto& tap : m_taps)
+            tap /= correction;
+      }
+
+      // Scale the constellation pattern
+      {
+         const float maxConstellation=std::abs(*std::max_element(
+                  m_constellation.begin(),
+                  m_constellation.end(),
+                  [](const std::complex<float>& x, const std::complex<float>& y){ 
+                     return std::abs(x)<std::abs(y);
+                  }));
+         for(auto& symbol : m_constellation)
+            symbol *= m_amplitude/maxConstellation;
+      }
+
       m_input.clear();
       m_input.resize(1+(m_numberOfTaps-1)/m_samplesPerSymbol, 0);
       m_taps.resize(m_input.size()*m_samplesPerSymbol, 0);
@@ -226,6 +261,7 @@ gr::Isatec::Implementations::PulseGenerator_impl::PulseGenerator_impl(unsigned i
    m_alpha(0.5),
    m_phase(0),
    m_currentPhase(0),
+   m_amplitude(0.8),
    m_shape(0),
    m_valid(false),
    m_tag(false)

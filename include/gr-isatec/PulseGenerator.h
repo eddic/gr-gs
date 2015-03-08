@@ -2,7 +2,7 @@
  * @file       PulseGenerator.h
  * @brief      Declares the "Pulse Generator" GNU Radio block
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       March 8, 2015
+ * @date       March 7, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -55,13 +55,14 @@ namespace gr
        * - An accumulating per-symbol phase shift can be applied to the
        *   constellation pattern for the purpose of spectral null shifting if it
        *   is so desired.
+       * - Output signal amplitude.
        * - A trigger tag can be enabled to the start of every pulse for scope
        *   triggering.
        *
        * See the members functions for further information on the parameters and
        * their meaning.
        *
-       * @date    March 3, 2015
+       * @date    March 7, 2015
        * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
        */
       class Isatec_API PulseGenerator: virtual public gr::sync_interpolator
@@ -163,6 +164,30 @@ namespace gr
           */
          virtual void set_alpha(const double alpha) =0;
 
+         //! Access signal amplitude
+         /*!
+          * This value represents the absolute \a maximum value that the output
+          * signal can possibly reach. This is relevant when ensuring clipping
+          * does not occur downstream.
+          *
+          * @return  Currently set excess bandwidth factor
+          * @date    March 7, 2015
+          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+          */
+         virtual float amplitude() const =0;
+
+         //! Set signal amplitude
+         /*!
+          * This value represents the absolute \a maximum value that the output
+          * signal can possibly reach. This is relevant when ensuring clipping
+          * does not occur downstream.
+          *
+          * @param   [in] amplitude Desired output signal amplitude
+          * @date    March 7, 2015
+          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+          */
+         virtual void set_amplitude(const float amplitude) =0;
+
          //! Access pulse shape
          /*!
           * Use this integer as an index in the vector returned by shapes() to
@@ -241,6 +266,7 @@ namespace gr
           *  - symbol phase shift = 0
           *  - pulse shape = rectangular
           *  - tagging = disabled
+          *  - amplitude = 0.8
           *
           * @param   samplesPerSymbol Amount of samples to generator per symbol
           * @return  Shared pointer to newly allocated pulse generator

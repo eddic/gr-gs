@@ -2,7 +2,7 @@
  * @file       PulseGenerator_impl.hpp
  * @brief      Declares the "Pulse Generator" GNU Radio block implementation
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       March 5, 2015
+ * @date       March 7, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -43,7 +43,7 @@ namespace gr
          /*!
           * Implements gr::Isatec::PulseGenerator
           *
-          * @date    March 5, 2015
+          * @date    March 7, 2015
           * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
           */
          class PulseGenerator_impl: public PulseGenerator
@@ -65,6 +65,9 @@ namespace gr
 
             double alpha() const;
             void set_alpha(const double alpha);
+
+            float amplitude() const;
+            void set_amplitude(const float amplitude);
 
             unsigned int shape() const;
             void set_shape(const unsigned int shape);
@@ -89,6 +92,7 @@ namespace gr
              *  - symbol phase shift = 0
              *  - pulse shape = rectangular
              *  - tagging = disabled
+             *  - amplitude = 0.8
              *
              * @param   samplesPerSymbol Amount of samples to generator per symbol
              * @date    March 5, 2015
@@ -105,6 +109,7 @@ namespace gr
             double m_alpha; //!< Excess bandwidth in root-raised-cosine
             float m_phase; //!< How much to phase shift per symbol
             float m_currentPhase; //!< Current symbol phase offset
+            float m_amplitude; //!< Current signal amplitude
 
             unsigned int m_shape; //!< Index to current pulse shaping type
 
