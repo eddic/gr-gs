@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1714</width>
-    <height>715</height>
+    <width>1004</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -512,7 +512,11 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QLineEdit" name="address"/>
+         <widget class="QLineEdit" name="address">
+          <property name="text">
+           <string>usrp</string>
+          </property>
+         </widget>
         </item>
         <item row="2" column="0">
          <widget class="QLabel" name="subdeviceLabel">
@@ -522,27 +526,59 @@
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QLineEdit" name="subdevice"/>
+         <widget class="QLineEdit" name="subdevice">
+          <property name="text">
+           <string>A:0</string>
+          </property>
+         </widget>
         </item>
         <item row="3" column="0">
-         <widget class="QLabel" name="antennaLabel">
+         <widget class="QLabel" name="txAntennaLabel">
           <property name="text">
-           <string>Antenna</string>
+           <string>TX Antenna</string>
           </property>
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="QLineEdit" name="antenna"/>
+         <widget class="QLineEdit" name="txAntenna">
+          <property name="text">
+           <string>TX/RX</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="rxAntennaLabel">
+          <property name="text">
+           <string>RX Antenna</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QLineEdit" name="rxAntenna">
+          <property name="text">
+           <string>RX2</string>
+          </property>
+         </widget>
         </item>
         <item row="4" column="0">
-         <widget class="QLabel" name="gainLabel">
+         <widget class="QLabel" name="txGainlabel">
           <property name="text">
-           <string>Gain</string>
+           <string>TX Gain</string>
           </property>
          </widget>
         </item>
         <item row="4" column="1">
-         <widget class="QDoubleSpinBox" name="gain"/>
+         <widget class="QDoubleSpinBox" name="txGain"/>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="rxGainLabel">
+          <property name="text">
+           <string>RX Gain</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QDoubleSpinBox" name="rxGain"/>
         </item>
        </layout>
       </widget>

@@ -190,9 +190,11 @@ gr::Isatec::Applications::GuidedScramblingDemo::GuidedScramblingDemo():
       QObject::connect(m_ui.noise, SIGNAL(valueChanged(int)), this, SLOT(noise()));
       QObject::connect(m_ui.phase, SIGNAL(valueChanged(double)), this, SLOT(phase()));
       QObject::connect(m_ui.usrp, SIGNAL(clicked()), this, SLOT(usrp()));
-      QObject::connect(m_ui.antenna, SIGNAL(textChanged(const QString&)), this, SLOT(usrp()));
+      QObject::connect(m_ui.rxAntenna, SIGNAL(textChanged(const QString&)), this, SLOT(usrp()));
+      QObject::connect(m_ui.txAntenna, SIGNAL(textChanged(const QString&)), this, SLOT(usrp()));
       QObject::connect(m_ui.subdevice, SIGNAL(textChanged(const QString&)), this, SLOT(usrp()));
-      QObject::connect(m_ui.gain, SIGNAL(valueChanged(double)), this, SLOT(gain()));
+      QObject::connect(m_ui.txGain, SIGNAL(valueChanged(double)), this, SLOT(txGain()));
+      QObject::connect(m_ui.rxGain, SIGNAL(valueChanged(double)), this, SLOT(rxGain()));
    }
 }
 
@@ -307,16 +309,16 @@ void gr::Isatec::Applications::GuidedScramblingDemo::baudRate()
    m_eye->set_samp_rate(1e3*m_ui.baudRate->value()*m_ui.samplesPerSymbol->value());
    m_eye->set_nsamps(m_ui.samplesPerSymbol->value()*16);
    m_pulseGenerator->set_baudRate(1e3*m_ui.baudRate->value());
-   if(m_usrp)
-      m_usrp->set_samp_rate(1e3*m_ui.baudRate->value()*m_ui.samplesPerSymbol->value());
+   if(m_usrpSink)
+      m_usrpSink->set_samp_rate(1e3*m_ui.baudRate->value()*m_ui.samplesPerSymbol->value());
    frequency();
 }
 
 void gr::Isatec::Applications::GuidedScramblingDemo::frequency()
 {
    m_fft->set_frequency_range(1e6*m_ui.frequency->value(), 2e3*m_ui.baudRate->value()*m_ui.samplesPerSymbol->value());
-   if(m_usrp)
-      m_usrp->set_center_freq(1e6*m_ui.frequency->value());
+   if(m_usrpSink)
+      m_usrpSink->set_center_freq(1e6*m_ui.frequency->value());
 }
 
 void gr::Isatec::Applications::GuidedScramblingDemo::samplesPerSymbol()
@@ -451,11 +453,17 @@ void gr::Isatec::Applications::GuidedScramblingDemo::phase()
 void gr::Isatec::Applications::GuidedScramblingDemo::usrp()
 {
    pause();
-   if(m_usrp)
+   if(m_usrpSink)
    {
-      if(!m_usrp.unique())
-         m_top->disconnect(m_usrp);
-      m_usrp.reset();
+      if(!m_usrpSink.unique())
+         m_top->disconnect(m_usrpSink);
+      m_usrpSink.reset();
+   }
+   if(m_usrpSource)
+   {
+      if(!m_usrpSource.unique())
+         m_top->disconnect(m_usrpSource);
+      m_usrpSource.reset();
    }
    if(!m_fft.unique())
       m_top->disconnect(m_fft);
@@ -471,30 +479,41 @@ void gr::Isatec::Applications::GuidedScramblingDemo::usrp()
    {
       try
       {
-         m_usrp = gr::uhd::usrp_sink::make(::uhd::device_addr_t(m_ui.address->text().toStdString()), ::uhd::stream_args_t("fc32", "sc16"));
-         m_usrp->set_subdev_spec(m_ui.subdevice->text().toStdString());
-         m_usrp->set_antenna(m_ui.antenna->text().toStdString());
-         m_usrp->set_center_freq(1e6*m_ui.frequency->value());
-         m_usrp->set_samp_rate(1e3*m_ui.baudRate->value()*m_ui.samplesPerSymbol->value());
+         // Set up USRP Sink
+         m_usrpSink = gr::uhd::usrp_sink::make(::uhd::device_addr_t(m_ui.address->text().toStdString()), ::uhd::stream_args_t("fc32", "sc16"));
+         m_usrpSink->set_subdev_spec(m_ui.subdevice->text().toStdString());
+         m_usrpSink->set_antenna(m_ui.txAntenna->text().toStdString());
+         m_usrpSink->set_center_freq(1e6*m_ui.frequency->value());
+         m_usrpSink->set_samp_rate(1e3*m_ui.baudRate->value()*m_ui.samplesPerSymbol->value());
+         m_ui.txGain->setMinimum(m_usrpSink->get_gain_range().start());
+         m_ui.txGain->setMaximum(m_usrpSink->get_gain_range().stop());
+         m_usrpSink->set_gain(m_ui.txGain->value());
 
-         m_ui.gain->setMinimum(m_usrp->get_gain_range().start());
-         m_ui.gain->setMaximum(m_usrp->get_gain_range().stop());
+         // Set up USRP Source
+         m_usrpSource = gr::uhd::usrp_source::make(::uhd::device_addr_t(m_ui.address->text().toStdString()), ::uhd::stream_args_t("fc32", "sc16"));
+         m_usrpSource->set_subdev_spec(m_ui.subdevice->text().toStdString());
+         m_usrpSource->set_antenna(m_ui.rxAntenna->text().toStdString());
+         m_usrpSource->set_center_freq(1e6*m_ui.frequency->value());
+         m_usrpSource->set_samp_rate(1e3*m_ui.baudRate->value()*m_ui.samplesPerSymbol->value());
+         m_ui.rxGain->setMinimum(m_usrpSource->get_gain_range().start());
+         m_ui.rxGain->setMaximum(m_usrpSource->get_gain_range().stop());
+         m_usrpSource->set_gain(m_ui.rxGain->value());
 
-         m_usrp->set_gain(m_ui.gain->value());
-
-         m_throttle = false;
+         throttle = false;
       }
       catch(...)
       {
-         m_usrp.reset();
+         m_usrpSink.reset();
+         m_usrpSource.reset();
          m_ui.usrp->setChecked(false);
       }
       if(!throttle)
       {
-         m_top->connect(m_adder, 0, m_fft, 0);
-         m_top->connect(m_adder, 0, m_constellation, 0);
-         m_top->connect(m_adder, 0, m_eye, 0);
-         m_top->connect(m_adder, 0, m_usrp, 0);
+         m_top->connect(m_adder, 0, m_usrpSink, 0);
+
+         m_top->connect(m_usrpSource, 0, m_fft, 0);
+         m_top->connect(m_usrpSource, 0, m_constellation, 0);
+         m_top->connect(m_usrpSource, 0, m_eye, 0);
       }
    }
 
@@ -508,8 +527,14 @@ void gr::Isatec::Applications::GuidedScramblingDemo::usrp()
    unpause();
 }
 
-void gr::Isatec::Applications::GuidedScramblingDemo::gain()
+void gr::Isatec::Applications::GuidedScramblingDemo::txGain()
 {
-   if(m_usrp)
-      m_usrp->set_gain(m_ui.gain->value());
+   if(m_usrpSink)
+      m_usrpSink->set_gain(m_ui.txGain->value());
+}
+
+void gr::Isatec::Applications::GuidedScramblingDemo::rxGain()
+{
+   if(m_usrpSource)
+      m_usrpSource->set_gain(m_ui.rxGain->value());
 }

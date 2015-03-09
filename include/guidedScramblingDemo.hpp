@@ -39,6 +39,7 @@
 #include <gnuradio/blocks/add_cc.h>
 #include <gnuradio/analog/noise_source_c.h>
 #include <gnuradio/uhd/usrp_sink.h>
+#include <gnuradio/uhd/usrp_source.h>
 #include "gr-isatec/GuidedScrambler.h"
 #include "gr-isatec/SymbolGenerator.h"
 #include "gr-isatec/PulseGenerator.h"
@@ -78,7 +79,8 @@ namespace gr
             gr::Isatec::GuidedScrambler::sptr m_guidedScrambler; //!< Our guided scrambler block
             gr::Isatec::SymbolGenerator::sptr m_symbolGenerator; //!< The random symbol generator block
             gr::Isatec::PulseGenerator::sptr m_pulseGenerator; //!< The pulse shaping block
-            gr::uhd::usrp_sink::sptr m_usrp; //!< Our physical output device
+            gr::uhd::usrp_sink::sptr m_usrpSink; //!< Our physical output device
+            gr::uhd::usrp_source::sptr m_usrpSource; //!< Our physical input device
 
             bool m_running; //!< True if the flow graph is running, false otherwise
 
@@ -111,7 +113,8 @@ namespace gr
             void phase(); //!< Update the symbol phase shift applied in the pulse generator
 
             void usrp(); //!< Reconfigure the USRP
-            void gain(); //!< Reconfigure the USRP gain
+            void txGain(); //!< Reconfigure the USRP TX gain
+            void rxGain(); //!< Reconfigure the USRP RX gain
          };
       }
    }
