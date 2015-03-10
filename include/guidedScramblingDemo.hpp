@@ -87,6 +87,8 @@ namespace gr
             void pause(); //!< Pause the flow graph
             void unpause(); //!< Unpause the flow graph
             unsigned int m_pauses; //!< How many pause requests are "queued" up?
+
+            void bandwidth(); //!< Set the USRP bandwidth
          public:
             GuidedScramblingDemo();
             ~GuidedScramblingDemo();

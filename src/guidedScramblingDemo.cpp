@@ -314,6 +314,7 @@ void gr::Isatec::Applications::GuidedScramblingDemo::baudRate()
    if(m_usrpSink)
       m_usrpSink->set_samp_rate(1e3*m_ui.baudRate->value()*m_ui.samplesPerSymbol->value());
    frequency();
+   bandwidth();
 }
 
 void gr::Isatec::Applications::GuidedScramblingDemo::frequency()
@@ -428,11 +429,13 @@ void gr::Isatec::Applications::GuidedScramblingDemo::pulseShape()
       m_ui.excessBandwidth->setEnabled(false);
       m_ui.taps->setEnabled(false);
    }
+   bandwidth();
 }
 
 void gr::Isatec::Applications::GuidedScramblingDemo::excessBandwidth()
 {
    m_pulseGenerator->set_alpha(m_ui.excessBandwidth->value());
+   bandwidth();
 }
 
 void gr::Isatec::Applications::GuidedScramblingDemo::taps()
@@ -539,4 +542,17 @@ void gr::Isatec::Applications::GuidedScramblingDemo::rxGain()
 {
    if(m_usrpSource)
       m_usrpSource->set_gain(m_ui.rxGain->value());
+}
+
+void gr::Isatec::Applications::GuidedScramblingDemo::bandwidth()
+{
+   if(m_usrpSink)
+   {
+      double bandwidth;
+      if(m_pulseGenerator->shape()>0)
+         bandwidth=m_ui.baudRate->value()*(1+m_ui.excessBandwidth->value());
+      else
+         bandwidth=m_ui.baudRate->value()*m_ui.samplesPerSymbol->value();
+      m_usrpSink->set_bandwidth(bandwidth);
+   }
 }
