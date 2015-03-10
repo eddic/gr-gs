@@ -31,8 +31,9 @@
 
 #include "MSW.hpp"
 #include "WRDS.hpp"
+#include "MSW2.hpp"
 
-const std::vector<std::string> gr::Isatec::GuidedScrambling::Analyzer::names = { "MSW", "WRDS" };
+const std::vector<std::string> gr::Isatec::GuidedScrambling::Analyzer::names = { "MSW", "WRDS", "MSW2" };
 
 gr::Isatec::GuidedScrambling::Analyzer* gr::Isatec::GuidedScrambling::manufactureAnalyzer(const unsigned int method)
 {
@@ -42,6 +43,8 @@ gr::Isatec::GuidedScrambling::Analyzer* gr::Isatec::GuidedScrambling::manufactur
          return new gr::Isatec::GuidedScrambling::MSW;
       case 1:
          return new gr::Isatec::GuidedScrambling::WRDS;
+      case 2:
+         return new gr::Isatec::GuidedScrambling::MSW2;
       default:
          throw Exceptions::BadSelectionMethod();
    }
@@ -55,6 +58,8 @@ gr::Isatec::GuidedScrambling::Analyzer::Feedback* gr::Isatec::GuidedScrambling::
          return new gr::Isatec::GuidedScrambling::MSW::Feedback;
       case 1:
          return new gr::Isatec::GuidedScrambling::WRDS::Feedback;
+      case 2:
+         return new gr::Isatec::GuidedScrambling::MSW2::Feedback;
       default:
          throw Exceptions::BadSelectionMethod();
    }
