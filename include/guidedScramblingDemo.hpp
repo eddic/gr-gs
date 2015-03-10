@@ -2,7 +2,7 @@
  * @file       guidedScramblingDemo.hpp
  * @brief      Declares the Guided Scrambling demo application
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       March 8, 2015
+ * @date       March 10, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -59,7 +59,7 @@ namespace gr
           * This application demonstrates the spectral capabilities of the
           * GuidedScrambler block.
           *
-          * @date    March 8, 2015
+          * @date    March 10, 2015
           * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
           */
          class GuidedScramblingDemo: public QDialog

@@ -2,7 +2,7 @@
  * @file       guidedScramblingDemo.cpp
  * @brief      Defines the Guided Scrambling demo application
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       March 8, 2015
+ * @date       March 10, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -216,12 +216,14 @@ void gr::Isatec::Applications::GuidedScramblingDemo::start()
       m_top->wait();
       m_running=false;
       m_ui.start->setText("Start");
+      m_ui.status->setText("Not currently running");
    }
    else
    {
       m_top->start();
       m_running=true;
       m_ui.start->setText("Stop");
+      m_ui.status->setText("Running");
    }
 }
 
