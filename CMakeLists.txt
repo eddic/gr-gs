@@ -12,6 +12,7 @@ FIND_PACKAGE(Gnuradio "3.7.0" REQUIRED)
 
 ADD_LIBRARY (gnuradio-isatec SHARED
 	src/MSW.cpp
+	src/WRDS.cpp
 	src/Analyzer.cpp
 	src/Scrambler.cpp
 	src/ScramblerGroup.cpp
@@ -34,6 +35,7 @@ INSTALL (TARGETS gnuradio-isatec LIBRARY DESTINATION lib)
 
 ADD_EXECUTABLE ( guidedScramblingTest
 	src/MSW.cpp
+	src/WRDS.cpp
 	src/Analyzer.cpp
 	src/Scrambler.cpp
 	src/ScramblerGroup.cpp

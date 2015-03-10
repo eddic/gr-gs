@@ -2,7 +2,7 @@
  * @file       Analyzer.cpp
  * @brief      Defines the gr::Isatec::GuidedScrambling::Analyzer class
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       March 3, 2015
+ * @date       March 10, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.
  *             This project is released under the GNU General Public License
  *             Version 3.
@@ -30,8 +30,9 @@
 #include "gr-isatec/Exceptions.hpp"
 
 #include "MSW.hpp"
+#include "WRDS.hpp"
 
-const std::vector<std::string> gr::Isatec::GuidedScrambling::Analyzer::names = { "MSW" };
+const std::vector<std::string> gr::Isatec::GuidedScrambling::Analyzer::names = { "MSW", "WRDS" };
 
 gr::Isatec::GuidedScrambling::Analyzer* gr::Isatec::GuidedScrambling::manufactureAnalyzer(const unsigned int method)
 {
@@ -39,6 +40,8 @@ gr::Isatec::GuidedScrambling::Analyzer* gr::Isatec::GuidedScrambling::manufactur
    {
       case 0:
          return new gr::Isatec::GuidedScrambling::MSW;
+      case 1:
+         return new gr::Isatec::GuidedScrambling::WRDS;
       default:
          throw Exceptions::BadSelectionMethod();
    }
@@ -50,6 +53,8 @@ gr::Isatec::GuidedScrambling::Analyzer::Feedback* gr::Isatec::GuidedScrambling::
    {
       case 0:
          return new gr::Isatec::GuidedScrambling::MSW::Feedback;
+      case 1:
+         return new gr::Isatec::GuidedScrambling::WRDS::Feedback;
       default:
          throw Exceptions::BadSelectionMethod();
    }
