@@ -313,6 +313,8 @@ void gr::Isatec::Applications::GuidedScramblingDemo::baudRate()
    m_pulseGenerator->set_baudRate(1e3*m_ui.baudRate->value());
    if(m_usrpSink)
       m_usrpSink->set_samp_rate(1e3*m_ui.baudRate->value()*m_ui.samplesPerSymbol->value());
+   if(m_usrpSource)
+      m_usrpSource->set_samp_rate(1e3*m_ui.baudRate->value()*m_ui.samplesPerSymbol->value());
    frequency();
    bandwidth();
 }
@@ -322,6 +324,8 @@ void gr::Isatec::Applications::GuidedScramblingDemo::frequency()
    m_fft->set_frequency_range(1e6*m_ui.frequency->value(), 2e3*m_ui.baudRate->value()*m_ui.samplesPerSymbol->value());
    if(m_usrpSink)
       m_usrpSink->set_center_freq(1e6*m_ui.frequency->value());
+   if(m_usrpSource)
+      m_usrpSource->set_center_freq(1e6*m_ui.frequency->value());
 }
 
 void gr::Isatec::Applications::GuidedScramblingDemo::samplesPerSymbol()
