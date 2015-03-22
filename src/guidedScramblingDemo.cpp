@@ -554,9 +554,10 @@ void gr::Isatec::Applications::GuidedScramblingDemo::bandwidth()
    {
       double bandwidth;
       if(m_pulseGenerator->shape()>0)
-         bandwidth=m_ui.baudRate->value()*(1+m_ui.excessBandwidth->value());
+         bandwidth=m_ui.baudRate->value()*(1+m_ui.excessBandwidth->value())*1e3;
       else
-         bandwidth=m_ui.baudRate->value()*m_ui.samplesPerSymbol->value();
+         bandwidth=m_ui.baudRate->value()*m_ui.samplesPerSymbol->value()*1e3;
+      bandwidth = std::max(bandwidth, m_usrpSink->get_bandwidth_range().start());
       m_usrpSink->set_bandwidth(bandwidth);
    }
 }
