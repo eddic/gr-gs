@@ -1,0 +1,677 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>audioReceiver</class>
+ <widget class="QDialog" name="audioReceiver">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1911</width>
+    <height>960</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="plots"/>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="parameters">
+     <item alignment="Qt::AlignTop">
+      <widget class="QGroupBox" name="usrpBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="title">
+        <string>USRP</string>
+       </property>
+       <layout class="QFormLayout" name="formLayout">
+        <property name="labelAlignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="usrpProbeLabel">
+          <property name="text">
+           <string>Probe</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QRadioButton" name="usrpProbe">
+          <property name="toolTip">
+           <string>Visualize the output of the USRP.</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">probe</string>
+          </attribute>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="usrpAddressLabel">
+          <property name="text">
+           <string>Address</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="usrpAddress">
+          <property name="toolTip">
+           <string>USRP device IP address or hostname</string>
+          </property>
+          <property name="text">
+           <string>usrp</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="usrpSubdeviceLabel">
+          <property name="text">
+           <string>Subdevice</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="usrpSubdevice">
+          <property name="toolTip">
+           <string>USRP subdevice. This would likely be either A:0 or B:0.</string>
+          </property>
+          <property name="text">
+           <string>A:0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="usrpAntennaLabel">
+          <property name="text">
+           <string>Antenna</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="usrpAntenna">
+          <property name="toolTip">
+           <string>USRP antenna port. Likely either TX/RX or RX2.</string>
+          </property>
+          <property name="text">
+           <string>TX/RX</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="usrpGainLabel">
+          <property name="text">
+           <string>Gain (dB)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QDoubleSpinBox" name="usrpGain">
+          <property name="toolTip">
+           <string>RF frontend amplifier gain.</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="usrpFrequencyLabel">
+          <property name="text">
+           <string>Frequency (MHz)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QDoubleSpinBox" name="usrpFrequency">
+          <property name="toolTip">
+           <string>Center frequency of USRP device.</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="usrpBandwidthLabel">
+          <property name="text">
+           <string>Bandwidth (kHz)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QDoubleSpinBox" name="usrpbandwidth">
+          <property name="toolTip">
+           <string>Bandwidth of analog filter in RF frontend.</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0">
+         <widget class="QLabel" name="usrpSampleRateLabel">
+          <property name="text">
+           <string>Sample Rate (kHz)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="QDoubleSpinBox" name="usrpSampleRate">
+          <property name="toolTip">
+           <string>USRP sample rate.</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="0">
+         <widget class="QLabel" name="usrpConnectLabel">
+          <property name="text">
+           <string>Connect</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="1">
+         <widget class="QCheckBox" name="usrpConnect">
+          <property name="toolTip">
+           <string>Connect to the USRP and start the signal flow.</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item alignment="Qt::AlignTop">
+      <widget class="QGroupBox" name="passbandFilterBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="title">
+        <string>Passband Filter</string>
+       </property>
+       <layout class="QFormLayout" name="formLayout_2">
+        <property name="labelAlignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <item row="1" column="0">
+         <widget class="QLabel" name="passbandGainLabel">
+          <property name="text">
+           <string>Gain</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="passbandProbeLabel">
+          <property name="text">
+           <string>Probe</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QRadioButton" name="passbandProbe">
+          <property name="toolTip">
+           <string>Visualize the output of the passband filter.</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">probe</string>
+          </attribute>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QDoubleSpinBox" name="passbandGain">
+          <property name="toolTip">
+           <string>Gain of this filter stage.</string>
+          </property>
+          <property name="maximum">
+           <double>10000.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>1.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="passbandTypeLabel">
+          <property name="text">
+           <string>Type</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QComboBox" name="passbandType">
+          <property name="toolTip">
+           <string>Either make the filter flat or set a window type.</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="passbandBandwidthLabel">
+          <property name="text">
+           <string>Bandwidth (kHz)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QDoubleSpinBox" name="passbandBandwidth">
+          <property name="toolTip">
+           <string>3dB double sided bandwidth of pass region.</string>
+          </property>
+          <property name="maximum">
+           <double>1000000.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="passbandTransitionLabel">
+          <property name="text">
+           <string>Trans Width (Hz)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QDoubleSpinBox" name="passbandTransition">
+          <property name="toolTip">
+           <string>Overall width of the filter transition region.</string>
+          </property>
+          <property name="maximum">
+           <double>100000.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="passbandAttenuationLabel">
+          <property name="text">
+           <string>Attenuation (dB)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QDoubleSpinBox" name="passbandAttenuation">
+          <property name="toolTip">
+           <string>Attenuation of in the stop region vs the pass region.</string>
+          </property>
+          <property name="maximum">
+           <double>1000.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="passbandDecimationLabel">
+          <property name="text">
+           <string>Decimation</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QSpinBox" name="spinBox">
+          <property name="toolTip">
+           <string>Decimate the sample rate down by this amount.</string>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item alignment="Qt::AlignTop">
+      <widget class="QGroupBox" name="carrierBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="title">
+        <string>Carrier Recovery</string>
+       </property>
+       <layout class="QFormLayout" name="formLayout_3">
+        <property name="fieldGrowthPolicy">
+         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+        </property>
+        <property name="labelAlignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="carrierProbeLabel">
+          <property name="text">
+           <string>Probe</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QRadioButton" name="carrierProbe">
+          <attribute name="buttonGroup">
+           <string notr="true">probe</string>
+          </attribute>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="carrierMethodLabel">
+          <property name="text">
+           <string>Method</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="carrierMethod"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="carrierMinFreqLabel">
+          <property name="text">
+           <string>Min Freq (Hz)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QDoubleSpinBox" name="carrierMinFreq"/>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="carrierMaxFreqLabel">
+          <property name="text">
+           <string>Max Freq (Hz)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QDoubleSpinBox" name="carrierMaxFreq"/>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="loopBWLabel">
+          <property name="text">
+           <string>Loop BW (Hz)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QDoubleSpinBox" name="loopBW"/>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="carrierOrderLabel">
+          <property name="text">
+           <string>Order</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QComboBox" name="carrierOrder"/>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item alignment="Qt::AlignTop">
+      <widget class="QFrame" name="verticalFrame">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="sizeConstraint">
+         <enum>QLayout::SetMaximumSize</enum>
+        </property>
+        <item alignment="Qt::AlignTop">
+         <widget class="QGroupBox" name="detectionBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title">
+           <string>Detection</string>
+          </property>
+          <layout class="QFormLayout" name="formLayout_4">
+           <property name="fieldGrowthPolicy">
+            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+           </property>
+           <property name="labelAlignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <item row="0" column="0">
+            <widget class="QLabel" name="detectionProbeLabel">
+             <property name="text">
+              <string>Probe</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QRadioButton" name="detectionProbe">
+             <attribute name="buttonGroup">
+              <string notr="true">probe</string>
+             </attribute>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="detectionMethodLabel">
+             <property name="text">
+              <string>Method</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QComboBox" name="detectionMethod"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item alignment="Qt::AlignTop">
+         <widget class="QGroupBox" name="audioBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title">
+           <string>Audio Output</string>
+          </property>
+          <layout class="QFormLayout" name="formLayout_7">
+           <property name="fieldGrowthPolicy">
+            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+           </property>
+           <property name="labelAlignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <item row="1" column="0">
+            <widget class="QLabel" name="audioSampleRateLabel">
+             <property name="text">
+              <string>Sample Rate (Hz)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QComboBox" name="audioSampleRate"/>
+           </item>
+           <item row="4" column="0">
+            <widget class="QPushButton" name="audioFolderButton">
+             <property name="text">
+              <string>Record Folder</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QPushButton" name="audioRecord">
+             <property name="text">
+              <string>Record</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QLCDNumber" name="lcdNumber"/>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="audioFolder"/>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="audioBypassLabel">
+             <property name="text">
+              <string>Bypass</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="audioBypass">
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="audioSampleSizeLabel">
+             <property name="text">
+              <string>Sample Size (bits)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QComboBox" name="audioSampleSize"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item alignment="Qt::AlignTop">
+      <widget class="QGroupBox" name="basebandFilterBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="title">
+        <string>Baseband Filter</string>
+       </property>
+       <layout class="QFormLayout" name="formLayout_6">
+        <property name="fieldGrowthPolicy">
+         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+        </property>
+        <property name="labelAlignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="basebandProbeLabel">
+          <property name="text">
+           <string>Probe</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QRadioButton" name="basebandProbe">
+          <attribute name="buttonGroup">
+           <string notr="true">probe</string>
+          </attribute>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="basebandGainLabel">
+          <property name="text">
+           <string>Gain</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="basebandTypeLabel">
+          <property name="text">
+           <string>Type</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QComboBox" name="basebandType">
+          <property name="toolTip">
+           <string>Either make the filter flat or set a window type.</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="basebandLowCutoffLabel">
+          <property name="text">
+           <string>Low Cutoff (Hz)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QDoubleSpinBox" name="basebandLowCutoff">
+          <property name="maximum">
+           <double>1000000.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="basebandHighCutoffLabel">
+          <property name="text">
+           <string>High Cutoff (kHz)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QDoubleSpinBox" name="basebandHighCutoff"/>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="basebandTransitionLabel">
+          <property name="text">
+           <string>Trans Width (Hz)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QDoubleSpinBox" name="basebandTransition">
+          <property name="maximum">
+           <double>100000.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
+         <widget class="QLabel" name="basebandAttenuationLabel">
+          <property name="text">
+           <string>Attenuation (dB)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QDoubleSpinBox" name="basebandAttenuation">
+          <property name="maximum">
+           <double>1000.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QDoubleSpinBox" name="basebandGain">
+          <property name="toolTip">
+           <string>Gain (in the pass region) of this filter stage.</string>
+          </property>
+          <property name="maximum">
+           <double>10000.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.100000000000000</double>
+          </property>
+          <property name="value">
+           <double>1.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+ <buttongroups>
+  <buttongroup name="probe"/>
+ </buttongroups>
+</ui>
