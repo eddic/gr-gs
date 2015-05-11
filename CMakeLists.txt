@@ -1,6 +1,7 @@
 CMAKE_MINIMUM_REQUIRED (VERSION 2.8)
 PROJECT (gr-isatec CXX)
-SET (CMAKE_CXX_FLAGS "-std=c++11 -pthread -Wall -Werror -march=native -mtune=native -O3 -fvisibility=hidden -fvisibility-inlines-hidden -fomit-frame-pointer")
+#SET (CMAKE_CXX_FLAGS "-std=c++11 -pthread -Wall -Werror -march=native -mtune=native -O3 -fvisibility=hidden -fvisibility-inlines-hidden -fomit-frame-pointer")
+SET (CMAKE_CXX_FLAGS "-std=c++11 -pthread -Wall -Werror -march=native -mtune=native -O0 -fvisibility=hidden -fvisibility-inlines-hidden -ggdb")
 
 INCLUDE_DIRECTORIES ("include")
 
@@ -88,6 +89,34 @@ IF(Qt4_FOUND AND Gnuradio_FOUND AND UHD_FOUND)
 		"${UHD_LIBRARIES}"
 		"${QT_LIBRARIES}")
 	ADD_DEPENDENCIES ( guidedScramblingDemo gnuradio-isatec)
+ENDIF()
+
+FIND_PACKAGE(Qt4)
+SET(GR_REQUIRED_COMPONENTS QTGUI BLOCKS ANALOG DIGITAL AUDIO FILTER UHD)
+FIND_PACKAGE(Gnuradio "3.7.6")
+FIND_PACKAGE(UHD)
+IF(Qt4_FOUND AND Gnuradio_FOUND AND UHD_FOUND)
+   # General Audio Receiver
+
+   QT4_WRAP_CPP(audioReceiver_HEADERS_MOC "include/audioReceiver.hpp")
+   QT4_WRAP_UI(audioReceiver_FORMS_HEADERS "ui/audioReceiver.ui")
+	INCLUDE(${QT_USE_FILE})
+	ADD_DEFINITIONS(${QT_DEFINITIONS})
+	ADD_EXECUTABLE(audioReceiver
+		"src/audioReceiver.cpp"
+		${audioReceiver_HEADERS_MOC}
+		${audioReceiver_FORMS_HEADERS})
+	TARGET_INCLUDE_DIRECTORIES ( audioReceiver PRIVATE
+		"${CMAKE_CURRENT_BINARY_DIR}"
+		"${Boost_INCLUDE_DIRS}"
+		"${UHD_INCLUDE_DIRS}"
+		"${GNURADIO_RUNTIME_INCLUDE_DIRS}"
+		"${GNURADIO_ALL_INCLUDE_DIRS}")
+	TARGET_LINK_LIBRARIES ( audioReceiver PUBLIC
+		"${Boost_LIBRARIES}"
+		"${GNURADIO_ALL_LIBRARIES}"
+		"${UHD_LIBRARIES}"
+		"${QT_LIBRARIES}")
 ENDIF()
 
 # Documentation
