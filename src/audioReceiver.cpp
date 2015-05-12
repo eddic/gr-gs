@@ -2,7 +2,7 @@
  * @file       audioReceiver.cpp
  * @brief      Defines the Audio Receiver application
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       May 11, 2015
+ * @date       May 12, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -38,11 +38,13 @@ int main(int argc, char *argv[])
 }
 
 #include <sstream>
+#include <ctime>
 #include <cmath>
 #include <gnuradio/filter/firdes.h>
 #include <thread>
 
 #include <QMessageBox>
+#include <QFileDialog>
 
 // gr::Isatec::Applications::AudioReceiver::USRP Functions
 
@@ -716,6 +718,34 @@ void gr::Isatec::Applications::AudioReceiver::Audio::connect()
    }
 }
 
+void gr::Isatec::Applications::AudioReceiver::Audio::record()
+{
+   if(m_wavfile)
+   {
+      if(m_ui.audioRecord->isChecked())
+      {
+         char time_buf[20];
+         std::time_t now = time(0);
+         std::strftime(time_buf, 21, "%Y-%m-%d-%H:%S:%M", std::localtime(&now));
+         m_wavfile->open((m_ui.audioFolder->text().toStdString() + '/' + time_buf + ".wav").c_str());
+         m_seconds = 0;
+         m_ui.audioRecordLength->display(int(m_seconds));
+         m_timer.start(1000);
+      }
+      else
+      {
+         m_timer.stop();
+         m_wavfile->close();
+      }
+   }
+}
+
+void gr::Isatec::Applications::AudioReceiver::Audio::timer()
+{
+   m_ui.audioRecordLength->display(int(++m_seconds));
+   m_timer.start(1000);
+}
+
 // gr::Isatec::Applications::AudioReceiver::Display Functions
 
 void gr::Isatec::Applications::AudioReceiver::Display::initialize(QWidget* parent)
@@ -1038,6 +1068,9 @@ gr::Isatec::Applications::AudioReceiver::AudioReceiver():
       QObject::connect(m_ui.audioBypass, SIGNAL(clicked()), this, SLOT(reconfigure()));
       QObject::connect(m_ui.audioSampleRate, SIGNAL(currentIndexChanged(int)), this, SLOT(reconfigure()));
       QObject::connect(m_ui.audioSampleSize, SIGNAL(currentIndexChanged(int)), this, SLOT(reconfigure()));
+      QObject::connect(m_ui.audioFolderButton, SIGNAL(clicked()), this, SLOT(folder()));
+      QObject::connect(m_ui.audioRecord, SIGNAL(clicked()), this, SLOT(record()));
+      QObject::connect(&m_audio.m_timer, SIGNAL(timeout()), this, SLOT(timer()));
    }
 }
 
@@ -1149,4 +1182,25 @@ void gr::Isatec::Applications::AudioReceiver::enableSignals()
    m_ui.audioBypass->blockSignals(false);
    m_ui.audioSampleRate->blockSignals(false);
    m_ui.audioSampleSize->blockSignals(false);
+}
+
+void gr::Isatec::Applications::AudioReceiver::folder()
+{
+   disableSignals();
+   m_ui.audioFolder->setText(QFileDialog::getExistingDirectory(this, tr("Select Record Folder"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks));
+   enableSignals();
+}
+
+void gr::Isatec::Applications::AudioReceiver::record()
+{
+   disableSignals();
+   m_audio.record();
+   enableSignals();
+}
+
+void gr::Isatec::Applications::AudioReceiver::timer()
+{
+   disableSignals();
+   m_audio.timer();
+   enableSignals();
 }

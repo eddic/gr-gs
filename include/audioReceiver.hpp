@@ -2,7 +2,7 @@
  * @file       audioReceiver.hpp
  * @brief      Declares the Audio Receiver demo application
  * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       May 11, 2015
+ * @date       May 12, 2015
  * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
  *             under the GNU General Public License Version 3.
  */
@@ -29,6 +29,7 @@
 #define AUDIORECEIVER_HPP
 
 #include <QDialog>
+#include <QTimer>
 #include "ui_audioReceiver.h"
 
 #include <gnuradio/top_block.h>
@@ -79,7 +80,7 @@ namespace gr
           * This application allows the operator to receive a wide variety of
           * different signal and both visualize and listen to them.
           *
-          * @date    May 11, 2015
+          * @date    May 12, 2015
           * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
           */
          class AudioReceiver: public QDialog
@@ -298,6 +299,7 @@ namespace gr
                unsigned int m_sampleRate; //!< Current sample rate
                Baseband& m_baseband; //!< Reference to the upstream baseband filter
                gr::top_block_sptr& m_top;
+               unsigned int m_seconds;
 
             public:
                //! Configure the baseband filter
@@ -311,6 +313,15 @@ namespace gr
 
                //! Connect the blocks
                void connect();
+
+               //! Start an audio recording
+               void record();
+
+               //! Second timer
+               QTimer m_timer;
+
+               //! Time clocker
+               void timer();
 
                Audio(Ui::AudioReceiver& ui, Baseband& baseband, gr::top_block_sptr& top):
                   m_ui(ui),
@@ -386,6 +397,9 @@ namespace gr
          private slots:
             void reconfigure();
             void connect();
+            void folder();
+            void record();
+            void timer();
          };
       }
    }
