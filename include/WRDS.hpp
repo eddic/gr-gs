@@ -35,91 +35,91 @@
 //! GNU Radio Namespace
 namespace gr
 {
-   //! Contains all blocks for the %Isatec GNU Radio Module
-   namespace Isatec
-   {
-      //! Contains all classes for performing guided scrambling operations
-      namespace GuidedScrambling
-      {
-         //! Performs %WRDS (word running digital sum) analysis of a codeword
-         /*!
-          * @date    March 10, 2015
-          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-          */
-         class WRDS: public Analyzer
-         {
-         public:
-            //! %Feedback mechanism for %WRDS (word running digital sum) codeword analysis
-            /*!
-             * Here is where we store and pass on the RDS (running digital sum) value
-             * remaining at the end of the analysis.
-             *
-             * @date    March 10, 2015
-             * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-             */
-            class Feedback: public Analyzer::Feedback
-            {
-            public:
-               //! Clone %WRDS feedback data
-               /*!
-                * @return  Pointer to dynamically allocated %WRDS Feedback copy.
-                * @date    March 10, 2015
-                * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-                */
-               Analyzer::Feedback* clone() const;
+	//! Contains all blocks for the %Isatec GNU Radio Module
+	namespace Isatec
+	{
+		//! Contains all classes for performing guided scrambling operations
+		namespace GuidedScrambling
+		{
+			//! Performs %WRDS (word running digital sum) analysis of a codeword
+			/*!
+			 * @date    March 10, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+			 */
+			class WRDS: public Analyzer
+			{
+			public:
+				//! %Feedback mechanism for %WRDS (word running digital sum) codeword analysis
+				/*!
+				 * Here is where we store and pass on the RDS (running digital sum) value
+				 * remaining at the end of the analysis.
+				 *
+				 * @date    March 10, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+				 */
+				class Feedback: public Analyzer::Feedback
+				{
+				public:
+					//! Clone %WRDS feedback data
+					/*!
+					 * @return  Pointer to dynamically allocated %WRDS Feedback copy.
+					 * @date    March 10, 2015
+					 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+					 */
+					Analyzer::Feedback* clone() const;
 
-               Feedback();
+					Feedback();
 
-               std::complex<float> RDS; //!< RDS (running digital sum) value at end of codeword
-            };
+					std::complex<float> RDS; //!< RDS (running digital sum) value at end of codeword
+				};
 
-            //! Perform %WRDS analysis on a codeword
-            /*!
-             * This actually performs the %WRDS analysis on the passed codeword using
-             * the feedback provided. After calling this function the feedback() and
-             * analysis() accessors become valid.
-             *
-             * @param   [in] codeword The codeword to perform analysis on.
-             * @param   [in] feedback The feedback from the winning codeword to start
-             *          the analysis with.
-             * @param   [in] constellation This is a direct mapping of symbols (as
-             *          vector indices) to constellation points.
-             * @date    March 10, 2015
-             * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-             */
-            void analyze(
-                  const std::vector<Symbol>& codeword,
-                  const Analyzer::Feedback& feedback,
-                  const std::vector<std::complex<float>>& constellation);
+				//! Perform %WRDS analysis on a codeword
+				/*!
+				 * This actually performs the %WRDS analysis on the passed codeword using
+				 * the feedback provided. After calling this function the feedback() and
+				 * analysis() accessors become valid.
+				 *
+				 * @param   [in] codeword The codeword to perform analysis on.
+				 * @param   [in] feedback The feedback from the winning codeword to start
+				 *          the analysis with.
+				 * @param   [in] constellation This is a direct mapping of symbols (as
+				 *          vector indices) to constellation points.
+				 * @date    March 10, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+				 */
+				void analyze(
+						const std::vector<Symbol>& codeword,
+						const Analyzer::Feedback& feedback,
+						const std::vector<std::complex<float>>& constellation);
 
-            //! Extract feedback from %WRDS analysis
-            /*!
-             * The output of this function becomes valid after a completed call to the
-             * analyze() function.
-             *
-             * @return  Constant reference to internal Feedback object.
-             * @date    March 10, 2015
-             * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-             */
-            const Analyzer::Feedback& feedback() const;
+				//! Extract feedback from %WRDS analysis
+				/*!
+				 * The output of this function becomes valid after a completed call to the
+				 * analyze() function.
+				 *
+				 * @return  Constant reference to internal Feedback object.
+				 * @date    March 10, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+				 */
+				const Analyzer::Feedback& feedback() const;
 
-            //! Extract result from %WRDS analysis
-            /*!
-             * The output of this function becomes valid after a completed call to the
-             * analyze() function. In this context a lower analysis means a better
-             * codeword.
-             *
-             * @return  Floating point representation of the codeword's %WRDS
-             *          analysis. Lower is better.
-             * @date    March 10, 2015
-             * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-             */
-            float analysis() const;
-         private:
-            Feedback m_feedback; //!< %Feedback from %WRDS analysis
-         };
-      }
-   }
+				//! Extract result from %WRDS analysis
+				/*!
+				 * The output of this function becomes valid after a completed call to the
+				 * analyze() function. In this context a lower analysis means a better
+				 * codeword.
+				 *
+				 * @return  Floating point representation of the codeword's %WRDS
+				 *          analysis. Lower is better.
+				 * @date    March 10, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+				 */
+				float analysis() const;
+			private:
+				Feedback m_feedback; //!< %Feedback from %WRDS analysis
+			};
+		}
+	}
 }
 
 #endif

@@ -33,49 +33,49 @@
 //! GNU Radio Namespace
 namespace gr
 {
-   //! Contains all blocks for the %Isatec GNU Radio Module
-   namespace Isatec
-   {
-      //! Contains all block implementation too trivial for their own namespace
-      namespace Implementations
-      {
-         //! "Random Symbol Generator" GNU Radio block implementation
-         /*!
-          * Implements gr::Isatec::SymbolGenerator
-          *
-          * @date    March 8, 2015
-          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-          */
-         class SymbolGenerator_impl: public SymbolGenerator
-         {
-         public:
-            const std::vector<double>& weightings() const;
-            void set_weightings(const std::vector<double>& weightings);
-            unsigned int count();
+	//! Contains all blocks for the %Isatec GNU Radio Module
+	namespace Isatec
+	{
+		//! Contains all block implementation too trivial for their own namespace
+		namespace Implementations
+		{
+			//! "Random Symbol Generator" GNU Radio block implementation
+			/*!
+			 * Implements gr::Isatec::SymbolGenerator
+			 *
+			 * @date    March 8, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+			 */
+			class SymbolGenerator_impl: public SymbolGenerator
+			{
+			public:
+				const std::vector<double>& weightings() const;
+				void set_weightings(const std::vector<double>& weightings);
+				unsigned int count();
 
-            //! GNU Radio work function
-            int work(int noutput_items,
-                  gr_vector_const_void_star &input_items,
-                  gr_vector_void_star &output_items);
+				//! GNU Radio work function
+				int work(int noutput_items,
+						gr_vector_const_void_star &input_items,
+						gr_vector_void_star &output_items);
 
-            //! Initialize a random symbol generator with a default weightings
-            /*!
-             * This symbol generator is initialized to a state where the "0" symbol
-             * is outputted with 100\% probability.
-             *
-             * @return  Shared pointer to newly allocated random symbol generator
-             * @date    March 5, 2015
-             * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-             */
-            SymbolGenerator_impl();
+				//! Initialize a random symbol generator with a default weightings
+				/*!
+				 * This symbol generator is initialized to a state where the "0" symbol
+				 * is outputted with 100\% probability.
+				 *
+				 * @return  Shared pointer to newly allocated random symbol generator
+				 * @date    March 5, 2015
+				 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+				 */
+				SymbolGenerator_impl();
 
-         private:
-            mutable std::mutex m_mutex; //!< Always practice safe threading
-            unsigned int m_count; //!< How many symbols have we generated?
-            std::vector<double> m_weightings; //!< Our symbol weightings
-            std::default_random_engine m_generator; //!< Our random number generator
-            std::discrete_distribution<Symbol> m_distribution; //!< Our distribution
-         };
-      }
-   }
+			private:
+				mutable std::mutex m_mutex; //!< Always practice safe threading
+				unsigned int m_count; //!< How many symbols have we generated?
+				std::vector<double> m_weightings; //!< Our symbol weightings
+				std::default_random_engine m_generator; //!< Our random number generator
+				std::discrete_distribution<Symbol> m_distribution; //!< Our distribution
+			};
+		}
+	}
 }

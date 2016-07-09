@@ -48,78 +48,78 @@
 //! GNU Radio Namespace
 namespace gr
 {
-   //! Contains all blocks for the %Isatec GNU Radio Module
-   namespace Isatec
-   {
-      //! Contains all full demo applications for the %Isatec GNU Radio Module
-      namespace Applications
-      {
-         //! Graphical demo of the Guided Scrambling method
-         /*!
-          * This application demonstrates the spectral capabilities of the
-          * GuidedScrambler block.
-          *
-          * @date    March 10, 2015
-          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
-          */
-         class GuidedScramblingDemo: public QDialog
-         {
-            Q_OBJECT
+	//! Contains all blocks for the %Isatec GNU Radio Module
+	namespace Isatec
+	{
+		//! Contains all full demo applications for the %Isatec GNU Radio Module
+		namespace Applications
+		{
+			//! Graphical demo of the Guided Scrambling method
+			/*!
+			 * This application demonstrates the spectral capabilities of the
+			 * GuidedScrambler block.
+			 *
+			 * @date    March 10, 2015
+			 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+			 */
+			class GuidedScramblingDemo: public QDialog
+			{
+				Q_OBJECT
 
-         private:
-            Ui::GuidedScramblingDemo m_ui; //!< Main window user interface made in QT Designer
+			private:
+				Ui::GuidedScramblingDemo m_ui; //!< Main window user interface made in QT Designer
 
-            gr::top_block_sptr m_top; //!< The GNU Radio top block
-            gr::qtgui::freq_sink_c::sptr m_fft; //!< FFT display
-            gr::qtgui::const_sink_c::sptr m_constellation; //!< Constellation pattern display
-            gr::qtgui::time_sink_c::sptr m_eye; //!< Time domain signal view
-            gr::blocks::throttle::sptr m_throttle; //!< Used to control the baud rate in the absence of a USRP
-            gr::blocks::add_cc::sptr m_adder; //!< used to add the noise in
-            gr::analog::noise_source_c::sptr m_noise; //!< Used to generate the noise
-            gr::Isatec::GuidedScrambler::sptr m_guidedScrambler; //!< Our guided scrambler block
-            gr::Isatec::SymbolGenerator::sptr m_symbolGenerator; //!< The random symbol generator block
-            gr::Isatec::PulseGenerator::sptr m_pulseGenerator; //!< The pulse shaping block
-            gr::uhd::usrp_sink::sptr m_usrpSink; //!< Our physical output device
-            gr::uhd::usrp_source::sptr m_usrpSource; //!< Our physical input device
+				gr::top_block_sptr m_top; //!< The GNU Radio top block
+				gr::qtgui::freq_sink_c::sptr m_fft; //!< FFT display
+				gr::qtgui::const_sink_c::sptr m_constellation; //!< Constellation pattern display
+				gr::qtgui::time_sink_c::sptr m_eye; //!< Time domain signal view
+				gr::blocks::throttle::sptr m_throttle; //!< Used to control the baud rate in the absence of a USRP
+				gr::blocks::add_cc::sptr m_adder; //!< used to add the noise in
+				gr::analog::noise_source_c::sptr m_noise; //!< Used to generate the noise
+				gr::Isatec::GuidedScrambler::sptr m_guidedScrambler; //!< Our guided scrambler block
+				gr::Isatec::SymbolGenerator::sptr m_symbolGenerator; //!< The random symbol generator block
+				gr::Isatec::PulseGenerator::sptr m_pulseGenerator; //!< The pulse shaping block
+				gr::uhd::usrp_sink::sptr m_usrpSink; //!< Our physical output device
+				gr::uhd::usrp_source::sptr m_usrpSource; //!< Our physical input device
 
-            bool m_running; //!< True if the flow graph is running, false otherwise
+				bool m_running; //!< True if the flow graph is running, false otherwise
 
-            void pause(); //!< Pause the flow graph
-            void unpause(); //!< Unpause the flow graph
-            unsigned int m_pauses; //!< How many pause requests are "queued" up?
+				void pause(); //!< Pause the flow graph
+				void unpause(); //!< Unpause the flow graph
+				unsigned int m_pauses; //!< How many pause requests are "queued" up?
 
-            void bandwidth(); //!< Set the USRP bandwidth
-         public:
-            GuidedScramblingDemo();
-            ~GuidedScramblingDemo();
+				void bandwidth(); //!< Set the USRP bandwidth
+			public:
+				GuidedScramblingDemo();
+				~GuidedScramblingDemo();
 
-         private slots:
-            void start(); //!< Start/stop the flowgraph
-            void fieldSize(); //!< Update the field (symbol) size
-            void codewordLength(); //!< Update the codeword length used by the guided scrambler
-            void augmentingLength(); //!< Update the augmenting length used by the guided scrambler
-            void scrambler(); //!< Update the scrambling polynomial used by the guided scrambler
-            void selectionMethod(); //!< Update the selection method used by the guided scrambler
-            void blockEncoding(); //!< Set block or continuous encoding in the guided scrambler
-            void bypass(); //!< Bypass/unbypass the guided scrambler block
+			private slots:
+				void start(); //!< Start/stop the flowgraph
+				void fieldSize(); //!< Update the field (symbol) size
+				void codewordLength(); //!< Update the codeword length used by the guided scrambler
+				void augmentingLength(); //!< Update the augmenting length used by the guided scrambler
+				void scrambler(); //!< Update the scrambling polynomial used by the guided scrambler
+				void selectionMethod(); //!< Update the selection method used by the guided scrambler
+				void blockEncoding(); //!< Set block or continuous encoding in the guided scrambler
+				void bypass(); //!< Bypass/unbypass the guided scrambler block
 
-            void constellation(); //!< Update the constellation pattern used by numerous blocks
-            void baudRate(); //!< Update the baud rate (on the coded side of things)
-            void samplesPerSymbol(); //!< Update the amount of samples per symbol to generate
-            void frequency(); //!< Update the centre frequency
-            void weightings(); //!< Update the random symbol probability weightings
-            void pulseShape(); //!< Update the pulse shape used in pulse generation
-            void excessBandwidth(); //!< Update the excess bandwidth used in pulse generation
-            void taps(); //!< Update the amount of tapes used in pulse generation
-            void noise(); //!< Update the noise amplitude
-            void phase(); //!< Update the symbol phase shift applied in the pulse generator
+				void constellation(); //!< Update the constellation pattern used by numerous blocks
+				void baudRate(); //!< Update the baud rate (on the coded side of things)
+				void samplesPerSymbol(); //!< Update the amount of samples per symbol to generate
+				void frequency(); //!< Update the centre frequency
+				void weightings(); //!< Update the random symbol probability weightings
+				void pulseShape(); //!< Update the pulse shape used in pulse generation
+				void excessBandwidth(); //!< Update the excess bandwidth used in pulse generation
+				void taps(); //!< Update the amount of tapes used in pulse generation
+				void noise(); //!< Update the noise amplitude
+				void phase(); //!< Update the symbol phase shift applied in the pulse generator
 
-            void usrp(); //!< Reconfigure the USRP
-            void txGain(); //!< Reconfigure the USRP TX gain
-            void rxGain(); //!< Reconfigure the USRP RX gain
-         };
-      }
-   }
+				void usrp(); //!< Reconfigure the USRP
+				void txGain(); //!< Reconfigure the USRP TX gain
+				void rxGain(); //!< Reconfigure the USRP RX gain
+			};
+		}
+	}
 }
 
 #endif

@@ -36,168 +36,168 @@
 
 int gr::Isatec::GuidedScrambling::Tests::ScramblerGroup_test()
 {
-   std::cout << "\n*** Initiating gr::Isatec::GuidedScrambling::ScramblerGroup unit tests ***\n\n";
+	std::cout << "\n*** Initiating gr::Isatec::GuidedScrambling::ScramblerGroup unit tests ***\n\n";
 
-   std::cout << "Testing random block scrambling->descrambling cycle in GF2 with gr::Isatec::GuidedScrambling::ScramblerGroup... ";
-   {
-      std::cout.flush();
+	std::cout << "Testing random block scrambling->descrambling cycle in GF2 with gr::Isatec::GuidedScrambling::ScramblerGroup... ";
+	{
+		std::cout.flush();
 
-      const std::vector<Symbol> divider({1,0,1,1,0,1,1});
-      std::vector<Symbol> input;
-      input.resize(32);
+		const std::vector<Symbol> divider({1,0,1,1,0,1,1});
+		std::vector<Symbol> input;
+		input.resize(32);
 
-      const std::vector<Symbol> remainder(divider.size()-1);
+		const std::vector<Symbol> remainder(divider.size()-1);
 
-      const unsigned int indexStart=3;
-      const unsigned int indexEnd=14;
+		const unsigned int indexStart=3;
+		const unsigned int indexEnd=14;
 
-      ScramblerGroup scramblers;
-      scramblers.configure(input.size()+4,indexStart,indexEnd,4,divider.size()-1, 0, 2);
+		ScramblerGroup scramblers;
+		scramblers.configure(input.size()+4,indexStart,indexEnd,4,divider.size()-1, 0, 2);
 
-      Descrambler_impl descrambler;
-      descrambler.set_fieldSize(2);
-      descrambler.set_augmentingLength(4);
-      descrambler.set_codewordLength(input.size()+4);
-      descrambler.set_continuous(false);
-      descrambler.set_multiplier(divider);
+		Descrambler_impl descrambler;
+		descrambler.set_fieldSize(2);
+		descrambler.set_augmentingLength(4);
+		descrambler.set_codewordLength(input.size()+4);
+		descrambler.set_continuous(false);
+		descrambler.set_multiplier(divider);
 
-      std::random_device generator;
-      std::uniform_int_distribution<size_t> distribution(0, indexEnd-indexStart-1);
+		std::random_device generator;
+		std::uniform_int_distribution<size_t> distribution(0, indexEnd-indexStart-1);
 
-      for(unsigned int i=0; i<64; ++i)
-      {
-         Word::randomize<GF2>(input);
-         scramblers.scramble(divider, input, remainder, scramblers.winner()->feedback(), defaultConstellation(2));
-         descrambler.descramble(scramblers.winner()->output());
-         if(descrambler.output() != input)
-         {
-            std::cout << "failed!" << std::endl;
-            return 1;
-         }
-      }
+		for(unsigned int i=0; i<64; ++i)
+		{
+			Word::randomize<GF2>(input);
+			scramblers.scramble(divider, input, remainder, scramblers.winner()->feedback(), defaultConstellation(2));
+			descrambler.descramble(scramblers.winner()->output());
+			if(descrambler.output() != input)
+			{
+				std::cout << "failed!" << std::endl;
+				return 1;
+			}
+		}
 
-      std::cout << "success." << std::endl;
-   }
+		std::cout << "success." << std::endl;
+	}
 
-   std::cout << "Testing random continuous scrambling->descrambling cycle in GF2 with gr::Isatec::GuidedScrambling::ScramblerGroup... ";
-   {
-      std::cout.flush();
+	std::cout << "Testing random continuous scrambling->descrambling cycle in GF2 with gr::Isatec::GuidedScrambling::ScramblerGroup... ";
+	{
+		std::cout.flush();
 
-      const std::vector<Symbol> divider({1,0,1,1,0,1,1});
-      std::vector<Symbol> remainder(divider.size()-1);
-      std::vector<Symbol> input;
-      input.resize(32);
+		const std::vector<Symbol> divider({1,0,1,1,0,1,1});
+		std::vector<Symbol> remainder(divider.size()-1);
+		std::vector<Symbol> input;
+		input.resize(32);
 
-      const unsigned int indexStart=3;
-      const unsigned int indexEnd=14;
+		const unsigned int indexStart=3;
+		const unsigned int indexEnd=14;
 
-      ScramblerGroup scramblers;
-      scramblers.configure(input.size()+4,indexStart,indexEnd,4,divider.size()-1, 0, 2);
+		ScramblerGroup scramblers;
+		scramblers.configure(input.size()+4,indexStart,indexEnd,4,divider.size()-1, 0, 2);
 
-      Descrambler_impl descrambler;
-      descrambler.set_fieldSize(2);
-      descrambler.set_augmentingLength(4);
-      descrambler.set_codewordLength(input.size()+4);
-      descrambler.set_continuous(true);
-      descrambler.set_multiplier(divider);
+		Descrambler_impl descrambler;
+		descrambler.set_fieldSize(2);
+		descrambler.set_augmentingLength(4);
+		descrambler.set_codewordLength(input.size()+4);
+		descrambler.set_continuous(true);
+		descrambler.set_multiplier(divider);
 
-      for(unsigned int i=0; i<64; ++i)
-      {
-         Word::randomize<GF2>(input);
-         scramblers.scramble(divider, input, remainder, scramblers.winner()->feedback(), defaultConstellation(2));
-         remainder = scramblers.winner()->remainder();
-         descrambler.descramble(scramblers.winner()->output());
+		for(unsigned int i=0; i<64; ++i)
+		{
+			Word::randomize<GF2>(input);
+			scramblers.scramble(divider, input, remainder, scramblers.winner()->feedback(), defaultConstellation(2));
+			remainder = scramblers.winner()->remainder();
+			descrambler.descramble(scramblers.winner()->output());
 
-         if(descrambler.output() != input)
-         {
-            std::cout << "failed on " << i << "!" << std::endl;
-            return 1;
-         }
-      }
+			if(descrambler.output() != input)
+			{
+				std::cout << "failed on " << i << "!" << std::endl;
+				return 1;
+			}
+		}
 
-      std::cout << "success." << std::endl;
-   }
+		std::cout << "success." << std::endl;
+	}
 
-   std::cout << "Testing random block scrambling->descrambling cycle in GF4 with gr::Isatec::GuidedScrambling::ScramblerGroup... ";
-   {
-      std::cout.flush();
+	std::cout << "Testing random block scrambling->descrambling cycle in GF4 with gr::Isatec::GuidedScrambling::ScramblerGroup... ";
+	{
+		std::cout.flush();
 
-      const std::vector<Symbol> divider({2,3,1,1,3,3});
-      std::vector<Symbol> input;
-      input.resize(32);
+		const std::vector<Symbol> divider({2,3,1,1,3,3});
+		std::vector<Symbol> input;
+		input.resize(32);
 
-      const std::vector<Symbol> remainder(divider.size()-1);
+		const std::vector<Symbol> remainder(divider.size()-1);
 
-      const unsigned int indexStart=3;
-      const unsigned int indexEnd=14;
+		const unsigned int indexStart=3;
+		const unsigned int indexEnd=14;
 
-      ScramblerGroup scramblers;
-      scramblers.configure(input.size()+4,indexStart,indexEnd,4,divider.size()-1, 0, 4);
+		ScramblerGroup scramblers;
+		scramblers.configure(input.size()+4,indexStart,indexEnd,4,divider.size()-1, 0, 4);
 
-      Descrambler_impl descrambler;
-      descrambler.set_fieldSize(4);
-      descrambler.set_augmentingLength(4);
-      descrambler.set_codewordLength(input.size()+4);
-      descrambler.set_continuous(false);
-      descrambler.set_multiplier(divider);
+		Descrambler_impl descrambler;
+		descrambler.set_fieldSize(4);
+		descrambler.set_augmentingLength(4);
+		descrambler.set_codewordLength(input.size()+4);
+		descrambler.set_continuous(false);
+		descrambler.set_multiplier(divider);
 
-      std::random_device generator;
-      std::uniform_int_distribution<size_t> distribution(0, indexEnd-indexStart-1);
+		std::random_device generator;
+		std::uniform_int_distribution<size_t> distribution(0, indexEnd-indexStart-1);
 
-      for(unsigned int i=0; i<64; ++i)
-      {
-         Word::randomize<GF4>(input);
-         scramblers.scramble(divider, input, remainder, scramblers.winner()->feedback(), defaultConstellation(2));
-         descrambler.descramble(scramblers.winner()->output());
-         if(descrambler.output() != input)
-         {
-            std::cout << "failed!" << std::endl;
-            return 1;
-         }
-      }
+		for(unsigned int i=0; i<64; ++i)
+		{
+			Word::randomize<GF4>(input);
+			scramblers.scramble(divider, input, remainder, scramblers.winner()->feedback(), defaultConstellation(2));
+			descrambler.descramble(scramblers.winner()->output());
+			if(descrambler.output() != input)
+			{
+				std::cout << "failed!" << std::endl;
+				return 1;
+			}
+		}
 
-      std::cout << "success." << std::endl;
-   }
+		std::cout << "success." << std::endl;
+	}
 
-   std::cout << "Testing random continuous scrambling->descrambling cycle in GF4 with gr::Isatec::GuidedScrambling::ScramblerGroup... ";
-   {
-      std::cout.flush();
+	std::cout << "Testing random continuous scrambling->descrambling cycle in GF4 with gr::Isatec::GuidedScrambling::ScramblerGroup... ";
+	{
+		std::cout.flush();
 
-      const std::vector<Symbol> divider({1,0,1,1,0,1,1});
-      std::vector<Symbol> remainder(divider.size()-1,0);
-      std::vector<Symbol> input;
-      input.resize(32);
+		const std::vector<Symbol> divider({1,0,1,1,0,1,1});
+		std::vector<Symbol> remainder(divider.size()-1,0);
+		std::vector<Symbol> input;
+		input.resize(32);
 
-      const unsigned int indexStart=3;
-      const unsigned int indexEnd=14;
+		const unsigned int indexStart=3;
+		const unsigned int indexEnd=14;
 
-      ScramblerGroup scramblers;
-      scramblers.configure(input.size()+4,indexStart,indexEnd,4,divider.size()-1, 0, 4);
+		ScramblerGroup scramblers;
+		scramblers.configure(input.size()+4,indexStart,indexEnd,4,divider.size()-1, 0, 4);
 
-      Descrambler_impl descrambler;
-      descrambler.set_fieldSize(4);
-      descrambler.set_augmentingLength(4);
-      descrambler.set_codewordLength(input.size()+4);
-      descrambler.set_continuous(true);
-      descrambler.set_multiplier(divider);
+		Descrambler_impl descrambler;
+		descrambler.set_fieldSize(4);
+		descrambler.set_augmentingLength(4);
+		descrambler.set_codewordLength(input.size()+4);
+		descrambler.set_continuous(true);
+		descrambler.set_multiplier(divider);
 
-      for(unsigned int i=0; i<64; ++i)
-      {
-         Word::randomize<GF4>(input);
+		for(unsigned int i=0; i<64; ++i)
+		{
+			Word::randomize<GF4>(input);
 
-         scramblers.scramble(divider, input, remainder, scramblers.winner()->feedback(), defaultConstellation(2));
-         remainder = scramblers.winner()->remainder();
-         descrambler.descramble(scramblers.winner()->output());
+			scramblers.scramble(divider, input, remainder, scramblers.winner()->feedback(), defaultConstellation(2));
+			remainder = scramblers.winner()->remainder();
+			descrambler.descramble(scramblers.winner()->output());
 
-         if(descrambler.output() != input)
-         {
-            std::cout << "failed on " << i << "!" << std::endl;
-            return 1;
-         }
-      }
+			if(descrambler.output() != input)
+			{
+				std::cout << "failed on " << i << "!" << std::endl;
+				return 1;
+			}
+		}
 
-      std::cout << "success." << std::endl;
-   }
+		std::cout << "success." << std::endl;
+	}
 
-   return 0;
+	return 0;
 }

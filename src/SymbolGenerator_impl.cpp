@@ -30,55 +30,55 @@
 
 const std::vector<double>& gr::Isatec::Implementations::SymbolGenerator_impl::weightings() const
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   return m_weightings;
+	std::lock_guard<std::mutex> lock(m_mutex);
+	return m_weightings;
 }
 
 void gr::Isatec::Implementations::SymbolGenerator_impl::set_weightings(const std::vector<double>& weightings)
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   m_weightings = weightings;
+	std::lock_guard<std::mutex> lock(m_mutex);
+	m_weightings = weightings;
 
-   std::discrete_distribution<Symbol> distribution(
-         m_weightings.begin(),
-         m_weightings.end());
-   m_distribution.param(distribution.param());
+	std::discrete_distribution<Symbol> distribution(
+			m_weightings.begin(),
+			m_weightings.end());
+	m_distribution.param(distribution.param());
 }
 
 int gr::Isatec::Implementations::SymbolGenerator_impl::work(int noutput_items,
-      gr_vector_const_void_star &input_items,
-      gr_vector_void_star &output_items)
+		gr_vector_const_void_star &input_items,
+		gr_vector_void_star &output_items)
 {
-   Symbol* const start = reinterpret_cast<Symbol*>(output_items[0]);
-   Symbol* const end = start+noutput_items;
+	Symbol* const start = reinterpret_cast<Symbol*>(output_items[0]);
+	Symbol* const end = start+noutput_items;
 
-   std::lock_guard<std::mutex> lock(m_mutex);
+	std::lock_guard<std::mutex> lock(m_mutex);
 
-   for(auto output=start; output != end; ++output)
-      *output = m_distribution(m_generator);
+	for(auto output=start; output != end; ++output)
+		*output = m_distribution(m_generator);
 
-   m_count += noutput_items;
-   return noutput_items;
+	m_count += noutput_items;
+	return noutput_items;
 }
 
 gr::Isatec::Implementations::SymbolGenerator_impl::SymbolGenerator_impl():
-   gr::sync_block("Symbol Generator",
-      io_signature::make(0,0,0),
-      io_signature::make(1,1,sizeof(Symbol))),
-   m_count(0),
-   m_generator(1984)
+	gr::sync_block("Symbol Generator",
+		io_signature::make(0,0,0),
+		io_signature::make(1,1,sizeof(Symbol))),
+	m_count(0),
+	m_generator(1984)
 {
 }
 
 gr::Isatec::SymbolGenerator::sptr gr::Isatec::SymbolGenerator::make()
 {
-   return gnuradio::get_initial_sptr(new Implementations::SymbolGenerator_impl());
+	return gnuradio::get_initial_sptr(new Implementations::SymbolGenerator_impl());
 }
 
 unsigned int gr::Isatec::Implementations::SymbolGenerator_impl::count()
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   const unsigned int count=m_count;
-   m_count=0;
-   return count;
+	std::lock_guard<std::mutex> lock(m_mutex);
+	const unsigned int count=m_count;
+	m_count=0;
+	return count;
 }

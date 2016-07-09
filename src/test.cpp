@@ -32,48 +32,48 @@
 
 int main()
 {
-   try
-   {
-      if(gr::Isatec::GuidedScrambling::Tests::Word_test())
-      {
-         std::cout << "\n!!!! TEST FAILED !!!!\n";
-         return 1;
-      }
+	try
+	{
+		if(gr::Isatec::GuidedScrambling::Tests::Word_test())
+		{
+			std::cout << "\n!!!! TEST FAILED !!!!\n";
+			return 1;
+		}
 
-      if(gr::Isatec::GuidedScrambling::Tests::Analyzer_test())
-      {
-         std::cout << "\n!!!! TEST FAILED !!!!\n";
-         return 1;
-      }
+		if(gr::Isatec::GuidedScrambling::Tests::Analyzer_test())
+		{
+			std::cout << "\n!!!! TEST FAILED !!!!\n";
+			return 1;
+		}
 
-      if(gr::Isatec::GuidedScrambling::Tests::Descrambler_test())
-      {
-         std::cout << "\n!!!! TEST FAILED !!!!\n";
-         return 1;
-      }
+		if(gr::Isatec::GuidedScrambling::Tests::Descrambler_test())
+		{
+			std::cout << "\n!!!! TEST FAILED !!!!\n";
+			return 1;
+		}
 
-      if(gr::Isatec::GuidedScrambling::Tests::Scrambler_test())
-      {
-         std::cout << "\n!!!! TEST FAILED !!!!\n";
-         return 1;
-      }
+		if(gr::Isatec::GuidedScrambling::Tests::Scrambler_test())
+		{
+			std::cout << "\n!!!! TEST FAILED !!!!\n";
+			return 1;
+		}
 
-      if(gr::Isatec::GuidedScrambling::Tests::ScramblerGroup_test())
-      {
-         std::cout << "\n!!!! TEST FAILED !!!!\n";
-         return 1;
-      }
+		if(gr::Isatec::GuidedScrambling::Tests::ScramblerGroup_test())
+		{
+			std::cout << "\n!!!! TEST FAILED !!!!\n";
+			return 1;
+		}
 
-      if(gr::Isatec::GuidedScrambling::Tests::GuidedScrambler_test())
-      {
-         std::cout << "\n!!!! TEST FAILED !!!!\n";
-         return 1;
-      }
-   }
-   catch (std::exception& e)
-   {
-      std::cerr << "\nError: " << e.what() << '\n';
-      return 1;
-   }
-   return 0;
+		if(gr::Isatec::GuidedScrambling::Tests::GuidedScrambler_test())
+		{
+			std::cout << "\n!!!! TEST FAILED !!!!\n";
+			return 1;
+		}
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << "\nError: " << e.what() << '\n';
+		return 1;
+	}
+	return 0;
 }

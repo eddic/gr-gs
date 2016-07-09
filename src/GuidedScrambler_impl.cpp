@@ -1,29 +1,30 @@
 /*!
- * @file       GuidedScrambler_impl.cpp
- * @brief      Defines the "Guided Scrambler" GNU Radio block implementation
- * @author     Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date       March 3, 2015
- * @copyright  Copyright &copy; 2015 %Isatec Inc.  This project is released
- *             under the GNU General Public License Version 3.
+ * @file      GuidedScrambler_impl.cpp
+ * @brief     Defines the "Guided Scrambler" GNU Radio block implementation
+ * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
+ * @date      July 8, 2016
+ * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ *            the GNU General Public License Version 3.
  */
-
-/* Copyright (C) 2015 %Isatec Inc.
+/* Copyright (C) 2016 Eddie Carle
  *
- * This file is part of the %Isatec GNU Radio Module
+ * This file is part of the Guided Scrambling GNU Radio Module
  *
- * The %Isatec GNU Radio Module is free software: you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * The Guided Scrambling GNU Radio Module is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of
+ * the License, or (at your option) any later version.
  *
- * The %Isatec GNU Radio Module is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+ * The Guided Scrambling GNU Radio Module is distributed in the hope that it
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
  * Public License for more details.
  *
  * You should have received a copy of the GNU General Public License along with
- * The %Isatec GNU Radio Module.  If not, see <http://www.gnu.org/licenses/>.
+ * The Guided Scrambling GNU Radio Module.  If not, see
+ * <http://www.gnu.org/licenses/>.
  */
+
 
 #include <condition_variable>
 #include <cmath>
@@ -32,316 +33,353 @@
 #include <gnuradio/io_signature.h>
 
 #include "GuidedScrambler_impl.hpp"
-#include "gr-isatec/Exceptions.hpp"
+#include "gr-gs/Exceptions.hpp"
 #include "Word.hpp"
 
-void gr::Isatec::GuidedScrambling::GuidedScrambler_impl::killThreads()
+void gr::gs::GuidedScrambling::GuidedScrambler_impl::killThreads()
 {
-   if(m_threads.size())
-   {
-      {
-         std::lock_guard<std::mutex> lock(m_args.sleepMutex);
-         m_cargs.sleep=false;
-         m_args.sleepCV.notify_all();
-      }
-      for(auto thread=m_threads.begin(); thread!=m_threads.end(); ++thread)
-         thread->join();
-      m_threads.clear();
-   }
+    if(m_threads.size())
+    {
+        {
+            std::lock_guard<std::mutex> lock(m_args.sleepMutex);
+            m_cargs.sleep=false;
+            m_args.sleepCV.notify_all();
+        }
+        for(auto thread=m_threads.begin(); thread!=m_threads.end(); ++thread)
+            thread->join();
+        m_threads.clear();
+    }
 }
 
-const std::vector<gr::Isatec::Symbol>& gr::Isatec::GuidedScrambling::GuidedScrambler_impl::scramble(const std::vector<Symbol>& input)
+const std::vector<gr::gs::Symbol>&
+gr::gs::GuidedScrambling::GuidedScrambler_impl::scramble(
+        const std::vector<Symbol>& input)
 {
-   std::unique_lock<std::mutex> sleepLock(m_args.sleepMutex);
-   if(!m_threads.size())
-   {
-      if(m_augmentingLength < 1)
-         throw Exceptions::AugmentingLengthTooSmall();
+    std::unique_lock<std::mutex> sleepLock(m_args.sleepMutex);
+    if(!m_threads.size())
+    {
+        if(m_augmentingLength < 1)
+            throw Exceptions::AugmentingLengthTooSmall();
 
-      if(m_augmentingLength >= m_codewordLength)
-         throw Exceptions::AugmentingCodewordLengthMismatch();
+        if(m_augmentingLength >= m_codewordLength)
+            throw Exceptions::AugmentingCodewordLengthMismatch();
 
-      if(m_cargs.divider.size() < 2)
-         throw Exceptions::DivisorLengthTooSmall();
+        if(m_cargs.divider.size() < 2)
+            throw Exceptions::DivisorLengthTooSmall();
 
-      const unsigned int totalScramblers=std::pow(m_fieldSize, m_augmentingLength);
-      m_groups = std::min(m_groups, totalScramblers);
-      m_scramblerGroups.resize(m_groups);
-      m_threads.resize(m_groups);
-      m_cargs.remainder.resize(m_cargs.divider.size()-1);
-      std::fill(m_cargs.remainder.begin(), m_cargs.remainder.end(), 0);
-      m_cargs.sleep=true;
-      m_cargs.feedback.reset(manufactureFeedback(m_selectionMethod));
+        const unsigned int totalScramblers = std::pow(
+                m_fieldSize,
+                m_augmentingLength);
+        m_groups = std::min(m_groups, totalScramblers);
+        m_scramblerGroups.resize(m_groups);
+        m_threads.resize(m_groups);
+        m_cargs.remainder.resize(m_cargs.divider.size()-1);
+        std::fill(m_cargs.remainder.begin(), m_cargs.remainder.end(), 0);
+        m_cargs.sleep=true;
+        m_cargs.feedback.reset(manufactureFeedback(m_selectionMethod));
 
-      const unsigned int groupSize = (totalScramblers-1)/m_groups+1;
-      for(unsigned int i=0; i<m_groups; ++i)
-      {
-         m_scramblerGroups[i].configure(
-               m_codewordLength,
-               i*groupSize,
-               std::min(totalScramblers,(i+1)*groupSize),
-               m_augmentingLength,
-               m_cargs.divider.size()-1,
-               m_selectionMethod,
-               m_fieldSize);
-         m_threads[i] = std::thread(
-               &::gr::Isatec::GuidedScrambling::ScramblerGroup::handler,
-               &m_scramblerGroups[i],
-               std::ref(m_args),
-               std::cref(m_cargs));
-      }
-   }
-   else
-      m_args.sleepCV.notify_all();
+        const unsigned int groupSize = (totalScramblers-1)/m_groups+1;
+        for(unsigned int i=0; i<m_groups; ++i)
+        {
+            m_scramblerGroups[i].configure(
+                    m_codewordLength,
+                    i*groupSize,
+                    std::min(totalScramblers,(i+1)*groupSize),
+                    m_augmentingLength,
+                    m_cargs.divider.size()-1,
+                    m_selectionMethod,
+                    m_fieldSize);
+            m_threads[i] = std::thread(
+                    &::gr::gs::GuidedScrambling::ScramblerGroup::handler,
+                    &m_scramblerGroups[i],
+                    std::ref(m_args),
+                    std::cref(m_cargs));
+        }
+    }
+    else
+        m_args.sleepCV.notify_all();
 
-   if(input.size() != m_codewordLength-m_augmentingLength)
-      throw Exceptions::BadInputLength();
+    if(input.size() != m_codewordLength-m_augmentingLength)
+        throw Exceptions::BadInputLength();
 
-   m_cargs.input = &input;
-   m_args.count = m_groups;
-   std::unique_lock<std::mutex> countLock(m_args.countMutex);
-   sleepLock.unlock();
-   do
-      m_args.countCV.wait(countLock);
-   while(m_args.count > 0);
+    m_cargs.input = &input;
+    m_args.count = m_groups;
+    std::unique_lock<std::mutex> countLock(m_args.countMutex);
+    sleepLock.unlock();
+    do
+        m_args.countCV.wait(countLock);
+    while(m_args.count > 0);
 
-   auto winner = m_scramblerGroups.front().winner();
-   for(auto const& scramblerGroup: m_scramblerGroups)
-      if(scramblerGroup.winner()->analysis() < winner->analysis())
-         winner = scramblerGroup.winner();
+    auto winner = m_scramblerGroups.front().winner();
+    for(auto const& scramblerGroup: m_scramblerGroups)
+        if(scramblerGroup.winner()->analysis() < winner->analysis())
+            winner = scramblerGroup.winner();
 
-   m_cargs.feedback.reset(winner->feedback().clone());
-   if(m_continuous)
-      std::copy(winner->remainder().begin(), winner->remainder().end(), m_cargs.remainder.begin());
+    m_cargs.feedback.reset(winner->feedback().clone());
+    if(m_continuous)
+        std::copy(
+                winner->remainder().begin(),
+                winner->remainder().end(),
+                m_cargs.remainder.begin());
 
-   return winner->output();
+    return winner->output();
 }
 
-gr::Isatec::GuidedScrambling::GuidedScrambler_impl::GuidedScrambler_impl():
-   gr::block("Guided Scrambler",
-      gr::io_signature::make(1,1,sizeof(Symbol)),
-      gr::io_signature::make(1,1,sizeof(Symbol))),
-   m_codewordLength(12),
-   m_augmentingLength(3),
-   m_selectionMethod(0),
-   m_groups(std::thread::hardware_concurrency()),
-   m_fieldSize(4),
-   m_continuous(true),
-   m_codeword(nullptr),
-   m_sourceword(m_codewordLength-m_augmentingLength),
-   m_sourcewordIt(m_sourceword.begin())
+gr::gs::GuidedScrambling::GuidedScrambler_impl::GuidedScrambler_impl():
+    gr::block("Guided Scrambler",
+        gr::io_signature::make(1,1,sizeof(Symbol)),
+        gr::io_signature::make(1,1,sizeof(Symbol))),
+    m_codewordLength(12),
+    m_augmentingLength(3),
+    m_selectionMethod(0),
+    m_groups(std::thread::hardware_concurrency()),
+    m_fieldSize(4),
+    m_continuous(true),
+    m_codeword(nullptr),
+    m_sourceword(m_codewordLength-m_augmentingLength),
+    m_sourcewordIt(m_sourceword.begin())
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   m_cargs.divider={1,0,0,1};
-   m_cargs.constellation = defaultConstellation(m_fieldSize);
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_cargs.divider={1,0,0,1};
+    m_cargs.constellation = defaultConstellation(m_fieldSize);
 }
 
-const std::string& gr::Isatec::GuidedScrambling::GuidedScrambler_impl::selectionMethod() const
+const std::string&
+gr::gs::GuidedScrambling::GuidedScrambler_impl::selectionMethod() const
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   return Analyzer::names[m_selectionMethod];
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return Analyzer::names[m_selectionMethod];
 }
 
-void gr::Isatec::GuidedScrambling::GuidedScrambler_impl::set_selectionMethod(const std::string& method)
+void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_selectionMethod(
+        const std::string& method)
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   m_codeword = nullptr;
-   auto result = std::find(Analyzer::names.begin(), Analyzer::names.end(), method);
-   m_selectionMethod = result - Analyzer::names.begin();
-   killThreads();
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_codeword = nullptr;
+    auto result = std::find(
+            Analyzer::names.begin(),
+            Analyzer::names.end(),
+            method);
+    m_selectionMethod = result - Analyzer::names.begin();
+    killThreads();
 }
 
-void gr::Isatec::GuidedScrambling::GuidedScrambler_impl::set_constellation(const std::vector<std::complex<float>>& constellation)
+void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_constellation(
+        const std::vector<std::complex<float>>& constellation)
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   m_codeword = nullptr;
-   if(constellation.size())
-   {
-      m_cargs.constellation = constellation;
-      m_cargs.constellation.resize(m_fieldSize);
-   }
-   else
-      m_cargs.constellation = defaultConstellation(m_fieldSize);
-   killThreads();
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_codeword = nullptr;
+    if(constellation.size())
+    {
+        m_cargs.constellation = constellation;
+        m_cargs.constellation.resize(m_fieldSize);
+    }
+    else
+        m_cargs.constellation = defaultConstellation(m_fieldSize);
+    killThreads();
 }
 
-void gr::Isatec::GuidedScrambling::GuidedScrambler_impl::set_fieldSize(const unsigned int size)
+void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_fieldSize(
+        const unsigned int size)
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   m_codeword = nullptr;
-   m_fieldSize = size;
-   m_cargs.constellation.resize(size);
-   for(auto& symbol: m_cargs.divider)
-      if(symbol >= size)
-         symbol = size-1;
-   killThreads();
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_codeword = nullptr;
+    m_fieldSize = size;
+    m_cargs.constellation.resize(size);
+    for(auto& symbol: m_cargs.divider)
+        if(symbol >= size)
+            symbol = size-1;
+    killThreads();
 }
 
-unsigned int gr::Isatec::GuidedScrambling::GuidedScrambler_impl::fieldSize() const
+unsigned int gr::gs::GuidedScrambling::GuidedScrambler_impl::fieldSize() const
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   return m_fieldSize;
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_fieldSize;
 }
 
-unsigned int gr::Isatec::GuidedScrambling::GuidedScrambler_impl::codewordLength() const
+unsigned int
+gr::gs::GuidedScrambling::GuidedScrambler_impl::codewordLength() const
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   return m_codewordLength;
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_codewordLength;
 }
 
-void gr::Isatec::GuidedScrambling::GuidedScrambler_impl::set_codewordLength(const unsigned int length)
+void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_codewordLength(
+        const unsigned int length)
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   m_sourceword.resize(length-m_augmentingLength);
-   m_sourcewordIt = m_sourceword.begin();
-   m_codeword = nullptr;
-   m_codewordLength = length;
-   killThreads();
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_sourceword.resize(length-m_augmentingLength);
+    m_sourcewordIt = m_sourceword.begin();
+    m_codeword = nullptr;
+    m_codewordLength = length;
+    killThreads();
 }
 
-unsigned int gr::Isatec::GuidedScrambling::GuidedScrambler_impl::augmentingLength() const
+unsigned int
+gr::gs::GuidedScrambling::GuidedScrambler_impl::augmentingLength() const
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   return m_augmentingLength;
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_augmentingLength;
 }
 
-void gr::Isatec::GuidedScrambling::GuidedScrambler_impl::set_augmentingLength(const unsigned int length)
+void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_augmentingLength(
+        const unsigned int length)
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   m_sourceword.resize(m_codewordLength-length);
-   m_sourcewordIt = m_sourceword.begin();
-   m_codeword = nullptr;
-   m_augmentingLength = length;
-   killThreads();
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_sourceword.resize(m_codewordLength-length);
+    m_sourcewordIt = m_sourceword.begin();
+    m_codeword = nullptr;
+    m_augmentingLength = length;
+    killThreads();
 }
 
-bool gr::Isatec::GuidedScrambling::GuidedScrambler_impl::continuous() const
+bool gr::gs::GuidedScrambling::GuidedScrambler_impl::continuous() const
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   return m_continuous;
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_continuous;
 }
 
-void gr::Isatec::GuidedScrambling::GuidedScrambler_impl::set_continuous(bool continuous)
+void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_continuous(
+        bool continuous)
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   m_codeword = nullptr;
-   m_continuous = continuous;
-   killThreads();
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_codeword = nullptr;
+    m_continuous = continuous;
+    killThreads();
 }
 
-const std::vector<std::complex<float>>& gr::Isatec::GuidedScrambling::GuidedScrambler_impl::constellation() const
+const std::vector<std::complex<float>>&
+gr::gs::GuidedScrambling::GuidedScrambler_impl::constellation() const
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   return m_cargs.constellation;
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_cargs.constellation;
 }
 
-const std::vector<gr::Isatec::Symbol>& gr::Isatec::GuidedScrambling::GuidedScrambler_impl::divider() const
+const std::vector<gr::gs::Symbol>&
+gr::gs::GuidedScrambling::GuidedScrambler_impl::divider() const
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   return m_cargs.divider;
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_cargs.divider;
 }
 
-void gr::Isatec::GuidedScrambling::GuidedScrambler_impl::set_divider(const std::vector<Symbol>& divider)
+void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_divider(
+        const std::vector<Symbol>& divider)
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   m_codeword = nullptr;
-   m_cargs.divider = divider;
-   killThreads();
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_codeword = nullptr;
+    m_cargs.divider = divider;
+    killThreads();
 }
 
-unsigned int gr::Isatec::GuidedScrambling::GuidedScrambler_impl::threads() const
+unsigned int gr::gs::GuidedScrambling::GuidedScrambler_impl::threads() const
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   return m_groups;
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_groups;
 }
 
-void gr::Isatec::GuidedScrambling::GuidedScrambler_impl::set_threads(unsigned int number)
+void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_threads(
+        unsigned int number)
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   m_codeword = nullptr;
-   if(number>0)
-      m_groups = number;
-   else
-      m_groups = std::thread::hardware_concurrency();
-   killThreads();
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_codeword = nullptr;
+    if(number>0)
+        m_groups = number;
+    else
+        m_groups = std::thread::hardware_concurrency();
+    killThreads();
 }
 
-gr::Isatec::GuidedScrambling::GuidedScrambler_impl::~GuidedScrambler_impl()
+gr::gs::GuidedScrambling::GuidedScrambler_impl::~GuidedScrambler_impl()
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   killThreads();
+    std::lock_guard<std::mutex> lock(m_mutex);
+    killThreads();
 }
 
-int gr::Isatec::GuidedScrambling::GuidedScrambler_impl::general_work(
-      int noutput_items,
-      gr_vector_int &ninput_items,
-      gr_vector_const_void_star &input_items,
-      gr_vector_void_star &output_items)
+int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
+        int noutput_items,
+        gr_vector_int &ninput_items,
+        gr_vector_const_void_star &input_items,
+        gr_vector_void_star &output_items)
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   const Symbol* input = reinterpret_cast<const Symbol*>(input_items[0]);
-   unsigned int inputSize = ninput_items[0];
+    std::lock_guard<std::mutex> lock(m_mutex);
+    const Symbol* input = reinterpret_cast<const Symbol*>(input_items[0]);
+    unsigned int inputSize = ninput_items[0];
 
-   Symbol* output = reinterpret_cast<Symbol*>(output_items[0]);
-   unsigned int outputSize = noutput_items;
+    Symbol* output = reinterpret_cast<Symbol*>(output_items[0]);
+    unsigned int outputSize = noutput_items;
 
-   while(true)
-   {
-      const unsigned int outputCopySize=m_codeword==nullptr?0:std::min(outputSize, unsigned(m_codeword->end()-m_codewordIt));
-      if(outputCopySize)
-      {
-         output = std::copy(m_codewordIt, m_codewordIt+outputCopySize, output);
-         outputSize -= outputCopySize;
-         m_codewordIt += outputCopySize;
-      }
-      else
-      {
-         const unsigned int inputCopySize=std::min(inputSize, unsigned(m_sourceword.end()-m_sourcewordIt));
-         if(inputCopySize)
-         {
-            m_sourcewordIt = std::copy(input, input+inputCopySize, m_sourcewordIt);
-            inputSize -= inputCopySize;
-            input += inputCopySize;
-            if(m_sourcewordIt == m_sourceword.end())
+    while(true)
+    {
+        const unsigned int outputCopySize = m_codeword==nullptr?0:std::min(
+                outputSize,
+                unsigned(m_codeword->end()-m_codewordIt));
+        if(outputCopySize)
+        {
+            output = std::copy(
+                    m_codewordIt,
+                    m_codewordIt+outputCopySize,
+                    output);
+            outputSize -= outputCopySize;
+            m_codewordIt += outputCopySize;
+        }
+        else
+        {
+            const unsigned int inputCopySize = std::min(
+                    inputSize,
+                    unsigned(m_sourceword.end()-m_sourcewordIt));
+            if(inputCopySize)
             {
-               m_codeword = &scramble(m_sourceword);
-               m_codewordIt = m_codeword->begin();
-               m_sourcewordIt = m_sourceword.begin();
+                m_sourcewordIt = std::copy(
+                        input,
+                        input+inputCopySize,
+                        m_sourcewordIt);
+                inputSize -= inputCopySize;
+                input += inputCopySize;
+                if(m_sourcewordIt == m_sourceword.end())
+                {
+                    m_codeword = &scramble(m_sourceword);
+                    m_codewordIt = m_codeword->begin();
+                    m_sourcewordIt = m_sourceword.begin();
+                }
+                else
+                    break;
             }
             else
-               break;
-         }
-         else
-            break;
-      }
-   }
+                break;
+        }
+    }
 
-   this->consume_each(ninput_items[0]-inputSize);
-   return noutput_items-outputSize;
+    this->consume_each(ninput_items[0]-inputSize);
+    return noutput_items-outputSize;
 }
 
-void gr::Isatec::GuidedScrambling::GuidedScrambler_impl::forecast(
-      int noutput_items,
-      gr_vector_int& ninput_items_required)
+void gr::gs::GuidedScrambling::GuidedScrambler_impl::forecast(
+        int noutput_items,
+        gr_vector_int& ninput_items_required)
 {
-   std::lock_guard<std::mutex> lock(m_mutex);
-   if(m_codeword != nullptr)
-      noutput_items -= m_codeword->end()-m_codewordIt;
-   if(noutput_items>0)
-   {
-      const int requiredCodewords = (noutput_items+m_codewordLength-1) / m_codewordLength;
-      ninput_items_required[0] = requiredCodewords*(m_codewordLength-m_augmentingLength)-(m_sourcewordIt-m_sourceword.begin());
-   }
-   else
-      ninput_items_required[0] = 0;
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if(m_codeword != nullptr)
+        noutput_items -= m_codeword->end()-m_codewordIt;
+    if(noutput_items>0)
+    {
+        const int requiredCodewords =
+            (noutput_items+m_codewordLength-1) / m_codewordLength;
+        ninput_items_required[0] =
+            requiredCodewords*(m_codewordLength-m_augmentingLength)
+            -(m_sourcewordIt-m_sourceword.begin());
+    }
+    else
+        ninput_items_required[0] = 0;
 }
 
-gr::Isatec::GuidedScrambler::sptr gr::Isatec::GuidedScrambler::make()
+gr::gs::GuidedScrambler::sptr gr::gs::GuidedScrambler::make()
 {
-   return gnuradio::get_initial_sptr(new ::gr::Isatec::GuidedScrambling::GuidedScrambler_impl());
+    return gnuradio::get_initial_sptr(
+            new ::gr::gs::GuidedScrambling::GuidedScrambler_impl());
 }
 
-const std::vector<std::string>& gr::Isatec::GuidedScrambler::selectionMethods()
+const std::vector<std::string>& gr::gs::GuidedScrambler::selectionMethods()
 {
-   return GuidedScrambling::Analyzer::names;
+    return GuidedScrambling::Analyzer::names;
 }
