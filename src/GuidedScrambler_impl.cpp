@@ -33,7 +33,7 @@
 #include <gnuradio/io_signature.h>
 
 #include "GuidedScrambler_impl.hpp"
-#include "gr-gs/Exceptions.hpp"
+#include "gr-gs/exceptions.h"
 #include "Word.hpp"
 
 void gr::gs::GuidedScrambling::GuidedScrambler_impl::killThreads()

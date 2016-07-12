@@ -27,7 +27,7 @@
  */
 
 #include "Descrambler_impl.hpp"
-#include "gr-gs/Exceptions.hpp"
+#include "gr-gs/exceptions.h"
 
 #include <algorithm>
 #include "Word.hpp"

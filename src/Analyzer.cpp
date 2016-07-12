@@ -26,7 +26,7 @@
  */
 
 #include "Analyzer.hpp"
-#include "gr-gs/Exceptions.hpp"
+#include "gr-gs/exceptions.h"
 
 #include "MSW.hpp"
 #include "WRDS.hpp"

@@ -6,7 +6,6 @@
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-
 /* Copyright (C) 2016 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
