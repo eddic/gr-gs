@@ -1,17 +1,56 @@
-CMAKE_MINIMUM_REQUIRED (VERSION 2.8)
-PROJECT (gr-gs CXX)
-#SET (CMAKE_CXX_FLAGS "-std=c++11 -pthread -Wall -Werror -march=native -mtune=native -O3 -fvisibility=hidden -fvisibility-inlines-hidden -fomit-frame-pointer")
-SET (CMAKE_CXX_FLAGS "-std=c++11 -pthread -Wall -Werror -march=native -mtune=native -O0 -fvisibility=hidden -fvisibility-inlines-hidden -ggdb")
+cmake_minimum_required(VERSION 2.8)
+project(gr-gs CXX)
 
-INCLUDE_DIRECTORIES ("include")
+# Set compile flags for gcc and clang
 
-FIND_PACKAGE (Boost 1.55.0 REQUIRED COMPONENTS filesystem system)
-SET(GR_REQUIRED_COMPONENTS RUNTIME)
-FIND_PACKAGE(Gnuradio "3.7.0" REQUIRED)
+if(UNIX)
+    set(CMAKE_CXX_FLAGS
+        "$ENV{CXXFLAGS} -std=c++14 -Wall -Werror -pthread -fvisibility-inlines-hidden -fvisibility=hidden")
+    set(CMAKE_CXX_FLAGS_RELEASE
+        "$ENV{CXXFLAGS} -O3 -fomit-frame-pointer -std=c++14 -Wall -Werror -pthread -fvisibility-inlines-hidden -fvisibility=hidden")
+    set(CMAKE_CXX_FLAGS_DEBUG
+        "$ENV{CXXFLAGS} -Og -fno-omit-frame-pointer -g -ggdb -std=c++14 -Wall -Werror -pthread")
+endif()
 
-# GNU Radio Module
+# Find Boost
 
-ADD_LIBRARY (gnuradio-gs SHARED
+set(Boost_ADDITIONAL_VERSIONS
+    "1.35.0" "1.35" "1.36.0" "1.36" "1.37.0" "1.37" "1.38.0" "1.38" "1.39.0" "1.39"
+    "1.40.0" "1.40" "1.41.0" "1.41" "1.42.0" "1.42" "1.43.0" "1.43" "1.44.0" "1.44"
+    "1.45.0" "1.45" "1.46.0" "1.46" "1.47.0" "1.47" "1.48.0" "1.48" "1.49.0" "1.49"
+    "1.50.0" "1.50" "1.51.0" "1.51" "1.52.0" "1.52" "1.53.0" "1.53" "1.54.0" "1.54"
+    "1.55.0" "1.55" "1.56.0" "1.56" "1.57.0" "1.57" "1.58.0" "1.58" "1.59.0" "1.59"
+    "1.60.0" "1.60" "1.61.0" "1.61" "1.62.0" "1.62" "1.63.0" "1.63" "1.64.0" "1.64"
+    "1.65.0" "1.65" "1.66.0" "1.66" "1.67.0" "1.67" "1.68.0" "1.68" "1.69.0" "1.69"
+)
+find_package(Boost 1.35.0 REQUIRED COMPONENTS filesystem system)
+
+# Find GNU Radio
+
+set(GR_REQUIRED_COMPONENTS RUNTIME)
+find_package(Gnuradio "3.7.0" REQUIRED)
+
+# Install directories
+
+include(GrPlatform) #define LIB_SUFFIX
+set(GR_RUNTIME_DIR bin)
+set(GR_LIBRARY_DIR lib${LIB_SUFFIX})
+set(GR_INCLUDE_DIR include/gr-gs)
+set(GR_DATA_DIR share)
+set(GR_PKG_DATA_DIR ${GR_DATA_DIR}/${CMAKE_PROJECT_NAME})
+set(GR_DOC_DIR ${GR_DATA_DIR}/doc)
+set(GR_PKG_DOC_DIR ${GR_DOC_DIR}/${CMAKE_PROJECT_NAME})
+set(GR_CONF_DIR etc)
+set(GR_PKG_CONF_DIR ${GR_CONF_DIR}/${CMAKE_PROJECT_NAME}/conf.d)
+set(GR_LIBEXEC_DIR libexec)
+set(GR_PKG_LIBEXEC_DIR ${GR_LIBEXEC_DIR}/${CMAKE_PROJECT_NAME})
+set(GRC_BLOCKS_DIR ${GR_PKG_DATA_DIR}/grc/blocks)
+
+include_directories("include")
+
+# Guided Scrambling GNU Radio Module
+
+add_library(gnuradio-gs SHARED
     src/MSW.cpp
     src/WRDS.cpp
     src/MSW2.cpp
@@ -21,115 +60,117 @@ ADD_LIBRARY (gnuradio-gs SHARED
     src/GuidedScrambler_impl.cpp
     src/SymbolGenerator_impl.cpp
     src/PulseGenerator_impl.cpp)
-TARGET_INCLUDE_DIRECTORIES ( gnuradio-gs PRIVATE
+set_target_properties(gnuradio-gs PROPERTIES DEFINE_SYMBOL "gnuradio_gs_EXPORTS")
+target_include_directories(gnuradio-gs PRIVATE
     "${Boost_INCLUDE_DIRS}"
     "${GNURADIO_RUNTIME_INCLUDE_DIRS}"
     "${GNURADIO_ALL_INCLUDE_DIRS}")
-TARGET_LINK_LIBRARIES ( gnuradio-gs PUBLIC
+target_link_libraries(gnuradio-gs PUBLIC
     "${Boost_LIBRARIES}"
     "${GNURADIO_ALL_LIBRARIES}")
-INSTALL (DIRECTORY
+install(DIRECTORY
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs"
     DESTINATION "include")
-INSTALL (TARGETS gnuradio-gs LIBRARY DESTINATION lib)
+install(TARGETS gnuradio-gs LIBRARY DESTINATION lib)
 
 # Guided Scrambling unit tests
 
-ADD_EXECUTABLE ( guidedScramblingTest
-    src/MSW.cpp
-    src/WRDS.cpp
-    src/MSW2.cpp
+enable_testing()
+
+add_executable(Analyzer_test EXCLUDE_FROM_ALL
+    tests/Analyzer.cpp
     src/Analyzer.cpp
     src/Scrambler.cpp
-    src/ScramblerGroup.cpp
-    src/GuidedScrambler_impl.cpp
-    src/Word_test.cpp
-    src/Analyzer_test.cpp
-    src/Scrambler_test.cpp
-    src/ScramblerGroup_test.cpp
-    src/GuidedScrambler_test.cpp
-    src/test.cpp
-    src/Descrambler_test.cpp
+    src/MSW2.cpp
+    src/MSW.cpp
+    src/WRDS.cpp)
+add_test("gr::gs::GuidedScrambling::Analyzer" Analyzer_test)
+
+add_executable(Descrambler_test EXCLUDE_FROM_ALL
+    tests/Descrambler.cpp
     src/Descrambler_impl.cpp)
-TARGET_INCLUDE_DIRECTORIES ( guidedScramblingTest PRIVATE
-    "${Boost_INCLUDE_DIRS}"
-    "${GNURADIO_RUNTIME_INCLUDE_DIRS}"
-    "${GNURADIO_ALL_INCLUDE_DIRS}")
-TARGET_LINK_LIBRARIES ( guidedScramblingTest PUBLIC
+target_link_libraries(Descrambler_test PRIVATE
     "${Boost_LIBRARIES}"
     "${GNURADIO_ALL_LIBRARIES}")
+add_test("gr::gs::Descrambler" Descrambler_test)
 
-# Applications
+add_executable(Word_test EXCLUDE_FROM_ALL
+    tests/Word.cpp
+    src/Scrambler.cpp
+    src/Analyzer.cpp
+    src/MSW2.cpp
+    src/MSW.cpp
+    src/WRDS.cpp
+    src/Descrambler_impl.cpp)
+target_link_libraries(Word_test PRIVATE
+    "${Boost_LIBRARIES}"
+    "${GNURADIO_ALL_LIBRARIES}")
+add_test("gr::gs::GuidedScrambling::Word" Word_test)
 
-FIND_PACKAGE(Qt4)
-SET(GR_REQUIRED_COMPONENTS QTGUI BLOCKS ANALOG UHD)
-FIND_PACKAGE(Gnuradio "3.7.6")
-FIND_PACKAGE(UHD)
-IF(Qt4_FOUND AND Gnuradio_FOUND AND UHD_FOUND)
-    # Guided Scrambling demonstration
+add_executable(Scrambler_test EXCLUDE_FROM_ALL
+    tests/Scrambler.cpp
+    src/Scrambler.cpp
+    src/Analyzer.cpp
+    src/MSW2.cpp
+    src/MSW.cpp
+    src/WRDS.cpp
+    src/Descrambler_impl.cpp)
+target_link_libraries(Scrambler_test PRIVATE
+    "${Boost_LIBRARIES}"
+    "${GNURADIO_ALL_LIBRARIES}")
+add_test("gr::gs::GuidedScrambling::Scrambler" Scrambler_test)
 
-    QT4_WRAP_CPP(guidedScramblingDemo_HEADERS_MOC "include/guidedScramblingDemo.hpp")
-    QT4_WRAP_UI(guidedScramblingDemo_FORMS_HEADERS "ui/guidedScramblingDemo.ui")
-    INCLUDE(${QT_USE_FILE})
-    ADD_DEFINITIONS(${QT_DEFINITIONS})
-    ADD_EXECUTABLE(guidedScramblingDemo
-        "src/guidedScramblingDemo.cpp"
-        ${guidedScramblingDemo_HEADERS_MOC}
-        ${guidedScramblingDemo_FORMS_HEADERS})
-    TARGET_INCLUDE_DIRECTORIES ( guidedScramblingDemo PRIVATE
-        "${CMAKE_CURRENT_BINARY_DIR}"
-        "${Boost_INCLUDE_DIRS}"
-        "${UHD_INCLUDE_DIRS}"
-        "${GNURADIO_RUNTIME_INCLUDE_DIRS}"
-        "${GNURADIO_ALL_INCLUDE_DIRS}")
-    TARGET_LINK_LIBRARIES ( guidedScramblingDemo PUBLIC
-        gnuradio-gs
-        "${Boost_LIBRARIES}"
-        "${GNURADIO_ALL_LIBRARIES}"
-        "${UHD_LIBRARIES}"
-        "${QT_LIBRARIES}")
-    ADD_DEPENDENCIES ( guidedScramblingDemo gnuradio-gs)
-ENDIF()
+add_executable(ScramblerGroup_test EXCLUDE_FROM_ALL
+    tests/ScramblerGroup.cpp
+    src/Scrambler.cpp
+    src/ScramblerGroup.cpp
+    src/Analyzer.cpp
+    src/MSW2.cpp
+    src/MSW.cpp
+    src/WRDS.cpp
+    src/Descrambler_impl.cpp)
+target_link_libraries(ScramblerGroup_test PRIVATE
+    "${Boost_LIBRARIES}"
+    "${GNURADIO_ALL_LIBRARIES}")
+add_test("gr::gs::GuidedScrambling::ScramblerGroup" ScramblerGroup_test)
 
-FIND_PACKAGE(Qt4)
-SET(GR_REQUIRED_COMPONENTS QTGUI BLOCKS ANALOG DIGITAL AUDIO FILTER UHD)
-FIND_PACKAGE(Gnuradio "3.7.6")
-FIND_PACKAGE(UHD)
-IF(Qt4_FOUND AND Gnuradio_FOUND AND UHD_FOUND)
-   # General Audio Receiver
+add_executable(GuidedScrambler_test EXCLUDE_FROM_ALL
+    tests/GuidedScrambler.cpp
+    src/Scrambler.cpp
+    src/ScramblerGroup.cpp
+    src/Analyzer.cpp
+    src/MSW2.cpp
+    src/MSW.cpp
+    src/WRDS.cpp
+    src/Descrambler_impl.cpp
+    src/GuidedScrambler_impl.cpp)
+target_link_libraries(GuidedScrambler_test PRIVATE
+    "${Boost_LIBRARIES}"
+    "${GNURADIO_ALL_LIBRARIES}")
+add_test("gr::gs::GuidedScrambler" GuidedScrambler_test)
 
-   QT4_WRAP_CPP(audioReceiver_HEADERS_MOC "include/audioReceiver.hpp")
-   QT4_WRAP_UI(audioReceiver_FORMS_HEADERS "ui/audioReceiver.ui")
-    INCLUDE(${QT_USE_FILE})
-    ADD_DEFINITIONS(${QT_DEFINITIONS})
-    ADD_EXECUTABLE(audioReceiver
-        "src/audioReceiver.cpp"
-        ${audioReceiver_HEADERS_MOC}
-        ${audioReceiver_FORMS_HEADERS})
-    TARGET_INCLUDE_DIRECTORIES ( audioReceiver PRIVATE
-        "${CMAKE_CURRENT_BINARY_DIR}"
-        "${Boost_INCLUDE_DIRS}"
-        "${UHD_INCLUDE_DIRS}"
-        "${GNURADIO_RUNTIME_INCLUDE_DIRS}"
-        "${GNURADIO_ALL_INCLUDE_DIRS}")
-    TARGET_LINK_LIBRARIES ( audioReceiver PUBLIC
-        "${Boost_LIBRARIES}"
-        "${GNURADIO_ALL_LIBRARIES}"
-        "${UHD_LIBRARIES}"
-        "${QT_LIBRARIES}")
-ENDIF()
+add_custom_target(tests DEPENDS
+    Descrambler_test
+    Analyzer_test
+    Word_test
+    Scrambler_test
+    ScramblerGroup_test
+    GuidedScrambler_test)
 
 # Documentation
 
-FIND_PACKAGE(Doxygen)
-IF(DOXYGEN_FOUND)
-    CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
         ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-    ADD_CUSTOM_TARGET(doc ALL
+    add_custom_target(doc
         ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        COMMENT "Generating API documentation with Doxygen" VERBATIM
-        )
-    INSTALL (DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/doc" DESTINATION
+        COMMENT "Generating API documentation with Doxygen" VERBATIM)
+    install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/doc" DESTINATION
         share/gr-gs)
-ENDIF(DOXYGEN_FOUND)
+endif(DOXYGEN_FOUND)
+
+# Swig
+
+GR_SWIG_MAKE(gs_swig gs_swig.i)

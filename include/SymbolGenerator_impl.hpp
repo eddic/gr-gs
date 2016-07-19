@@ -25,6 +25,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#ifndef GR_GS_SYMBOLGENERATOR_IMPL_HPP
+#define GR_GS_SYMBOLGENERATOR_IMPL_HPP
+
 #include "gr-gs/SymbolGenerator.h"
 
 #include <random>
@@ -49,7 +52,7 @@ namespace gr
             class SymbolGenerator_impl: public SymbolGenerator
             {
             public:
-                const std::vector<double> weightings() const;
+                const std::vector<double>& weightings() const;
                 void set_weightings(const std::vector<double>& weightings);
                 unsigned int count();
 
@@ -87,3 +90,5 @@ namespace gr
         }
     }
 }
+
+#endif

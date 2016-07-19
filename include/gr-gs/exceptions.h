@@ -2,7 +2,7 @@
  * @file      exceptions.h
  * @brief     Defines the GNU Radio Guided Scrambling C++ exception
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 8, 2016
+ * @date      July 19, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GR_GS_EXCEPTIONS_H
-#define GR_GS_EXCEPTIONS_H
+#ifndef GS_API_EXCEPTIONS_H
+#define GS_API_EXCEPTIONS_H
 
 #include <exception>
 
@@ -44,7 +44,7 @@ namespace gr
             //! Contains all exceptions related to guided scrambling
             namespace Exceptions
             {
-                class GR_GS BadScrambleInput: public std::exception
+                class GS_API BadScrambleInput: public std::exception
                 {
                     const char* what() const throw()
                     {
@@ -53,7 +53,7 @@ namespace gr
                     }
                 };
 
-                class GR_GS AugmentingCodewordLengthMismatch: public std::exception
+                class GS_API AugmentingCodewordLengthMismatch: public std::exception
                 {
                     const char* what() const throw()
                     {
@@ -63,7 +63,7 @@ namespace gr
                     }
                 };
 
-                class GR_GS AugmentingLengthTooSmall: public std::exception
+                class GS_API AugmentingLengthTooSmall: public std::exception
                 {
                     const char* what() const throw()
                     {
@@ -72,7 +72,7 @@ namespace gr
                     }
                 };
 
-                class GR_GS DivisorLengthTooSmall: public std::exception
+                class GS_API DivisorLengthTooSmall: public std::exception
                 {
                     const char* what() const throw()
                     {
@@ -81,7 +81,7 @@ namespace gr
                     }
                 };
 
-                class GR_GS BadSelectionMethod: public std::exception
+                class GS_API BadSelectionMethod: public std::exception
                 {
                     const char* what() const throw()
                     {
@@ -91,7 +91,7 @@ namespace gr
                     }
                 };
 
-                class GR_GS BadInputLength: public std::exception
+                class GS_API BadInputLength: public std::exception
                 {
                     const char* what() const throw()
                     {
@@ -101,7 +101,7 @@ namespace gr
                     }
                 };
 
-                class GR_GS BadFieldSize: public std::exception
+                class GS_API BadFieldSize: public std::exception
                 {
                     const char* what() const throw()
                     {

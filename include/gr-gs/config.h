@@ -47,10 +47,10 @@ namespace gr
     namespace gs
     {
         //! Pi
-        const double pi = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089;
+        const double pi = 3.141592653589793238462643383279502884197169399375105;
 
         //! Get a default constellation pattern for a field size
-        gs_API std::vector<std::complex<float>> defaultConstellation(
+        GS_API std::vector<std::complex<float>> defaultConstellation(
                 unsigned int fieldSize);
 
         //! Type to use for representation of symbols

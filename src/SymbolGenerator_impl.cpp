@@ -28,7 +28,7 @@
 #include "SymbolGenerator_impl.hpp"
 #include <gnuradio/io_signature.h>
 
-std::vector<double>
+const std::vector<double>&
 gr::gs::Implementations::SymbolGenerator_impl::weightings() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
