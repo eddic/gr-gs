@@ -40,6 +40,9 @@
 #  define GS_API __GR_ATTR_IMPORT
 #endif
 
+
+        //! Type to use for representation of symbols
+        typedef uint8_t Symbol;
 //! GNU Radio Namespace
 namespace gr
 {

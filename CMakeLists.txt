@@ -11,6 +11,7 @@ if(UNIX)
     set(CMAKE_CXX_FLAGS_DEBUG
         "$ENV{CXXFLAGS} -Og -fno-omit-frame-pointer -g -ggdb -std=c++14 -Wall -Werror -pthread")
 endif()
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 # Find Boost
 
@@ -24,11 +25,13 @@ set(Boost_ADDITIONAL_VERSIONS
     "1.65.0" "1.65" "1.66.0" "1.66" "1.67.0" "1.67" "1.68.0" "1.68" "1.69.0" "1.69"
 )
 find_package(Boost 1.35.0 REQUIRED COMPONENTS filesystem system)
+include_directories("${Boost_INCLUDE_DIRS}")
 
 # Find GNU Radio
 
-set(GR_REQUIRED_COMPONENTS RUNTIME)
+set(GR_REQUIRED_COMPONENTS RUNTIME FILTER)
 find_package(Gnuradio "3.7.0" REQUIRED)
+include_directories("${GNURADIO_RUNTIME_INCLUDE_DIRS}")
 
 # Install directories
 
@@ -46,8 +49,6 @@ set(GR_LIBEXEC_DIR libexec)
 set(GR_PKG_LIBEXEC_DIR ${GR_LIBEXEC_DIR}/${CMAKE_PROJECT_NAME})
 set(GRC_BLOCKS_DIR ${GR_PKG_DATA_DIR}/grc/blocks)
 
-include_directories("include")
-
 # Guided Scrambling GNU Radio Module
 
 add_library(gnuradio-gs SHARED
@@ -57,21 +58,25 @@ add_library(gnuradio-gs SHARED
     src/Analyzer.cpp
     src/Scrambler.cpp
     src/ScramblerGroup.cpp
+    src/ScramblerGroup.cpp
     src/GuidedScrambler_impl.cpp
+    src/Descrambler_impl.cpp
     src/SymbolGenerator_impl.cpp
     src/PulseGenerator_impl.cpp)
 set_target_properties(gnuradio-gs PROPERTIES DEFINE_SYMBOL "gnuradio_gs_EXPORTS")
-target_include_directories(gnuradio-gs PRIVATE
-    "${Boost_INCLUDE_DIRS}"
-    "${GNURADIO_RUNTIME_INCLUDE_DIRS}"
-    "${GNURADIO_ALL_INCLUDE_DIRS}")
 target_link_libraries(gnuradio-gs PUBLIC
     "${Boost_LIBRARIES}"
-    "${GNURADIO_ALL_LIBRARIES}")
-install(DIRECTORY
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs"
-    DESTINATION "include")
+    "${GNURADIO_FILTER_LIBRARIES}"
+    "${GNURADIO_RUNTIME_LIBRARIES}")
 install(TARGETS gnuradio-gs LIBRARY DESTINATION lib)
+install(FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/GuidedScrambler.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Descrambler.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/SymbolGenerator.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/PulseGenerator.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/exceptions.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/config.h"
+    DESTINATION "include/gr-gs")
 
 # Guided Scrambling unit tests
 
@@ -91,7 +96,7 @@ add_executable(Descrambler_test EXCLUDE_FROM_ALL
     src/Descrambler_impl.cpp)
 target_link_libraries(Descrambler_test PRIVATE
     "${Boost_LIBRARIES}"
-    "${GNURADIO_ALL_LIBRARIES}")
+    "${GNURADIO_RUNTIME_LIBRARIES}")
 add_test("gr::gs::Descrambler" Descrambler_test)
 
 add_executable(Word_test EXCLUDE_FROM_ALL
@@ -104,7 +109,7 @@ add_executable(Word_test EXCLUDE_FROM_ALL
     src/Descrambler_impl.cpp)
 target_link_libraries(Word_test PRIVATE
     "${Boost_LIBRARIES}"
-    "${GNURADIO_ALL_LIBRARIES}")
+    "${GNURADIO_RUNTIME_LIBRARIES}")
 add_test("gr::gs::GuidedScrambling::Word" Word_test)
 
 add_executable(Scrambler_test EXCLUDE_FROM_ALL
@@ -117,7 +122,7 @@ add_executable(Scrambler_test EXCLUDE_FROM_ALL
     src/Descrambler_impl.cpp)
 target_link_libraries(Scrambler_test PRIVATE
     "${Boost_LIBRARIES}"
-    "${GNURADIO_ALL_LIBRARIES}")
+    "${GNURADIO_RUNTIME_LIBRARIES}")
 add_test("gr::gs::GuidedScrambling::Scrambler" Scrambler_test)
 
 add_executable(ScramblerGroup_test EXCLUDE_FROM_ALL
@@ -131,7 +136,7 @@ add_executable(ScramblerGroup_test EXCLUDE_FROM_ALL
     src/Descrambler_impl.cpp)
 target_link_libraries(ScramblerGroup_test PRIVATE
     "${Boost_LIBRARIES}"
-    "${GNURADIO_ALL_LIBRARIES}")
+    "${GNURADIO_RUNTIME_LIBRARIES}")
 add_test("gr::gs::GuidedScrambling::ScramblerGroup" ScramblerGroup_test)
 
 add_executable(GuidedScrambler_test EXCLUDE_FROM_ALL
@@ -146,7 +151,7 @@ add_executable(GuidedScrambler_test EXCLUDE_FROM_ALL
     src/GuidedScrambler_impl.cpp)
 target_link_libraries(GuidedScrambler_test PRIVATE
     "${Boost_LIBRARIES}"
-    "${GNURADIO_ALL_LIBRARIES}")
+    "${GNURADIO_RUNTIME_LIBRARIES}")
 add_test("gr::gs::GuidedScrambler" GuidedScrambler_test)
 
 add_custom_target(tests DEPENDS
@@ -168,9 +173,35 @@ if(DOXYGEN_FOUND)
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Generating API documentation with Doxygen" VERBATIM)
     install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/doc" DESTINATION
-        share/gr-gs)
+        share/gr-gs
+        OPTIONAL)
 endif(DOXYGEN_FOUND)
 
 # Swig
 
-GR_SWIG_MAKE(gs_swig gs_swig.i)
+find_package(SWIG REQUIRED)
+include(${SWIG_USE_FILE})
+
+find_package(PythonLibs 2)
+include_directories("${PYTHON_INCLUDE_DIRS}")
+
+foreach(incdir ${GNURADIO_RUNTIME_INCLUDE_DIRS})
+    include_directories(${incdir}/gnuradio/swig)
+endforeach(incdir)
+
+set(CMAKE_SWIG_FLAGS -fvirtual -modern -keyword -w511)
+set_source_files_properties(gr_gs.i PROPERTIES CPLUSPLUS ON)
+swig_add_module(gr_gs python gr_gs.i)
+swig_link_libraries(gr_gs
+    gnuradio-gs
+    "${PYTHON_LIBRARIES}"
+    "${Boost_LIBRARIES}"
+    "${GNURADIO_FILTER_LIBRARIES}"
+    "${GNURADIO_RUNTIME_LIBRARIES}")
+
+execute_process(COMMAND python2 -c "
+from distutils import sysconfig
+print sysconfig.get_python_lib(plat_specific=True, prefix='')
+" OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE)
+install(TARGETS _gr_gs DESTINATION ${PYTHON_SITE_PACKAGES})
+install(FILES ${CMAKE_BINARY_DIR}/gr_gs.py DESTINATION ${PYTHON_SITE_PACKAGES})
