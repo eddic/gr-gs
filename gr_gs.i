@@ -10,10 +10,10 @@
 #include "gr-gs/PulseGenerator.h"
 #include "gr-gs/SymbolGenerator.h"
 #include "gr-gs/exceptions.h"
+typedef gr::gs::Symbol Symbol;
 %}
 
-typedef Symbol unsigned;
-
+typedef gr::gs::Symbol Symbol;
 %include "gr-gs/GuidedScrambler.h"
 GR_SWIG_BLOCK_MAGIC2(gs, GuidedScrambler);
 %include "gr-gs/Descrambler.h"
