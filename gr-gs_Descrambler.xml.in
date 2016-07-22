@@ -50,10 +50,10 @@
     </param>
     <sink>
         <name>in</name>
-        <type>byte</type>
+        <type>@PYTHON_SYMBOL_TYPE@</type>
     </sink>
     <source>
         <name>out</name>
-        <type>byte</type>
+        <type>@PYTHON_SYMBOL_TYPE@</type>
     </source>
 </block>

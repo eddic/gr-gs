@@ -14,7 +14,7 @@
     </param>
     <source>
         <name>out</name>
-        <type>byte</type>
+        <type>@PYTHON_SYMBOL_TYPE@</type>
     </source>
     <doc>This block simply allows us to generate a random stream of uncorrelated symbols with discretely defined probability weightings. All we do is pass a vector of doubles where the double describes the weighting of the symbol as represented by the index of said vector. Thus a weighting vector of [1,1,1,2] would produce symbol values {0,1,2,3} with respective probabilities of {0.2, 0.2, 0.2, 0.4}.</doc>
 </block>

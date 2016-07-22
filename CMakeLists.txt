@@ -1,6 +1,23 @@
 cmake_minimum_required(VERSION 2.8)
 project(gr-gs CXX)
 
+# Setup symbol type
+
+if(NOT SYMBOL_SIZE)
+    set(SYMBOL_SIZE 2)
+endif()
+
+if(SYMBOL_SIZE EQUAL 1)
+    set(CXX_SYMBOL_TYPE "unsigned char")
+    set(PYTHON_SYMBOL_TYPE "byte")
+elseif(SYMBOL_SIZE EQUAL 2)
+    set(CXX_SYMBOL_TYPE "unsigned short")
+    set(PYTHON_SYMBOL_TYPE "short")
+elseif(SYMBOL_SIZE EQUAL 4)
+    set(CXX_SYMBOL_TYPE "unsigned int")
+    set(PYTHON_SYMBOL_TYPE "int")
+endif()
+
 # Set compile flags for gcc and clang
 
 if(UNIX)
@@ -11,7 +28,9 @@ if(UNIX)
     set(CMAKE_CXX_FLAGS_DEBUG
         "$ENV{CXXFLAGS} -Og -fno-omit-frame-pointer -g -ggdb -std=c++14 -Wall -Werror -pthread")
 endif()
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/include")
+include_directories(
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    "${CMAKE_CURRENT_BINARY_DIR}/include")
 
 # Find Boost
 
@@ -33,24 +52,11 @@ set(GR_REQUIRED_COMPONENTS RUNTIME FILTER)
 find_package(Gnuradio "3.7.0" REQUIRED)
 include_directories("${GNURADIO_RUNTIME_INCLUDE_DIRS}")
 
-# Install directories
-
-include(GrPlatform) #define LIB_SUFFIX
-set(GR_RUNTIME_DIR bin)
-set(GR_LIBRARY_DIR lib${LIB_SUFFIX})
-set(GR_INCLUDE_DIR include/gr-gs)
-set(GR_DATA_DIR share)
-set(GR_PKG_DATA_DIR ${GR_DATA_DIR}/${CMAKE_PROJECT_NAME})
-set(GR_DOC_DIR ${GR_DATA_DIR}/doc)
-set(GR_PKG_DOC_DIR ${GR_DOC_DIR}/${CMAKE_PROJECT_NAME})
-set(GR_CONF_DIR etc)
-set(GR_PKG_CONF_DIR ${GR_CONF_DIR}/${CMAKE_PROJECT_NAME}/conf.d)
-set(GR_LIBEXEC_DIR libexec)
-set(GR_PKG_LIBEXEC_DIR ${GR_LIBEXEC_DIR}/${CMAKE_PROJECT_NAME})
-set(GRC_BLOCKS_DIR ${GR_PKG_DATA_DIR}/grc/blocks)
-
 # Guided Scrambling GNU Radio Module
 
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/config.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/include/gr-gs/config.h @ONLY)
 add_library(gnuradio-gs SHARED
     src/MSW.cpp
     src/WRDS.cpp
@@ -75,7 +81,7 @@ install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/SymbolGenerator.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/PulseGenerator.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/exceptions.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/config.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/gr-gs/config.h"
     DESTINATION "include/gr-gs")
 
 # Guided Scrambling unit tests
@@ -166,7 +172,8 @@ add_custom_target(tests DEPENDS
 
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in
         ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
     add_custom_target(doc
         ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
@@ -189,9 +196,14 @@ foreach(incdir ${GNURADIO_RUNTIME_INCLUDE_DIRS})
     include_directories(${incdir}/gnuradio/swig)
 endforeach(incdir)
 
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/gr_gs.i.in
+    ${CMAKE_CURRENT_BINARY_DIR}/gr_gs.i @ONLY)
+
 set(CMAKE_SWIG_FLAGS -fvirtual -modern -keyword -w511)
-set_source_files_properties(gr_gs.i PROPERTIES CPLUSPLUS ON)
-swig_add_module(gr_gs python gr_gs.i)
+set_source_files_properties("${CMAKE_CURRENT_BINARY_DIR}/gr_gs.i"
+    PROPERTIES CPLUSPLUS ON)
+swig_add_module(gr_gs python "${CMAKE_CURRENT_BINARY_DIR}/gr_gs.i")
 swig_link_libraries(gr_gs
     gnuradio-gs
     "${PYTHON_LIBRARIES}"
@@ -208,8 +220,17 @@ install(FILES ${CMAKE_BINARY_DIR}/gr_gs.py DESTINATION ${PYTHON_SITE_PACKAGES})
 
 # GNU Radio Companion Blocks
 
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/gr-gs_Descrambler.xml.in
+    ${CMAKE_CURRENT_BINARY_DIR}/gr-gs_Descrambler.xml @ONLY)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/gr-gs_PulseGenerator.xml.in
+    ${CMAKE_CURRENT_BINARY_DIR}/gr-gs_PulseGenerator.xml @ONLY)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/gr-gs_SymbolGenerator.xml.in
+    ${CMAKE_CURRENT_BINARY_DIR}/gr-gs_SymbolGenerator.xml @ONLY)
 install(FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/gr-gs_PulseGenerator.xml"
-    "${CMAKE_CURRENT_SOURCE_DIR}/gr-gs_SymbolGenerator.xml"
-    "${CMAKE_CURRENT_SOURCE_DIR}/gr-gs_Descrambler.xml"
+    "${CMAKE_CURRENT_BINARY_DIR}/gr-gs_PulseGenerator.xml"
+    "${CMAKE_CURRENT_BINARY_DIR}/gr-gs_SymbolGenerator.xml"
+    "${CMAKE_CURRENT_BINARY_DIR}/gr-gs_Descrambler.xml"
     DESTINATION "share/gnuradio/grc/blocks/")
