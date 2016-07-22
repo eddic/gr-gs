@@ -2,7 +2,7 @@
  * @file      SymbolGenerator_impl.hpp
  * @brief     Declares the "Random Symbol Generator" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 8, 2016
+ * @date      July 21, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -46,7 +46,7 @@ namespace gr
             /*!
              * Implements gr::gs::SymbolGenerator
              *
-             * @date   March 8, 2015
+             * @date   July 21, 2016
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             class SymbolGenerator_impl: public SymbolGenerator
@@ -63,13 +63,10 @@ namespace gr
 
                 //! Initialize with default symbol weightings
                 /*!
-                 * This symbol generator is initialized to a state where the
-                 * "0" symbol is outputted with 100\% probability.
-                 *
-                 * @date   March 5, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
+                 * @param  [in] weightings See set_weightings()
                  */
-                SymbolGenerator_impl();
+                inline SymbolGenerator_impl(
+                        const std::vector<double>& weightings);
 
             private:
                 //! Always practice safe threading

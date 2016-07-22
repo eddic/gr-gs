@@ -2,7 +2,7 @@
  * @file      PulseGenerator_impl.hpp
  * @brief     Declares the "Pulse Generator" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 8, 2016
+ * @date      July 21, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -46,7 +46,7 @@ namespace gr
             /*!
              * Implements gr::gs::PulseGenerator
              *
-             * @date    March 7, 2015
+             * @date    July 21, 2015
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             class PulseGenerator_impl: public PulseGenerator
@@ -89,23 +89,27 @@ namespace gr
 
                 //! Initialize the pulse generator with some default options
                 /*!
-                 * This initializes the pulse shaper with the following
-                 * parameters:
-                 *  - constellation = (1,0) (0,1) (0,-1) (-1,0)
-                 *  - baud rate = 100 kBd
-                 *  - number of taps = 1024
-                 *  - excess bandwidth (alpha) = 0.5
-                 *  - symbol phase shift = 0
-                 *  - pulse shape = rectangular
-                 *  - tagging = disabled
-                 *  - amplitude = 0.8
-                 *
-                 * @param   samplesPerSymbol Amount of samples to generator per
-                 *                           symbol
-                 * @date    March 5, 2015
-                 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+                 * @param [in] samplesPerSymbol Amount of samples to generator
+                 *                              per symbol
+                 * @param [in] constellation See set_constellation()
+                 * @param [in] baudRate See set_baudRate()
+                 * @param [in] numberOfTaps See set_numberOfTaps()
+                 * @param [in] alpha See set_alpha()
+                 * @param [in] amplitude See set_amplitude()
+                 * @param [in] shape See set_shape()
+                 * @param [in] tags See enable_tags()
+                 * @param [in] phase See set_phase()
                  */
-                PulseGenerator_impl(unsigned int samplesPerSymbol);
+                inline PulseGenerator_impl(
+                    unsigned int samplesPerSymbol,
+                    const std::vector<std::complex<float>>& constellation,
+                    const double baudRate,
+                    const unsigned int numberOfTaps,
+                    const double alpha,
+                    const double amplitude,
+                    const unsigned int shape,
+                    const bool tags,
+                    const double phase);
 
             private:
                 //! Always practice safe threading

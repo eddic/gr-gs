@@ -2,7 +2,7 @@
  * @file      PulseGenerator.h
  * @brief     Declares the "Pulse Generator" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 8, 2016
+ * @date      July 21, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -62,7 +62,7 @@ namespace gr
          * See the members functions for further information on the parameters
          * and their meaning.
          *
-         * @date    March 7, 2015
+         * @date    July 21, 2016
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         class GS_API PulseGenerator: virtual public gr::sync_interpolator
@@ -72,8 +72,6 @@ namespace gr
             /*!
              * @return Constant reference to symbol to constellation mapping
              *         vector
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual const std::vector<std::complex<float>>&
             constellation() const =0;
@@ -82,8 +80,6 @@ namespace gr
             /*!
              * @param  [in] constellation Desired symbol to constellation
              *              mapping vector
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual void set_constellation(
                     const std::vector<std::complex<float>>& constellation) =0;
@@ -95,8 +91,6 @@ namespace gr
              * pulses.
              *
              * @return Currently set baud rate
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual double baudRate() const =0;
 
@@ -107,8 +101,6 @@ namespace gr
              * pulses.
              *
              * @param  [in] baudRate Desired baud rate
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual void set_baudRate(const double baudRate) =0;
 
@@ -119,8 +111,6 @@ namespace gr
              * pulses.
              *
              * @return Currently set number of taps
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual unsigned int numberOfTaps() const =0;
 
@@ -136,8 +126,6 @@ namespace gr
              * or 2048.
              *
              * @param  [in] numberOfTaps Desired number of taps
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual void set_numberOfTaps(const unsigned int numberOfTaps) =0;
 
@@ -148,8 +136,6 @@ namespace gr
              * pulses.
              *
              * @return Currently set excess bandwidth factor
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual double alpha() const =0;
 
@@ -162,8 +148,6 @@ namespace gr
              * Note that this value should be in the range of [0,1]
              *
              * @param  [in] alpha Desired excess bandwidth factor
-             * @date   March 5, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual void set_alpha(const double alpha) =0;
 
@@ -174,8 +158,6 @@ namespace gr
              * clipping does not occur downstream.
              *
              * @return Currently set signal amplitude
-             * @date   March 7, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual float amplitude() const =0;
 
@@ -186,8 +168,6 @@ namespace gr
              * clipping does not occur downstream.
              *
              * @param  [in] amplitude Desired output signal amplitude
-             * @date   March 7, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual void set_amplitude(const float amplitude) =0;
 
@@ -197,8 +177,6 @@ namespace gr
              * to find a corresponding textual description of the pulse shape.
              *
              * @return Currently set pulse shape
-             * @date   March 5, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual unsigned int shape() const =0;
 
@@ -209,8 +187,6 @@ namespace gr
              * returned by shapes().
              *
              * @param  [in] shape Desired pulse shape
-             * @date   March 5, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual void set_shape(const unsigned int shape) =0;
 
@@ -224,8 +200,6 @@ namespace gr
              * overhead.
              *
              * @param  [in] enable True to enable, false to disable
-             * @date   March 5, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual void enable_tags(const bool enable) =0;
 
@@ -235,8 +209,6 @@ namespace gr
              * should be "rotated" every symbol.
              *
              * @return  Currently set symbol phase shift
-             * @date    March 5, 2015
-             * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual float phase() const =0;
 
@@ -254,8 +226,6 @@ namespace gr
              * up.
              *
              * @param  [in] phase Desired symbol phase shift
-             * @date   March 5, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual void set_phase(const float phase) =0;
 
@@ -264,30 +234,34 @@ namespace gr
 
             //! Manufacture a pulse generator with some default options
             /*!
-             * This initializes the pulse generator with the following
-             * parameters:
-             *  - constellation = (1,0) (0,1) (0,-1) (-1,0)
-             *  - baud rate = 100 kBd
-             *  - number of taps = 1024
-             *  - excess bandwidth (alpha) = 0.5
-             *  - symbol phase shift = 0
-             *  - pulse shape = rectangular
-             *  - tagging = disabled
-             *  - amplitude = 0.8
              *
-             * @param  samplesPerSymbol Amount of samples to generator per
-             *                          symbol
+             * @param [in] samplesPerSymbol Amount of samples to generate per
+             *                              symbol
+             * @param [in] constellation See set_constellation()
+             * @param [in] baudRate See set_baudRate()
+             * @param [in] numberOfTaps See set_numberOfTaps()
+             * @param [in] alpha See set_alpha()
+             * @param [in] amplitude See set_amplitude()
+             * @param [in] shape See set_shape()
+             * @param [in] tags See enable_tags()
+             * @param [in] phase See set_phase()
              * @return Shared pointer to newly allocated pulse generator
-             * @date   March 5, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
-            static sptr make(unsigned int samplesPerSymbol=1);
+            static sptr make(
+                    unsigned int samplesPerSymbol = 1,
+                    const std::vector<std::complex<float>>& constellation
+                        = {{1,0},{0,1},{0,-1},{-1,0}},
+                    const double baudRate = 100e3,
+                    const unsigned int numberOfTaps = 1024,
+                    const double alpha = 0.5,
+                    const double amplitude = 0.8,
+                    const unsigned int shape = 0,
+                    const bool tags = false,
+                    const double phase = 0);
 
             //! Get a vector of pulse shape names
             /*!
              * @return Reference to constant vector of pulse shape names.
-             * @date   March 5, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             static const std::vector<std::string>& shapes();
         };

@@ -40,9 +40,6 @@
 #  define GS_API __GR_ATTR_IMPORT
 #endif
 
-
-        //! Type to use for representation of symbols
-        typedef uint8_t Symbol;
 //! GNU Radio Namespace
 namespace gr
 {
@@ -57,7 +54,7 @@ namespace gr
                 unsigned int fieldSize);
 
         //! Type to use for representation of symbols
-        typedef uint8_t Symbol;
+        typedef unsigned Symbol;
 
         //! Stuff needed for the GuidedScrambler and Descrambler blocks
         namespace GuidedScrambling

@@ -2,7 +2,7 @@
  * @file      Descrambler.h
  * @brief     Declares the "Descrambler" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 8, 2016
+ * @date      July 21, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -42,7 +42,7 @@ namespace gr
     {
         //! Guided Scrambling "Descrambler" GNU Radio block
         /*!
-         * @date   March 3, 2015
+         * @date   July 21, 2016
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         class GS_API Descrambler: virtual public gr::block
@@ -51,8 +51,6 @@ namespace gr
             //! Access field size
             /*!
              * @return Field size as the *n* in GF(*n*)
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual unsigned int fieldSize() const =0;
 
@@ -63,40 +61,30 @@ namespace gr
              * gr::gs::GuidedScrambling::maxFieldSize.
              *
              * @param  [in] size Desired field size as the *n* in GF(*n*)
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual void set_fieldSize(const unsigned int size) =0;
 
             //! Access codeword length
             /*!
              * @return Codeword Length
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual unsigned int codewordLength() const =0;
 
             //! Set codeword length
             /*!
              * @param  [in] length Desired codeword length
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual void set_codewordLength(const unsigned int length) =0;
 
             //! Access augmenting length
             /*!
              * @return Augmenting Length
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual unsigned int augmentingLength() const =0;
 
             //! Set augmenting length
             /*!
              * @param  [in] length Desired augmenting length
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual void set_augmentingLength(const unsigned int length) =0;
 
@@ -104,8 +92,6 @@ namespace gr
             /*!
              * @return True if set to continuous encoding, false if block
              *         encoding
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual bool continuous() const =0;
 
@@ -113,24 +99,18 @@ namespace gr
             /*!
              * @param  [in] continuous Set to true for continuous encoding,
              *                         false for block encoding
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual void set_continuous(bool continuous) =0;
 
             //! Access multiplier word
             /*!
              * @return Multiplier word (polynomial)
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual const std::vector<Symbol>& multiplier() const =0;
 
             //! Set multiplier polynomial
             /*!
              * @param  [in] multiplier Desired multiplier word (polynomial)
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual void set_multiplier(
                     const std::vector<Symbol>& multiplier) =0;
@@ -140,18 +120,19 @@ namespace gr
 
             //! Manufacture a descrambler with some default options
             /*!
-             * This initializes the descrambler with the following parameters:
-             *  - codeword length = 12
-             *  - augmenting length = 3
-             *  - multiplier = 1 0 0 1 (\f$x^3+1\f$)
-             *  - continuous encoding = true
-             *  - field size = 4
-             *
+             * @param [in] fieldSize See set_fieldSize()
+             * @param [in] codewordLength See set_codewordLength()
+             * @param [in] augmentingLength See set_augmentingLength()
+             * @param [in] continuous See set_continuous()
+             * @param [in] multiplier See set_multiplier()
              * @return Shared pointer to newly allocated descrambler
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
-            static sptr make();
+            static sptr make(
+                    const unsigned int fieldSize = 4,
+                    const unsigned int codewordLength = 12,
+                    const unsigned int augmentingLength = 3,
+                    const bool continuous = true,
+                    const std::vector<Symbol>& multiplier = {1,0,0,1});
         };
     }
 }

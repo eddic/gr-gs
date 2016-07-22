@@ -51,19 +51,20 @@ namespace gr
             class Descrambler_impl: public Descrambler
             {
             public:
-                //! Initialize the descrambler with some default options
+                //! Initialize the descrambler
                 /*!
-                 * This initializes the scrambler with the following parameters:
-                 *  - codeword length = 12
-                 *  - augmenting length = 3
-                 *  - multiplier = 1 0 0 1 (\f$x^3+1\f$)
-                 *  - continuous encoding = true
-                 *  - field size = 4
-                 *
-                 * @date   March 3, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
+                 * @param [in] fieldSize See set_fieldSize()
+                 * @param [in] codewordLength See set_codewordLength()
+                 * @param [in] augmentingLength See set_augmentingLength()
+                 * @param [in] continuous See set_continuous()
+                 * @param [in] multiplier See set_multiplier()
                  */
-                Descrambler_impl();
+                inline Descrambler_impl(
+                    const unsigned int fieldSize,
+                    const unsigned int codewordLength,
+                    const unsigned int augmentingLength,
+                    const bool continuous,
+                    const std::vector<Symbol>& multiplier);
 
                 //! No copying allowed
                 Descrambler_impl(const Descrambler_impl& x) = delete;
