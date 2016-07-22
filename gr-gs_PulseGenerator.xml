@@ -85,7 +85,7 @@
     </param>
     <sink>
         <name>in</name>
-        <type>int</type>
+        <type>byte</type>
     </sink>
     <source>
         <name>out</name>

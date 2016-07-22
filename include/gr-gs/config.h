@@ -54,7 +54,7 @@ namespace gr
                 unsigned int fieldSize);
 
         //! Type to use for representation of symbols
-        typedef unsigned Symbol;
+        typedef unsigned char Symbol;
 
         //! Stuff needed for the GuidedScrambler and Descrambler blocks
         namespace GuidedScrambling
