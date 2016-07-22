@@ -12,6 +12,8 @@
 #include "gr-gs/exceptions.h"
 %}
 
+typedef Symbol unsigned;
+
 %include "gr-gs/GuidedScrambler.h"
 GR_SWIG_BLOCK_MAGIC2(gs, GuidedScrambler);
 %include "gr-gs/Descrambler.h"

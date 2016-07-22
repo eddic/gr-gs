@@ -66,17 +66,21 @@ void gr::gs::GuidedScrambling::Word::multiply(
                 remainder.begin());
 }
 
-gr::gs::GuidedScrambling::Descrambler_impl::Descrambler_impl():
+gr::gs::GuidedScrambling::Descrambler_impl::Descrambler_impl(
+        const unsigned int fieldSize,
+        const unsigned int codewordLength,
+        const unsigned int augmentingLength,
+        const bool continuous,
+        const std::vector<Symbol>& multiplier):
     gr::block("Guided Scrambling Descrambler",
         gr::io_signature::make(1,1,sizeof(Symbol)),
         gr::io_signature::make(1,1,sizeof(Symbol))),
-    m_codewordLength(12),
-    m_augmentingLength(3),
-    m_multiplier({1,0,0,1}),
-    m_continuous(true),
+    m_codewordLength(codewordLength),
+    m_augmentingLength(augmentingLength),
+    m_multiplier(multiplier),
+    m_continuous(continuous),
     m_valid(false),
-    m_fieldSize(4),
-    m_multiply(Word::multiply<GF4>)
+    m_fieldSize(fieldSize)
 {}
 
 void gr::gs::GuidedScrambling::Descrambler_impl::descramble(
@@ -297,8 +301,18 @@ void gr::gs::GuidedScrambling::Descrambler_impl::forecast(
         ninput_items_required[0] = 0;
 }
 
-gr::gs::Descrambler::sptr gr::gs::Descrambler::make()
+gr::gs::Descrambler::sptr gr::gs::Descrambler::make(
+        const unsigned int fieldSize,
+        const unsigned int codewordLength,
+        const unsigned int augmentingLength,
+        const bool continuous,
+        const std::vector<Symbol>& multiplier)
 {
     return gnuradio::get_initial_sptr(
-            new ::gr::gs::GuidedScrambling::Descrambler_impl());
+            new ::gr::gs::GuidedScrambling::Descrambler_impl(
+                fieldSize,
+                codewordLength,
+                augmentingLength,
+                continuous,
+                multiplier));
 }

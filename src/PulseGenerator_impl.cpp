@@ -2,7 +2,7 @@
  * @file      PulseGenerator_impl.cpp
  * @brief     Defines the "Pulse Generator" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 8, 2016
+ * @date      July 21, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -266,30 +266,55 @@ int gr::gs::Implementations::PulseGenerator_impl::work(
 }
 
 gr::gs::Implementations::PulseGenerator_impl::PulseGenerator_impl(
-        unsigned int samplesPerSymbol):
+        unsigned int samplesPerSymbol,
+        const std::vector<std::complex<float>>& constellation,
+        const double baudRate,
+        const unsigned int numberOfTaps,
+        const double alpha,
+        const double amplitude,
+        const unsigned int shape,
+        const bool tags,
+        const double phase):
     gr::sync_interpolator("Pulse Generator",
         io_signature::make(1,1,sizeof(Symbol)),
         io_signature::make(1,1,sizeof(std::complex<float>)),
         samplesPerSymbol),
     m_samplesPerSymbol(samplesPerSymbol),
-    m_constellation(defaultConstellation(4)),
-    m_baudRate(100e3),
-    m_numberOfTaps(1024),
-    m_alpha(0.5),
-    m_phase(0),
+    m_constellation(constellation),
+    m_baudRate(baudRate),
+    m_numberOfTaps(numberOfTaps),
+    m_alpha(alpha),
+    m_phase(phase),
     m_currentPhase(0),
-    m_amplitude(0.8),
-    m_shape(0),
+    m_amplitude(amplitude),
+    m_shape(shape),
     m_valid(false),
-    m_tag(false)
+    m_tag(tags)
 {
 }
 
 gr::gs::PulseGenerator::sptr gr::gs::PulseGenerator::make(
-        unsigned int samplesPerSymbol)
+        unsigned int samplesPerSymbol,
+        const std::vector<std::complex<float>>& constellation,
+        const double baudRate,
+        const unsigned int numberOfTaps,
+        const double alpha,
+        const double amplitude,
+        const unsigned int shape,
+        const bool tags,
+        const double phase)
 {
     return gnuradio::get_initial_sptr(
-            new Implementations::PulseGenerator_impl(samplesPerSymbol));
+            new Implementations::PulseGenerator_impl(
+                samplesPerSymbol,
+                constellation,
+                baudRate,
+                numberOfTaps,
+                alpha,
+                amplitude,
+                shape,
+                tags,
+                phase));
 }
 
 const std::vector<std::string>& gr::gs::PulseGenerator::shapes()

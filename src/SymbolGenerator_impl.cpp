@@ -2,7 +2,7 @@
  * @file      SymbolGenerator_impl.cpp
  * @brief     Defines the "Random Symbol Generator" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 8, 2016
+ * @date      July 21, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -64,19 +64,24 @@ int gr::gs::Implementations::SymbolGenerator_impl::work(
     return noutput_items;
 }
 
-gr::gs::Implementations::SymbolGenerator_impl::SymbolGenerator_impl():
+#include <iostream>
+gr::gs::Implementations::SymbolGenerator_impl::SymbolGenerator_impl(
+        const std::vector<double>& weightings):
     gr::sync_block("Symbol Generator",
         io_signature::make(0,0,0),
         io_signature::make(1,1,sizeof(Symbol))),
     m_count(0),
-    m_generator(1984)
+    m_weightings(weightings),
+    m_generator(1984),
+    m_distribution(m_weightings.cbegin(), m_weightings.cend())
 {
 }
 
-gr::gs::SymbolGenerator::sptr gr::gs::SymbolGenerator::make()
+gr::gs::SymbolGenerator::sptr gr::gs::SymbolGenerator::make(
+        const std::vector<double>& weightings)
 {
     return gnuradio::get_initial_sptr(
-            new Implementations::SymbolGenerator_impl());
+            new Implementations::SymbolGenerator_impl(weightings));
 }
 
 unsigned int gr::gs::Implementations::SymbolGenerator_impl::count()

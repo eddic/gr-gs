@@ -205,3 +205,11 @@ print sysconfig.get_python_lib(plat_specific=True, prefix='')
 " OUTPUT_VARIABLE PYTHON_SITE_PACKAGES OUTPUT_STRIP_TRAILING_WHITESPACE)
 install(TARGETS _gr_gs DESTINATION ${PYTHON_SITE_PACKAGES})
 install(FILES ${CMAKE_BINARY_DIR}/gr_gs.py DESTINATION ${PYTHON_SITE_PACKAGES})
+
+# GNU Radio Companion Blocks
+
+install(FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/gr-gs_PulseGenerator.xml"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gr-gs_SymbolGenerator.xml"
+    "${CMAKE_CURRENT_SOURCE_DIR}/gr-gs_Descrambler.xml"
+    DESTINATION "share/gnuradio/grc/blocks/")

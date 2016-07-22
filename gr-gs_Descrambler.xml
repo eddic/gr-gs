@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<block>
+    <name>Descrambler</name>
+    <key>Descrambler</key>
+    <category>Guided Scrambling</category>
+    <import>import gr_gs as gs</import>
+    <make>gs.Descrambler($fieldSize, $codewordLength, $augmentingLength, $continuous, $multiplier)</make>
+    <callback>set_fieldSize($fieldSize)</callback>
+    <callback>set_codewordLength($codewordLength)</callback>
+    <callback>set_augmentingLength($augmentingLength)</callback>
+    <callback>set_continuous($continuous)</callback>
+    <callback>set_multiplier($multiplier)</callback>
+    <param>
+        <name>Field Size</name>
+        <key>fieldSize</key>
+        <value>4</value>
+        <type>int</type>
+        <option>
+            <name>2</name>
+            <key>2</key>
+        </option>
+        <option>
+            <name>4</name>
+            <key>4</key>
+        </option>
+    </param>
+    <param>
+        <name>Codeword Length</name>
+        <key>codewordLength</key>
+        <value>12</value>
+        <type>int</type>
+    </param>
+    <param>
+        <name>Augmenting Length</name>
+        <key>augmentingLength</key>
+        <value>3</value>
+        <type>int</type>
+    </param>
+    <param>
+        <name>Continuous</name>
+        <key>continuous</key>
+        <value>True</value>
+        <type>bool</type>
+    </param>
+    <param>
+        <name>Multiplier</name>
+        <key>multiplier</key>
+        <value>[1,0,0,1]</value>
+        <type>int_vector</type>
+    </param>
+    <sink>
+        <name>in</name>
+        <type>int</type>
+    </sink>
+    <source>
+        <name>out</name>
+        <type>int</type>
+    </source>
+</block>
