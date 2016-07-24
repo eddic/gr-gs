@@ -2,7 +2,7 @@
  * @file      GuidedScrambler.h
  * @brief     Declares the "Guided Scrambler" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 8, 2016
+ * @date      July 23, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -39,7 +39,7 @@ namespace gr
     {
         //! "Guided Scrambler" GNU Radio block
         /*!
-         * @date   March 3, 2015
+         * @date   July 23, 2016
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         class GS_API GuidedScrambler: virtual public gr::block
@@ -48,8 +48,6 @@ namespace gr
             //! Access field size
             /*!
              * @return Field size as the *n* in GF(*n*)
-             * @date   Jan 29, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual unsigned int fieldSize() const =0;
 
@@ -60,40 +58,30 @@ namespace gr
              * gr::gs::GuidedScrambling::maxFieldSize.
              *
              * @param  [in] size Desired field size as the *n* in GF(*n*)
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual void set_fieldSize(const unsigned int size) =0;
 
             //! Access codeword length
             /*!
              * @return Codeword Length
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual unsigned int codewordLength() const =0;
 
             //! Set codeword length
             /*!
              * @param  [in] length Desired codeword length
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual void set_codewordLength(const unsigned int length) =0;
 
             //! Access augmenting length
             /*!
              * @return Augmenting Length
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual unsigned int augmentingLength() const =0;
 
             //! Set augmenting length
             /*!
              * @param  [in] length Desired augmenting length
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual void set_augmentingLength(const unsigned int length) =0;
 
@@ -101,8 +89,6 @@ namespace gr
             /*!
              * @return True if set to continuous encoding, false if block
              *         encoding
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual bool continuous() const =0;
 
@@ -110,16 +96,12 @@ namespace gr
             /*!
              * @param  [in] continuous Set to true for continuous encoding,
              *                         false for block encoding
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual void set_continuous(bool continuous) =0;
 
             //! Access constellation
             /*!
              * @return Constant reference to constellation vector
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual const std::vector<std::complex<float>>&
             constellation() const =0;
@@ -129,8 +111,6 @@ namespace gr
              * @param  [in] constellation This is a direct mapping of symbols
              *                            (as vector indices) to constellation
              *                            points.
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual void set_constellation(
                     const std::vector<std::complex<float>>& constellation) =0;
@@ -138,48 +118,36 @@ namespace gr
             //! Access selection method
             /*!
              * @return Selection Method
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual const std::string& selectionMethod() const =0;
 
             //! List selection methods
             /*!
              * @return Vector of selection method names
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             static const std::vector<std::string>& selectionMethods();
 
             //! Set selection method
             /*!
              * @param  [in] method Desired selection method
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual void set_selectionMethod(const std::string& method) =0;
 
             //! Access divider word
             /*!
              * @return Divider word (polynomial)
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual const std::vector<Symbol>& divider() const =0;
 
             //! Set divider word
             /*!
              * @param  [in] divider Desired divider word (polynomial)
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual void set_divider(const std::vector<Symbol>& divider) =0;
 
             //! Access number of concurrent scrambling threads
             /*!
              * @return Number of concurrent threads running in this block
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual unsigned int threads() const =0;
 
@@ -194,32 +162,34 @@ namespace gr
              *
              * @param  [in] number Desired number of concurrent scrambling
              *                     threads
-             * @date   March 3, 2015
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             virtual void set_threads(unsigned int number) =0;
 
             //! Shared pointer to this
             typedef boost::shared_ptr<GuidedScrambler> sptr;
 
-            //! Manufacture a guided scrambler with some default options
+            //! Manufacture a guided scrambler
             /*!
-             * This initializes the guided scrambler with the following
-             * parameters:
-             *  - codeword length = 12
-             *  - augmenting length = 3
-             *  - selection method = MSW
-             *  - continuous encoding = true
-             *  - maximum threads = optimal
-             *  - divider = 1 0 0 1 (\f$x^3+1\f$)
-             *  - field size = 4
-             *  - constellation = (1,0) (0,1) (0,-1) (-1,0)
-             *
-             * @return  Shared pointer to newly allocated guided scrambler
-             * @date    March 3, 2015
-             * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+             * @param [in] fieldSize See set_fieldSize()
+             * @param [in] codewordLength See set_codewordLength()
+             * @param [in] augmentingLength See set_augmentingLength()
+             * @param [in] continuous See set_continuous()
+             * @param [in] divider See set_divider()
+             * @param [in] threads See set_threads()
+             * @param [in] constellation See set_constellation()
+             * @param [in] selectionMethod See set_selectionMethod()
+             * @return Shared pointer to newly allocated guided scrambler
              */
-            static sptr make();
+            static sptr make(
+                    const unsigned int fieldSize = 4,
+                    const unsigned int codewordLength = 12,
+                    const unsigned int augmentingLength = 3,
+                    const bool continuous = true,
+                    const std::vector<Symbol>& divider = {1,0,0,1},
+                    const unsigned int threads = 0,
+                    const std::vector<std::complex<float>>& constellation =
+                        gr::gs::defaultConstellation(4),
+                    const std::string& selectionMethod = "MSW");
         };
     }
 }

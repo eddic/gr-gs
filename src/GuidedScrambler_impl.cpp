@@ -2,7 +2,7 @@
  * @file      GuidedScrambler_impl.cpp
  * @brief     Defines the "Guided Scrambler" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 8, 2016
+ * @date      July 23, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -125,23 +125,33 @@ gr::gs::GuidedScrambling::GuidedScrambler_impl::scramble(
     return winner->output();
 }
 
-gr::gs::GuidedScrambling::GuidedScrambler_impl::GuidedScrambler_impl():
+gr::gs::GuidedScrambling::GuidedScrambler_impl::GuidedScrambler_impl(
+        const unsigned int fieldSize,
+        const unsigned int codewordLength,
+        const unsigned int augmentingLength,
+        const bool continuous,
+        const std::vector<Symbol>& divider,
+        const unsigned int threads,
+        const std::vector<std::complex<float>>& constellation,
+        const std::string& selectionMethod):
     gr::block("Guided Scrambler",
         gr::io_signature::make(1,1,sizeof(Symbol)),
         gr::io_signature::make(1,1,sizeof(Symbol))),
-    m_codewordLength(12),
-    m_augmentingLength(3),
-    m_selectionMethod(0),
-    m_groups(std::thread::hardware_concurrency()),
-    m_fieldSize(4),
-    m_continuous(true),
+    m_codewordLength(codewordLength),
+    m_augmentingLength(augmentingLength),
+    m_selectionMethod(std::find(
+            Analyzer::names.cbegin(),
+            Analyzer::names.cend(),
+            selectionMethod) - Analyzer::names.cbegin()),
+    m_groups(threads==0?std::thread::hardware_concurrency():threads),
+    m_fieldSize(fieldSize),
+    m_continuous(continuous),
     m_codeword(nullptr),
     m_sourceword(m_codewordLength-m_augmentingLength),
     m_sourcewordIt(m_sourceword.begin())
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
-    m_cargs.divider={1,0,0,1};
-    m_cargs.constellation = defaultConstellation(m_fieldSize);
+    set_divider(divider);
+    set_constellation(constellation);
 }
 
 const std::string&
@@ -373,10 +383,26 @@ void gr::gs::GuidedScrambling::GuidedScrambler_impl::forecast(
         ninput_items_required[0] = 0;
 }
 
-gr::gs::GuidedScrambler::sptr gr::gs::GuidedScrambler::make()
+gr::gs::GuidedScrambler::sptr gr::gs::GuidedScrambler::make(
+        const unsigned int fieldSize,
+        const unsigned int codewordLength,
+        const unsigned int augmentingLength,
+        const bool continuous,
+        const std::vector<Symbol>& divider,
+        const unsigned int threads,
+        const std::vector<std::complex<float>>& constellation,
+        const std::string& selectionMethod)
 {
     return gnuradio::get_initial_sptr(
-            new ::gr::gs::GuidedScrambling::GuidedScrambler_impl());
+            new ::gr::gs::GuidedScrambling::GuidedScrambler_impl(
+                    fieldSize,
+                    codewordLength,
+                    augmentingLength,
+                    continuous,
+                    divider,
+                    threads,
+                    constellation,
+                    selectionMethod));
 }
 
 const std::vector<std::string>& gr::gs::GuidedScrambler::selectionMethods()

@@ -2,7 +2,7 @@
  * @file      GuidedScrambler_impl.hpp
  * @brief     Declares the "Guided Scrambler" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 8, 2016
+ * @date      July 23, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -48,7 +48,7 @@ namespace gr
              * This class allows us to perform guided scrambling in an
              * efficient multi threaded fashion
              *
-             * @date   March 3, 2015
+             * @date   July 23, 2016
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             class GuidedScrambler_impl: public GuidedScrambler
@@ -96,28 +96,31 @@ namespace gr
                  *                    source word \a must equal the codeword
                  *                    length minus the augmenting length.
                  * @return Constant reference code word.
-                 * @date   March 8, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 const std::vector<Symbol>& scramble(
                         const std::vector<Symbol>& input);
 
-                //! Initialize the guided scrambler with some default options
+                //! Initialize the guided scrambler
                 /*!
-                 * This initializes the scrambler with the following parameters:
-                 *  - codeword length = 12
-                 *  - augmenting length = 3
-                 *  - selection method = MSW
-                 *  - continuous encoding = true
-                 *  - maximum threads = hardware maximum
-                 *  - divider = 1 0 0 1 (\f$x^3+1\f$)
-                 *  - field size = 4
-                 *  - constellation = (1,0) (0,1) (0,-1) (-1,0)
-                 *
-                 * @date   March 5, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
+                 * @param [in] fieldSize See set_fieldSize()
+                 * @param [in] codewordLength See set_codewordLength()
+                 * @param [in] augmentingLength See set_augmentingLength()
+                 * @param [in] continuous See set_continuous()
+                 * @param [in] divider See set_divider()
+                 * @param [in] threads See set_threads()
+                 * @param [in] constellation See set_constellation()
+                 * @param [in] selectionMethod See set_selectionMethod()
                  */
-                GuidedScrambler_impl();
+                inline GuidedScrambler_impl(
+                        const unsigned int fieldSize = 4,
+                        const unsigned int codewordLength = 12,
+                        const unsigned int augmentingLength = 3,
+                        const bool continuous = true,
+                        const std::vector<Symbol>& divider = {1,0,0,1},
+                        const unsigned int threads = 0,
+                        const std::vector<std::complex<float>>& constellation =
+                            defaultConstellation(4),
+                        const std::string& selectionMethod = "MSW");
 
                 //! Simply kills the active threads.
                 ~GuidedScrambler_impl();

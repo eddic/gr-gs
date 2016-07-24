@@ -2,7 +2,7 @@
  * @file      PulseGenerator.h
  * @brief     Declares the "Pulse Generator" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 21, 2016
+ * @date      July 23, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -62,7 +62,7 @@ namespace gr
          * See the members functions for further information on the parameters
          * and their meaning.
          *
-         * @date    July 21, 2016
+         * @date    July 23, 2016
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         class GS_API PulseGenerator: virtual public gr::sync_interpolator
@@ -250,7 +250,7 @@ namespace gr
             static sptr make(
                     unsigned int samplesPerSymbol = 1,
                     const std::vector<std::complex<float>>& constellation
-                        = {{1,0},{0,1},{0,-1},{-1,0}},
+                        = gr::gs::defaultConstellation(4),
                     const double baudRate = 100e3,
                     const unsigned int numberOfTaps = 1024,
                     const double alpha = 0.5,

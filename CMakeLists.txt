@@ -218,8 +218,11 @@ print sysconfig.get_python_lib(plat_specific=True, prefix='')
 install(TARGETS _gr_gs DESTINATION ${PYTHON_SITE_PACKAGES})
 install(FILES ${CMAKE_BINARY_DIR}/gr_gs.py DESTINATION ${PYTHON_SITE_PACKAGES})
 
-# GNU Radio Companion Blocks
+# GNU Radio Companion
 
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/gr-gs_GuidedScrambler.xml.in
+    ${CMAKE_CURRENT_BINARY_DIR}/gr-gs_GuidedScrambler.xml @ONLY)
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/gr-gs_Descrambler.xml.in
     ${CMAKE_CURRENT_BINARY_DIR}/gr-gs_Descrambler.xml @ONLY)
@@ -230,7 +233,8 @@ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/gr-gs_SymbolGenerator.xml.in
     ${CMAKE_CURRENT_BINARY_DIR}/gr-gs_SymbolGenerator.xml @ONLY)
 install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/gr-gs_GuidedScrambler.xml"
+    "${CMAKE_CURRENT_BINARY_DIR}/gr-gs_Descrambler.xml"
     "${CMAKE_CURRENT_BINARY_DIR}/gr-gs_PulseGenerator.xml"
     "${CMAKE_CURRENT_BINARY_DIR}/gr-gs_SymbolGenerator.xml"
-    "${CMAKE_CURRENT_BINARY_DIR}/gr-gs_Descrambler.xml"
     DESTINATION "share/gnuradio/grc/blocks/")

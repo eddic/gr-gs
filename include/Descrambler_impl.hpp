@@ -2,7 +2,7 @@
  * @file      Descrambler_impl.hpp
  * @brief     Declares the "Descrambler" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 8, 2016
+ * @date      July 21, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -45,7 +45,7 @@ namespace gr
         {
             //! Guided Scrambling "Descrambler" GNU Radio block implementation
             /*!
-             * @date   March 3, 2015
+             * @date   July 21, 2016
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             class Descrambler_impl: public Descrambler
@@ -97,8 +97,6 @@ namespace gr
                  * @param   [in] input Input code word to be descrambled. The
                  *                     size of this word \a must equal the
                  *                     codeword length.
-                 * @date    March 3, 2015
-                 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 void descramble(const std::vector<Symbol>& input);
 
