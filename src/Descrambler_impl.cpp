@@ -2,11 +2,10 @@
  * @file      Descrambler_impl.cpp
  * @brief     Defines the "Descrambler" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 21, 2016
+ * @date      July 23, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-
 /* Copyright (C) 2016 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
@@ -33,6 +32,42 @@
 #include "Word.hpp"
 #include "GF2.hpp"
 #include "GF4.hpp"
+
+void gr::gs::GuidedScrambling::Descrambler_impl::setup()
+{
+    if(m_augmentingLength < 1)
+        throw Exceptions::AugmentingLengthTooSmall();
+
+    if(m_augmentingLength >= m_codewordLength)
+        throw Exceptions::AugmentingCodewordLengthMismatch();
+
+    if(m_multiplier.size() < 2)
+        throw Exceptions::DivisorLengthTooSmall();
+
+    switch(m_fieldSize)
+    {
+        case 2:
+            m_multiply = Word::multiply<GF2>;
+            break;
+        case 4:
+            m_multiply = Word::multiply<GF4>;
+            break;
+        default:
+            throw Exceptions::BadFieldSize();
+    }
+
+    for(auto& symbol: m_multiplier)
+        if(symbol >= m_fieldSize)
+            symbol = m_fieldSize-1;
+
+    m_codeword.resize(m_codewordLength);
+    m_codewordIt = m_codeword.begin();
+    m_product.resize(m_codewordLength);
+    m_productIt = m_product.end();
+    m_remainder.resize(m_multiplier.size()-1);
+    std::fill(m_remainder.begin(), m_remainder.end(), 0);
+    m_valid=true;
+}
 
 template<typename Field>
 void gr::gs::GuidedScrambling::Word::multiply(
@@ -87,40 +122,7 @@ void gr::gs::GuidedScrambling::Descrambler_impl::descramble(
         const std::vector<Symbol>& input)
 {
     if(!m_valid)
-    {
-        if(m_augmentingLength < 1)
-            throw Exceptions::AugmentingLengthTooSmall();
-
-        if(m_augmentingLength >= m_codewordLength)
-            throw Exceptions::AugmentingCodewordLengthMismatch();
-
-        if(m_multiplier.size() < 2)
-            throw Exceptions::DivisorLengthTooSmall();
-
-        switch(m_fieldSize)
-        {
-            case 2:
-                m_multiply = Word::multiply<GF2>;
-                break;
-            case 4:
-                m_multiply = Word::multiply<GF4>;
-                break;
-            default:
-                throw Exceptions::BadFieldSize();
-        }
-
-        for(auto& symbol: m_multiplier)
-            if(symbol >= m_fieldSize)
-                symbol = m_fieldSize-1;
-
-        m_codeword.resize(m_codewordLength);
-        m_codewordIt = m_codeword.begin();
-        m_product.resize(m_codewordLength);
-        m_productIt = m_product.end();
-        m_remainder.resize(m_multiplier.size()-1);
-        std::fill(m_remainder.begin(), m_remainder.end(), 0);
-        m_valid=true;
-    }
+        setup();
 
     m_multiply(
             input,
@@ -230,6 +232,9 @@ int gr::gs::GuidedScrambling::Descrambler_impl::general_work(
         gr_vector_void_star &output_items)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
+    if(!m_valid)
+        setup();
+
     const Symbol* input = reinterpret_cast<const Symbol*>(input_items[0]);
     unsigned int inputSize = ninput_items[0];
 
@@ -266,7 +271,12 @@ int gr::gs::GuidedScrambling::Descrambler_impl::general_work(
                 input += inputCopySize;
                 if(m_codewordIt == m_codeword.end())
                 {
-                    descramble(m_codeword);
+                    m_multiply(
+                            m_codeword,
+                            m_multiplier,
+                            m_product,
+                            m_remainder,
+                            m_continuous);
                     m_productIt = m_product.begin()+m_augmentingLength;
                     m_codewordIt = m_codeword.begin();
                 }
@@ -287,6 +297,9 @@ void gr::gs::GuidedScrambling::Descrambler_impl::forecast(
         gr_vector_int& ninput_items_required)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
+    if(!m_valid)
+        setup();
+
     noutput_items -= m_product.end()-m_productIt;
     if(noutput_items>0)
     {

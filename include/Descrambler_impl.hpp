@@ -2,7 +2,7 @@
  * @file      Descrambler_impl.hpp
  * @brief     Declares the "Descrambler" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 21, 2016
+ * @date      July 23, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -45,7 +45,7 @@ namespace gr
         {
             //! Guided Scrambling "Descrambler" GNU Radio block implementation
             /*!
-             * @date   July 21, 2016
+             * @date   July 23, 2016
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             class Descrambler_impl: public Descrambler
@@ -159,6 +159,9 @@ namespace gr
                     std::vector<Symbol>&,
                     std::vector<Symbol>&,
                     bool)> m_multiply;
+
+                //! Setup the descrambler
+                void setup();
             };
         }
     }
