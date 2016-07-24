@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<block>
+    <name>Guided Scrambler</name>
+    <key>GuidedScrambler</key>
+    <category>Guided Scrambling</category>
+    <import>import gr_gs as gs</import>
+    <make>gs.GuidedScrambler($fieldSize, $codewordLength, $augmentingLength, $continuous, $divider, $threads, $constellation, $selectionMethod)</make>
+    <callback>set_fieldSize($fieldSize)</callback>
+    <callback>set_codewordLength($codewordLength)</callback>
+    <callback>set_augmentingLength($augmentingLength)</callback>
+    <callback>set_continuous($continuous)</callback>
+    <callback>set_divider($divider)</callback>
+    <callback>set_threads($threads)</callback>
+    <callback>set_constellation($constellation)</callback>
+    <callback>set_selectionMethod($selectionMethod)</callback>
+    <param>
+        <name>Field Size</name>
+        <key>fieldSize</key>
+        <value>4</value>
+        <type>int</type>
+        <option>
+            <name>2</name>
+            <key>2</key>
+        </option>
+        <option>
+            <name>4</name>
+            <key>4</key>
+        </option>
+    </param>
+    <param>
+        <name>Codeword Length</name>
+        <key>codewordLength</key>
+        <value>12</value>
+        <type>int</type>
+    </param>
+    <param>
+        <name>Augmenting Length</name>
+        <key>augmentingLength</key>
+        <value>3</value>
+        <type>int</type>
+    </param>
+    <param>
+        <name>Continuous</name>
+        <key>continuous</key>
+        <value>True</value>
+        <type>bool</type>
+    </param>
+    <param>
+        <name>Divider</name>
+        <key>divider</key>
+        <value>[1,0,0,1]</value>
+        <type>int_vector</type>
+    </param>
+    <param>
+        <name>Threads</name>
+        <key>threads</key>
+        <value>0</value>
+        <type>int</type>
+    </param>
+    <param>
+        <name>Constellation</name>
+        <key>constellation</key>
+        <value>[1,1j,-1j,-1]</value>
+        <type>complex_vector</type>
+    </param>
+    <param>
+        <name>Selection Method</name>
+        <key>selectionMethod</key>
+        <value>MSW</value>
+        <type>string</type>
+        <option>
+            <name>MSW</name>
+            <key>MSW</key>
+        </option>
+        <option>
+            <name>WRDS</name>
+            <key>WRDS</key>
+        </option>
+        <option>
+            <name>MSW2</name>
+            <key>MSW2</key>
+        </option>
+    </param>
+    <sink>
+        <name>in</name>
+        <type>@PYTHON_SYMBOL_TYPE@</type>
+    </sink>
+    <source>
+        <name>out</name>
+        <type>@PYTHON_SYMBOL_TYPE@</type>
+    </source>
+</block>
