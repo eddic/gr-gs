@@ -85,6 +85,15 @@ namespace gr
                 unsigned int threads() const;
                 void set_threads(unsigned int number=0);
 
+                const std::string& framingTag() const;
+                void set_framingTag(const std::string& tag);
+
+                const FramingStyle framingStyle() const;
+                void set_framingStyle(const FramingStyle style);
+
+                const unsigned int frameLength() const;
+                void set_frameLength(const unsigned int length);
+
                 //! Perform guided scrambling on an input source word
                 /*!
                  * Note that in order to improve efficiency of operation this
@@ -110,17 +119,22 @@ namespace gr
                  * @param [in] threads See set_threads()
                  * @param [in] constellation See set_constellation()
                  * @param [in] selectionMethod See set_selectionMethod()
+                 * @param [in] framingTag See set_framingTag()
+                 * @param [in] framingStyle See set_framingStyle()
+                 * @param [in] frameLength See set_framingLength()
                  */
                 inline GuidedScrambler_impl(
-                        const unsigned int fieldSize = 4,
-                        const unsigned int codewordLength = 12,
-                        const unsigned int augmentingLength = 3,
-                        const bool continuous = true,
-                        const std::vector<Symbol>& divider = {1,0,0,1},
-                        const unsigned int threads = 0,
-                        const std::vector<std::complex<float>>& constellation =
-                            defaultConstellation(4),
-                        const std::string& selectionMethod = "MSW");
+                        const unsigned int fieldSize,
+                        const unsigned int codewordLength,
+                        const unsigned int augmentingLength,
+                        const bool continuous,
+                        const std::vector<Symbol>& divider,
+                        const unsigned int threads,
+                        const std::vector<std::complex<float>>& constellation,
+                        const std::string& selectionMethod,
+                        const std::string& framingTag,
+                        const FramingStyle framingStyle,
+                        const unsigned int frameLength);
 
                 //! Simply kills the active threads.
                 ~GuidedScrambler_impl();
@@ -185,6 +199,24 @@ namespace gr
 
                 //! Iterator to sourceword write position
                 std::vector<Symbol>::iterator m_sourcewordIt;
+
+                //! Framing tag name/key
+                std::string m_framingTag;
+
+                //! PMT version of framing tag
+                pmt::pmt_t m_framingTagPMT;
+
+                //! Framing style for this block
+                FramingStyle m_framingStyle;
+
+                //! Frame length (for frame tag generation)
+                unsigned int m_frameLength;
+
+                //! Current codeword number (for framing)
+                unsigned int m_codewordNumber;
+
+                //! Current frame number
+                unsigned long long m_frameNumber;
             };
         }
     }

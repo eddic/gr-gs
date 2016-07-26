@@ -133,7 +133,10 @@ gr::gs::GuidedScrambling::GuidedScrambler_impl::GuidedScrambler_impl(
         const std::vector<Symbol>& divider,
         const unsigned int threads,
         const std::vector<std::complex<float>>& constellation,
-        const std::string& selectionMethod):
+        const std::string& selectionMethod,
+        const std::string& framingTag,
+        const FramingStyle framingStyle,
+        const unsigned int frameLength):
     gr::block("Guided Scrambler",
         gr::io_signature::make(1,1,sizeof(Symbol)),
         gr::io_signature::make(1,1,sizeof(Symbol))),
@@ -148,8 +151,14 @@ gr::gs::GuidedScrambling::GuidedScrambler_impl::GuidedScrambler_impl(
     m_continuous(continuous),
     m_codeword(nullptr),
     m_sourceword(m_codewordLength-m_augmentingLength),
-    m_sourcewordIt(m_sourceword.begin())
+    m_sourcewordIt(m_sourceword.begin()),
+    m_framingTag(framingTag),
+    m_framingStyle(framingStyle),
+    m_frameLength(frameLength),
+    m_codewordNumber(0),
+    m_frameNumber(0)
 {
+    set_tag_propagation_policy(gr::TPP_DONT);
     set_divider(divider);
     set_constellation(constellation);
 }
@@ -300,6 +309,48 @@ void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_threads(
     killThreads();
 }
 
+const std::string&
+gr::gs::GuidedScrambling::GuidedScrambler_impl::framingTag() const
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_framingTag;
+}
+
+void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_framingTag(
+        const std::string& tag)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_framingTag = tag;
+}
+
+const gr::gs::FramingStyle
+gr::gs::GuidedScrambling::GuidedScrambler_impl::framingStyle() const
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_framingStyle;
+}
+
+void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_framingStyle(
+        const FramingStyle style)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_framingStyle = tag;
+}
+
+const unsigned int
+gr::gs::GuidedScrambling::GuidedScrambler_impl::frameLength() const
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_frameLength;
+}
+
+void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_frameLength(
+        const unsigned int length)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_frameLength = length;
+}
+
 gr::gs::GuidedScrambling::GuidedScrambler_impl::~GuidedScrambler_impl()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -319,6 +370,20 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
     Symbol* output = reinterpret_cast<Symbol*>(output_items[0]);
     unsigned int outputSize = noutput_items;
 
+    std::vector<gr::tag_t> tags;
+    std::vector<gr::tag_t>::const_iterator tag;
+    bool tagWord = false;
+
+    if(m_framingStyle == FramingStyle::Read)
+    {
+        tags = this->get_tags_in_range(
+                0,
+                this->nitems_read(0),
+                this->nitems_read(0)+ninput_items[0],
+                m_framingTagPMT);
+        tag = tags.cbegin();
+    }
+
     while(true)
     {
         const unsigned int outputCopySize = m_codeword==nullptr?0:std::min(
@@ -335,6 +400,13 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
         }
         else
         {
+            if(m_framingStyle == FramingStyle::Read &&
+                    input-reinterpret_cast<const Symbol*>(input_items[0])
+                    +m_codewordLength > tag->offset-this->nitems_read(0))
+            {
+
+            }
+
             const unsigned int inputCopySize = std::min(
                     inputSize,
                     unsigned(m_sourceword.end()-m_sourcewordIt));
@@ -391,7 +463,10 @@ gr::gs::GuidedScrambler::sptr gr::gs::GuidedScrambler::make(
         const std::vector<Symbol>& divider,
         const unsigned int threads,
         const std::vector<std::complex<float>>& constellation,
-        const std::string& selectionMethod)
+        const std::string& selectionMethod,
+        const std::string& framingTag,
+        const FramingStyle framingStyle,
+        const unsigned int frameLength)
 {
     return gnuradio::get_initial_sptr(
             new ::gr::gs::GuidedScrambling::GuidedScrambler_impl(
@@ -402,7 +477,10 @@ gr::gs::GuidedScrambler::sptr gr::gs::GuidedScrambler::make(
                     divider,
                     threads,
                     constellation,
-                    selectionMethod));
+                    selectionMethod,
+                    framingTag,
+                    framingStyle,
+                    frameLength));
 }
 
 const std::vector<std::string>& gr::gs::GuidedScrambler::selectionMethods()

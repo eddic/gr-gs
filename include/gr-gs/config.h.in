@@ -2,7 +2,7 @@
  * @file      config.h
  * @brief     Defines some basic parameters for the module
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 8, 2016
+ * @date      July 26, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -55,6 +55,19 @@ namespace gr
 
         //! Type to use for representation of symbols
         typedef @CXX_SYMBOL_TYPE@ Symbol;
+
+        //! Indicates how a block should handle framing tags
+        enum class FramingStyle
+        {
+            //! Block should neither generate nor read framing tags
+            None,
+
+            //! Block should look for framing tags and adjust when found
+            Read,
+
+            //! Block should generate framing tags
+            Generate
+        };
 
         //! Stuff needed for the GuidedScrambler and Descrambler blocks
         namespace GuidedScrambling

@@ -2,7 +2,7 @@
  * @file      GuidedScrambler.h
  * @brief     Declares the "Guided Scrambler" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 23, 2016
+ * @date      July 26, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -39,7 +39,7 @@ namespace gr
     {
         //! "Guided Scrambler" GNU Radio block
         /*!
-         * @date   July 23, 2016
+         * @date   July 26, 2016
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         class GS_API GuidedScrambler: virtual public gr::block
@@ -165,6 +165,43 @@ namespace gr
              */
             virtual void set_threads(unsigned int number) =0;
 
+            //! Access the framing tag name
+            virtual const std::string& framingTag() const =0;
+
+            //! Set the framing tag name
+            /*!
+             * @param [in] tag Desired string to use for the "key" of the tag
+             *                 inserted at frame beginnings.
+             */
+            virtual void set_framingTag(const std::string& tag) =0;
+
+            //! Access the frame style
+            virtual const FramingStyle framingStyle() const =0;
+
+            //! Set the framing style
+            /*!
+             * @param [in] style Designed framing style. See FramingStyle.
+             */
+            virtual void set_framingStyle(const FramingStyle style) =0;
+
+            //! Access the frame length in codewords
+            /*!
+             * Note this only has meaning if the framing style is
+             * FramingStyle::Generate.
+             */
+            virtual const unsigned int frameLength() const =0;
+
+            //! Set the frame length in codewords
+            /*!
+             * Note this only has meaning if the framing style is
+             * FramingStyle::Generate.
+             *
+             * @param [in] length Desired length of frame in codewords. This
+             *                    means a frame tag is generated every *length*
+             *                    codewords.
+             */
+            virtual void set_frameLength(const unsigned int length) =0;
+
             //! Shared pointer to this
             typedef boost::shared_ptr<GuidedScrambler> sptr;
 
@@ -178,6 +215,9 @@ namespace gr
              * @param [in] threads See set_threads()
              * @param [in] constellation See set_constellation()
              * @param [in] selectionMethod See set_selectionMethod()
+             * @param [in] framingTag See set_framingTag()
+             * @param [in] framingStyle See set_framingStyle()
+             * @param [in] frameLength See set_framingLength()
              * @return Shared pointer to newly allocated guided scrambler
              */
             static sptr make(
@@ -189,7 +229,10 @@ namespace gr
                     const unsigned int threads = 0,
                     const std::vector<std::complex<float>>& constellation =
                         gr::gs::defaultConstellation(4),
-                    const std::string& selectionMethod = "MSW");
+                    const std::string& selectionMethod = "MSW",
+                    const std::string& framingTag = "frame",
+                    const FramingStyle framingStyle = FramingStyle::None,
+                    const unsigned int frameLength = 4096);
         };
     }
 }
