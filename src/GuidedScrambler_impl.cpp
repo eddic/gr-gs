@@ -364,15 +364,16 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
         gr_vector_void_star &output_items)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    const Symbol* input = reinterpret_cast<const Symbol*>(input_items[0]);
+    const Symbol* const& inputStart = reinterpret_cast<const Symbol*>(input_items[0]);
+    const Symbol* input = inputStart;
     unsigned int inputSize = ninput_items[0];
 
-    Symbol* output = reinterpret_cast<Symbol*>(output_items[0]);
+    Symbol* const& outputStart = reinterpret_cast<Symbol*>(output_items[0]);
+    Symbol* output = outputStart;
     unsigned int outputSize = noutput_items;
 
     std::vector<gr::tag_t> tags;
     std::vector<gr::tag_t>::const_iterator tag;
-    bool tagWord = false;
 
     if(m_framingStyle == FramingStyle::Read)
     {
@@ -397,16 +398,11 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
                     output);
             outputSize -= outputCopySize;
             m_codewordIt += outputCopySize;
+            if(m_codewordIt == m_codeword.end())
+                m_codeword = nullptr;
         }
         else
         {
-            if(m_framingStyle == FramingStyle::Read &&
-                    input-reinterpret_cast<const Symbol*>(input_items[0])
-                    +m_codewordLength > tag->offset-this->nitems_read(0))
-            {
-
-            }
-
             const unsigned int inputCopySize = std::min(
                     inputSize,
                     unsigned(m_sourceword.end()-m_sourcewordIt));
@@ -418,11 +414,32 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
                         m_sourcewordIt);
                 inputSize -= inputCopySize;
                 input += inputCopySize;
-                if(m_sourcewordIt == m_sourceword.end())
+                if(!m_codeword && m_sourcewordIt == m_sourceword.end())
                 {
                     m_codeword = &scramble(m_sourceword);
                     m_codewordIt = m_codeword->begin();
                     m_sourcewordIt = m_sourceword.begin();
+
+                    if(m_framingStyle == FramingStyle::Read && tag != tags.cend())
+                    {
+                        const size_t offset =
+                            tag->offset
+                            -this->nitems_read(0)
+                            -(input-inputStart);
+
+                        if(offset < m_codewordLength)
+                        {
+                            inputSize -= offset;
+                            input += offset;
+                            this->add_item_tag(
+                                    0,
+                                    this->nitems_written(0)
+                                    +(unsigned long long)(output-outputStart),
+                                    tag->key,
+                                    tag->value);
+                            ++tag;
+                        }
+                    }
                 }
                 else
                     break;
