@@ -321,6 +321,7 @@ void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_framingTag(
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_framingTag = tag;
+    m_framingTagPMT = pmt::string_to_symbol(tag);
 }
 
 const gr::gs::FramingStyle
@@ -392,6 +393,22 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
                 unsigned(m_codeword->end()-m_codewordIt));
         if(outputCopySize)
         {
+            if(m_framingStyle == FramingStyle::Generate)
+            {
+                if(m_codewordNumber == 0)
+                {
+                    this->add_item_tag(
+                            0,
+                            this->nitems_written(0)
+                            +(unsigned long long)(output-outputStart),
+                            m_framingTagPMT,
+                            m_frameNumber++);
+                }
+
+                if(++m_codewordNumber == m_frameLength)
+                    m_codewordNumber = 0;
+            }
+
             output = std::copy(
                     m_codewordIt,
                     m_codewordIt+outputCopySize,
