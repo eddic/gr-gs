@@ -158,7 +158,7 @@ gr::gs::GuidedScrambling::GuidedScrambler_impl::GuidedScrambler_impl(
     m_codewordNumber(0),
     m_frameNumber(0)
 {
-    set_tag_propagation_policy(gr::TPP_DONT);
+    set_tag_propagation_policy(gr::block::TPP_DONT);
     set_divider(divider);
     set_constellation(constellation);
 }
@@ -335,7 +335,7 @@ void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_framingStyle(
         const FramingStyle style)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    m_framingStyle = tag;
+    m_framingStyle = style;
 }
 
 const unsigned int
@@ -376,9 +376,10 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
     std::vector<gr::tag_t> tags;
     std::vector<gr::tag_t>::const_iterator tag;
 
-    if(m_framingStyle == FramingStyle::Read)
+    if(m_framingStyle == FramingStyle::ReadFrameMarkers)
     {
-        tags = this->get_tags_in_range(
+        this->get_tags_in_range(
+                tags,
                 0,
                 this->nitems_read(0),
                 this->nitems_read(0)+ninput_items[0],
@@ -393,7 +394,7 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
                 unsigned(m_codeword->end()-m_codewordIt));
         if(outputCopySize)
         {
-            if(m_framingStyle == FramingStyle::Generate)
+            if(m_framingStyle == FramingStyle::GenerateFrameMarkers)
             {
                 if(m_codewordNumber == 0)
                 {
@@ -402,7 +403,7 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
                             this->nitems_written(0)
                             +(unsigned long long)(output-outputStart),
                             m_framingTagPMT,
-                            m_frameNumber++);
+                            pmt::from_uint64(m_frameNumber++));
                 }
 
                 if(++m_codewordNumber == m_frameLength)
@@ -415,7 +416,7 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
                     output);
             outputSize -= outputCopySize;
             m_codewordIt += outputCopySize;
-            if(m_codewordIt == m_codeword.end())
+            if(m_codewordIt == m_codeword->end())
                 m_codeword = nullptr;
         }
         else
@@ -437,7 +438,7 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
                     m_codewordIt = m_codeword->begin();
                     m_sourcewordIt = m_sourceword.begin();
 
-                    if(m_framingStyle == FramingStyle::Read && tag != tags.cend())
+                    if(m_framingStyle == FramingStyle::ReadFrameMarkers && tag != tags.cend())
                     {
                         const size_t offset =
                             tag->offset
@@ -451,7 +452,7 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
                             this->add_item_tag(
                                     0,
                                     this->nitems_written(0)
-                                    +(unsigned long long)(output-outputStart),
+                                    +uint64_t(output-outputStart),
                                     tag->key,
                                     tag->value);
                             ++tag;

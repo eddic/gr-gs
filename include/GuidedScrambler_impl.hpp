@@ -216,7 +216,7 @@ namespace gr
                 unsigned int m_codewordNumber;
 
                 //! Current frame number
-                unsigned long long m_frameNumber;
+                uint64_t m_frameNumber;
             };
         }
     }
