@@ -9,6 +9,7 @@
 #include "gr-gs/Descrambler.h"
 #include "gr-gs/PulseGenerator.h"
 #include "gr-gs/SymbolGenerator.h"
+#include "gr-gs/InfiniteAverage.h"
 #include "gr-gs/exceptions.h"
 %}
 
@@ -22,3 +23,5 @@ GR_SWIG_BLOCK_MAGIC2(gs, Descrambler);
 GR_SWIG_BLOCK_MAGIC2(gs, PulseGenerator);
 %include "gr-gs/SymbolGenerator.h"
 GR_SWIG_BLOCK_MAGIC2(gs, SymbolGenerator);
+%include "gr-gs/InfiniteAverage.h"
+GR_SWIG_BLOCK_MAGIC2(gs, InfiniteAverage);
