@@ -231,7 +231,7 @@ namespace gr
                         gr::gs::defaultConstellation(4),
                     const std::string& selectionMethod = "MSW",
                     const std::string& framingTag = "frame",
-                    const FramingStyle framingStyle = NoFramingStyle,
+                    const FramingStyle framingStyle = gr::gs::IgnoreFrameMarkers,
                     const unsigned int frameLength = 4096);
         };
     }

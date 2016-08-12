@@ -196,14 +196,10 @@ foreach(incdir ${GNURADIO_RUNTIME_INCLUDE_DIRS})
     include_directories(${incdir}/gnuradio/swig)
 endforeach(incdir)
 
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/gr_gs.i.in
-    ${CMAKE_CURRENT_BINARY_DIR}/gr_gs.i @ONLY)
-
 set(CMAKE_SWIG_FLAGS -fvirtual -modern -keyword -w511)
-set_source_files_properties("${CMAKE_CURRENT_BINARY_DIR}/gr_gs.i"
+set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/gr_gs.i"
     PROPERTIES CPLUSPLUS ON)
-swig_add_module(gr_gs python "${CMAKE_CURRENT_BINARY_DIR}/gr_gs.i")
+swig_add_module(gr_gs python "${CMAKE_CURRENT_SOURCE_DIR}/gr_gs.i")
 swig_link_libraries(gr_gs
     gnuradio-gs
     "${PYTHON_LIBRARIES}"

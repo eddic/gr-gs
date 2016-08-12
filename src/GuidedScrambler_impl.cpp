@@ -432,35 +432,34 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
                         m_sourcewordIt);
                 inputSize -= inputCopySize;
                 input += inputCopySize;
-                if(!m_codeword && m_sourcewordIt == m_sourceword.end())
+            }
+
+            if(!m_codeword && m_sourcewordIt == m_sourceword.end())
+            {
+                m_codeword = &scramble(m_sourceword);
+                m_codewordIt = m_codeword->begin();
+                m_sourcewordIt = m_sourceword.begin();
+
+                if(m_framingStyle == FramingStyle::ReadFrameMarkers && tag != tags.cend())
                 {
-                    m_codeword = &scramble(m_sourceword);
-                    m_codewordIt = m_codeword->begin();
-                    m_sourcewordIt = m_sourceword.begin();
+                    const size_t offset =
+                        tag->offset
+                        -this->nitems_read(0)
+                        -(input-inputStart);
 
-                    if(m_framingStyle == FramingStyle::ReadFrameMarkers && tag != tags.cend())
+                    if(offset < m_codewordLength)
                     {
-                        const size_t offset =
-                            tag->offset
-                            -this->nitems_read(0)
-                            -(input-inputStart);
-
-                        if(offset < m_codewordLength)
-                        {
-                            inputSize -= offset;
-                            input += offset;
-                            this->add_item_tag(
-                                    0,
-                                    this->nitems_written(0)
-                                    +uint64_t(output-outputStart),
-                                    tag->key,
-                                    tag->value);
-                            ++tag;
-                        }
+                        inputSize -= offset;
+                        input += offset;
+                        this->add_item_tag(
+                                0,
+                                this->nitems_written(0)
+                                +uint64_t(output-outputStart),
+                                tag->key,
+                                tag->value);
+                        ++tag;
                     }
                 }
-                else
-                    break;
             }
             else
                 break;

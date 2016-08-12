@@ -101,12 +101,12 @@
         <option>
             <name>None</name>
             <key>None</key>
-            <opt>val:gs.NoFramingStyle</opt>
+            <opt>val:gs.IgnoreFrameMarkers</opt>
         </option>
         <option>
             <name>Read</name>
             <key>Read</key>
-            <opt>val:gs.ReadFrameMakers</opt>
+            <opt>val:gs.ReadFrameMarkers</opt>
         </option>
         <option>
             <name>Generate</name>

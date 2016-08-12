@@ -10,12 +10,9 @@
 #include "gr-gs/PulseGenerator.h"
 #include "gr-gs/SymbolGenerator.h"
 #include "gr-gs/exceptions.h"
-typedef @CXX_SYMBOL_TYPE@ Symbol;
-typedef gr::gs::FramingStyle FramingStyle;
 %}
 
-typedef @CXX_SYMBOL_TYPE@ Symbol;
-typedef gr::gs::FramingStyle FramingStyle;
+%include "gr-gs/config.h"
 
 %include "gr-gs/GuidedScrambler.h"
 GR_SWIG_BLOCK_MAGIC2(gs, GuidedScrambler);

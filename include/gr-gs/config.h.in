@@ -32,12 +32,13 @@
 #include <vector>
 #include <complex>
 
+#ifndef GS_API
 #include <gnuradio/attributes.h>
-
 #ifdef gnuradio_gs_EXPORTS
 #  define GS_API __GR_ATTR_EXPORT
 #else
 #  define GS_API __GR_ATTR_IMPORT
+#endif
 #endif
 
 //! GNU Radio Namespace
@@ -60,7 +61,7 @@ namespace gr
         enum FramingStyle
         {
             //! Block should neither generate nor read framing tags
-            NoFramingStyle,
+            IgnoreFrameMarkers = 0,
 
             //! Block should look for framing tags and adjust when found
             ReadFrameMarkers,
