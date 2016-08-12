@@ -2,7 +2,7 @@
  * @file      GuidedScrambler_impl.hpp
  * @brief     Declares the "Guided Scrambler" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 23, 2016
+ * @date      August 11, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -48,7 +48,7 @@ namespace gr
              * This class allows us to perform guided scrambling in an
              * efficient multi threaded fashion
              *
-             * @date   July 23, 2016
+             * @date   August 11, 2016
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             class GuidedScrambler_impl: public GuidedScrambler

@@ -2,7 +2,7 @@
  * @file      Descrambler_impl.cpp
  * @brief     Defines the "Descrambler" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 23, 2016
+ * @date      August 11, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -106,7 +106,9 @@ gr::gs::GuidedScrambling::Descrambler_impl::Descrambler_impl(
         const unsigned int codewordLength,
         const unsigned int augmentingLength,
         const bool continuous,
-        const std::vector<Symbol>& multiplier):
+        const std::vector<Symbol>& multiplier,
+        const std::string& framingTag,
+        const FramingStyle framingStyle):
     gr::block("Guided Scrambling Descrambler",
         gr::io_signature::make(1,1,sizeof(Symbol)),
         gr::io_signature::make(1,1,sizeof(Symbol))),
@@ -115,8 +117,13 @@ gr::gs::GuidedScrambling::Descrambler_impl::Descrambler_impl(
     m_multiplier(multiplier),
     m_continuous(continuous),
     m_valid(false),
-    m_fieldSize(fieldSize)
-{}
+    m_fieldSize(fieldSize),
+    m_framingTag(framingTag),
+    m_framingTagPMT(pmt::string_to_symbol(framingTag)),
+    m_framingStyle(framingStyle)
+{
+    set_tag_propagation_policy(gr::block::TPP_DONT);
+}
 
 void gr::gs::GuidedScrambling::Descrambler_impl::descramble(
         const std::vector<Symbol>& input)
@@ -202,6 +209,35 @@ void gr::gs::GuidedScrambling::Descrambler_impl::set_multiplier(
     m_valid=false;
 }
 
+const std::string&
+gr::gs::GuidedScrambling::Descrambler_impl::framingTag() const
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_framingTag;
+}
+
+void gr::gs::GuidedScrambling::Descrambler_impl::set_framingTag(
+        const std::string& tag)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_framingTag = tag;
+    m_framingTagPMT = pmt::string_to_symbol(tag);
+}
+
+const gr::gs::FramingStyle
+gr::gs::GuidedScrambling::Descrambler_impl::framingStyle() const
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_framingStyle;
+}
+
+void gr::gs::GuidedScrambling::Descrambler_impl::set_framingStyle(
+        const FramingStyle style)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_framingStyle = style;
+}
+
 const std::vector<gr::gs::Symbol>
 gr::gs::GuidedScrambling::Descrambler_impl::output() const
 {
@@ -235,11 +271,27 @@ int gr::gs::GuidedScrambling::Descrambler_impl::general_work(
     if(!m_valid)
         setup();
 
-    const Symbol* input = reinterpret_cast<const Symbol*>(input_items[0]);
+    const Symbol* const& inputStart = reinterpret_cast<const Symbol*>(input_items[0]);
+    const Symbol* input = inputStart;
     unsigned int inputSize = ninput_items[0];
 
-    Symbol* output = reinterpret_cast<Symbol*>(output_items[0]);
+    Symbol* const& outputStart = reinterpret_cast<Symbol*>(output_items[0]);
+    Symbol* output = outputStart;
     unsigned int outputSize = noutput_items;
+
+    std::vector<gr::tag_t> tags;
+    std::vector<gr::tag_t>::const_iterator tag;
+
+    if(m_framingStyle == ReadFrameMarkers)
+    {
+        this->get_tags_in_range(
+                tags,
+                0,
+                this->nitems_read(0),
+                this->nitems_read(0)+ninput_items[0],
+                m_framingTagPMT);
+        tag = tags.cbegin();
+    }
 
     while(true)
     {
@@ -269,19 +321,40 @@ int gr::gs::GuidedScrambling::Descrambler_impl::general_work(
                         m_codewordIt);
                 inputSize -= inputCopySize;
                 input += inputCopySize;
-                if(m_codewordIt == m_codeword.end())
+            }
+
+            if(m_productIt == m_product.end()
+                    && m_codewordIt == m_codeword.end())
+            {
+                m_multiply(
+                        m_codeword,
+                        m_multiplier,
+                        m_product,
+                        m_remainder,
+                        m_continuous);
+                m_productIt = m_product.begin()+m_augmentingLength;
+                m_codewordIt = m_codeword.begin();
+
+                if(m_framingStyle == ReadFrameMarkers && tag != tags.cend())
                 {
-                    m_multiply(
-                            m_codeword,
-                            m_multiplier,
-                            m_product,
-                            m_remainder,
-                            m_continuous);
-                    m_productIt = m_product.begin()+m_augmentingLength;
-                    m_codewordIt = m_codeword.begin();
+                    const size_t offset =
+                        tag->offset
+                        -this->nitems_read(0)
+                        -(input-inputStart);
+
+                    if(offset < m_codewordLength)
+                    {
+                        inputSize -= offset;
+                        input += offset;
+                        this->add_item_tag(
+                                0,
+                                this->nitems_written(0)
+                                +uint64_t(output-outputStart),
+                                tag->key,
+                                tag->value);
+                        ++tag;
+                    }
                 }
-                else
-                    break;
             }
             else
                 break;
@@ -319,7 +392,9 @@ gr::gs::Descrambler::sptr gr::gs::Descrambler::make(
         const unsigned int codewordLength,
         const unsigned int augmentingLength,
         const bool continuous,
-        const std::vector<Symbol>& multiplier)
+        const std::vector<Symbol>& multiplier,
+        const std::string& framingTag,
+        const FramingStyle framingStyle)
 {
     return gnuradio::get_initial_sptr(
             new ::gr::gs::GuidedScrambling::Descrambler_impl(
@@ -327,5 +402,7 @@ gr::gs::Descrambler::sptr gr::gs::Descrambler::make(
                 codewordLength,
                 augmentingLength,
                 continuous,
-                multiplier));
+                multiplier,
+                framingTag,
+                framingStyle));
 }

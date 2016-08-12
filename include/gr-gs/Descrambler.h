@@ -115,6 +115,27 @@ namespace gr
             virtual void set_multiplier(
                     const std::vector<Symbol>& multiplier) =0;
 
+            //! Access the framing tag name
+            virtual const std::string& framingTag() const =0;
+
+            //! Set the framing tag name
+            /*!
+             * @param [in] tag Desired string to use for the "key" of the tag
+             *                 inserted at frame beginnings.
+             */
+            virtual void set_framingTag(const std::string& tag) =0;
+
+            //! Access the frame style
+            virtual const FramingStyle framingStyle() const =0;
+
+            //! Set the framing style
+            /*!
+             * @param [in] style Designed framing style. See FramingStyle. Note
+             *                   this block can only read or ignore framing
+             *                   markers.
+             */
+            virtual void set_framingStyle(const FramingStyle style) =0;
+
             //! Shared pointer to this
             typedef boost::shared_ptr<Descrambler> sptr;
 
@@ -125,6 +146,8 @@ namespace gr
              * @param [in] augmentingLength See set_augmentingLength()
              * @param [in] continuous See set_continuous()
              * @param [in] multiplier See set_multiplier()
+             * @param [in] framingTag See set_framingTag()
+             * @param [in] framingStyle See set_framingStyle()
              * @return Shared pointer to newly allocated descrambler
              */
             static sptr make(
@@ -132,7 +155,9 @@ namespace gr
                     const unsigned int codewordLength = 12,
                     const unsigned int augmentingLength = 3,
                     const bool continuous = true,
-                    const std::vector<Symbol>& multiplier = {1,0,0,1});
+                    const std::vector<Symbol>& multiplier = {1,0,0,1},
+                    const std::string& framingTag = "frame",
+                    const FramingStyle framingStyle = IgnoreFrameMarkers);
         };
     }
 }

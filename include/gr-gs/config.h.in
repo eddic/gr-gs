@@ -2,7 +2,7 @@
  * @file      config.h
  * @brief     Defines some basic parameters for the module
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 26, 2016
+ * @date      August 11, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */

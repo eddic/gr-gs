@@ -4,7 +4,7 @@ project(gr-gs CXX)
 # Setup symbol type
 
 if(NOT SYMBOL_SIZE)
-    set(SYMBOL_SIZE 2)
+    set(SYMBOL_SIZE 1)
 endif()
 
 if(SYMBOL_SIZE EQUAL 1)

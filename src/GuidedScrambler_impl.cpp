@@ -2,7 +2,7 @@
  * @file      GuidedScrambler_impl.cpp
  * @brief     Defines the "Guided Scrambler" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 23, 2016
+ * @date      August 11, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -153,6 +153,7 @@ gr::gs::GuidedScrambling::GuidedScrambler_impl::GuidedScrambler_impl(
     m_sourceword(m_codewordLength-m_augmentingLength),
     m_sourcewordIt(m_sourceword.begin()),
     m_framingTag(framingTag),
+    m_framingTagPMT(pmt::string_to_symbol(framingTag)),
     m_framingStyle(framingStyle),
     m_frameLength(frameLength),
     m_codewordNumber(0),
@@ -376,7 +377,7 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
     std::vector<gr::tag_t> tags;
     std::vector<gr::tag_t>::const_iterator tag;
 
-    if(m_framingStyle == FramingStyle::ReadFrameMarkers)
+    if(m_framingStyle == ReadFrameMarkers)
     {
         this->get_tags_in_range(
                 tags,
@@ -394,7 +395,7 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
                 unsigned(m_codeword->end()-m_codewordIt));
         if(outputCopySize)
         {
-            if(m_framingStyle == FramingStyle::GenerateFrameMarkers)
+            if(m_framingStyle == GenerateFrameMarkers)
             {
                 if(m_codewordNumber == 0)
                 {
@@ -440,14 +441,14 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
                 m_codewordIt = m_codeword->begin();
                 m_sourcewordIt = m_sourceword.begin();
 
-                if(m_framingStyle == FramingStyle::ReadFrameMarkers && tag != tags.cend())
+                if(m_framingStyle == ReadFrameMarkers && tag != tags.cend())
                 {
                     const size_t offset =
                         tag->offset
                         -this->nitems_read(0)
                         -(input-inputStart);
 
-                    if(offset < m_codewordLength)
+                    if(offset < m_codewordLength-m_augmentingLength)
                     {
                         inputSize -= offset;
                         input += offset;

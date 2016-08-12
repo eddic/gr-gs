@@ -2,7 +2,7 @@
  * @file      GuidedScrambler.h
  * @brief     Declares the "Guided Scrambler" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 26, 2016
+ * @date      August 11, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -39,7 +39,7 @@ namespace gr
     {
         //! "Guided Scrambler" GNU Radio block
         /*!
-         * @date   July 26, 2016
+         * @date   August 11, 2016
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         class GS_API GuidedScrambler: virtual public gr::block
@@ -231,7 +231,7 @@ namespace gr
                         gr::gs::defaultConstellation(4),
                     const std::string& selectionMethod = "MSW",
                     const std::string& framingTag = "frame",
-                    const FramingStyle framingStyle = gr::gs::IgnoreFrameMarkers,
+                    const FramingStyle framingStyle = IgnoreFrameMarkers,
                     const unsigned int frameLength = 4096);
         };
     }

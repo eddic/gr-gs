@@ -2,7 +2,7 @@
  * @file      Descrambler_impl.hpp
  * @brief     Declares the "Descrambler" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 23, 2016
+ * @date      August 11, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -45,7 +45,7 @@ namespace gr
         {
             //! Guided Scrambling "Descrambler" GNU Radio block implementation
             /*!
-             * @date   July 23, 2016
+             * @date   August 11, 2016
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             class Descrambler_impl: public Descrambler
@@ -58,13 +58,17 @@ namespace gr
                  * @param [in] augmentingLength See set_augmentingLength()
                  * @param [in] continuous See set_continuous()
                  * @param [in] multiplier See set_multiplier()
+                 * @param [in] framingTag See set_framingTag()
+                 * @param [in] framingStyle See set_framingStyle()
                  */
                 inline Descrambler_impl(
                     const unsigned int fieldSize,
                     const unsigned int codewordLength,
                     const unsigned int augmentingLength,
                     const bool continuous,
-                    const std::vector<Symbol>& multiplier);
+                    const std::vector<Symbol>& multiplier,
+                    const std::string& framingTag = "frame",
+                    const FramingStyle framingStyle = IgnoreFrameMarkers);
 
                 //! No copying allowed
                 Descrambler_impl(const Descrambler_impl& x) = delete;
@@ -85,6 +89,12 @@ namespace gr
 
                 const std::vector<Symbol>& multiplier() const;
                 void set_multiplier(const std::vector<Symbol>& multiplier);
+
+                const std::string& framingTag() const;
+                void set_framingTag(const std::string& tag);
+
+                const FramingStyle framingStyle() const;
+                void set_framingStyle(const FramingStyle style);
 
                 //! Perform the actual descramble operation
                 /*!
@@ -151,6 +161,15 @@ namespace gr
 
                 //! Field size to descramble with
                 unsigned int m_fieldSize;
+
+                //! Framing tag name/key
+                std::string m_framingTag;
+
+                //! PMT version of framing tag
+                pmt::pmt_t m_framingTagPMT;
+
+                //! Framing style for this block
+                FramingStyle m_framingStyle;
 
                 //! The actual multiplying function to use
                 std::function<void(
