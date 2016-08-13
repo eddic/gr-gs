@@ -2,7 +2,7 @@
  * @file      PulseGenerator_impl.cpp
  * @brief     Defines the "Pulse Generator" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 21, 2016
+ * @date      August 12, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -131,6 +131,12 @@ void gr::gs::Implementations::PulseGenerator_impl::set_phase(const float phase)
     std::lock_guard<std::mutex> lock(m_mutex);
     m_phase = phase;
     m_currentPhase = 0;
+}
+
+const std::vector<float>&
+gr::gs::Implementations::PulseGenerator_impl::taps() const
+{
+    return m_taps;
 }
 
 int gr::gs::Implementations::PulseGenerator_impl::work(

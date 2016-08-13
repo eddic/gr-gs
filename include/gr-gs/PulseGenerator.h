@@ -2,7 +2,7 @@
  * @file      PulseGenerator.h
  * @brief     Declares the "Pulse Generator" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 23, 2016
+ * @date      August 12, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -62,7 +62,7 @@ namespace gr
          * See the members functions for further information on the parameters
          * and their meaning.
          *
-         * @date    July 23, 2016
+         * @date    August 12, 2016
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         class GS_API PulseGenerator: virtual public gr::sync_interpolator
@@ -228,6 +228,9 @@ namespace gr
              * @param  [in] phase Desired symbol phase shift
              */
             virtual void set_phase(const float phase) =0;
+
+            //! See the actual taps used (for root raised cosine)
+            virtual const std::vector<float>& taps() const =0;
 
             //! Shared pointer to this
             typedef boost::shared_ptr<PulseGenerator> sptr;

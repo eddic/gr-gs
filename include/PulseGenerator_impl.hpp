@@ -2,7 +2,7 @@
  * @file      PulseGenerator_impl.hpp
  * @brief     Declares the "Pulse Generator" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 21, 2016
+ * @date      August 12, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -46,7 +46,7 @@ namespace gr
             /*!
              * Implements gr::gs::PulseGenerator
              *
-             * @date    July 21, 2015
+             * @date    August 12, 2016
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             class PulseGenerator_impl: public PulseGenerator
@@ -81,6 +81,8 @@ namespace gr
 
                 float phase() const;
                 void set_phase(const float phase);
+
+                const std::vector<float>& taps() const;
 
                 //! GNU Radio work function
                 int work(int noutput_items,
