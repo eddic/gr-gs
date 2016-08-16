@@ -7,7 +7,7 @@
     <make>gs.PulseGenerator($samplesPerSymbol, $constellation, $baudRate, $numberOfTaps, $alpha, $amplitude, $shape, $tags, $phase)</make>
     <callback>set_constellation($constellation)</callback>
     <callback>set_baudRate($baudRate)</callback>
-    <callback>set_numberOfTaps($numberOfTaps</callback>
+    <callback>set_numberOfTaps($numberOfTaps)</callback>
     <callback>set_alpha($alpha)</callback>
     <callback>set_amplitude($amplitude)</callback>
     <callback>set_shape($shape)</callback>
