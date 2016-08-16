@@ -159,7 +159,9 @@ int gr::gs::Implementations::PulseGenerator_impl::work(
             std::vector<float> corrections(m_samplesPerSymbol, 0);
             for(unsigned int i=0; i<m_taps.size(); ++i)
                 corrections[i%m_samplesPerSymbol] += std::abs(m_taps[i]);
-            const float correction = *std::max_element(corrections.begin(), corrections.end());
+            const float correction = *std::max_element(
+                    corrections.begin(),
+                    corrections.end());
 
             for(auto& tap : m_taps)
                 tap /= correction;
@@ -181,13 +183,13 @@ int gr::gs::Implementations::PulseGenerator_impl::work(
 
         m_input.clear();
         m_input.resize(1+(m_numberOfTaps-1)/m_samplesPerSymbol, 0);
+        this->declare_sample_delay(m_input.size()/2);
         m_taps.resize(m_input.size()*m_samplesPerSymbol, 0);
         m_valid=true;
     }
 
-    const Symbol* const start = reinterpret_cast<const Symbol*>(input_items[0]);
-    const Symbol* const end = reinterpret_cast<const Symbol*>(input_items[0])
-        +noutput_items/m_samplesPerSymbol;
+    const Symbol* const& start = reinterpret_cast<const Symbol*>(input_items[0]);
+    const Symbol* const& end = start + noutput_items/m_samplesPerSymbol;
 
     std::complex<float>* sample = reinterpret_cast<std::complex<float>*>(
             output_items[0]);
@@ -297,6 +299,7 @@ gr::gs::Implementations::PulseGenerator_impl::PulseGenerator_impl(
     m_valid(false),
     m_tag(tags)
 {
+    this->enable_update_rate(false);
 }
 
 gr::gs::PulseGenerator::sptr gr::gs::PulseGenerator::make(

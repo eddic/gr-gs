@@ -159,6 +159,9 @@ gr::gs::GuidedScrambling::GuidedScrambler_impl::GuidedScrambler_impl(
     m_codewordNumber(0),
     m_frameNumber(0)
 {
+    this->enable_update_rate(false);
+    this->set_relative_rate(
+            double(codewordLength)/(codewordLength-augmentingLength));
     set_tag_propagation_policy(gr::block::TPP_DONT);
     set_divider(divider);
     set_constellation(constellation);
@@ -233,6 +236,8 @@ void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_codewordLength(
     m_sourcewordIt = m_sourceword.begin();
     m_codeword = nullptr;
     m_codewordLength = length;
+    this->set_relative_rate(
+            double(m_codewordLength)/(m_codewordLength-m_augmentingLength));
     killThreads();
 }
 
@@ -251,6 +256,8 @@ void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_augmentingLength(
     m_sourcewordIt = m_sourceword.begin();
     m_codeword = nullptr;
     m_augmentingLength = length;
+    this->set_relative_rate(
+            double(m_codewordLength)/(m_codewordLength-m_augmentingLength));
     killThreads();
 }
 

@@ -70,6 +70,7 @@ gr::gs::Implementations::InfiniteAverage_impl::InfiniteAverage_impl(
     m_count(0),
     m_average(vectorSize)
 {
+    this->enable_update_rate(false);
 }
 
 gr::gs::InfiniteAverage::sptr gr::gs::InfiniteAverage::make(

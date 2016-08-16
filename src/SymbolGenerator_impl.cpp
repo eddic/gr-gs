@@ -75,6 +75,7 @@ gr::gs::Implementations::SymbolGenerator_impl::SymbolGenerator_impl(
     m_generator(1984),
     m_distribution(m_weightings.cbegin(), m_weightings.cend())
 {
+    this->enable_update_rate(false);
 }
 
 gr::gs::SymbolGenerator::sptr gr::gs::SymbolGenerator::make(

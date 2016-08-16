@@ -122,6 +122,9 @@ gr::gs::GuidedScrambling::Descrambler_impl::Descrambler_impl(
     m_framingTagPMT(pmt::string_to_symbol(framingTag)),
     m_framingStyle(framingStyle)
 {
+    this->enable_update_rate(false);
+    this->set_relative_rate(
+            double(codewordLength-augmentingLength)/codewordLength);
     set_tag_propagation_policy(gr::block::TPP_DONT);
 }
 
@@ -164,6 +167,8 @@ void gr::gs::GuidedScrambling::Descrambler_impl::set_codewordLength(
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_codewordLength = length;
+    this->set_relative_rate(
+            double(m_codewordLength-m_augmentingLength)/m_codewordLength);
     m_valid=false;
 }
 
@@ -178,6 +183,8 @@ void gr::gs::GuidedScrambling::Descrambler_impl::set_augmentingLength(
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_augmentingLength = length;
+    this->set_relative_rate(
+            double(m_codewordLength-m_augmentingLength)/m_codewordLength);
     m_valid=false;
 }
 
