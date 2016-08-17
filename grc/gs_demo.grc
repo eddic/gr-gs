@@ -888,69 +888,6 @@
     </param>
   </block>
   <block>
-    <key>digital_constellation_modulator</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>constellation</key>
-      <value>constellation</value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>differential</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>excess_bw</key>
-      <value>alpha</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(656, 191)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>digital_constellation_modulator_0</value>
-    </param>
-    <param>
-      <key>log</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>samples_per_symbol</key>
-      <value>samples_per_symbol</value>
-    </param>
-    <param>
-      <key>verbose</key>
-      <value>False</value>
-    </param>
-  </block>
-  <block>
     <key>fft_vxx</key>
     <param>
       <key>alias</key>
@@ -1119,7 +1056,7 @@
     </param>
     <param>
       <key>frameLength</key>
-      <value>4096</value>
+      <value>10000</value>
     </param>
     <param>
       <key>framingStyle</key>
@@ -2359,20 +2296,8 @@
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>digital_constellation_modulator_0</source_block_id>
-    <sink_block_id>throttle</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
     <source_block_id>fft_vxx_0</source_block_id>
     <sink_block_id>blocks_complex_to_mag_squared_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>guidedScrambler</source_block_id>
-    <sink_block_id>digital_constellation_modulator_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>

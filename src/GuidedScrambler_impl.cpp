@@ -159,7 +159,6 @@ gr::gs::GuidedScrambling::GuidedScrambler_impl::GuidedScrambler_impl(
     m_codewordNumber(0),
     m_frameNumber(0)
 {
-    this->enable_update_rate(false);
     this->set_relative_rate(
             double(codewordLength)/(codewordLength-augmentingLength));
     set_tag_propagation_policy(gr::block::TPP_DONT);
@@ -402,14 +401,16 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
                 unsigned(m_codeword->end()-m_codewordIt));
         if(outputCopySize)
         {
-            if(m_framingStyle == GenerateFrameMarkers)
+            if(m_framingStyle == GenerateFrameMarkers
+                    && m_codewordIt == m_codeword->cbegin())
             {
                 if(m_codewordNumber == 0)
                 {
+                    std::cout << "Generating frame " << m_frameNumber << " at sample " << this->nitems_written(0)+uint64_t(output-outputStart) << '.' << std::endl;
                     this->add_item_tag(
                             0,
                             this->nitems_written(0)
-                            +(unsigned long long)(output-outputStart),
+                            +uint64_t(output-outputStart),
                             m_framingTagPMT,
                             pmt::from_uint64(m_frameNumber++));
                 }

@@ -122,7 +122,6 @@ gr::gs::GuidedScrambling::Descrambler_impl::Descrambler_impl(
     m_framingTagPMT(pmt::string_to_symbol(framingTag)),
     m_framingStyle(framingStyle)
 {
-    this->enable_update_rate(false);
     this->set_relative_rate(
             double(codewordLength-augmentingLength)/codewordLength);
     set_tag_propagation_policy(gr::block::TPP_DONT);
@@ -330,8 +329,7 @@ int gr::gs::GuidedScrambling::Descrambler_impl::general_work(
                 input += inputCopySize;
             }
 
-            if(m_productIt == m_product.end()
-                    && m_codewordIt == m_codeword.end())
+            if(m_productIt==m_product.end() && m_codewordIt==m_codeword.end())
             {
                 m_multiply(
                         m_codeword,
@@ -351,8 +349,14 @@ int gr::gs::GuidedScrambling::Descrambler_impl::general_work(
 
                     if(offset < m_codewordLength)
                     {
-                        inputSize -= offset;
-                        input += offset;
+                        std::cout << "Found a frame at input sample #" << tag->offset;
+                        if(offset != 0)
+                        {
+                            std::cout << " but we're on input sample " << tag->offset-offset << ". Dropping " << offset << " symbols.";
+                            inputSize -= offset;
+                            input += offset;
+                        }
+                        std::cout << "\nPassing frame to output sample #" << this->nitems_written(0)+uint64_t(output-outputStart) << '\n' << std::endl;
                         this->add_item_tag(
                                 0,
                                 this->nitems_written(0)
