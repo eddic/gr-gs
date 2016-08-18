@@ -30,7 +30,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(16, 5)</value>
+      <value>(8, 5)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -93,34 +93,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(528, 5)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>alpha</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>0.1</value>
-    </param>
-  </block>
-  <block>
-    <key>variable</key>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(184, 5)</value>
+      <value>(176, 5)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -155,7 +128,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(880, 8)</value>
+      <value>(1112, 8)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -194,7 +167,104 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(280, 5)</value>
+      <value>(616, 5)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>rotation</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>math.pi/2</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(520, 5)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>rrcTapSize</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>1024</value>
+    </param>
+  </block>
+  <block>
+    <key>variable_rrc_filter_taps</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>alpha</key>
+      <value>0.1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(960, 9)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>gain</key>
+      <value>2</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>rrcTaps</value>
+    </param>
+    <param>
+      <key>ntaps</key>
+      <value>rrcTapSize</value>
+    </param>
+    <param>
+      <key>samp_rate</key>
+      <value>baud_rate*samples_per_symbol</value>
+    </param>
+    <param>
+      <key>sym_rate</key>
+      <value>baud_rate</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(272, 5)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -221,34 +291,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(624, 5)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>taps</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>1024</value>
-    </param>
-  </block>
-  <block>
-    <key>variable</key>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(424, 5)</value>
+      <value>(416, 5)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -378,7 +421,7 @@
     </param>
   </block>
   <block>
-    <key>analog_agc_xx</key>
+    <key>SymbolMapper</key>
     <param>
       <key>alias</key>
       <value></value>
@@ -388,32 +431,28 @@
       <value></value>
     </param>
     <param>
+      <key>constellation</key>
+      <value>constellation.points()</value>
+    </param>
+    <param>
       <key>affinity</key>
       <value></value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>True</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(856, 535)</value>
+      <value>(440, 276)</value>
     </param>
     <param>
       <key>_rotation</key>
-      <value>180</value>
-    </param>
-    <param>
-      <key>gain</key>
-      <value>1.0</value>
+      <value>0</value>
     </param>
     <param>
       <key>id</key>
-      <value>analog_agc_xx_0</value>
-    </param>
-    <param>
-      <key>max_gain</key>
-      <value>65536</value>
+      <value>SymbolMapper_0</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -422,18 +461,6 @@
     <param>
       <key>minoutbuf</key>
       <value>0</value>
-    </param>
-    <param>
-      <key>rate</key>
-      <value>1e-4</value>
-    </param>
-    <param>
-      <key>reference</key>
-      <value>max([abs(number) for number in constellation.points()])</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>complex</value>
     </param>
   </block>
   <block>
@@ -554,11 +581,11 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(380, 424)</value>
+      <value>(264, 412)</value>
     </param>
     <param>
       <key>_rotation</key>
-      <value>270</value>
+      <value>0</value>
     </param>
     <param>
       <key>id</key>
@@ -579,108 +606,6 @@
     <param>
       <key>type</key>
       <value>byte</value>
-    </param>
-    <param>
-      <key>vlen</key>
-      <value>1</value>
-    </param>
-  </block>
-  <block>
-    <key>blocks_file_sink</key>
-    <param>
-      <key>append</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>file</key>
-      <value>/home/eddie/Desktop/input</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(456, 134)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>blocks_file_sink_0</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>byte</value>
-    </param>
-    <param>
-      <key>unbuffered</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>vlen</key>
-      <value>1</value>
-    </param>
-  </block>
-  <block>
-    <key>blocks_file_sink</key>
-    <param>
-      <key>append</key>
-      <value>False</value>
-    </param>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>file</key>
-      <value>/home/eddie/Desktop/output</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(240, 686)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>180</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>blocks_file_sink_1</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>byte</value>
-    </param>
-    <param>
-      <key>unbuffered</key>
-      <value>False</value>
     </param>
     <param>
       <key>vlen</key>
@@ -731,11 +656,97 @@
     </param>
     <param>
       <key>k</key>
-      <value>-10*cmath.log10(baud_rate * samples_per_symbol).real</value>
+      <value>-10*math.log10(baud_rate * samples_per_symbol).real</value>
     </param>
     <param>
       <key>n</key>
       <value>10</value>
+    </param>
+  </block>
+  <block>
+    <key>blocks_rotator_cc</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(880, 556)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>180</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>blocks_rotator_cc_0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>phase_inc</key>
+      <value>-rotation</value>
+    </param>
+  </block>
+  <block>
+    <key>blocks_rotator_cc</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(632, 276)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>blocks_rotator_cc_1</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>phase_inc</key>
+      <value>rotation</value>
     </param>
   </block>
   <block>
@@ -793,7 +804,7 @@
     <key>analog_noise_source_x</key>
     <param>
       <key>amp</key>
-      <value>0.01</value>
+      <value>0.25</value>
     </param>
     <param>
       <key>alias</key>
@@ -813,7 +824,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(888, 246)</value>
+      <value>(1016, 174)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -868,7 +879,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(624, 556)</value>
+      <value>(632, 556)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -885,6 +896,65 @@
     <param>
       <key>minoutbuf</key>
       <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>fft_filter_xxx</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>decim</key>
+      <value>samples_per_symbol</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1088, 542)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>180</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>fft_filter_xxx_1</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>nthreads</key>
+      <value>8</value>
+    </param>
+    <param>
+      <key>samp_delay</key>
+      <value>rrcTapSize/2</value>
+    </param>
+    <param>
+      <key>taps</key>
+      <value>rrcTaps</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>ccc</value>
     </param>
   </block>
   <block>
@@ -966,38 +1036,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1048, 12)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>firdesImport</value>
-    </param>
-    <param>
-      <key>import</key>
-      <value>from gnuradio.filter import firdes</value>
-    </param>
-  </block>
-  <block>
-    <key>import</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(1144, 12)</value>
+      <value>(864, 12)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1009,7 +1048,7 @@
     </param>
     <param>
       <key>import</key>
-      <value>import cmath</value>
+      <value>import math</value>
     </param>
   </block>
   <block>
@@ -1068,7 +1107,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(448, 306)</value>
+      <value>(240, 234)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1096,7 +1135,7 @@
     </param>
   </block>
   <block>
-    <key>fft_filter_xxx</key>
+    <key>interp_fir_filter_xxx</key>
     <param>
       <key>alias</key>
       <value></value>
@@ -1110,24 +1149,24 @@
       <value></value>
     </param>
     <param>
-      <key>decim</key>
-      <value>samples_per_symbol</value>
-    </param>
-    <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>True</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1032, 542)</value>
+      <value>(824, 269)</value>
     </param>
     <param>
       <key>_rotation</key>
-      <value>180</value>
+      <value>0</value>
     </param>
     <param>
       <key>id</key>
-      <value>matchedFilter</value>
+      <value>interp_fir_filter_xxx_0</value>
+    </param>
+    <param>
+      <key>interp</key>
+      <value>samples_per_symbol</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -1138,16 +1177,12 @@
       <value>0</value>
     </param>
     <param>
-      <key>nthreads</key>
-      <value>8</value>
-    </param>
-    <param>
       <key>samp_delay</key>
-      <value>taps/2</value>
+      <value>rrcTapSize/(samples_per_symbol*2)</value>
     </param>
     <param>
       <key>taps</key>
-      <value>firdes.root_raised_cosine(1.0, baud_rate*samples_per_symbol, baud_rate, alpha, taps)</value>
+      <value>rrcTaps</value>
     </param>
     <param>
       <key>type</key>
@@ -1174,7 +1209,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1112, 289)</value>
+      <value>(1216, 217)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1206,81 +1241,6 @@
     </param>
   </block>
   <block>
-    <key>PulseGenerator</key>
-    <param>
-      <key>amplitude</key>
-      <value>0.8</value>
-    </param>
-    <param>
-      <key>baudRate</key>
-      <value>baud_rate</value>
-    </param>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>constellation</key>
-      <value>constellation.points()</value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>alpha</key>
-      <value>alpha</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(672, 292)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>pulseGenerator</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>phase</key>
-      <value>0.0</value>
-    </param>
-    <param>
-      <key>samplesPerSymbol</key>
-      <value>samples_per_symbol</value>
-    </param>
-    <param>
-      <key>shape</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>numberOfTaps</key>
-      <value>taps</value>
-    </param>
-    <param>
-      <key>tags</key>
-      <value>False</value>
-    </param>
-  </block>
-  <block>
     <key>qtgui_number_sink</key>
     <param>
       <key>autoscale</key>
@@ -1308,7 +1268,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(0, 526)</value>
+      <value>(8, 519)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -1515,7 +1475,7 @@
     <key>qtgui_vector_sink_f</key>
     <param>
       <key>autoscale</key>
-      <value>False</value>
+      <value>True</value>
     </param>
     <param>
       <key>average</key>
@@ -1806,7 +1766,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(608, 693)</value>
+      <value>(624, 613)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -2145,7 +2105,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(160, 348)</value>
+      <value>(8, 412)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2188,7 +2148,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(896, 348)</value>
+      <value>(1024, 276)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2230,26 +2190,14 @@
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>Descrambler_0</source_block_id>
-    <sink_block_id>blocks_file_sink_1</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
     <source_block_id>InfiniteAverage_0</source_block_id>
     <sink_block_id>blocks_nlog10_ff_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>analog_agc_xx_0</source_block_id>
-    <sink_block_id>digital_constellation_decoder_cb_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>analog_agc_xx_0</source_block_id>
-    <sink_block_id>receivedSignalConstellation</sink_block_id>
+    <source_block_id>SymbolMapper_0</source_block_id>
+    <sink_block_id>blocks_rotator_cc_1</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -2278,6 +2226,24 @@
     <sink_key>0</sink_key>
   </connection>
   <connection>
+    <source_block_id>blocks_rotator_cc_0</source_block_id>
+    <sink_block_id>digital_constellation_decoder_cb_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>blocks_rotator_cc_0</source_block_id>
+    <sink_block_id>receivedSignalConstellation</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>blocks_rotator_cc_1</source_block_id>
+    <sink_block_id>interp_fir_filter_xxx_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
     <source_block_id>blocks_stream_to_vector_0</source_block_id>
     <sink_block_id>fft_vxx_0</sink_block_id>
     <source_key>0</source_key>
@@ -2296,6 +2262,12 @@
     <sink_key>0</sink_key>
   </connection>
   <connection>
+    <source_block_id>fft_filter_xxx_1</source_block_id>
+    <sink_block_id>blocks_rotator_cc_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
     <source_block_id>fft_vxx_0</source_block_id>
     <sink_block_id>blocks_complex_to_mag_squared_0</sink_block_id>
     <source_key>0</source_key>
@@ -2303,13 +2275,13 @@
   </connection>
   <connection>
     <source_block_id>guidedScrambler</source_block_id>
-    <sink_block_id>pulseGenerator</sink_block_id>
+    <sink_block_id>SymbolMapper_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>matchedFilter</source_block_id>
-    <sink_block_id>analog_agc_xx_0</sink_block_id>
+    <source_block_id>interp_fir_filter_xxx_0</source_block_id>
+    <sink_block_id>throttle</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -2321,25 +2293,13 @@
   </connection>
   <connection>
     <source_block_id>noiseAdder</source_block_id>
-    <sink_block_id>matchedFilter</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>pulseGenerator</source_block_id>
-    <sink_block_id>throttle</sink_block_id>
+    <sink_block_id>fft_filter_xxx_1</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
     <source_block_id>symbolGenerator</source_block_id>
     <sink_block_id>blocks_delay_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>symbolGenerator</source_block_id>
-    <sink_block_id>blocks_file_sink_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>

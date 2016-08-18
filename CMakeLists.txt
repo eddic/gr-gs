@@ -68,7 +68,7 @@ add_library(gnuradio-gs SHARED
     src/GuidedScrambler_impl.cpp
     src/Descrambler_impl.cpp
     src/SymbolGenerator_impl.cpp
-    src/PulseGenerator_impl.cpp
+    src/SymbolMapper_impl.cpp
     src/InfiniteAverage_impl.cpp)
 set_target_properties(gnuradio-gs PROPERTIES DEFINE_SYMBOL "gnuradio_gs_EXPORTS")
 target_link_libraries(gnuradio-gs PUBLIC
@@ -80,7 +80,7 @@ install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/GuidedScrambler.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Descrambler.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/SymbolGenerator.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/PulseGenerator.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/SymbolMapper.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/InfiniteAverage.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/exceptions.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/gr-gs/config.h"
@@ -225,15 +225,15 @@ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Descrambler.xml.in
     ${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_Descrambler.xml @ONLY)
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_PulseGenerator.xml.in
-    ${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_PulseGenerator.xml @ONLY)
+    ${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_SymbolMapper.xml.in
+    ${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_SymbolMapper.xml @ONLY)
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_SymbolGenerator.xml.in
     ${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_SymbolGenerator.xml @ONLY)
 install(FILES
     "${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_GuidedScrambler.xml"
     "${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_Descrambler.xml"
-    "${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_PulseGenerator.xml"
+    "${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_SymbolMapper.xml"
     "${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_SymbolGenerator.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_InfiniteAverage.xml"
     DESTINATION "share/gnuradio/grc/blocks/")

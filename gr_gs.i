@@ -7,7 +7,7 @@
 #include "gr-gs/config.h"
 #include "gr-gs/GuidedScrambler.h"
 #include "gr-gs/Descrambler.h"
-#include "gr-gs/PulseGenerator.h"
+#include "gr-gs/SymbolMapper.h"
 #include "gr-gs/SymbolGenerator.h"
 #include "gr-gs/InfiniteAverage.h"
 #include "gr-gs/exceptions.h"
@@ -19,8 +19,8 @@
 GR_SWIG_BLOCK_MAGIC2(gs, GuidedScrambler);
 %include "gr-gs/Descrambler.h"
 GR_SWIG_BLOCK_MAGIC2(gs, Descrambler);
-%include "gr-gs/PulseGenerator.h"
-GR_SWIG_BLOCK_MAGIC2(gs, PulseGenerator);
+%include "gr-gs/SymbolMapper.h"
+GR_SWIG_BLOCK_MAGIC2(gs, SymbolMapper);
 %include "gr-gs/SymbolGenerator.h"
 GR_SWIG_BLOCK_MAGIC2(gs, SymbolGenerator);
 %include "gr-gs/InfiniteAverage.h"

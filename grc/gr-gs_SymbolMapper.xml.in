@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<block>
+    <name>Symbol Mapper</name>
+    <key>SymbolMapper</key>
+    <category>Guided Scrambling</category>
+    <import>import gr_gs as gs</import>
+    <make>gs.SymbolMapper($constellation)</make>
+    <callback>set_constellation($constellation)</callback>
+    <param>
+        <name>Constellation</name>
+        <key>constellation</key>
+        <value>[1,1j,-1j,-1]</value>
+        <type>complex_vector</type>
+    </param>
+    <sink>
+        <name>in</name>
+        <type>@PYTHON_SYMBOL_TYPE@</type>
+    </sink>
+    <source>
+        <name>out</name>
+        <type>complex</type>
+    </source>
+    <doc>This block generates a sequence of constellation points from a sequence of digital symbols.</doc>
+</block>
