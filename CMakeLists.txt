@@ -69,7 +69,8 @@ add_library(gnuradio-gs SHARED
     src/Descrambler_impl.cpp
     src/SymbolGenerator_impl.cpp
     src/SymbolMapper_impl.cpp
-    src/InfiniteAverage_impl.cpp)
+    src/InfiniteAverage_impl.cpp
+    src/ErrorCount_impl.cpp)
 set_target_properties(gnuradio-gs PROPERTIES DEFINE_SYMBOL "gnuradio_gs_EXPORTS")
 target_link_libraries(gnuradio-gs PUBLIC
     "${Boost_LIBRARIES}"
@@ -82,6 +83,7 @@ install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/SymbolGenerator.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/SymbolMapper.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/InfiniteAverage.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/ErrorCount.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/exceptions.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/gr-gs/config.h"
     DESTINATION "include/gr-gs")
@@ -230,12 +232,16 @@ configure_file(
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_SymbolGenerator.xml.in
     ${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_SymbolGenerator.xml @ONLY)
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_ErrorCount.xml.in
+    ${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_ErrorCount.xml @ONLY)
 install(FILES
     "${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_GuidedScrambler.xml"
     "${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_Descrambler.xml"
     "${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_SymbolMapper.xml"
     "${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_SymbolGenerator.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_InfiniteAverage.xml"
+    "${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_ErrorCount.xml"
     DESTINATION "share/gnuradio/grc/blocks/")
 install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gs_demo.grc"

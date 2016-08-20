@@ -4,14 +4,13 @@
     <key>Descrambler</key>
     <category>Guided Scrambling</category>
     <import>import gr_gs as gs</import>
-    <make>gs.Descrambler($fieldSize, $codewordLength, $augmentingLength, $continuous, $multiplier, $framingTag, $framingStyle.val)</make>
+    <make>gs.Descrambler($fieldSize, $codewordLength, $augmentingLength, $continuous, $multiplier, $framingTag)</make>
     <callback>set_fieldSize($fieldSize)</callback>
     <callback>set_codewordLength($codewordLength)</callback>
     <callback>set_augmentingLength($augmentingLength)</callback>
     <callback>set_continuous($continuous)</callback>
     <callback>set_multiplier($multiplier)</callback>
     <callback>set_framingTag($framingTag)</callback>
-    <callback>set_framingStyle($framingStyle.val)</callback>
     <param>
         <name>Field Size</name>
         <key>fieldSize</key>
@@ -53,26 +52,9 @@
     <param>
         <name>Framing Tag</name>
         <key>framingTag</key>
-        <value>frame</value>
+        <value></value>
         <type>string</type>
         <hide>part</hide>
-    </param>
-    <param>
-        <name>Framing Style</name>
-        <key>framingStyle</key>
-        <value>None</value>
-        <type>enum</type>
-        <hide>part</hide>
-        <option>
-            <name>None</name>
-            <key>None</key>
-            <opt>val:gs.IgnoreFrameMarkers</opt>
-        </option>
-        <option>
-            <name>Read</name>
-            <key>Read</key>
-            <opt>val:gs.ReadFrameMarkers</opt>
-        </option>
     </param>
     <sink>
         <name>in</name>

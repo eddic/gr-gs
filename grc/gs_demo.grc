@@ -93,7 +93,34 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(176, 5)</value>
+      <value>(336, 69)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>augmentingLength</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>3</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(216, 5)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -106,6 +133,33 @@
     <param>
       <key>value</key>
       <value>200000</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(216, 69)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>codewordLength</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>12</value>
     </param>
   </block>
   <block>
@@ -167,7 +221,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(616, 5)</value>
+      <value>(464, 69)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -175,11 +229,11 @@
     </param>
     <param>
       <key>id</key>
-      <value>rotation</value>
+      <value>continuous</value>
     </param>
     <param>
       <key>value</key>
-      <value>math.pi/2</value>
+      <value>True</value>
     </param>
   </block>
   <block>
@@ -194,7 +248,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(520, 5)</value>
+      <value>(624, 5)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -202,11 +256,38 @@
     </param>
     <param>
       <key>id</key>
-      <value>rrcTapSize</value>
+      <value>frameLength</value>
     </param>
     <param>
       <key>value</key>
-      <value>1024</value>
+      <value>10000</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(536, 5)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>rotation</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>math.pi/2</value>
     </param>
   </block>
   <block>
@@ -241,7 +322,7 @@
     </param>
     <param>
       <key>ntaps</key>
-      <value>rrcTapSize</value>
+      <value>4096</value>
     </param>
     <param>
       <key>samp_rate</key>
@@ -264,7 +345,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(272, 5)</value>
+      <value>(304, 5)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -291,7 +372,34 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(416, 5)</value>
+      <value>(552, 69)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>scramblingPolynomial</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>[1, 0, 0, 1]</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(440, 5)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -310,7 +418,7 @@
     <key>Descrambler</key>
     <param>
       <key>augmentingLength</key>
-      <value>3</value>
+      <value>augmentingLength</value>
     </param>
     <param>
       <key>alias</key>
@@ -318,7 +426,7 @@
     </param>
     <param>
       <key>codewordLength</key>
-      <value>12</value>
+      <value>codewordLength</value>
     </param>
     <param>
       <key>comment</key>
@@ -326,7 +434,7 @@
     </param>
     <param>
       <key>continuous</key>
-      <value>True</value>
+      <value>continuous</value>
     </param>
     <param>
       <key>affinity</key>
@@ -338,11 +446,7 @@
     </param>
     <param>
       <key>fieldSize</key>
-      <value>4</value>
-    </param>
-    <param>
-      <key>framingStyle</key>
-      <value>Read</value>
+      <value>len(constellation.points())</value>
     </param>
     <param>
       <key>framingTag</key>
@@ -350,7 +454,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(424, 528)</value>
+      <value>(424, 248)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -370,7 +474,50 @@
     </param>
     <param>
       <key>multiplier</key>
-      <value>[1,0,0,1]</value>
+      <value>scramblingPolynomial</value>
+    </param>
+  </block>
+  <block>
+    <key>ErrorCount</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>framingTag</key>
+      <value>frame</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(224, 281)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>180</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>ErrorCount_0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
     </param>
   </block>
   <block>
@@ -397,7 +544,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(424, 909)</value>
+      <value>(448, 909)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -444,7 +591,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(440, 276)</value>
+      <value>(272, 644)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -461,57 +608,6 @@
     <param>
       <key>minoutbuf</key>
       <value>0</value>
-    </param>
-  </block>
-  <block>
-    <key>blks2_error_rate</key>
-    <param>
-      <key>bits_per_symbol</key>
-      <value>2</value>
-    </param>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(208, 529)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>180</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>blks2_error_rate_0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>'SER'</value>
-    </param>
-    <param>
-      <key>win_size</key>
-      <value>1000</value>
     </param>
   </block>
   <block>
@@ -534,7 +630,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(600, 916)</value>
+      <value>(640, 916)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -558,61 +654,6 @@
     </param>
   </block>
   <block>
-    <key>blocks_delay</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>delay</key>
-      <value>189</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(264, 412)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>blocks_delay_0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>num_ports</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>byte</value>
-    </param>
-    <param>
-      <key>vlen</key>
-      <value>1</value>
-    </param>
-  </block>
-  <block>
     <key>blocks_nlog10_ff</key>
     <param>
       <key>alias</key>
@@ -632,7 +673,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(248, 902)</value>
+      <value>(256, 902)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -683,7 +724,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(880, 556)</value>
+      <value>(880, 276)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -726,7 +767,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(632, 276)</value>
+      <value>(488, 644)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -769,7 +810,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1080, 916)</value>
+      <value>(1096, 916)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -824,7 +865,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1016, 174)</value>
+      <value>(928, 558)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -879,7 +920,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(632, 556)</value>
+      <value>(632, 276)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -922,7 +963,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1088, 542)</value>
+      <value>(1112, 262)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -946,7 +987,7 @@
     </param>
     <param>
       <key>samp_delay</key>
-      <value>rrcTapSize/2</value>
+      <value>len(rrcTaps)/2</value>
     </param>
     <param>
       <key>taps</key>
@@ -985,7 +1026,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(816, 888)</value>
+      <value>(848, 888)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1055,7 +1096,7 @@
     <key>GuidedScrambler</key>
     <param>
       <key>augmentingLength</key>
-      <value>3</value>
+      <value>augmentingLength</value>
     </param>
     <param>
       <key>alias</key>
@@ -1063,7 +1104,7 @@
     </param>
     <param>
       <key>codewordLength</key>
-      <value>12</value>
+      <value>codewordLength</value>
     </param>
     <param>
       <key>comment</key>
@@ -1075,7 +1116,7 @@
     </param>
     <param>
       <key>continuous</key>
-      <value>True</value>
+      <value>continuous</value>
     </param>
     <param>
       <key>affinity</key>
@@ -1083,7 +1124,7 @@
     </param>
     <param>
       <key>divider</key>
-      <value>[1,0,0,1]</value>
+      <value>scramblingPolynomial</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -1091,15 +1132,7 @@
     </param>
     <param>
       <key>fieldSize</key>
-      <value>4</value>
-    </param>
-    <param>
-      <key>frameLength</key>
-      <value>10000</value>
-    </param>
-    <param>
-      <key>framingStyle</key>
-      <value>Generate</value>
+      <value>len(constellation.points())</value>
     </param>
     <param>
       <key>framingTag</key>
@@ -1107,7 +1140,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(240, 234)</value>
+      <value>(56, 602)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1154,7 +1187,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(824, 269)</value>
+      <value>(704, 637)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1178,7 +1211,7 @@
     </param>
     <param>
       <key>samp_delay</key>
-      <value>rrcTapSize/(samples_per_symbol*2)</value>
+      <value>len(rrcTaps)/(samples_per_symbol*2)</value>
     </param>
     <param>
       <key>taps</key>
@@ -1209,7 +1242,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1216, 217)</value>
+      <value>(1136, 617)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1268,11 +1301,11 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(8, 519)</value>
+      <value>(8, 271)</value>
     </param>
     <param>
       <key>gui_hint</key>
-      <value></value>
+      <value>0,1,2,1</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1280,7 +1313,7 @@
     </param>
     <param>
       <key>graph_type</key>
-      <value>qtgui.NUM_GRAPH_HORIZ</value>
+      <value>qtgui.NUM_GRAPH_VERT</value>
     </param>
     <param>
       <key>id</key>
@@ -1452,7 +1485,7 @@
     </param>
     <param>
       <key>max</key>
-      <value>1</value>
+      <value>0.5</value>
     </param>
     <param>
       <key>min</key>
@@ -1468,7 +1501,7 @@
     </param>
     <param>
       <key>update_time</key>
-      <value>0.10</value>
+      <value>1</value>
     </param>
   </block>
   <block>
@@ -1503,7 +1536,7 @@
     </param>
     <param>
       <key>gui_hint</key>
-      <value></value>
+      <value>0,0,1,1</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1511,7 +1544,7 @@
     </param>
     <param>
       <key>grid</key>
-      <value>False</value>
+      <value>True</value>
     </param>
     <param>
       <key>id</key>
@@ -1703,7 +1736,7 @@
     </param>
     <param>
       <key>update_time</key>
-      <value>0.10</value>
+      <value>1</value>
     </param>
     <param>
       <key>vlen</key>
@@ -1766,11 +1799,11 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(624, 613)</value>
+      <value>(624, 333)</value>
     </param>
     <param>
       <key>gui_hint</key>
-      <value></value>
+      <value>1,0,1,1</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2104,8 +2137,16 @@
       <value>True</value>
     </param>
     <param>
+      <key>frameLength</key>
+      <value>frameLength*(codewordLength-augmentingLength)</value>
+    </param>
+    <param>
+      <key>framingTag</key>
+      <value>frame</value>
+    </param>
+    <param>
       <key>_coordinate</key>
-      <value>(8, 412)</value>
+      <value>(16, 436)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2125,7 +2166,7 @@
     </param>
     <param>
       <key>weightings</key>
-      <value>[1, 1, 1, 1]</value>
+      <value>[1] * len(constellation.points())</value>
     </param>
   </block>
   <block>
@@ -2148,7 +2189,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1024, 276)</value>
+      <value>(936, 644)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2185,7 +2226,13 @@
   </block>
   <connection>
     <source_block_id>Descrambler_0</source_block_id>
-    <sink_block_id>blks2_error_rate_0</sink_block_id>
+    <sink_block_id>ErrorCount_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>1</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>ErrorCount_0</source_block_id>
+    <sink_block_id>qtgui_number_sink_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -2202,22 +2249,10 @@
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>blks2_error_rate_0</source_block_id>
-    <sink_block_id>qtgui_number_sink_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
     <source_block_id>blocks_complex_to_mag_squared_0</source_block_id>
     <sink_block_id>InfiniteAverage_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>blocks_delay_0</source_block_id>
-    <sink_block_id>blks2_error_rate_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>1</sink_key>
   </connection>
   <connection>
     <source_block_id>blocks_nlog10_ff_0</source_block_id>
@@ -2299,7 +2334,7 @@
   </connection>
   <connection>
     <source_block_id>symbolGenerator</source_block_id>
-    <sink_block_id>blocks_delay_0</sink_block_id>
+    <sink_block_id>ErrorCount_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>

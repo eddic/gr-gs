@@ -2,7 +2,7 @@
  * @file      GuidedScrambler_impl.cpp
  * @brief     Defines the "Guided Scrambler" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 11, 2016
+ * @date      August 19, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -134,9 +134,7 @@ gr::gs::GuidedScrambling::GuidedScrambler_impl::GuidedScrambler_impl(
         const unsigned int threads,
         const std::vector<std::complex<float>>& constellation,
         const std::string& selectionMethod,
-        const std::string& framingTag,
-        const FramingStyle framingStyle,
-        const unsigned int frameLength):
+        const std::string& framingTag):
     gr::block("Guided Scrambler",
         gr::io_signature::make(1,1,sizeof(Symbol)),
         gr::io_signature::make(1,1,sizeof(Symbol))),
@@ -153,11 +151,7 @@ gr::gs::GuidedScrambling::GuidedScrambler_impl::GuidedScrambler_impl(
     m_sourceword(m_codewordLength-m_augmentingLength),
     m_sourcewordIt(m_sourceword.begin()),
     m_framingTag(framingTag),
-    m_framingTagPMT(pmt::string_to_symbol(framingTag)),
-    m_framingStyle(framingStyle),
-    m_frameLength(frameLength),
-    m_codewordNumber(0),
-    m_frameNumber(0)
+    m_framingTagPMT(pmt::string_to_symbol(framingTag))
 {
     this->set_relative_rate(
             double(codewordLength)/(codewordLength-augmentingLength));
@@ -331,34 +325,6 @@ void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_framingTag(
     m_framingTagPMT = pmt::string_to_symbol(tag);
 }
 
-const gr::gs::FramingStyle
-gr::gs::GuidedScrambling::GuidedScrambler_impl::framingStyle() const
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    return m_framingStyle;
-}
-
-void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_framingStyle(
-        const FramingStyle style)
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    m_framingStyle = style;
-}
-
-const unsigned int
-gr::gs::GuidedScrambling::GuidedScrambler_impl::frameLength() const
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    return m_frameLength;
-}
-
-void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_frameLength(
-        const unsigned int length)
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    m_frameLength = length;
-}
-
 gr::gs::GuidedScrambling::GuidedScrambler_impl::~GuidedScrambler_impl()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -372,6 +338,7 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
         gr_vector_void_star &output_items)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
+
     const Symbol* const& inputStart = reinterpret_cast<const Symbol*>(input_items[0]);
     const Symbol* input = inputStart;
     unsigned int inputSize = ninput_items[0];
@@ -383,7 +350,7 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
     std::vector<gr::tag_t> tags;
     std::vector<gr::tag_t>::const_iterator tag;
 
-    if(m_framingStyle == ReadFrameMarkers)
+    if(!m_framingTag.empty())
     {
         this->get_tags_in_range(
                 tags,
@@ -392,6 +359,27 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
                 this->nitems_read(0)+ninput_items[0],
                 m_framingTagPMT);
         tag = tags.cbegin();
+
+        if(tag != tags.cend())
+        {
+            const size_t offset = tag->offset-this->nitems_read(0);
+            if(offset < m_codewordLength-m_augmentingLength)
+            {
+                if(offset != 0)
+                {
+                    inputSize -= offset;
+                    input += offset;
+                }
+                this->add_item_tag(
+                        0,
+                        this->nitems_written(0)
+                            +m_codeword==nullptr?0:unsigned(
+                                m_codeword->end()-m_codewordIt),
+                        tag->key,
+                        tag->value);
+                ++tag;
+            }
+        }
     }
 
     while(true)
@@ -401,24 +389,6 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
                 unsigned(m_codeword->end()-m_codewordIt));
         if(outputCopySize)
         {
-            if(m_framingStyle == GenerateFrameMarkers
-                    && m_codewordIt == m_codeword->cbegin())
-            {
-                if(m_codewordNumber == 0)
-                {
-                    std::cout << "Generating frame " << m_frameNumber << " at sample " << this->nitems_written(0)+uint64_t(output-outputStart) << '.' << std::endl;
-                    this->add_item_tag(
-                            0,
-                            this->nitems_written(0)
-                            +uint64_t(output-outputStart),
-                            m_framingTagPMT,
-                            pmt::from_uint64(m_frameNumber++));
-                }
-
-                if(++m_codewordNumber == m_frameLength)
-                    m_codewordNumber = 0;
-            }
-
             output = std::copy(
                     m_codewordIt,
                     m_codewordIt+outputCopySize,
@@ -449,7 +419,7 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
                 m_codewordIt = m_codeword->begin();
                 m_sourcewordIt = m_sourceword.begin();
 
-                if(m_framingStyle == ReadFrameMarkers && tag != tags.cend())
+                if(!m_framingTag.empty() && tag != tags.cend())
                 {
                     const size_t offset =
                         tag->offset
@@ -458,12 +428,15 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
 
                     if(offset < m_codewordLength-m_augmentingLength)
                     {
-                        inputSize -= offset;
-                        input += offset;
+                        if(offset != 0)
+                        {
+                            inputSize -= offset;
+                            input += offset;
+                        }
                         this->add_item_tag(
                                 0,
                                 this->nitems_written(0)
-                                +uint64_t(output-outputStart),
+                                +uint64_t(output-outputStart+m_codewordLength),
                                 tag->key,
                                 tag->value);
                         ++tag;
@@ -507,9 +480,7 @@ gr::gs::GuidedScrambler::sptr gr::gs::GuidedScrambler::make(
         const unsigned int threads,
         const std::vector<std::complex<float>>& constellation,
         const std::string& selectionMethod,
-        const std::string& framingTag,
-        const FramingStyle framingStyle,
-        const unsigned int frameLength)
+        const std::string& framingTag)
 {
     return gnuradio::get_initial_sptr(
             new ::gr::gs::GuidedScrambling::GuidedScrambler_impl(
@@ -521,9 +492,7 @@ gr::gs::GuidedScrambler::sptr gr::gs::GuidedScrambler::make(
                     threads,
                     constellation,
                     selectionMethod,
-                    framingTag,
-                    framingStyle,
-                    frameLength));
+                    framingTag));
 }
 
 const std::vector<std::string>& gr::gs::GuidedScrambler::selectionMethods()

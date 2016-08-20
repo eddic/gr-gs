@@ -4,17 +4,33 @@
     <key>SymbolGenerator</key>
     <category>Guided Scrambling</category>
     <import>import gr_gs as gs</import>
-    <make>gs.SymbolGenerator($weightings)</make>
+    <make>gs.SymbolGenerator($weightings, $framingTag, $frameLength)</make>
     <callback>set_weightings($weightings)</callback>
+    <callback>set_framingTag($framingTag)</callback>
+    <callback>set_frameLength($frameLength)</callback>
     <param>
         <name>Symbol Weightings</name>
         <key>weightings</key>
         <value>[1]</value>
         <type>real_vector</type>
     </param>
+    <param>
+        <name>Framing Tag</name>
+        <key>framingTag</key>
+        <value>frame</value>
+        <type>string</type>
+        <hide>part</hide>
+    </param>
+    <param>
+        <name>Frame Length</name>
+        <key>frameLength</key>
+        <value>0</value>
+        <type>int</type>
+        <hide>part</hide>
+    </param>
     <source>
         <name>out</name>
         <type>@PYTHON_SYMBOL_TYPE@</type>
     </source>
-    <doc>This block simply allows us to generate a random stream of uncorrelated symbols with discretely defined probability weightings. All we do is pass a vector of doubles where the double describes the weighting of the symbol as represented by the index of said vector. Thus a weighting vector of [1,1,1,2] would produce symbol values {0,1,2,3} with respective probabilities of {0.2, 0.2, 0.2, 0.4}.</doc>
+    <doc>This block simply allows us to generate a random stream of uncorrelated symbols with discretely defined probability weightings. All we do is pass a vector of doubles where the double describes the weighting of the symbol as represented by the index of said vector. Thus a weighting vector of [1,1,1,2] would produce symbol values {0,1,2,3} with respective probabilities of {0.2, 0.2, 0.2, 0.4}. This block also has the ability to add framing tags at set intervals to aid in alignment.</doc>
 </block>

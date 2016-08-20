@@ -57,19 +57,6 @@ namespace gr
         //! Type to use for representation of symbols
         typedef @CXX_SYMBOL_TYPE@ Symbol;
 
-        //! Indicates how a block should handle framing tags
-        enum FramingStyle
-        {
-            //! Block should neither generate nor read framing tags
-            IgnoreFrameMarkers = 0,
-
-            //! Block should look for framing tags and adjust when found
-            ReadFrameMarkers,
-
-            //! Block should generate framing tags
-            GenerateFrameMarkers
-        };
-
         //! Stuff needed for the GuidedScrambler and Descrambler blocks
         namespace GuidedScrambling
         {

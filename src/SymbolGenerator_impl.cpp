@@ -2,7 +2,7 @@
  * @file      SymbolGenerator_impl.cpp
  * @brief     Defines the "Random Symbol Generator" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 21, 2016
+ * @date      August 19, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -47,6 +47,35 @@ void gr::gs::Implementations::SymbolGenerator_impl::set_weightings(
     m_distribution.param(distribution.param());
 }
 
+const std::string&
+gr::gs::Implementations::SymbolGenerator_impl::framingTag() const
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_framingTag;
+}
+
+void gr::gs::Implementations::SymbolGenerator_impl::set_framingTag(
+        const std::string& tag)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_framingTag = tag;
+    m_framingTagPMT = pmt::string_to_symbol(tag);
+}
+
+const unsigned int
+gr::gs::Implementations::SymbolGenerator_impl::frameLength() const
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_frameLength;
+}
+
+void gr::gs::Implementations::SymbolGenerator_impl::set_frameLength(
+        const unsigned int length)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_frameLength = length;
+}
+
 int gr::gs::Implementations::SymbolGenerator_impl::work(
         int noutput_items,
         gr_vector_const_void_star &input_items,
@@ -58,37 +87,53 @@ int gr::gs::Implementations::SymbolGenerator_impl::work(
     std::lock_guard<std::mutex> lock(m_mutex);
 
     for(auto output=start; output != end; ++output)
+    {
         *output = m_distribution(m_generator);
+        if(m_frameLength != 0)
+        {
+            if(m_symbolNumber == 0)
+                this->add_item_tag(
+                        0,
+                        this->nitems_written(0)
+                        +uint64_t(output-start),
+                        m_framingTagPMT,
+                        pmt::from_uint64(m_frameNumber++));
 
-    m_count += noutput_items;
+            if(++m_symbolNumber == m_frameLength)
+                m_symbolNumber = 0;
+        }
+    }
+
     return noutput_items;
 }
 
-#include <iostream>
 gr::gs::Implementations::SymbolGenerator_impl::SymbolGenerator_impl(
-        const std::vector<double>& weightings):
+        const std::vector<double>& weightings,
+        const std::string& framingTag,
+        const unsigned int frameLength):
     gr::sync_block("Symbol Generator",
         io_signature::make(0,0,0),
         io_signature::make(1,1,sizeof(Symbol))),
-    m_count(0),
     m_weightings(weightings),
     m_generator(1984),
-    m_distribution(m_weightings.cbegin(), m_weightings.cend())
+    m_distribution(m_weightings.cbegin(), m_weightings.cend()),
+    m_framingTag(framingTag),
+    m_framingTagPMT(pmt::string_to_symbol(framingTag)),
+    m_frameLength(frameLength),
+    m_symbolNumber(0),
+    m_frameNumber(0)
 {
     this->enable_update_rate(false);
 }
 
 gr::gs::SymbolGenerator::sptr gr::gs::SymbolGenerator::make(
-        const std::vector<double>& weightings)
+        const std::vector<double>& weightings,
+        const std::string& framingTag,
+        const unsigned int frameLength)
 {
     return gnuradio::get_initial_sptr(
-            new Implementations::SymbolGenerator_impl(weightings));
-}
-
-unsigned int gr::gs::Implementations::SymbolGenerator_impl::count()
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    const unsigned int count=m_count;
-    m_count=0;
-    return count;
+            new Implementations::SymbolGenerator_impl(
+                weightings,
+                framingTag,
+                frameLength));
 }

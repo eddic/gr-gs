@@ -2,7 +2,7 @@
  * @file      GuidedScrambler.h
  * @brief     Declares the "Guided Scrambler" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 11, 2016
+ * @date      August 19, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -39,7 +39,7 @@ namespace gr
     {
         //! "Guided Scrambler" GNU Radio block
         /*!
-         * @date   August 11, 2016
+         * @date   August 19, 2016
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         class GS_API GuidedScrambler: virtual public gr::block
@@ -170,37 +170,15 @@ namespace gr
 
             //! Set the framing tag name
             /*!
+             * This allows the codeword/sourceword starts to be aligned with a
+             * frame stream tag. Use this to ensure alignment with the
+             * Descrambler.
+             *
              * @param [in] tag Desired string to use for the "key" of the tag
-             *                 inserted at frame beginnings.
+             *                 inserted at frame beginnings. Use an empty string
+             *                 to disable framing.
              */
             virtual void set_framingTag(const std::string& tag) =0;
-
-            //! Access the frame style
-            virtual const FramingStyle framingStyle() const =0;
-
-            //! Set the framing style
-            /*!
-             * @param [in] style Designed framing style. See FramingStyle.
-             */
-            virtual void set_framingStyle(const FramingStyle style) =0;
-
-            //! Access the frame length in codewords
-            /*!
-             * Note this only has meaning if the framing style is
-             * FramingStyle::Generate.
-             */
-            virtual const unsigned int frameLength() const =0;
-
-            //! Set the frame length in codewords
-            /*!
-             * Note this only has meaning if the framing style is
-             * FramingStyle::Generate.
-             *
-             * @param [in] length Desired length of frame in codewords. This
-             *                    means a frame tag is generated every *length*
-             *                    codewords.
-             */
-            virtual void set_frameLength(const unsigned int length) =0;
 
             //! Shared pointer to this
             typedef boost::shared_ptr<GuidedScrambler> sptr;
@@ -216,8 +194,6 @@ namespace gr
              * @param [in] constellation See set_constellation()
              * @param [in] selectionMethod See set_selectionMethod()
              * @param [in] framingTag See set_framingTag()
-             * @param [in] framingStyle See set_framingStyle()
-             * @param [in] frameLength See set_framingLength()
              * @return Shared pointer to newly allocated guided scrambler
              */
             static sptr make(
@@ -230,9 +206,7 @@ namespace gr
                     const std::vector<std::complex<float>>& constellation =
                         gr::gs::defaultConstellation(4),
                     const std::string& selectionMethod = "MSW",
-                    const std::string& framingTag = "frame",
-                    const FramingStyle framingStyle = IgnoreFrameMarkers,
-                    const unsigned int frameLength = 4096);
+                    const std::string& framingTag = "");
         };
     }
 }

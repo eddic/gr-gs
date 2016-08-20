@@ -2,7 +2,7 @@
  * @file      SymbolGenerator_impl.hpp
  * @brief     Declares the "Random Symbol Generator" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 21, 2016
+ * @date      August 19, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -46,7 +46,7 @@ namespace gr
             /*!
              * Implements gr::gs::SymbolGenerator
              *
-             * @date   July 21, 2016
+             * @date   August 19, 2016
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             class SymbolGenerator_impl: public SymbolGenerator
@@ -54,7 +54,12 @@ namespace gr
             public:
                 const std::vector<double>& weightings() const;
                 void set_weightings(const std::vector<double>& weightings);
-                unsigned int count();
+
+                const std::string& framingTag() const;
+                void set_framingTag(const std::string& tag);
+
+                const unsigned int frameLength() const;
+                void set_frameLength(const unsigned int length);
 
                 //! GNU Radio work function
                 int work(int noutput_items,
@@ -66,14 +71,13 @@ namespace gr
                  * @param  [in] weightings See set_weightings()
                  */
                 inline SymbolGenerator_impl(
-                        const std::vector<double>& weightings);
+                        const std::vector<double>& weightings,
+                        const std::string& framingTag,
+                        const unsigned int frameLength);
 
             private:
                 //! Always practice safe threading
                 mutable std::mutex m_mutex;
-
-                //! How many symbols have we generated?
-                unsigned int m_count;
 
                 //! Our symbol weightings
                 std::vector<double> m_weightings;
@@ -83,6 +87,21 @@ namespace gr
 
                 //! Our distribution
                 std::discrete_distribution<Symbol> m_distribution;
+
+                //! Framing tag
+                std::string m_framingTag;
+
+                //! Framing tag PMT
+                pmt::pmt_t m_framingTagPMT;
+
+                //! Frame length (for frame tag generation)
+                unsigned int m_frameLength;
+
+                //! Current symbol number (for framing)
+                unsigned int m_symbolNumber;
+
+                //! Current frame number
+                uint64_t m_frameNumber;
             };
         }
     }

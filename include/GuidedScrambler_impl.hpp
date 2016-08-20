@@ -2,7 +2,7 @@
  * @file      GuidedScrambler_impl.hpp
  * @brief     Declares the "Guided Scrambler" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 11, 2016
+ * @date      August 19, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -48,7 +48,7 @@ namespace gr
              * This class allows us to perform guided scrambling in an
              * efficient multi threaded fashion
              *
-             * @date   August 11, 2016
+             * @date   August 19, 2016
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             class GuidedScrambler_impl: public GuidedScrambler
@@ -88,12 +88,6 @@ namespace gr
                 const std::string& framingTag() const;
                 void set_framingTag(const std::string& tag);
 
-                const FramingStyle framingStyle() const;
-                void set_framingStyle(const FramingStyle style);
-
-                const unsigned int frameLength() const;
-                void set_frameLength(const unsigned int length);
-
                 //! Perform guided scrambling on an input source word
                 /*!
                  * Note that in order to improve efficiency of operation this
@@ -120,8 +114,6 @@ namespace gr
                  * @param [in] constellation See set_constellation()
                  * @param [in] selectionMethod See set_selectionMethod()
                  * @param [in] framingTag See set_framingTag()
-                 * @param [in] framingStyle See set_framingStyle()
-                 * @param [in] frameLength See set_framingLength()
                  */
                 inline GuidedScrambler_impl(
                         const unsigned int fieldSize,
@@ -132,9 +124,7 @@ namespace gr
                         const unsigned int threads,
                         const std::vector<std::complex<float>>& constellation,
                         const std::string& selectionMethod,
-                        const std::string& framingTag,
-                        const FramingStyle framingStyle,
-                        const unsigned int frameLength);
+                        const std::string& framingTag);
 
                 //! Simply kills the active threads.
                 ~GuidedScrambler_impl();
@@ -205,18 +195,6 @@ namespace gr
 
                 //! PMT version of framing tag
                 pmt::pmt_t m_framingTagPMT;
-
-                //! Framing style for this block
-                FramingStyle m_framingStyle;
-
-                //! Frame length (for frame tag generation)
-                unsigned int m_frameLength;
-
-                //! Current codeword number (for framing)
-                unsigned int m_codewordNumber;
-
-                //! Current frame number
-                uint64_t m_frameNumber;
             };
         }
     }

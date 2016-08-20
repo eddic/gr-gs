@@ -2,7 +2,7 @@
  * @file      Descrambler.h
  * @brief     Declares the "Descrambler" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 21, 2016
+ * @date      August 19, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -42,7 +42,7 @@ namespace gr
     {
         //! Guided Scrambling "Descrambler" GNU Radio block
         /*!
-         * @date   July 21, 2016
+         * @date   August 19, 2016
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         class GS_API Descrambler: virtual public gr::block
@@ -120,21 +120,15 @@ namespace gr
 
             //! Set the framing tag name
             /*!
+             * This allows the codeword/sourceword starts to be aligned with a
+             * frame stream tag. Use this to ensure alignment with the
+             * Descrambler.
+             *
              * @param [in] tag Desired string to use for the "key" of the tag
-             *                 inserted at frame beginnings.
+             *                 inserted at frame beginnings. Use an empty string
+             *                 to disable framing.
              */
             virtual void set_framingTag(const std::string& tag) =0;
-
-            //! Access the frame style
-            virtual const FramingStyle framingStyle() const =0;
-
-            //! Set the framing style
-            /*!
-             * @param [in] style Designed framing style. See FramingStyle. Note
-             *                   this block can only read or ignore framing
-             *                   markers.
-             */
-            virtual void set_framingStyle(const FramingStyle style) =0;
 
             //! Shared pointer to this
             typedef boost::shared_ptr<Descrambler> sptr;
@@ -147,7 +141,6 @@ namespace gr
              * @param [in] continuous See set_continuous()
              * @param [in] multiplier See set_multiplier()
              * @param [in] framingTag See set_framingTag()
-             * @param [in] framingStyle See set_framingStyle()
              * @return Shared pointer to newly allocated descrambler
              */
             static sptr make(
@@ -156,8 +149,7 @@ namespace gr
                     const unsigned int augmentingLength = 3,
                     const bool continuous = true,
                     const std::vector<Symbol>& multiplier = {1,0,0,1},
-                    const std::string& framingTag = "frame",
-                    const FramingStyle framingStyle = IgnoreFrameMarkers);
+                    const std::string& framingTag = "");
         };
     }
 }
