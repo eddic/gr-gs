@@ -36,17 +36,24 @@ int main()
     {
         std::cout.flush();
 
-        GuidedScrambler_impl scrambler;
-        scrambler.set_continuous(false);
-        scrambler.set_fieldSize(2);
-        scrambler.set_constellation(defaultConstellation(2));
+        GuidedScrambler_impl scrambler(
+                2,
+                12,
+                3,
+                false,
+                {1,0,0,1},
+                0,
+                defaultConstellation(2),
+                "MSW",
+                "");
 
-        Descrambler_impl descrambler;
-        descrambler.set_fieldSize(scrambler.fieldSize());
-        descrambler.set_augmentingLength(scrambler.augmentingLength());
-        descrambler.set_codewordLength(scrambler.codewordLength());
-        descrambler.set_continuous(scrambler.continuous());
-        descrambler.set_multiplier(scrambler.divider());
+        Descrambler_impl descrambler(
+                scrambler.fieldSize(),
+                scrambler.codewordLength(),
+                scrambler.augmentingLength(),
+                scrambler.continuous(),
+                scrambler.divider(),
+                "");
 
         std::vector<Symbol> input(scrambler.codewordLength()-scrambler.augmentingLength());
         Word::randomize<GF2>(input);
@@ -70,17 +77,24 @@ int main()
     {
         std::cout.flush();
 
-        GuidedScrambler_impl scrambler;
-        scrambler.set_continuous(true);
-        scrambler.set_fieldSize(2);
-        scrambler.set_constellation(defaultConstellation(2));
+        GuidedScrambler_impl scrambler(
+                2,
+                12,
+                3,
+                true,
+                {1,0,0,1},
+                0,
+                defaultConstellation(2),
+                "MSW",
+                "");
 
-        Descrambler_impl descrambler;
-        descrambler.set_fieldSize(scrambler.fieldSize());
-        descrambler.set_augmentingLength(scrambler.augmentingLength());
-        descrambler.set_codewordLength(scrambler.codewordLength());
-        descrambler.set_continuous(scrambler.continuous());
-        descrambler.set_multiplier(scrambler.divider());
+        Descrambler_impl descrambler(
+                scrambler.fieldSize(),
+                scrambler.codewordLength(),
+                scrambler.augmentingLength(),
+                scrambler.continuous(),
+                scrambler.divider(),
+                "");
 
         std::vector<Symbol> input(scrambler.codewordLength()-scrambler.augmentingLength());
         Word::randomize<GF2>(input);
@@ -104,17 +118,24 @@ int main()
     {
         std::cout.flush();
 
-        GuidedScrambler_impl scrambler;
-        scrambler.set_continuous(false);
-        scrambler.set_constellation(defaultConstellation(4));
-        scrambler.set_fieldSize(4);
+        GuidedScrambler_impl scrambler(
+                4,
+                12,
+                3,
+                false,
+                {1,0,0,1},
+                0,
+                defaultConstellation(4),
+                "MSW",
+                "");
 
-        Descrambler_impl descrambler;
-        descrambler.set_fieldSize(scrambler.fieldSize());
-        descrambler.set_augmentingLength(scrambler.augmentingLength());
-        descrambler.set_codewordLength(scrambler.codewordLength());
-        descrambler.set_continuous(scrambler.continuous());
-        descrambler.set_multiplier(scrambler.divider());
+        Descrambler_impl descrambler(
+                scrambler.fieldSize(),
+                scrambler.codewordLength(),
+                scrambler.augmentingLength(),
+                scrambler.continuous(),
+                scrambler.divider(),
+                "");
 
         std::vector<Symbol> input(scrambler.codewordLength()-scrambler.augmentingLength());
         Word::randomize<GF4>(input);
@@ -138,17 +159,24 @@ int main()
     {
         std::cout.flush();
 
-        GuidedScrambler_impl scrambler;
-        scrambler.set_continuous(true);
-        scrambler.set_constellation(defaultConstellation(4));
-        scrambler.set_fieldSize(4);
+        GuidedScrambler_impl scrambler(
+                4,
+                12,
+                3,
+                true,
+                {1,0,0,1},
+                0,
+                defaultConstellation(4),
+                "MSW",
+                "");
 
-        Descrambler_impl descrambler;
-        descrambler.set_fieldSize(scrambler.fieldSize());
-        descrambler.set_augmentingLength(scrambler.augmentingLength());
-        descrambler.set_codewordLength(scrambler.codewordLength());
-        descrambler.set_continuous(scrambler.continuous());
-        descrambler.set_multiplier(scrambler.divider());
+        Descrambler_impl descrambler(
+                scrambler.fieldSize(),
+                scrambler.codewordLength(),
+                scrambler.augmentingLength(),
+                scrambler.continuous(),
+                scrambler.divider(),
+                "");
 
         std::vector<Symbol> input(scrambler.codewordLength()-scrambler.augmentingLength());
         Word::randomize<GF4>(input);

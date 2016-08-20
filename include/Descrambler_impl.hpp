@@ -60,13 +60,13 @@ namespace gr
                  * @param [in] multiplier See set_multiplier()
                  * @param [in] framingTag See set_framingTag()
                  */
-                inline Descrambler_impl(
+                Descrambler_impl(
                     const unsigned int fieldSize,
                     const unsigned int codewordLength,
                     const unsigned int augmentingLength,
                     const bool continuous,
                     const std::vector<Symbol>& multiplier,
-                    const std::string& framingTag = "frame");
+                    const std::string& framingTag);
 
                 //! No copying allowed
                 Descrambler_impl(const Descrambler_impl& x) = delete;

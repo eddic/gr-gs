@@ -115,7 +115,7 @@ namespace gr
                  * @param [in] selectionMethod See set_selectionMethod()
                  * @param [in] framingTag See set_framingTag()
                  */
-                inline GuidedScrambler_impl(
+                GuidedScrambler_impl(
                         const unsigned int fieldSize,
                         const unsigned int codewordLength,
                         const unsigned int augmentingLength,

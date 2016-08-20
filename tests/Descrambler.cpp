@@ -35,12 +35,13 @@ int main()
         const std::vector<Symbol> product({1,0,0,1,0,1,0,0,1,1,0,1,0,0,0,1});
         const std::vector<Symbol> input({1,1,1,1,0,0,1,1,0,0,1,0,0,1,1,0});
 
-        Descrambler_impl descrambler;
-        descrambler.set_fieldSize(2);
-        descrambler.set_augmentingLength(input.size()-output.size());
-        descrambler.set_codewordLength(input.size());
-        descrambler.set_continuous(false);
-        descrambler.set_multiplier({1,1,0,1});
+        Descrambler_impl descrambler(
+                2,
+                input.size(),
+                input.size()-output.size(),
+                false,
+                {1,1,0,1},
+                "");
         descrambler.descramble(input);
 
         if(output != descrambler.output() || product != descrambler.product())
@@ -59,12 +60,14 @@ int main()
         const std::vector<Symbol> product({0,0,2,1,3,1,1,1,0,0,1,1,3,2,2,3,3,3,1,1,2,3,3,1,0,2,3});
         const std::vector<Symbol> input({0,0,1,1,3,2,3,1,2,0,3,0,1,2,0,1,3,1,3,1,1,2,2,1,2,1,2});
 
-        Descrambler_impl descrambler;
-        descrambler.set_fieldSize(4);
-        descrambler.set_augmentingLength(input.size()-output.size());
-        descrambler.set_codewordLength(input.size());
-        descrambler.set_continuous(false);
-        descrambler.set_multiplier({2,3,1,1,3,3});
+        Descrambler_impl descrambler(
+                4,
+                input.size(),
+                input.size()-output.size(),
+                false,
+                {2,3,1,1,3,3},
+                "");
+        descrambler.descramble(input);
         descrambler.descramble(input);
 
         if(output != descrambler.output() || product != descrambler.product())

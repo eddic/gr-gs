@@ -48,12 +48,13 @@ int main()
         ScramblerGroup scramblers;
         scramblers.configure(input.size()+4,indexStart,indexEnd,4,divider.size()-1, 0, 2);
 
-        Descrambler_impl descrambler;
-        descrambler.set_fieldSize(2);
-        descrambler.set_augmentingLength(4);
-        descrambler.set_codewordLength(input.size()+4);
-        descrambler.set_continuous(false);
-        descrambler.set_multiplier(divider);
+        Descrambler_impl descrambler(
+                2,
+                input.size()+4,
+                4,
+                false,
+                divider,
+                "");
 
         std::random_device generator;
         std::uniform_int_distribution<size_t> distribution(0, indexEnd-indexStart-1);
@@ -88,12 +89,13 @@ int main()
         ScramblerGroup scramblers;
         scramblers.configure(input.size()+4,indexStart,indexEnd,4,divider.size()-1, 0, 2);
 
-        Descrambler_impl descrambler;
-        descrambler.set_fieldSize(2);
-        descrambler.set_augmentingLength(4);
-        descrambler.set_codewordLength(input.size()+4);
-        descrambler.set_continuous(true);
-        descrambler.set_multiplier(divider);
+        Descrambler_impl descrambler(
+                2,
+                input.size()+4,
+                4,
+                true,
+                divider,
+                "");
 
         for(unsigned int i=0; i<64; ++i)
         {
@@ -128,12 +130,13 @@ int main()
         ScramblerGroup scramblers;
         scramblers.configure(input.size()+4,indexStart,indexEnd,4,divider.size()-1, 0, 4);
 
-        Descrambler_impl descrambler;
-        descrambler.set_fieldSize(4);
-        descrambler.set_augmentingLength(4);
-        descrambler.set_codewordLength(input.size()+4);
-        descrambler.set_continuous(false);
-        descrambler.set_multiplier(divider);
+        Descrambler_impl descrambler(
+                4,
+                input.size()+4,
+                4,
+                false,
+                divider,
+                "");
 
         std::random_device generator;
         std::uniform_int_distribution<size_t> distribution(0, indexEnd-indexStart-1);
@@ -168,12 +171,13 @@ int main()
         ScramblerGroup scramblers;
         scramblers.configure(input.size()+4,indexStart,indexEnd,4,divider.size()-1, 0, 4);
 
-        Descrambler_impl descrambler;
-        descrambler.set_fieldSize(4);
-        descrambler.set_augmentingLength(4);
-        descrambler.set_codewordLength(input.size()+4);
-        descrambler.set_continuous(true);
-        descrambler.set_multiplier(divider);
+        Descrambler_impl descrambler(
+                4,
+                input.size()+4,
+                4,
+                true,
+                divider,
+                "");
 
         for(unsigned int i=0; i<64; ++i)
         {
