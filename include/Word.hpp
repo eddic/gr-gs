@@ -147,7 +147,8 @@ namespace gr
                 {
                     std::string output("\"");
                     for(unsigned int i=0; i<word.size(); ++i)
-                        output += std::to_string((unsigned int)(word[i])) + ' ';
+                        output +=
+                            std::to_string(static_cast<unsigned>(word[i])) + ' ';
                     output.pop_back();
                     output += '"';
                     return output;
