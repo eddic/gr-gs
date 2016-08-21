@@ -34,7 +34,7 @@
 
 #include "GuidedScrambler_impl.hpp"
 #include "gr-gs/exceptions.h"
-#include "Word.hpp"
+#include "Words.hpp"
 
 void gr::gs::GuidedScrambling::GuidedScrambler_impl::killThreads()
 {
@@ -53,7 +53,7 @@ void gr::gs::GuidedScrambling::GuidedScrambler_impl::killThreads()
 
 const std::vector<gr::gs::Symbol>&
 gr::gs::GuidedScrambling::GuidedScrambler_impl::scramble(
-        const std::vector<Symbol>& input)
+        const Word& input)
 {
     std::unique_lock<std::mutex> sleepLock(m_args.sleepMutex);
     if(!m_threads.size())
@@ -130,7 +130,7 @@ gr::gs::GuidedScrambling::GuidedScrambler_impl::GuidedScrambler_impl(
         const unsigned int codewordLength,
         const unsigned int augmentingLength,
         const bool continuous,
-        const std::vector<Symbol>& divider,
+        const Word& divider,
         const unsigned int threads,
         const std::vector<std::complex<float>>& constellation,
         const std::string& selectionMethod,
@@ -284,7 +284,7 @@ gr::gs::GuidedScrambling::GuidedScrambler_impl::divider() const
 }
 
 void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_divider(
-        const std::vector<Symbol>& divider)
+        const Word& divider)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_codeword = nullptr;
@@ -476,7 +476,7 @@ gr::gs::GuidedScrambler::sptr gr::gs::GuidedScrambler::make(
         const unsigned int codewordLength,
         const unsigned int augmentingLength,
         const bool continuous,
-        const std::vector<Symbol>& divider,
+        const Word& divider,
         const unsigned int threads,
         const std::vector<std::complex<float>>& constellation,
         const std::string& selectionMethod,

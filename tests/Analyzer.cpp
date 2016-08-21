@@ -24,7 +24,6 @@
 #include "MSW.hpp"
 #include "GF2.hpp"
 #include "GF4.hpp"
-#include "Word.hpp"
 
 int main()
 {
@@ -37,7 +36,7 @@ int main()
     {
         std::cout.flush();
 
-        const std::vector<Symbol> codeword{1,1,0,1,0,1,1,1,0,1,0,0,1,1,1,1,1,1,0};
+        const Word codeword{1,1,0,1,0,1,1,1,0,1,0,0,1,1,1,1,1,1,0};
 
         std::unique_ptr<Analyzer> analyzer(manufactureAnalyzer(0));
         analyzer->analyze(codeword, analyzer->feedback(), defaultConstellation(2));
@@ -55,7 +54,7 @@ int main()
     {
         std::cout.flush();
 
-        const std::vector<Symbol> codeword{3,1,1,1,0,0,1,1,3,2,2,3,3,3,1,1,2,3,3,1,0,2,3};
+        const Word codeword{3,1,1,1,0,0,1,1,3,2,2,3,3,3,1,1,2,3,3,1,0,2,3};
         std::unique_ptr<Analyzer> analyzer(manufactureAnalyzer(0));
         analyzer->analyze(codeword, analyzer->feedback(), defaultConstellation(4));
 

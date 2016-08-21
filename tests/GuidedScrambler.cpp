@@ -23,7 +23,7 @@
 #include "Descrambler_impl.hpp"
 #include "GF2.hpp"
 #include "GF4.hpp"
-#include "Word.hpp"
+#include "Words.hpp"
 
 int main()
 {
@@ -55,13 +55,13 @@ int main()
                 scrambler.divider(),
                 "");
 
-        std::vector<Symbol> input(scrambler.codewordLength()-scrambler.augmentingLength());
-        Word::randomize<GF2>(input);
+        Word input(scrambler.codewordLength()-scrambler.augmentingLength());
+        Words::randomize<GF2>(input);
 
         for(unsigned int i=0; i<64; ++i)
         {
-            Word::randomize<GF2>(input);
-            const std::vector<Symbol>& output = scrambler.scramble(input);
+            Words::randomize<GF2>(input);
+            const Word& output = scrambler.scramble(input);
             descrambler.descramble(output);
             if(descrambler.output() != input)
             {
@@ -96,13 +96,13 @@ int main()
                 scrambler.divider(),
                 "");
 
-        std::vector<Symbol> input(scrambler.codewordLength()-scrambler.augmentingLength());
-        Word::randomize<GF2>(input);
+        Word input(scrambler.codewordLength()-scrambler.augmentingLength());
+        Words::randomize<GF2>(input);
 
         for(unsigned int i=0; i<64; ++i)
         {
-            Word::randomize<GF2>(input);
-            const std::vector<Symbol>& output = scrambler.scramble(input);
+            Words::randomize<GF2>(input);
+            const Word& output = scrambler.scramble(input);
             descrambler.descramble(output);
             if(descrambler.output() != input)
             {
@@ -137,13 +137,13 @@ int main()
                 scrambler.divider(),
                 "");
 
-        std::vector<Symbol> input(scrambler.codewordLength()-scrambler.augmentingLength());
-        Word::randomize<GF4>(input);
+        Word input(scrambler.codewordLength()-scrambler.augmentingLength());
+        Words::randomize<GF4>(input);
 
         for(unsigned int i=0; i<64; ++i)
         {
-            Word::randomize<GF4>(input);
-            const std::vector<Symbol>& output = scrambler.scramble(input);
+            Words::randomize<GF4>(input);
+            const Word& output = scrambler.scramble(input);
             descrambler.descramble(output);
             if(descrambler.output() != input)
             {
@@ -178,13 +178,13 @@ int main()
                 scrambler.divider(),
                 "");
 
-        std::vector<Symbol> input(scrambler.codewordLength()-scrambler.augmentingLength());
-        Word::randomize<GF4>(input);
+        Word input(scrambler.codewordLength()-scrambler.augmentingLength());
+        Words::randomize<GF4>(input);
 
         for(unsigned int i=0; i<64; ++i)
         {
-            Word::randomize<GF4>(input);
-            const std::vector<Symbol>& output = scrambler.scramble(input);
+            Words::randomize<GF4>(input);
+            const Word& output = scrambler.scramble(input);
             descrambler.descramble(output);
             if(descrambler.output() != input)
             {

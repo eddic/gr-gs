@@ -65,7 +65,7 @@ namespace gr
                     const unsigned int codewordLength,
                     const unsigned int augmentingLength,
                     const bool continuous,
-                    const std::vector<Symbol>& multiplier,
+                    const Word& multiplier,
                     const std::string& framingTag);
 
                 //! No copying allowed
@@ -85,8 +85,8 @@ namespace gr
                 bool continuous() const;
                 void set_continuous(bool continuous);
 
-                const std::vector<Symbol>& multiplier() const;
-                void set_multiplier(const std::vector<Symbol>& multiplier);
+                const Word& multiplier() const;
+                void set_multiplier(const Word& multiplier);
 
                 const std::string& framingTag() const;
                 void set_framingTag(const std::string& tag);
@@ -103,10 +103,10 @@ namespace gr
                  *                   of this word \a must equal the codeword
                  *                   length.
                  */
-                void descramble(const std::vector<Symbol>& input);
+                void descramble(const Word& input);
 
-                const std::vector<Symbol> output() const;
-                const std::vector<Symbol>& product() const;
+                const Word output() const;
+                const Word& product() const;
 
                 //! GNU Radio work function
                 int general_work(int noutput_items,
@@ -125,19 +125,19 @@ namespace gr
                 mutable std::mutex m_mutex;
 
                 //! Buffer to store up input codeword
-                std::vector<Symbol> m_codeword;
+                Word m_codeword;
 
                 //! Codeword buffer write position
-                std::vector<Symbol>::iterator m_codewordIt;
+                Word::iterator m_codewordIt;
 
                 //! The actual product of multiplication
-                std::vector<Symbol> m_product;
+                Word m_product;
 
                 //! Output sourceword read position
-                std::vector<Symbol>::const_iterator m_productIt;
+                Word::const_iterator m_productIt;
 
                 //! The multiplication remainder
-                std::vector<Symbol> m_remainder;
+                Word m_remainder;
 
                 //! The codeword length
                 unsigned int m_codewordLength;
@@ -146,7 +146,7 @@ namespace gr
                 unsigned int m_augmentingLength;
 
                 //! The multiplier used to descramble
-                std::vector<Symbol> m_multiplier;
+                Word m_multiplier;
 
                 //! True if we're doing continuous multiplication
                 bool m_continuous;
@@ -165,10 +165,10 @@ namespace gr
 
                 //! The actual multiplying function to use
                 std::function<void(
-                    const std::vector<Symbol>&,
-                    const std::vector<Symbol>&,
-                    std::vector<Symbol>&,
-                    std::vector<Symbol>&,
+                    const Word&,
+                    const Word&,
+                    Word&,
+                    Word&,
                     bool)> m_multiply;
 
                 //! Setup the descrambler

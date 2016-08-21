@@ -29,7 +29,7 @@
 #include "gr-gs/exceptions.h"
 
 #include <algorithm>
-#include "Word.hpp"
+#include "Words.hpp"
 #include "GF2.hpp"
 #include "GF4.hpp"
 
@@ -47,10 +47,10 @@ void gr::gs::GuidedScrambling::Descrambler_impl::setup()
     switch(m_fieldSize)
     {
         case 2:
-            m_multiply = Word::multiply<GF2>;
+            m_multiply = Words::multiply<GF2>;
             break;
         case 4:
-            m_multiply = Word::multiply<GF4>;
+            m_multiply = Words::multiply<GF4>;
             break;
         default:
             throw Exceptions::BadFieldSize();
@@ -70,11 +70,11 @@ void gr::gs::GuidedScrambling::Descrambler_impl::setup()
 }
 
 template<typename Field>
-void gr::gs::GuidedScrambling::Word::multiply(
-        const std::vector<Symbol>& multiplicand,
-        const std::vector<Symbol>& multiplier,
-        std::vector<Symbol>& product,
-        std::vector<Symbol>& remainder,
+void gr::gs::GuidedScrambling::Words::multiply(
+        const Word& multiplicand,
+        const Word& multiplier,
+        Word& product,
+        Word& remainder,
         bool continuous)
 {
     std::fill(product.begin(), product.end(), 0);
@@ -106,7 +106,7 @@ gr::gs::GuidedScrambling::Descrambler_impl::Descrambler_impl(
         const unsigned int codewordLength,
         const unsigned int augmentingLength,
         const bool continuous,
-        const std::vector<Symbol>& multiplier,
+        const Word& multiplier,
         const std::string& framingTag):
     gr::block("Guided Scrambling Descrambler",
         gr::io_signature::make(1,1,sizeof(Symbol)),
@@ -126,7 +126,7 @@ gr::gs::GuidedScrambling::Descrambler_impl::Descrambler_impl(
 }
 
 void gr::gs::GuidedScrambling::Descrambler_impl::descramble(
-        const std::vector<Symbol>& input)
+        const Word& input)
 {
     if(!m_valid)
         setup();
@@ -206,7 +206,7 @@ gr::gs::GuidedScrambling::Descrambler_impl::multiplier() const
 }
 
 void gr::gs::GuidedScrambling::Descrambler_impl::set_multiplier(
-        const std::vector<Symbol>& multiplier)
+        const Word& multiplier)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_multiplier = multiplier;
@@ -232,7 +232,7 @@ const std::vector<gr::gs::Symbol>
 gr::gs::GuidedScrambling::Descrambler_impl::output() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    std::vector<Symbol> output;
+    Word output;
     if(m_valid)
     {
         output.resize(m_codewordLength-m_augmentingLength);
@@ -407,7 +407,7 @@ gr::gs::Descrambler::sptr gr::gs::Descrambler::make(
         const unsigned int codewordLength,
         const unsigned int augmentingLength,
         const bool continuous,
-        const std::vector<Symbol>& multiplier,
+        const Word& multiplier,
         const std::string& framingTag)
 {
     return gnuradio::get_initial_sptr(

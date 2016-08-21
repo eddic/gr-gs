@@ -28,7 +28,7 @@
 #include "Scrambler.hpp"
 #include "gr-gs/exceptions.h"
 
-#include "Word.hpp"
+#include "Words.hpp"
 #include "GF2.hpp"
 #include "GF4.hpp"
 
@@ -49,11 +49,11 @@ std::vector<std::complex<float>> gr::gs::defaultConstellation(
 }
 
 template<typename Field>
-void gr::gs::GuidedScrambling::Word::divide(
-        const std::vector<Symbol>& dividend,
-        const std::vector<Symbol>& divider,
-        std::vector<Symbol>& quotient,
-        std::vector<Symbol>& remainder)
+void gr::gs::GuidedScrambling::Words::divide(
+        const Word& dividend,
+        const Word& divider,
+        Word& quotient,
+        Word& remainder)
 {
     for(unsigned int i=0; i<quotient.size(); ++i)
     {
@@ -93,10 +93,10 @@ void gr::gs::GuidedScrambling::Scrambler::configure(
     switch(fieldSize)
     {
         case 2:
-            m_divide = Word::divide<GF2>;
+            m_divide = Words::divide<GF2>;
             break;
         case 4:
-            m_divide = Word::divide<GF4>;
+            m_divide = Words::divide<GF4>;
             break;
         default:
             throw Exceptions::BadFieldSize();

@@ -106,8 +106,8 @@ namespace gr
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 void scramble(
-                        const std::vector<Symbol>& divider,
-                        const std::vector<Symbol>& input)
+                        const Word& divider,
+                        const Word& input)
                 {
                     std::copy(
                             input.begin(),
@@ -141,7 +141,7 @@ namespace gr
                  * @date   March 3, 2015
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
-                void setRemainder(const std::vector<Symbol>& remainder)
+                void setRemainder(const Word& remainder)
                 {
                     if(&m_remainder != &remainder)
                         std::copy(
@@ -161,7 +161,7 @@ namespace gr
                  * @date    March 3, 2015
                  * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
-                const std::vector<Symbol>& remainder() const
+                const Word& remainder() const
                 {
                     return m_remainder;
                 }
@@ -176,7 +176,7 @@ namespace gr
                  * @date    March 3, 2015
                  * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
-                const std::vector<Symbol>& output() const
+                const Word& output() const
                 {
                     return m_output;
                 }
@@ -193,7 +193,7 @@ namespace gr
                  * @date    March 3, 2015
                  * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
-                const std::vector<Symbol>& dividend() const
+                const Word& dividend() const
                 {
                     return m_dividend;
                 }
@@ -247,23 +247,23 @@ namespace gr
 
             protected:
                 //! Actual input to division operation
-                std::vector<Symbol> m_dividend;
+                Word m_dividend;
 
                 //! Output resulting from division operation
-                std::vector<Symbol> m_output;
+                Word m_output;
 
                 //! Remainder word used in division operation
-                std::vector<Symbol> m_remainder;
+                Word m_remainder;
 
                 //! Analyzer object
                 std::unique_ptr<Analyzer> m_analyzer;
 
                 //! Divide function we'll be using
                 std::function<void(
-                        const std::vector<Symbol>& dividend,
-                        const std::vector<Symbol>& divider,
-                        std::vector<Symbol>& quotient,
-                        std::vector<Symbol>& remainder)> m_divide;
+                        const Word& dividend,
+                        const Word& divider,
+                        Word& quotient,
+                        Word& remainder)> m_divide;
             };
         }
     }

@@ -1,8 +1,8 @@
 /*!
- * @file      Word.hpp
- * @brief     Declares the gr::gs::GuidedScrambling::Word namespace.
+ * @file      Words.hpp
+ * @brief     Declares the gr::gs::GuidedScrambling::Words namespace.
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 8, 2016
+ * @date      August 21, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -25,13 +25,10 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GR_GS_WORD_HPP
-#define GR_GS_WORD_HPP
+#ifndef GR_GS_WORDS_HPP
+#define GR_GS_WORDS_HPP
 
-#include <vector>
-#include <map>
 #include <string>
-#include <complex>
 
 #include "gr-gs/config.h"
 
@@ -49,7 +46,7 @@ namespace gr
              * @date   March 3, 2015
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
-            namespace Word
+            namespace Words
             {
                 //! Arithmetic multiplication of words
                 /*!
@@ -90,10 +87,10 @@ namespace gr
                  */
                 template<typename Field>
                 void multiply(
-                        const std::vector<Symbol>& multiplicand,
-                        const std::vector<Symbol>& multiplier,
-                        std::vector<Symbol>& product,
-                        std::vector<Symbol>& remainder,
+                        const Word& multiplicand,
+                        const Word& multiplier,
+                        Word& product,
+                        Word& remainder,
                         bool continuous=true);
 
                 //! Arithmetic division of words
@@ -128,10 +125,10 @@ namespace gr
                  */
                 template<typename Field>
                 void divide(
-                        const std::vector<Symbol>& dividend,
-                        const std::vector<Symbol>& divider,
-                        std::vector<Symbol>& quotient,
-                        std::vector<Symbol>& remainder);
+                        const Word& dividend,
+                        const Word& divider,
+                        Word& quotient,
+                        Word& remainder);
 
                 //! Give string representation of the word
                 /*!
@@ -143,7 +140,7 @@ namespace gr
                  * @date March 3, 2015
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
-                inline std::string to_string(const std::vector<Symbol>& word)
+                inline std::string to_string(const Word& word)
                 {
                     std::string output("\"");
                     for(unsigned int i=0; i<word.size(); ++i)
@@ -170,7 +167,7 @@ namespace gr
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 template<typename Field>
-                void randomize(std::vector<Symbol>& word)
+                void randomize(Word& word)
                 {
                     for(Symbol& symbol: word)
                         symbol = Field::random();

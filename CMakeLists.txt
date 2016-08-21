@@ -109,18 +109,18 @@ target_link_libraries(Descrambler_test PRIVATE
     "${GNURADIO_RUNTIME_LIBRARIES}")
 add_test("gr::gs::Descrambler" Descrambler_test)
 
-add_executable(Word_test EXCLUDE_FROM_ALL
-    tests/Word.cpp
+add_executable(Words_test EXCLUDE_FROM_ALL
+    tests/Words.cpp
     src/Scrambler.cpp
     src/Analyzer.cpp
     src/MSW2.cpp
     src/MSW.cpp
     src/WRDS.cpp
     src/Descrambler_impl.cpp)
-target_link_libraries(Word_test PRIVATE
+target_link_libraries(Words_test PRIVATE
     "${Boost_LIBRARIES}"
     "${GNURADIO_RUNTIME_LIBRARIES}")
-add_test("gr::gs::GuidedScrambling::Word" Word_test)
+add_test("gr::gs::GuidedScrambling::Words" Words_test)
 
 add_executable(Scrambler_test EXCLUDE_FROM_ALL
     tests/Scrambler.cpp
@@ -167,7 +167,7 @@ add_test("gr::gs::GuidedScrambler" GuidedScrambler_test)
 add_custom_target(tests DEPENDS
     Descrambler_test
     Analyzer_test
-    Word_test
+    Words_test
     Scrambler_test
     ScramblerGroup_test
     GuidedScrambler_test)

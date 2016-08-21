@@ -79,8 +79,8 @@ namespace gr
                 const std::string& selectionMethod() const;
                 void set_selectionMethod(const std::string& method);
 
-                const std::vector<Symbol>& divider() const;
-                void set_divider(const std::vector<Symbol>& divider);
+                const Word& divider() const;
+                void set_divider(const Word& divider);
 
                 unsigned int threads() const;
                 void set_threads(unsigned int number=0);
@@ -100,8 +100,8 @@ namespace gr
                  *                    length minus the augmenting length.
                  * @return Constant reference code word.
                  */
-                const std::vector<Symbol>& scramble(
-                        const std::vector<Symbol>& input);
+                const Word& scramble(
+                        const Word& input);
 
                 //! Initialize the guided scrambler
                 /*!
@@ -120,7 +120,7 @@ namespace gr
                         const unsigned int codewordLength,
                         const unsigned int augmentingLength,
                         const bool continuous,
-                        const std::vector<Symbol>& divider,
+                        const Word& divider,
                         const unsigned int threads,
                         const std::vector<std::complex<float>>& constellation,
                         const std::string& selectionMethod,
@@ -179,16 +179,16 @@ namespace gr
                 ScramblerGroup::HandlerConstArguments m_cargs;
 
                 //! Pointer to current codeword
-                const std::vector<Symbol>* m_codeword;
+                const Word* m_codeword;
 
                 //! Iterator to codeword read position
-                std::vector<Symbol>::const_iterator m_codewordIt;
+                Word::const_iterator m_codewordIt;
 
                 //! Buffered source word
-                std::vector<Symbol> m_sourceword;
+                Word m_sourceword;
 
                 //! Iterator to sourceword write position
-                std::vector<Symbol>::iterator m_sourcewordIt;
+                Word::iterator m_sourcewordIt;
 
                 //! Framing tag name/key
                 std::string m_framingTag;

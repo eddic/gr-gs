@@ -112,7 +112,7 @@ namespace gr
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 virtual void analyze(
-                        const std::vector<Symbol>& codeword,
+                        const Word& codeword,
                         const Feedback& feedback,
                         const std::vector<std::complex<float>>& constellation)
                     =0;

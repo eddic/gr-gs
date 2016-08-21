@@ -106,14 +106,14 @@ namespace gr
             /*!
              * @return Multiplier word (polynomial)
              */
-            virtual const std::vector<Symbol>& multiplier() const =0;
+            virtual const Word& multiplier() const =0;
 
             //! Set multiplier polynomial
             /*!
              * @param  [in] multiplier Desired multiplier word (polynomial)
              */
             virtual void set_multiplier(
-                    const std::vector<Symbol>& multiplier) =0;
+                    const Word& multiplier) =0;
 
             //! Access the framing tag name
             virtual const std::string& framingTag() const =0;
@@ -148,7 +148,7 @@ namespace gr
                     const unsigned int codewordLength = 12,
                     const unsigned int augmentingLength = 3,
                     const bool continuous = true,
-                    const std::vector<Symbol>& multiplier = {1,0,0,1},
+                    const Word& multiplier = {1,0,0,1},
                     const std::string& framingTag = "");
         };
     }

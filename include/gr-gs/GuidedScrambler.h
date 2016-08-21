@@ -137,13 +137,13 @@ namespace gr
             /*!
              * @return Divider word (polynomial)
              */
-            virtual const std::vector<Symbol>& divider() const =0;
+            virtual const Word& divider() const =0;
 
             //! Set divider word
             /*!
              * @param  [in] divider Desired divider word (polynomial)
              */
-            virtual void set_divider(const std::vector<Symbol>& divider) =0;
+            virtual void set_divider(const Word& divider) =0;
 
             //! Access number of concurrent scrambling threads
             /*!
@@ -201,7 +201,7 @@ namespace gr
                     const unsigned int codewordLength = 12,
                     const unsigned int augmentingLength = 3,
                     const bool continuous = true,
-                    const std::vector<Symbol>& divider = {1,0,0,1},
+                    const Word& divider = {1,0,0,1},
                     const unsigned int threads = 0,
                     const std::vector<std::complex<float>>& constellation =
                         gr::gs::defaultConstellation(4),

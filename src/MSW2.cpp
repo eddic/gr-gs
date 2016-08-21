@@ -39,7 +39,7 @@ gr::gs::GuidedScrambling::MSW2::Feedback::Feedback():
 {}
 
 void gr::gs::GuidedScrambling::MSW2::analyze(
-        const std::vector<Symbol>& codeword,
+        const Word& codeword,
         const Analyzer::Feedback& feedback,
         const std::vector<std::complex<float>>& constellation)
 {

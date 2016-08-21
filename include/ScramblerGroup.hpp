@@ -134,9 +134,9 @@ namespace gr
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 void scramble(
-                        const std::vector<Symbol>& divider,
-                        const std::vector<Symbol>& input,
-                        const std::vector<Symbol>& remainder,
+                        const Word& divider,
+                        const Word& input,
+                        const Word& remainder,
                         const Analyzer::Feedback& feedback,
                         const std::vector<std::complex<float>>& constellation)
                 {
@@ -177,13 +177,13 @@ namespace gr
                     bool sleep;
 
                     //! Input dividing word
-                    std::vector<Symbol> divider;
+                    Word divider;
 
                     //! Input to be scrambled
-                    const std::vector<Symbol>* input;
+                    const Word* input;
 
                     //! Input remainder word
-                    std::vector<Symbol> remainder;
+                    Word remainder;
 
                     //! The feedback from the previous winning codeword to start the analysis with
                     std::unique_ptr<const Analyzer::Feedback> feedback;
