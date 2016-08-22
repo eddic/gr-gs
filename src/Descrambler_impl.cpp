@@ -30,8 +30,6 @@
 
 #include <algorithm>
 #include "Words.hpp"
-#include "GF2.hpp"
-#include "GF4.hpp"
 
 void gr::gs::GuidedScrambling::Descrambler_impl::setup()
 {
@@ -44,22 +42,11 @@ void gr::gs::GuidedScrambling::Descrambler_impl::setup()
     if(m_multiplier.size() < 2)
         throw Exceptions::DivisorLengthTooSmall();
 
-    switch(m_fieldSize)
-    {
-        case 2:
-            m_multiply = Words::multiply<GF2>;
-            break;
-        case 4:
-            m_multiply = Words::multiply<GF4>;
-            break;
-        default:
-            throw Exceptions::BadFieldSize();
-    }
-
     for(auto& symbol: m_multiplier)
         if(symbol >= m_fieldSize)
             symbol = m_fieldSize-1;
 
+    m_multiply = Words::getMultiply(m_fieldSize);
     m_codeword.resize(m_codewordLength);
     m_codewordIt = m_codeword.begin();
     m_product.resize(m_codewordLength);
@@ -67,38 +54,6 @@ void gr::gs::GuidedScrambling::Descrambler_impl::setup()
     m_remainder.resize(m_multiplier.size()-1);
     std::fill(m_remainder.begin(), m_remainder.end(), 0);
     m_valid=true;
-}
-
-template<typename Field>
-void gr::gs::GuidedScrambling::Words::multiply(
-        const Word& multiplicand,
-        const Word& multiplier,
-        Word& product,
-        Word& remainder,
-        bool continuous)
-{
-    std::fill(product.begin(), product.end(), 0);
-    const unsigned int productSize=product.size();
-    const unsigned int remainderSize=remainder.size();
-    for(unsigned int i=0; i<productSize; ++i)
-    {
-        Symbol& output=product[i];
-        for(unsigned int j=0; j<=remainderSize; ++j)
-        {
-            const unsigned int ijSum = i+j;
-            const Symbol& input =
-                (ijSum<remainderSize)?
-                remainder[ijSum]
-                :multiplicand[ijSum-remainderSize];
-            output = Field(output)
-                +Field(input)*Field(multiplier[remainderSize-j]);
-        }
-    }
-    if(continuous)
-        std::copy(
-                multiplicand.end()-remainderSize,
-                multiplicand.end(),
-                remainder.begin());
 }
 
 gr::gs::GuidedScrambling::Descrambler_impl::Descrambler_impl(

@@ -11,10 +11,12 @@
 #include "gr-gs/SymbolGenerator.h"
 #include "gr-gs/InfiniteAverage.h"
 #include "gr-gs/ErrorCount.h"
+#include "gr-gs/Primitives.h"
 #include "gr-gs/exceptions.h"
 %}
 
 %include "gr-gs/config.h"
+%include "gr-gs/Primitives.h"
 
 %include "gr-gs/GuidedScrambler.h"
 GR_SWIG_BLOCK_MAGIC2(gs, GuidedScrambler);

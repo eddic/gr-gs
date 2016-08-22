@@ -62,6 +62,8 @@ add_library(gnuradio-gs SHARED
     src/WRDS.cpp
     src/MSW2.cpp
     src/Analyzer.cpp
+    src/Words.cpp
+    src/Primitives.cpp
     src/Scrambler.cpp
     src/ScramblerGroup.cpp
     src/ScramblerGroup.cpp
@@ -84,6 +86,7 @@ install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/SymbolMapper.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/InfiniteAverage.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/ErrorCount.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Primitives.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/exceptions.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/gr-gs/config.h"
     DESTINATION "include/gr-gs")
@@ -95,7 +98,7 @@ enable_testing()
 add_executable(Analyzer_test EXCLUDE_FROM_ALL
     tests/Analyzer.cpp
     src/Analyzer.cpp
-    src/Scrambler.cpp
+    src/Words.cpp
     src/MSW2.cpp
     src/MSW.cpp
     src/WRDS.cpp)
@@ -103,6 +106,7 @@ add_test("gr::gs::GuidedScrambling::Analyzer" Analyzer_test)
 
 add_executable(Descrambler_test EXCLUDE_FROM_ALL
     tests/Descrambler.cpp
+    src/Words.cpp
     src/Descrambler_impl.cpp)
 target_link_libraries(Descrambler_test PRIVATE
     "${Boost_LIBRARIES}"
@@ -111,12 +115,11 @@ add_test("gr::gs::Descrambler" Descrambler_test)
 
 add_executable(Words_test EXCLUDE_FROM_ALL
     tests/Words.cpp
-    src/Scrambler.cpp
+    src/Words.cpp
     src/Analyzer.cpp
     src/MSW2.cpp
     src/MSW.cpp
-    src/WRDS.cpp
-    src/Descrambler_impl.cpp)
+    src/WRDS.cpp)
 target_link_libraries(Words_test PRIVATE
     "${Boost_LIBRARIES}"
     "${GNURADIO_RUNTIME_LIBRARIES}")
@@ -126,6 +129,7 @@ add_executable(Scrambler_test EXCLUDE_FROM_ALL
     tests/Scrambler.cpp
     src/Scrambler.cpp
     src/Analyzer.cpp
+    src/Words.cpp
     src/MSW2.cpp
     src/MSW.cpp
     src/WRDS.cpp
@@ -141,6 +145,7 @@ add_executable(ScramblerGroup_test EXCLUDE_FROM_ALL
     src/ScramblerGroup.cpp
     src/Analyzer.cpp
     src/MSW2.cpp
+    src/Words.cpp
     src/MSW.cpp
     src/WRDS.cpp
     src/Descrambler_impl.cpp)
@@ -155,6 +160,7 @@ add_executable(GuidedScrambler_test EXCLUDE_FROM_ALL
     src/ScramblerGroup.cpp
     src/Analyzer.cpp
     src/MSW2.cpp
+    src/Words.cpp
     src/MSW.cpp
     src/WRDS.cpp
     src/Descrambler_impl.cpp

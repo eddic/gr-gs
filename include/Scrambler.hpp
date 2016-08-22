@@ -2,7 +2,7 @@
  * @file      Scrambler.hpp
  * @brief     Declares the gr::gs::GuidedScrambling::Scrambler class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 8, 2016
+ * @date      August 21, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */

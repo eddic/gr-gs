@@ -29,6 +29,7 @@
 #define GR_GS_WORDS_HPP
 
 #include <string>
+#include <functional>
 
 #include "gr-gs/config.h"
 
@@ -93,6 +94,14 @@ namespace gr
                         Word& remainder,
                         bool continuous=true);
 
+                //! Get the multiplying function we need from a field size
+                std::function<void(
+                    const Word&,
+                    const Word&,
+                    Word&,
+                    Word&,
+                    bool)> getMultiply(unsigned fieldSize);
+
                 //! Arithmetic division of words
                 /*!
                  * Note that the remainder and quotient words are not resized
@@ -129,6 +138,13 @@ namespace gr
                         const Word& divider,
                         Word& quotient,
                         Word& remainder);
+
+                //! Get the dividing function we need from a field size
+                std::function<void(
+                    const Word& dividend,
+                    const Word& divider,
+                    Word& quotient,
+                    Word& remainder)> getDivide(unsigned fieldSize);
 
                 //! Give string representation of the word
                 /*!
