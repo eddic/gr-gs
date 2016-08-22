@@ -38,13 +38,12 @@ void gr::gs::Primitives::populate(
         const unsigned length,
         WordSet& wordSet)
 {
-    using namespace GuidedScrambling::Words;
     const std::function<void(
             const Word& dividend,
             const Word& divider,
             Word& quotient,
             Word& remainder)> divide
-        = GuidedScrambling::Words::getDivide(fieldSize);
+        = GuidedScrambling::Words::getDivide(fieldSize, false);
 
     const unsigned startingLength 
         = wordSet.empty()?2:wordSet.crbegin()->size()+1;
@@ -61,7 +60,6 @@ void gr::gs::Primitives::populate(
 
         while(polynomial.front() != 0)
         {
-            std::cout << "Trying " << to_string(polynomial);
             // Try dividing all the lesser degree polynomials
             bool foundFactor = false;
             for(const auto& divider: wordSet)
@@ -72,23 +70,18 @@ void gr::gs::Primitives::populate(
                         divider,
                         quotient,
                         remainder);
-                std::fill(quotient.begin(), quotient.end(), 0);
-                if(!std::all_of(
+                if(std::all_of(
                             remainder.cbegin(),
                             remainder.cend(),
                             [](const Symbol& x) { return x==0; }))
                 {
-                    std::cout << " and found factor " << to_string(divider) << std::endl;
                     foundFactor = true;
                     break;
                 }
             }
 
             if(!foundFactor)
-            {
                 newPrimitives.push_back(polynomial);
-                std::cout << " and found no factor" << std::endl;
-            }
 
             // Increment the polynomial
             for(
@@ -118,7 +111,19 @@ gr::gs::Primitives::WordSet gr::gs::Primitives::getPrimitives(
 {
     WordSet primitives;
     populate(fieldSize, length, primitives);
-    return primitives;
+
+    auto range = std::equal_range(
+            primitives.cbegin(),
+            primitives.cend(),
+            length,
+            WordLess());
+
+    WordSet subset;
+    subset.reserve(range.second-range.first);
+    for(auto primitive=range.first; primitive!=range.second; ++primitive)
+        subset.push_back(std::move(*primitive));
+
+    return subset;
 }
 
 gr::gs::Word gr::gs::Primitives::getTrinomial(

@@ -2,7 +2,7 @@
  * @file      Words.hpp
  * @brief     Declares the gr::gs::GuidedScrambling::Words namespace.
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 21, 2016
+ * @date      August 22, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -44,7 +44,7 @@ namespace gr
         {
             //! Handles Galois Field words.
             /*!
-             * @date   March 3, 2015
+             * @date   August 22, 2016
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             namespace Words
@@ -104,6 +104,13 @@ namespace gr
 
                 //! Arithmetic division of words
                 /*!
+                 * This isn't *actual* division. Arithmetically speaking it is
+                 * first shifting the dividend in the most significant direction
+                 * by divider.size()-1 symbols. Also the remainder doesn't
+                 * represent the actual division remainder but something else.
+                 * This makes it very useful for scrambling but useless for
+                 * actual polynomial division.
+                 *
                  * Note that the remainder and quotient words are not resized
                  * or set to zero before division occurs. This means that
                  * continuous division can be accomplished by leaving the
@@ -139,12 +146,56 @@ namespace gr
                         Word& quotient,
                         Word& remainder);
 
+                //! Delayed arithmetic division of words
+                /*!
+                 * This differs from divide() in that it gives actual quotient
+                 * and remainder values. This makes it useless for scrambling
+                 * but good for actual division of polynomials. The only reason
+                 * I added this function is for finding primitives.
+                 *
+                 * Note that the remainder and quotient words are not resized
+                 * or set to zero before division occurs. This means that
+                 * continuous division can be accomplished by leaving the
+                 * remainder word untouched between division operations. This
+                 * also means, however, that you must ensure:
+                 *
+                 * 1. The length of the quotient word is equal to the length of
+                 *    the dividend word.
+                 * 2. The length of the remainder word is equal to the length of
+                 *    the divider word minus one.
+                 * 3. The implementer must be conscious of the contents of the
+                 *    remainder word before calling this function.
+                 *
+                 * @tparam  GF Field Type.
+                 * @param [in] dividend Dividend in division operation.
+                 * @param [in] divider Divider in division operation.
+                 * @param [out] quotient Quotient of division operation. This
+                 *                       word \a must be of the same size
+                 *                       (length) as the dividend or bad things
+                 *                       will happen.
+                 * @param [inout] remainder Input and output remainder of
+                 *                          division operation. This size
+                 *                          (length) of this word \a must equal
+                 *                          the size of the divider minus one or
+                 *                          bad things will happen.
+                 * @date August 22, 2016
+                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
+                 */
+                template<typename Field>
+                void delayedDivide(
+                        const Word& dividend,
+                        const Word& divider,
+                        Word& quotient,
+                        Word& remainder);
+
                 //! Get the dividing function we need from a field size
                 std::function<void(
                     const Word& dividend,
                     const Word& divider,
                     Word& quotient,
-                    Word& remainder)> getDivide(unsigned fieldSize);
+                    Word& remainder)> getDivide(
+                        unsigned fieldSize,
+                        bool delayed=false);
 
                 //! Give string representation of the word
                 /*!

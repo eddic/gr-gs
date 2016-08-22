@@ -70,24 +70,58 @@ void gr::gs::GuidedScrambling::Words::divide(
     }
 }
 
+template<typename Field>
+void gr::gs::GuidedScrambling::Words::delayedDivide(
+        const Word& dividend,
+        const Word& divider,
+        Word& quotient,
+        Word& remainder)
+{
+    for(unsigned int i=0; i<quotient.size(); ++i)
+    {
+        Symbol& output=quotient[i];
+        output = Field(remainder.front())/Field(divider.front());
+
+        for(unsigned int j=1; j<remainder.size(); ++j)
+            remainder[j-1] =
+                Field(output) * (-Field(divider[j])) + Field(remainder[j]);
+        remainder.back() =
+            Field(dividend[i])
+            + Field(output) * (-Field(divider.back()));
+    }
+}
+
 std::function<void(
     const gr::gs::Word& dividend,
     const gr::gs::Word& divider,
     gr::gs::Word& quotient,
     gr::gs::Word& remainder)>
-gr::gs::GuidedScrambling::Words::getDivide(unsigned fieldSize)
+gr::gs::GuidedScrambling::Words::getDivide(unsigned fieldSize, bool delayed)
 {
-    switch(fieldSize)
-    {
-        case 2:
-            return Words::divide<GF2>;
-            break;
-        case 4:
-            return Words::divide<GF4>;
-            break;
-        default:
-            throw Exceptions::BadFieldSize();
-    }
+    if(delayed)
+        switch(fieldSize)
+        {
+            case 2:
+                return Words::delayedDivide<GF2>;
+                break;
+            case 4:
+                return Words::delayedDivide<GF4>;
+                break;
+            default:
+                throw Exceptions::BadFieldSize();
+        }
+    else
+        switch(fieldSize)
+        {
+            case 2:
+                return Words::divide<GF2>;
+                break;
+            case 4:
+                return Words::divide<GF4>;
+                break;
+            default:
+                throw Exceptions::BadFieldSize();
+        }
 }
 
 template<typename Field>
