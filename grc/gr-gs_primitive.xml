@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<block>
+    <name>Primitive Polynomial</name>
+    <key>variable_PrimitivePolynomial</key>
+    <category>Guided Scrambling</category>
+    <import>import gr_gs as gs</import>
+    <var_make>
+self.$(id) = $(id) = gs.findPrimitive($fieldSize, $length)
+    </var_make>
+    <var_value>gs.findPrimitive($fieldSize, $length)</var_value>
+    <make></make>
+    <param>
+        <name>Field Size</name>
+        <key>fieldSize</key>
+        <value>4</value>
+        <type>int</type>
+        <option>
+            <name>2</name>
+            <key>2</key>
+        </option>
+        <option>
+            <name>4</name>
+            <key>4</key>
+        </option>
+    </param>
+    <param>
+        <name>Length</name>
+        <key>length</key>
+        <value>6</value>
+        <type>int</type>
+    </param>
+    <doc>This will find you a primitive polynomial of the specified field size and length. The result is consistent.</doc>
+</block>

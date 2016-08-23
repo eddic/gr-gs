@@ -247,6 +247,8 @@ install(FILES
     "${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_SymbolMapper.xml"
     "${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_SymbolGenerator.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_InfiniteAverage.xml"
+    "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_primitive.xml"
+    "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_defaultConstellation.xml"
     "${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_ErrorCount.xml"
     DESTINATION "share/gnuradio/grc/blocks/")
 install(FILES

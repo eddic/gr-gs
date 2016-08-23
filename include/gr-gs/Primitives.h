@@ -2,7 +2,7 @@
  * @file      Primitives.hpp
  * @brief     Declares the gr::gs::Primitives namespace.
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 21, 2016
+ * @date      August 23, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -41,54 +41,71 @@ namespace gr
     {
         //! Tools for finding primitive polynomials
         /*!
-         * @date   August 21, 2016
+         * @date   August 23, 2016
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         namespace Primitives
         {
-            //! Comparison class needed for words
-            struct WordLess
+            struct Irreducible
             {
-                bool operator()(const Word& x, const Word& y) const
+                Word word;
+                bool primitive;
+            };
+
+            //! Comparison class needed for words
+            struct IrreducibleLess
+            {
+                bool operator()(
+                        const Irreducible& x,
+                        const Irreducible& y) const
                 {
-                    if(x.size() == y.size())
+                    if(x.word.size() == y.word.size())
                     {
                         for(
-                                Word::const_iterator i=x.cbegin(), j=y.cbegin();
-                                i != x.cend();
+                                Word::const_iterator
+                                    i = x.word.cbegin(),
+                                    j = y.word.cbegin();
+                                i != x.word.cend();
                                 ++i, ++j)
                             if(*i < *j)
                                 return true;
                     }
                     else
-                        return x.size() < y.size();
+                        return x.word.size() < y.word.size();
                     return false;
                 }
 
-                bool operator()(const Word& word, const unsigned length) const
+                bool operator()(
+                        const Irreducible& polynomial,
+                        const unsigned length) const
                 {
-                    return word.size() < length;
+                    return polynomial.word.size() < length;
                 }
 
-                bool operator()(const unsigned length, const Word& word) const
+                bool operator()(
+                        const unsigned length,
+                        const Irreducible& polynomial) const
                 {
-                    return length < word.size();
+                    return length < polynomial.word.size();
                 }
             };
 
             //! An ordered set for words
-            typedef std::vector<Word> WordSet;
+            typedef std::vector<Irreducible> Irreducibles;
 
-            GS_API void populate(
+            //! Populate a set of irreducibles
+            GS_API void populateIrreducibles(
                     const unsigned fieldSize,
                     const unsigned length,
-                    WordSet& wordSet);
+                    Irreducibles& irreducibles);
 
-            GS_API WordSet getPrimitives(
+            //! Find a set of primitives of a specific length
+            GS_API std::vector<Word> findPrimitives(
                     const unsigned fieldSize,
                     const unsigned length);
 
-            GS_API Word getTrinomial(
+            //! Find a primitive of a specific length with the least terms
+            GS_API Word findPrimitive(
                     const unsigned fieldSize,
                     const unsigned length);
         }

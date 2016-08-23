@@ -2,7 +2,7 @@
  * @file      Primitives.cpp
  * @brief     Declares the gr::gs::Primitives namespace.
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 21, 2016
+ * @date      August 23, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -32,42 +32,44 @@
 
 #include <algorithm>
 #include <iostream>
+#include <cmath>
 
-void gr::gs::Primitives::populate(
+void gr::gs::Primitives::populateIrreducibles(
         const unsigned fieldSize,
         const unsigned length,
-        WordSet& wordSet)
+        Irreducibles& irreducibles)
 {
+    //using namespace GuidedScrambling::Words;
     const std::function<void(
             const Word& dividend,
             const Word& divider,
             Word& quotient,
             Word& remainder)> divide
-        = GuidedScrambling::Words::getDivide(fieldSize, false);
+        = GuidedScrambling::Words::getDivide(fieldSize, true);
 
     const unsigned startingLength 
-        = wordSet.empty()?2:wordSet.crbegin()->size()+1;
+        = irreducibles.empty()?2:irreducibles.crbegin()->word.size()+1;
 
     for(unsigned i=startingLength; i<=length; ++i)
     {
-        std::vector<Word> newPrimitives;
+        Irreducibles newIrreducibles;
         
         Word polynomial(i, 0);
         polynomial.front() = 1;
-        polynomial.back() = 1;
 
         Word quotient(i, 0);
 
         while(polynomial.front() != 0)
         {
-            // Try dividing all the lesser degree polynomials
+            //std::cout << "Trying " << to_string(polynomial);
+            // Try dividing all the lesser degree irreducibles
             bool foundFactor = false;
-            for(const auto& divider: wordSet)
+            for(const auto& divider: irreducibles)
             {
-                Word remainder(divider.size()-1, 0);
+                Word remainder(divider.word.size()-1, 0);
                 divide(
                         polynomial,
-                        divider,
+                        divider.word,
                         quotient,
                         remainder);
                 if(std::all_of(
@@ -75,13 +77,75 @@ void gr::gs::Primitives::populate(
                             remainder.cend(),
                             [](const Symbol& x) { return x==0; }))
                 {
+                    //std::cout << " but found factor " << to_string(divider.word) << " with quotient " << to_string(quotient) << std::endl;;
                     foundFactor = true;
                     break;
                 }
             }
 
             if(!foundFactor)
-                newPrimitives.push_back(polynomial);
+            {
+                //std::cout << " and it is irreducible";
+                // It's irreducible, but is it primitive?
+                bool isPrimitive = true;
+                unsigned maxDegree = fieldSize;
+                for(unsigned j=2; j<polynomial.size(); ++j)
+                    maxDegree *= fieldSize;
+
+                Word quotient(maxDegree);
+                Word dividend(maxDegree);
+                dividend.front()=1;
+                dividend.back()=1;
+                Word remainder(polynomial.size()-1, 0);
+                divide(
+                        dividend,
+                        polynomial,
+                        quotient,
+                        remainder);
+                if(std::all_of(
+                            remainder.cbegin(),
+                            remainder.cend(),
+                            [](const Symbol& x) { return x==0; }))
+                {
+                    maxDegree -= 1;
+                    for(unsigned j=polynomial.size(); j<maxDegree; ++j)
+                        if(maxDegree%j == 0)
+                        {
+                            quotient.resize(j+1);
+                            dividend.resize(j+1);
+                            dividend.front()=1;
+                            dividend.back()=1;
+                            std::fill(remainder.begin(), remainder.end(), 0);
+                            divide(
+                                    dividend,
+                                    polynomial,
+                                    quotient,
+                                    remainder);
+                            if(std::all_of(
+                                        remainder.cbegin(),
+                                        remainder.cend(),
+                                        [](const Symbol& x) { return x==0; }))
+                            {
+                                //std::cout << " but a factor of " << to_string(dividend) << std::endl;
+                                isPrimitive = false;
+                                break;
+                            }
+                        }
+                }
+                else
+                {
+                    //std::cout << " but not a factor of " << to_string(dividend) << std::endl;
+                    isPrimitive = false;
+                }
+
+                //if(isPrimitive)
+                //    std::cout << " and primitive." << std::endl;
+
+                Irreducible newIrreducible;
+                newIrreducible.word = polynomial;
+                newIrreducible.primitive = isPrimitive;
+                newIrreducibles.push_back(std::move(newIrreducible));
+            }
 
             // Increment the polynomial
             for(
@@ -99,54 +163,67 @@ void gr::gs::Primitives::populate(
             }
         }
 
-        wordSet.reserve(wordSet.size()+newPrimitives.size());
-        for(auto& primitive: newPrimitives)
-            wordSet.push_back(std::move(primitive));
+        irreducibles.reserve(irreducibles.size()+newIrreducibles.size());
+        for(auto& irreducible: newIrreducibles)
+            irreducibles.push_back(std::move(irreducible));
     }
 }
 
-gr::gs::Primitives::WordSet gr::gs::Primitives::getPrimitives(
+std::vector<gr::gs::Word> gr::gs::Primitives::findPrimitives(
         const unsigned fieldSize,
         const unsigned length)
 {
-    WordSet primitives;
-    populate(fieldSize, length, primitives);
+    Irreducibles irreducibles;
+    populateIrreducibles(fieldSize, length, irreducibles);
 
     auto range = std::equal_range(
-            primitives.cbegin(),
-            primitives.cend(),
+            irreducibles.cbegin(),
+            irreducibles.cend(),
             length,
-            WordLess());
+            IrreducibleLess());
 
-    WordSet subset;
+    std::vector<Word> subset;
     subset.reserve(range.second-range.first);
-    for(auto primitive=range.first; primitive!=range.second; ++primitive)
-        subset.push_back(std::move(*primitive));
+    for(auto irreducible=range.first; irreducible!=range.second; ++irreducible)
+        if(irreducible->primitive)
+            subset.push_back(std::move(irreducible->word));
 
     return subset;
 }
 
-gr::gs::Word gr::gs::Primitives::getTrinomial(
+gr::gs::Word gr::gs::Primitives::findPrimitive(
         const unsigned fieldSize,
         const unsigned length)
 {
-    WordSet primitives;
-    populate(fieldSize, length, primitives);
+    Irreducibles irreducibles;
+    populateIrreducibles(fieldSize, length, irreducibles);
     
     auto range = std::equal_range(
-            primitives.cbegin(),
-            primitives.cend(),
+            irreducibles.cbegin(),
+            irreducibles.cend(),
             length,
-            WordLess());
+            IrreducibleLess());
+
+    auto primitive=range.second;
+    unsigned leastTerms=0xffffffffU;
 
     for(auto polynomial=range.first; polynomial!= range.second; ++polynomial)
     {
-        unsigned terms = 0;
-        for(const auto& symbol: *polynomial)
-            if(symbol != 0)
-                ++terms;
-        if(terms == 3)
-            return std::move(*polynomial);
+        if(polynomial->primitive)
+        {
+            unsigned terms = 0;
+            for(const auto& symbol: polynomial->word)
+                if(symbol != 0)
+                    ++terms;
+            if(terms < leastTerms)
+            {
+                leastTerms=terms;
+                primitive=polynomial;
+            }
+        }
     }
-    return Word();
+    if(primitive != range.second)
+        return std::move(primitive->word);
+    else
+        return Word();
 }

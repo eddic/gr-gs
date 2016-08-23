@@ -163,6 +163,33 @@
     </param>
   </block>
   <block>
+    <key>variable_DefaultConstellation</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>fieldSize</key>
+      <value>fieldSize</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(800, 93)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>constellation</value>
+    </param>
+  </block>
+  <block>
     <key>variable_constellation</key>
     <param>
       <key>comment</key>
@@ -170,7 +197,7 @@
     </param>
     <param>
       <key>const_points</key>
-      <value>[1,1j,-1j,-1]</value>
+      <value>constellation</value>
     </param>
     <param>
       <key>dims</key>
@@ -190,7 +217,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>constellation</value>
+      <value>constellationObj</value>
     </param>
     <param>
       <key>rot_sym</key>
@@ -206,7 +233,7 @@
     </param>
     <param>
       <key>sym_map</key>
-      <value>[0, 1, 2, 3]</value>
+      <value>range(fieldSize)</value>
     </param>
   </block>
   <block>
@@ -249,6 +276,33 @@
     <param>
       <key>_coordinate</key>
       <value>(624, 5)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>fieldSize</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>4</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(552, 69)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -361,7 +415,7 @@
     </param>
   </block>
   <block>
-    <key>variable</key>
+    <key>variable_PrimitivePolynomial</key>
     <param>
       <key>comment</key>
       <value></value>
@@ -371,8 +425,12 @@
       <value>True</value>
     </param>
     <param>
+      <key>fieldSize</key>
+      <value>fieldSize</value>
+    </param>
+    <param>
       <key>_coordinate</key>
-      <value>(552, 69)</value>
+      <value>(808, 14)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -383,8 +441,8 @@
       <value>scramblingPolynomial</value>
     </param>
     <param>
-      <key>value</key>
-      <value>[1, 0, 0, 1]</value>
+      <key>length</key>
+      <value>6</value>
     </param>
   </block>
   <block>
@@ -411,7 +469,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>4096</value>
+      <value>8192</value>
     </param>
   </block>
   <block>
@@ -446,7 +504,7 @@
     </param>
     <param>
       <key>fieldSize</key>
-      <value>len(constellation.points())</value>
+      <value>fieldSize</value>
     </param>
     <param>
       <key>framingTag</key>
@@ -579,7 +637,7 @@
     </param>
     <param>
       <key>constellation</key>
-      <value>constellation.points()</value>
+      <value>constellation</value>
     </param>
     <param>
       <key>affinity</key>
@@ -908,7 +966,7 @@
     </param>
     <param>
       <key>constellation</key>
-      <value>constellation</value>
+      <value>constellationObj</value>
     </param>
     <param>
       <key>affinity</key>
@@ -1077,7 +1135,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(864, 12)</value>
+      <value>(8, 68)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1112,7 +1170,7 @@
     </param>
     <param>
       <key>constellation</key>
-      <value>constellation.points()</value>
+      <value>constellation</value>
     </param>
     <param>
       <key>continuous</key>
@@ -1132,7 +1190,7 @@
     </param>
     <param>
       <key>fieldSize</key>
-      <value>len(constellation.points())</value>
+      <value>fieldSize</value>
     </param>
     <param>
       <key>framingTag</key>
@@ -2166,7 +2224,7 @@
     </param>
     <param>
       <key>weightings</key>
-      <value>[1] * len(constellation.points())</value>
+      <value>[1] * fieldSize</value>
     </param>
   </block>
   <block>
