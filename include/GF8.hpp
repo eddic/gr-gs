@@ -1,8 +1,8 @@
 /*!
- * @file      GF4.hpp
- * @brief     Declares the gr::gs::GuidedScrambling::GF4 class
+ * @file      GF8.hpp
+ * @brief     Declares the gr::gs::GuidedScrambling::GF8 class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 8, 2016
+ * @date      August 23, 2016
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GR_GS_GF4_HPP
-#define GR_GS_GF4_HPP
+#ifndef GR_GS_GF8_HPP
+#define GR_GS_GF8_HPP
 
 #include <random>
 
@@ -41,9 +41,9 @@ namespace gr
         //! Stuff needed for the GuidedScrambler and Descrambler blocks
         namespace GuidedScrambling
         {
-            //! Handles Galois Field (4) symbols.
+            //! Handles Galois Field (8) symbols.
             /*!
-             * This class can contain a Galois Field (4) symbol. The class
+             * This class can contain a Galois Field (8) symbol. The class
              * allows for some basic arithmetic operations needed to perform
              * scrambling.
              *
@@ -51,102 +51,103 @@ namespace gr
              * actually represent valid symbols. Should they not, the behaviour
              * is undefined.
              *
-             * @date   March 3, 2015
+             * @date   August 23, 2016
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
-            class GF4
+            class GF8
             {
             public:
                 //! Size of symbol
-                static const unsigned int fieldSize=4;
+                static const unsigned int fieldSize=8;
 
                 //! Initialize symbol from it's integer representation
                 /*!
                  * @param  [in] x Source integer.
-                 * @date   March 3, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
-                GF4(const Symbol x):
+                GF8(const Symbol x):
                     m_data(x)
                 {}
 
-                //! Perform Galois Field (4) addition
+                //! Perform Galois Field (8) addition
                 /*!
                  * @param  [in] x Right hand summand.
-                 * @return Galois Field (4) sum of *this and argument.
-                 * @date   March 3, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
+                 * @return Galois Field (8) sum of *this and argument.
                  */
-                GF4 operator+(const GF4 x) const
+                GF8 operator+(const GF8 x) const
                 {
                     static const Symbol table[fieldSize][fieldSize] =
                     {
-                        {0, 1, 2, 3},
-                        {1, 0, 3, 2},
-                        {2, 3, 0, 1},
-                        {3, 2, 1, 0}
+                        {0, 1, 2, 3, 4, 5, 6, 7},
+                        {1, 0, 3, 2, 5, 4, 7, 6},
+                        {2, 3, 0, 1, 6, 7, 4, 5},
+                        {3, 2, 1, 0, 7, 6, 5, 4},
+                        {4, 5, 6, 7, 0, 1, 2, 3},
+                        {5, 4, 7, 6, 1, 0, 3, 2},
+                        {6, 7, 4, 5, 2, 3, 0, 1},
+                        {7, 6, 5, 4, 3, 2, 1, 0}
                     };
                     return table[m_data][x.m_data];
                 }
 
-                //! Perform Galois Field (4) subtraction
+                //! Perform Galois Field (8) subtraction
                 /*!
                  * @param  [in] x Subtrahend in subtraction operation.
-                 * @return Galois Field (4) difference of *this and the argument
-                 * @date   March 3, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
+                 * @return Galois Field (8) difference of *this and the argument
                  */
-                GF4 operator-(const GF4 x) const
+                GF8 operator-(const GF8 x) const
                 {
                     return *this + x;
                 }
 
-                //! Perform Galois Field (4) negation
+                //! Perform Galois Field (8) negation
                 /*!
-                 * @return The Galois Field (4) additive inverse of *this
-                 * @date   March 3, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
+                 * @return The Galois Field (8) additive inverse of *this
                  */
-                GF4 operator-() const
+                GF8 operator-() const
                 {
                     return *this;
                 }
 
-                //! Perform Galois Field (4) multiplication
+                //! Perform Galois Field (8) multiplication
                 /*!
                  * @param  [in] x Multiplier in multiplication operation.
-                 * @return Galois Field (4) product of *this and the argument
-                 * @date   March 3, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
+                 * @return Galois Field (8) product of *this and the argument
                  */
-                GF4 operator*(const GF4 x) const
+                GF8 operator*(const GF8 x) const
                 {
                     static const Symbol table[fieldSize][fieldSize] =
                     {
-                        {0, 0, 0, 0},
-                        {0, 1, 2, 3},
-                        {0, 2, 3, 1},
-                        {0, 3, 1, 2}
+                      // 0, 1, 2, 3, 4, 5, 6, 7
+                        {0, 0, 0, 0, 0, 0, 0, 0}, // 0
+                        {0, 1, 2, 3, 4, 5, 6, 7}, // 1
+                        {0, 2, 4, 6, 3, 1, 7, 5}, // 2
+                        {0, 3, 6, 5, 7, 4, 1, 2}, // 3
+                        {0, 4, 3, 7, 6, 2, 5, 1}, // 4
+                        {0, 5, 1, 4, 2, 7, 3, 6}, // 5
+                        {0, 6, 7, 1, 5, 3, 2, 4}, // 6
+                        {0, 7, 5, 2, 1, 6, 4, 3}  // 7
                     };
                     return table[m_data][x.m_data];
                 }
 
-                //! Perform Galois Field (4) division
+                //! Perform Galois Field (8) division
                 /*!
                  * @param  [in] x Divider in division operation.
-                 * @return Galois Field (4) quotient of *this and the argument
-                 * @date   March 3, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
+                 * @return Galois Field (8) quotient of *this and the argument
                  */
-                GF4 operator/(const GF4 x) const
+                GF8 operator/(const GF8 x) const
                 {
                     static const Symbol table[fieldSize][fieldSize] =
                     {
-                      // 0, 1, 2, 3
-                        {0, 0, 0, 0}, // 0
-                        {0, 1, 3, 2}, // 1
-                        {0, 2, 1, 3}, // 2
-                        {0, 3, 2, 1}  // 3
+                      // 0, 1, 2, 3, 4, 5, 6, 7
+                        {0, 0, 0, 0, 0, 0, 0, 0}, // 0
+                        {0, 1, 5, 6, 7, 2, 3, 4}, // 1
+                        {0, 2, 1, 7, 5, 4, 6, 3}, // 2
+                        {0, 3, 4, 1, 2, 6, 5, 7}, // 3
+                        {0, 4, 2, 5, 1, 3, 7, 6}, // 4
+                        {0, 5, 7, 3, 6, 1, 4, 2}, // 5
+                        {0, 6, 3, 2, 4, 7, 1, 5}, // 6
+                        {0, 7, 6, 4, 3, 5, 2, 1}  // 7
                     };
                     return table[m_data][x.m_data];
                 }
@@ -157,24 +158,20 @@ namespace gr
                  * generation nor can it's statistics be controlled. It is
                  * intended entirely for debug and testing purposes.
                  *
-                 * @return Randomly generated Galois Field (4) symbol.
-                 * @date   March 3, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
+                 * @return Randomly generated Galois Field (8) symbol.
                  */
-                static GF4 random()
+                static GF8 random()
                 {
                     std::random_device generator;
                     std::uniform_int_distribution<Symbol> distribution(
                             0,
                             fieldSize-1);
-                    return GF4(distribution(generator));
+                    return GF8(distribution(generator));
                 }
 
                 //! Access internal Symbol
                 /*!
                  * @return Internal Symbol
-                 * @date   March 3, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 operator Symbol() const
                 {

@@ -26,23 +26,36 @@
  */
 
 #include <algorithm>
+#include <cmath>
 
 #include "gr-gs/exceptions.h"
 #include "Words.hpp"
 #include "GF2.hpp"
 #include "GF4.hpp"
+#include "GF8.hpp"
 
 std::vector<std::complex<float>> gr::gs::defaultConstellation(
         unsigned int fieldSize)
 {
+    static const float root2inv=1.0/std::sqrt(2);
+
     switch(fieldSize)
     {
         case 2:
-            return std::vector<std::complex<float>>(
-                    {{-1,0},{1,0}});
+            return {{-1,0},{1,0}};
         case 4:
-            return std::vector<std::complex<float>>(
-                    {{1,0},{0,1},{0,-1},{-1,0}});
+            return {{1,0},{0,1},{0,-1},{-1,0}};
+        case 8:
+            return {
+                {1,0},
+                {root2inv,root2inv},
+                {-root2inv,root2inv},
+                {0,1},
+                {root2inv,-root2inv},
+                {0,-1},
+                {-1,0},
+                {-root2inv,-root2inv}
+            };
         default:
             return std::vector<std::complex<float>>();
     }
@@ -107,6 +120,9 @@ gr::gs::GuidedScrambling::Words::getDivide(unsigned fieldSize, bool delayed)
             case 4:
                 return Words::delayedDivide<GF4>;
                 break;
+            case 8:
+                return Words::delayedDivide<GF8>;
+                break;
             default:
                 throw Exceptions::BadFieldSize();
         }
@@ -118,6 +134,9 @@ gr::gs::GuidedScrambling::Words::getDivide(unsigned fieldSize, bool delayed)
                 break;
             case 4:
                 return Words::divide<GF4>;
+                break;
+            case 8:
+                return Words::divide<GF8>;
                 break;
             default:
                 throw Exceptions::BadFieldSize();
@@ -171,6 +190,9 @@ gr::gs::GuidedScrambling::Words::getMultiply(unsigned fieldSize)
             break;
         case 4:
             return Words::multiply<GF4>;
+            break;
+        case 8:
+            return Words::multiply<GF8>;
             break;
         default:
             throw Exceptions::BadFieldSize();

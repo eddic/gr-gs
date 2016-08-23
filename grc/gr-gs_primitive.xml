@@ -22,6 +22,10 @@ self.$(id) = $(id) = gs.findPrimitive($fieldSize, $length)
             <name>4</name>
             <key>4</key>
         </option>
+        <option>
+            <name>8</name>
+            <key>8</key>
+        </option>
     </param>
     <param>
         <name>Length</name>
