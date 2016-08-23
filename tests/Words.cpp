@@ -21,6 +21,7 @@
 
 #include "GF2.hpp"
 #include "GF4.hpp"
+#include "GF8.hpp"
 #include "Words.hpp"
 
 int main()
@@ -109,6 +110,50 @@ int main()
         Word remainder(divisor.size()-1);
 
         Words::divide<GF4>(dividend, divisor, quotient, remainder);
+
+        if(quotient != properQuotient && remainder != properRemainder)
+        {
+            std::cout << "failed!" << std::endl;
+            return 1;
+        }
+
+        std::cout << "success." << std::endl;
+    }
+
+    std::cout << "Testing Words::multiply<GF8>()... ";
+    {
+        std::cout.flush();
+
+        const Word properProduct({6,5,5,5,5,3,5,1,1,2,6,1,1,1,3,4,6});
+        const Word multiplicand({6,0,5,2,1,4,1,1,7,7,6,4,0,3,7,7,7});
+        const Word multiplier({1,4,0,4,2,3});
+        Word product(multiplicand.size());
+        Word remainder(multiplier.size()-1);
+
+        Words::multiply<GF8>(multiplicand, multiplier, product, remainder, false);
+
+        if(product != properProduct)
+        {
+            std::cout << "failed!" << std::endl;
+            return 1;
+        }
+
+        std::cout << "success." << std::endl;
+    }
+
+    std::cout << "Testing Words::divide<GF8>()... ";
+    {
+        std::cout.flush();
+
+        const Word dividend({6,0,5,2,1,4,1,1,7,7,6,4,0,3,7,7,7});
+        const Word divisor({1,4,0,4,2,3});
+        const Word properQuotient({6,5,7,6,1,1,1,4,6,7,0,1,5,5,3,0,7});
+        const Word properRemainder({3,2,4,5,2});
+
+        Word quotient(dividend.size());
+        Word remainder(divisor.size()-1);
+
+        Words::divide<GF8>(dividend, divisor, quotient, remainder);
 
         if(quotient != properQuotient && remainder != properRemainder)
         {
@@ -223,6 +268,63 @@ int main()
             Words::randomize<GF4>(input);
             Words::divide<GF4>(input, scrambler, quotient, divideRemainder);
             Words::multiply<GF4>(quotient, scrambler, output, multiplyRemainder);
+            if(output != input)
+            {
+                std::cout << "failed!" << i << std::endl;
+                return 1;
+            }
+        }
+
+        std::cout << "success." << std::endl;
+    }
+
+    std::cout << "Testing random block Words::divide->Words::multiply cycle in GF8... ";
+    {
+        std::cout.flush();
+
+        const Word scrambler({1,4,0,4,2,3});
+        Word input;
+        input.resize(32);
+
+        Word quotient(input.size());
+        Word output(input.size());
+        Word divideRemainder(scrambler.size()-1);
+        Word multiplyRemainder(scrambler.size()-1);
+
+        for(unsigned int i=0; i<64; ++i)
+        {
+            Words::randomize<GF8>(input);
+            Words::divide<GF8>(input, scrambler, quotient, divideRemainder);
+            std::fill(divideRemainder.begin(), divideRemainder.end(), 0);
+            Words::multiply<GF8>(quotient, scrambler, output, multiplyRemainder, false);
+            if(output != input)
+            {
+                std::cout << "failed!" << std::endl;
+                return 1;
+            }
+        }
+
+        std::cout << "success." << std::endl;
+    }
+
+    std::cout << "Testing random continuous Words::divide->Words::multiply cycle in GF8... ";
+    {
+        std::cout.flush();
+
+        const Word scrambler({1,4,0,4,2,3});
+        Word input;
+        input.resize(32);
+
+        Word quotient(input.size());
+        Word output(input.size());
+        Word divideRemainder(scrambler.size()-1, 0);
+        Word multiplyRemainder(scrambler.size()-1, 0);
+
+        for(unsigned int i=0; i<64; ++i)
+        {
+            Words::randomize<GF8>(input);
+            Words::divide<GF8>(input, scrambler, quotient, divideRemainder);
+            Words::multiply<GF8>(quotient, scrambler, output, multiplyRemainder);
             if(output != input)
             {
                 std::cout << "failed!" << i << std::endl;
