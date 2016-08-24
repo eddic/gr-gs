@@ -22,6 +22,7 @@
 #include "GF2.hpp"
 #include "GF4.hpp"
 #include "GF8.hpp"
+#include "GF16.hpp"
 #include "Words.hpp"
 
 int main()
@@ -154,6 +155,50 @@ int main()
         Word remainder(divisor.size()-1);
 
         Words::divide<GF8>(dividend, divisor, quotient, remainder);
+
+        if(quotient != properQuotient && remainder != properRemainder)
+        {
+            std::cout << "failed!" << std::endl;
+            return 1;
+        }
+
+        std::cout << "success." << std::endl;
+    }
+
+    std::cout << "Testing Words::multiply<GF16>()... ";
+    {
+        std::cout.flush();
+
+        const Word properProduct({13,1,8,11,6,8,0,4,10,12,7,6,2,12,4,8,15,5,0,0,9,12,9,5,9});
+        const Word multiplicand({12,6,10,2,3,4,15,10,9,2,10,3,8,11,15,0,3,15,0,10,11,4,2,11,3});
+        const Word multiplier({11,6,11,15,7,0,15});
+        Word product(multiplicand.size());
+        Word remainder(multiplier.size()-1);
+
+        Words::multiply<GF16>(multiplicand, multiplier, product, remainder, false);
+
+        if(product != properProduct)
+        {
+            std::cout << "failed!" << std::endl;
+            return 1;
+        }
+
+        std::cout << "success." << std::endl;
+    }
+
+    std::cout << "Testing Words::divide<GF16>()... ";
+    {
+        std::cout.flush();
+
+        const Word dividend({12,6,10,2,3,4,15,10,9,2,10,3,8,11,15,0,3,15,0,10,11,4,2,11,3});
+        const Word divisor({11,6,11,15,7,0,15});
+        const Word properQuotient({9,2,4,10,8,7,7,0,10,4,7,6,4,1,12,7,7,5,11,13,10,1,3,2,3});
+        const Word properRemainder({13,6,3,11,13,2});
+
+        Word quotient(dividend.size());
+        Word remainder(divisor.size()-1);
+
+        Words::divide<GF16>(dividend, divisor, quotient, remainder);
 
         if(quotient != properQuotient && remainder != properRemainder)
         {
@@ -334,6 +379,81 @@ int main()
 
         std::cout << "success." << std::endl;
     }
+
+    std::cout << "Testing random block Words::divide->Words::multiply cycle in GF16... ";
+    {
+        std::cout.flush();
+
+        const Word scrambler({11,6,11,15,7,0,15});
+        Word input;
+        input.resize(32);
+
+        Word quotient(input.size());
+        Word output(input.size());
+        Word divideRemainder(scrambler.size()-1);
+        Word multiplyRemainder(scrambler.size()-1);
+
+        for(unsigned int i=0; i<64; ++i)
+        {
+            Words::randomize<GF16>(input);
+            Words::divide<GF16>(input, scrambler, quotient, divideRemainder);
+            std::fill(divideRemainder.begin(), divideRemainder.end(), 0);
+            Words::multiply<GF16>(quotient, scrambler, output, multiplyRemainder, false);
+            if(output != input)
+            {
+                std::cout << "failed!" << std::endl;
+                return 1;
+            }
+        }
+
+        std::cout << "success." << std::endl;
+    }
+
+    std::cout << "Testing random continuous Words::divide->Words::multiply cycle in GF16... ";
+    {
+        std::cout.flush();
+
+        const Word scrambler({11,6,11,15,7,0,15});
+        Word input;
+        input.resize(32);
+
+        Word quotient(input.size());
+        Word output(input.size());
+        Word divideRemainder(scrambler.size()-1, 0);
+        Word multiplyRemainder(scrambler.size()-1, 0);
+
+        for(unsigned int i=0; i<64; ++i)
+        {
+            Words::randomize<GF16>(input);
+            Words::divide<GF16>(input, scrambler, quotient, divideRemainder);
+            Words::multiply<GF16>(quotient, scrambler, output, multiplyRemainder);
+            if(output != input)
+            {
+                std::cout << "failed!" << i << std::endl;
+                return 1;
+            }
+        }
+
+        std::cout << "success." << std::endl;
+    }
+
+    /*
+    std::cout << "Finding GF16 multiplicative inverses...\n";
+    {
+        for(Symbol i=0; i!=16; ++i)
+        {
+            for(Symbol j=0; j!=16; ++j)
+            {
+                if(j==0)
+                    std::cout << 0;
+                else
+                    for(Symbol k=0; k!=16; ++k)
+                        if(GF16(j)*GF16(k)==1)
+                            std::cout << ',' << static_cast<unsigned>(GF16(i)*GF16(k));
+            }
+            std::cout << '\n';
+        }
+    }*/
 
     return 0;
 }

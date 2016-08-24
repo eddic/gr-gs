@@ -26,6 +26,10 @@ self.$(id) = $(id) = gs.defaultConstellation($fieldSize)
             <name>8</name>
             <key>8</key>
         </option>
+        <option>
+            <name>16</name>
+            <key>16</key>
+        </option>
     </param>
     <doc>This simply gives you gr-gs's default constellation for a specific field size.</doc>
 </block>

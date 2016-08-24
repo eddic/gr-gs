@@ -33,6 +33,7 @@
 #include "GF2.hpp"
 #include "GF4.hpp"
 #include "GF8.hpp"
+#include "GF16.hpp"
 
 std::vector<std::complex<float>> gr::gs::defaultConstellation(
         unsigned int fieldSize)
@@ -55,6 +56,25 @@ std::vector<std::complex<float>> gr::gs::defaultConstellation(
                 {0,-1},
                 {-1,0},
                 {-root2inv,-root2inv}
+            };
+        case 16:
+            return {
+                {-1,1},
+                {-1,1.0/3},
+                {-1,-1},
+                {-1,-1.0/3},
+                {-1.0/3,1},
+                {-1.0/3,1.0/3},
+                {-1.0/3,-1},
+                {-1.0/3,-1.0/3},
+                {1,1},
+                {1,1.0/3},
+                {1,-1},
+                {1,-1.0/3},
+                {1.0/3,1},
+                {1.0/3,1.0/3},
+                {1.0/3,-1},
+                {1.0/3,-1.0/3}
             };
         default:
             return std::vector<std::complex<float>>();
@@ -123,6 +143,9 @@ gr::gs::GuidedScrambling::Words::getDivide(unsigned fieldSize, bool delayed)
             case 8:
                 return Words::delayedDivide<GF8>;
                 break;
+            case 16:
+                return Words::delayedDivide<GF16>;
+                break;
             default:
                 throw Exceptions::BadFieldSize();
         }
@@ -137,6 +160,9 @@ gr::gs::GuidedScrambling::Words::getDivide(unsigned fieldSize, bool delayed)
                 break;
             case 8:
                 return Words::divide<GF8>;
+                break;
+            case 16:
+                return Words::divide<GF16>;
                 break;
             default:
                 throw Exceptions::BadFieldSize();
@@ -193,6 +219,9 @@ gr::gs::GuidedScrambling::Words::getMultiply(unsigned fieldSize)
             break;
         case 8:
             return Words::multiply<GF8>;
+            break;
+        case 16:
+            return Words::multiply<GF16>;
             break;
         default:
             throw Exceptions::BadFieldSize();
