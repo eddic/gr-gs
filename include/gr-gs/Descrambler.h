@@ -122,7 +122,7 @@ namespace gr
             /*!
              * This allows the codeword/sourceword starts to be aligned with a
              * frame stream tag. Use this to ensure alignment with the
-             * Descrambler.
+             * GuidedScrambler.
              *
              * @param [in] tag Desired string to use for the "key" of the tag
              *                 inserted at frame beginnings. Use an empty string

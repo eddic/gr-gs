@@ -47,13 +47,13 @@ void gr::gs::Primitives::populateIrreducibles(
             Word& remainder)> divide
         = GuidedScrambling::Words::getDivide(fieldSize, true);
 
-    const unsigned startingLength 
+    const unsigned startingLength
         = irreducibles.empty()?2:irreducibles.crbegin()->word.size()+1;
 
     for(unsigned i=startingLength; i<=length; ++i)
     {
         Irreducibles newIrreducibles;
-        
+
         Word polynomial(i, 0);
         polynomial.front() = 1;
 
@@ -197,7 +197,7 @@ gr::gs::Word gr::gs::Primitives::findPrimitive(
 {
     Irreducibles irreducibles;
     populateIrreducibles(fieldSize, length, irreducibles);
-    
+
     auto range = std::equal_range(
             irreducibles.cbegin(),
             irreducibles.cend(),

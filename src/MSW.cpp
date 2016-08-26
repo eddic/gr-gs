@@ -31,11 +31,11 @@
 gr::gs::GuidedScrambling::Analyzer::Feedback*
 gr::gs::GuidedScrambling::MSW::Feedback::clone() const
 {
-	return new Feedback(*this);
+    return new Feedback(*this);
 }
 
 gr::gs::GuidedScrambling::MSW::Feedback::Feedback():
-	RDS(startingRDS)
+    RDS(startingRDS)
 {}
 
 void gr::gs::GuidedScrambling::MSW::analyze(
@@ -43,23 +43,23 @@ void gr::gs::GuidedScrambling::MSW::analyze(
         const Analyzer::Feedback& feedback,
         const std::vector<std::complex<float>>& constellation)
 {
-	m_feedback.RDS = static_cast<const Feedback&>(feedback).RDS;
-	m_analysis = 0;
+    m_feedback.RDS = static_cast<const Feedback&>(feedback).RDS;
+    m_analysis = 0;
 
-	for(const Symbol& symbol: codeword)
-	{
-		m_feedback.RDS += constellation[symbol];
-		m_analysis += std::norm(m_feedback.RDS);
-	}
+    for(const Symbol& symbol: codeword)
+    {
+        m_feedback.RDS += constellation[symbol];
+        m_analysis += std::norm(m_feedback.RDS);
+    }
 }
 
 const gr::gs::GuidedScrambling::Analyzer::Feedback&
 gr::gs::GuidedScrambling::MSW::feedback() const
 {
-	return m_feedback;
+    return m_feedback;
 }
 
 float gr::gs::GuidedScrambling::MSW::analysis() const
 {
-	return m_analysis;
+    return m_analysis;
 }

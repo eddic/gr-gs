@@ -1,5 +1,5 @@
 /*!
- * @file      Primitives.hpp
+ * @file      Primitives.h
  * @brief     Declares the gr::gs::Primitives namespace.
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
  * @date      August 23, 2016
@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GR_GS_PRIMITIVES_HPP
-#define GR_GS_PRIMITIVES_HPP
+#ifndef GR_GS_PRIMITIVES_H
+#define GR_GS_PRIMITIVES_H
 
 #include "gr-gs/config.h"
 

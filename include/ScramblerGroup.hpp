@@ -68,7 +68,7 @@ namespace gr
                  * wanted a set of scramblers to use augmenting portions
                  * defined by 2,3,4 and 5, you would set indexStart=2 and
                  * indexEnd=6.
-                 
+
                  * @param  [in] length Length of codeword.
                  * @param  [in] indexStart Starting index of the scrambler
                  *                         group. This is used to set the

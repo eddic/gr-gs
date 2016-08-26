@@ -34,39 +34,39 @@
 
 const std::vector<std::string> gr::gs::GuidedScrambling::Analyzer::names
 {
-	 "MSW",
-	 "WRDS",
-	 "MSW2"
+     "MSW",
+     "WRDS",
+     "MSW2"
 };
 
 gr::gs::GuidedScrambling::Analyzer*
 gr::gs::GuidedScrambling::manufactureAnalyzer(const unsigned int method)
 {
-	switch(method)
-	{
-		case 0:
-			return new gr::gs::GuidedScrambling::MSW;
-		case 1:
-			return new gr::gs::GuidedScrambling::WRDS;
-		case 2:
-			return new gr::gs::GuidedScrambling::MSW2;
-		default:
-			throw Exceptions::BadSelectionMethod();
-	}
+    switch(method)
+    {
+        case 0:
+            return new gr::gs::GuidedScrambling::MSW;
+        case 1:
+            return new gr::gs::GuidedScrambling::WRDS;
+        case 2:
+            return new gr::gs::GuidedScrambling::MSW2;
+        default:
+            throw Exceptions::BadSelectionMethod();
+    }
 }
 
 gr::gs::GuidedScrambling::Analyzer::Feedback*
 gr::gs::GuidedScrambling::manufactureFeedback(const unsigned int method)
 {
-	switch(method)
-	{
-		case 0:
-			return new gr::gs::GuidedScrambling::MSW::Feedback;
-		case 1:
-			return new gr::gs::GuidedScrambling::WRDS::Feedback;
-		case 2:
-			return new gr::gs::GuidedScrambling::MSW2::Feedback;
-		default:
-			throw Exceptions::BadSelectionMethod();
-	}
+    switch(method)
+    {
+        case 0:
+            return new gr::gs::GuidedScrambling::MSW::Feedback;
+        case 1:
+            return new gr::gs::GuidedScrambling::WRDS::Feedback;
+        case 2:
+            return new gr::gs::GuidedScrambling::MSW2::Feedback;
+        default:
+            throw Exceptions::BadSelectionMethod();
+    }
 }

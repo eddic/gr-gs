@@ -1,5 +1,5 @@
 /*!
- * @file      WRDS.hpp
+ * @file      WRDS.cpp
  * @brief     Defines the gr::gs::GuidedScrambling::WRDS class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
  * @date      July 8, 2016
@@ -31,11 +31,11 @@
 gr::gs::GuidedScrambling::Analyzer::Feedback*
 gr::gs::GuidedScrambling::WRDS::Feedback::clone() const
 {
-	return new Feedback(*this);
+    return new Feedback(*this);
 }
 
 gr::gs::GuidedScrambling::WRDS::Feedback::Feedback():
-	RDS(startingRDS)
+    RDS(startingRDS)
 {}
 
 void gr::gs::GuidedScrambling::WRDS::analyze(
@@ -43,19 +43,19 @@ void gr::gs::GuidedScrambling::WRDS::analyze(
         const Analyzer::Feedback& feedback,
         const std::vector<std::complex<float>>& constellation)
 {
-	m_feedback.RDS = static_cast<const Feedback&>(feedback).RDS;
+    m_feedback.RDS = static_cast<const Feedback&>(feedback).RDS;
 
-	for(const Symbol& symbol: codeword)
-		m_feedback.RDS += constellation[symbol];
+    for(const Symbol& symbol: codeword)
+        m_feedback.RDS += constellation[symbol];
 }
 
 const gr::gs::GuidedScrambling::Analyzer::Feedback&
 gr::gs::GuidedScrambling::WRDS::feedback() const
 {
-	return m_feedback;
+    return m_feedback;
 }
 
 float gr::gs::GuidedScrambling::WRDS::analysis() const
 {
-	return std::abs(m_feedback.RDS);
+    return std::abs(m_feedback.RDS);
 }

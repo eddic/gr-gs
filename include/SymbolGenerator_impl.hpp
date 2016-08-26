@@ -69,6 +69,8 @@ namespace gr
                 //! Initialize with default symbol weightings
                 /*!
                  * @param  [in] weightings See set_weightings()
+                 * @param [in] framingTag See set_framingTag()
+                 * @param [in] frameLength See set_framingLength()
                  */
                 inline SymbolGenerator_impl(
                         const std::vector<double>& weightings,
