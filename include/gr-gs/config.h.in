@@ -71,7 +71,7 @@ namespace gr
             const std::complex<float> startingRDS={1,0};
 
             //! Maximum field size defined
-            const unsigned int maxFieldSize=8;
+            const unsigned int maxFieldSize=16;
         }
     }
 }
