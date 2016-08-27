@@ -43,6 +43,13 @@ namespace gr
         {
             //! Performs %MSW (mean squared weight) analysis of a codeword
             /*!
+             * This selection method minimizes the mean square of the running
+             * digital sum as described in [1].
+             *
+             *  1. K. Immink and L. Patrovics, “Performance assessment of
+             *     DC-free multi-mode codes,” *IEEE Transactions on
+             *     Communications*, vol. 45, no. 3, pp. 293-299, 1997.
+             *
              * @date   March 3, 2015
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */

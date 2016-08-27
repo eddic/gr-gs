@@ -42,6 +42,16 @@ namespace gr
     {
         //! Guided Scrambling "Descrambler" GNU Radio block
         /*!
+         * This block is a fully functional implementation of the recieve side
+         * of Guided Scrambling channel coding technique first described by Dr.
+         * Ivan Fair at The University of Alberta in [1].
+         *
+         *  1. Ivan J. Fair, Wayne D. Grover, Witold A. Krymien, and R. Ian
+         *     MacDonald, “Guided scrambling: A new line coding technique for
+         *     high bit rate fiber optic transmission systems,” *IEEE
+         *     Transaction on Communications*, vol. 39, no. 2, pp. 289-297,
+         *     February 1991.
+         *
          * @date   August 19, 2016
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */

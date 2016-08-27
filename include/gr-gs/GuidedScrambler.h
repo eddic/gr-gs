@@ -39,6 +39,20 @@ namespace gr
     {
         //! "Guided Scrambler" GNU Radio block
         /*!
+         * This block is a fully functional implementation of the transmit side
+         * of Guided Scrambling channel coding technique first described by Dr.
+         * Ivan Fair at The University of Alberta in [1]. Extension the
+         * technique into the realm of RF communications is described in [2].
+         *
+         *  1. Ivan J. Fair, Wayne D. Grover, Witold A. Krymien, and R. Ian
+         *     MacDonald, “Guided scrambling: A new line coding technique for
+         *     high bit rate fiber optic transmission systems,” *IEEE
+         *     Transaction on Communications*, vol. 39, no. 2, pp. 289-297,
+         *     February 1991.
+         *  2. I. Fair and D. Martin, “Generation of balanced QPSK sequence
+         *     through guided scrambling,” *IET Communications*, vol. 9, no. 11,
+         *     pp. 1404-1411, July 2015.
+         *
          * @date   August 19, 2016
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
@@ -174,9 +188,9 @@ namespace gr
              * frame stream tag. Use this to ensure alignment with the
              * Descrambler.
              *
-             * @param [in] tag Desired string to use for the "key" of the tag
-             *                 inserted at frame beginnings. Use an empty string
-             *                 to disable framing.
+             * @param [in] tag String representation of the framing tag "key".
+             *                 Use an empty string to disable framing
+             *                 completely.
              */
             virtual void set_framingTag(const std::string& tag) =0;
 
