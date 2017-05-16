@@ -2,11 +2,11 @@
  * @file      GuidedScrambler.h
  * @brief     Declares the "Guided Scrambler" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 19, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 16, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -53,7 +53,7 @@ namespace gr
          *     through guided scrambling,” *IET Communications*, vol. 9, no. 11,
          *     pp. 1404-1411, July 2015.
          *
-         * @date   August 19, 2016
+         * @date   May 16, 2017
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         class GS_API GuidedScrambler: virtual public gr::block
@@ -117,8 +117,7 @@ namespace gr
             /*!
              * @return Constant reference to constellation vector
              */
-            virtual const std::vector<std::complex<float>>&
-            constellation() const =0;
+            virtual const std::vector<Complex>& constellation() const =0;
 
             //! Set constellation
             /*!
@@ -127,7 +126,7 @@ namespace gr
              *                            points.
              */
             virtual void set_constellation(
-                    const std::vector<std::complex<float>>& constellation) =0;
+                    const std::vector<Complex>& constellation) =0;
 
             //! Access selection method
             /*!
@@ -217,7 +216,7 @@ namespace gr
                     const bool continuous = true,
                     const Word& divider = {1,0,0,1},
                     const unsigned int threads = 0,
-                    const std::vector<std::complex<float>>& constellation =
+                    const std::vector<Complex>& constellation =
                         gr::gs::defaultConstellation(4),
                     const std::string& selectionMethod = "MSW",
                     const std::string& framingTag = "");

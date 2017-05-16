@@ -2,11 +2,11 @@
  * @file      Scrambler.hpp
  * @brief     Declares the gr::gs::GuidedScrambling::Scrambler class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 21, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 16, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -51,7 +51,7 @@ namespace gr
              * ScramblerGroup objects for the purpose of keeping them in
              * execution groups.
              *
-             * @date    March 3, 2015
+             * @date    May 16, 2017
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             class Scrambler
@@ -205,12 +205,12 @@ namespace gr
                  * @param  [in] constellation This is a direct mapping of
                  *                            symbols (as vector indices) to
                  *                            constellation points.
-                 * @date   March 3, 2015
+                 * @date   May 16, 2017
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 void analyze(
                         const Analyzer::Feedback& feedback,
-                        const std::vector<std::complex<float>>& constellation)
+                        const std::vector<Complex>& constellation)
                 {
                     m_analyzer->analyze(m_output, feedback, constellation);
                 }
@@ -237,10 +237,10 @@ namespace gr
                  *
                  * @return Floating point representation of the codeword's
                  *         selection analysis. Lower is better.
-                 * @date   March 3, 2015
+                 * @date   May 16, 2017
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
-                float analysis() const
+                double analysis() const
                 {
                     return m_analyzer->analysis();
                 }

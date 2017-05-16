@@ -18,7 +18,7 @@
     </sink>
     <source>
         <name>out</name>
-        <type>complex</type>
+        <type>@COMPLEX_TYPE@</type>
     </source>
     <doc>This block generates a sequence of constellation points from a sequence of digital symbols.</doc>
 </block>

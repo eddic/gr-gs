@@ -2,11 +2,11 @@
  * @file      SymbolMapper_impl.cpp
  * @brief     Defines the "Symbol Mapper" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 17, 2016
+ * @date      May 16, 2017
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -29,7 +29,7 @@
 
 #include <gnuradio/io_signature.h>
 
-const std::vector<std::complex<float>>&
+const std::vector<gr::gs::Complex>&
 gr::gs::Implementations::SymbolMapper_impl::constellation() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -37,7 +37,7 @@ gr::gs::Implementations::SymbolMapper_impl::constellation() const
 }
 
 void gr::gs::Implementations::SymbolMapper_impl::set_constellation(
-        const std::vector<std::complex<float>>& constellation)
+        const std::vector<Complex>& constellation)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_constellation = constellation;
@@ -53,7 +53,7 @@ int gr::gs::Implementations::SymbolMapper_impl::work(
     const Symbol* const& start = reinterpret_cast<const Symbol*>(input_items[0]);
     const Symbol* const& end = start + noutput_items;
 
-    std::complex<float>* sample = reinterpret_cast<std::complex<float>*>(
+    Complex* sample = reinterpret_cast<Complex*>(
             output_items[0]);
 
     for(const Symbol* input=start; input!=end; ++input, ++sample)
@@ -63,17 +63,17 @@ int gr::gs::Implementations::SymbolMapper_impl::work(
 }
 
 gr::gs::Implementations::SymbolMapper_impl::SymbolMapper_impl(
-        const std::vector<std::complex<float>>& constellation):
+        const std::vector<Complex>& constellation):
     gr::sync_block("Symbol Mapper",
         io_signature::make(1,1,sizeof(Symbol)),
-        io_signature::make(1,1,sizeof(std::complex<float>))),
+        io_signature::make(1,1,sizeof(Complex))),
     m_constellation(constellation)
 {
     this->enable_update_rate(false);
 }
 
 gr::gs::SymbolMapper::sptr gr::gs::SymbolMapper::make(
-        const std::vector<std::complex<float>>& constellation)
+        const std::vector<Complex>& constellation)
 {
     return gnuradio::get_initial_sptr(
             new Implementations::SymbolMapper_impl(

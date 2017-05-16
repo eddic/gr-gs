@@ -16,6 +16,24 @@ elseif(SYMBOL_SIZE EQUAL 2)
 elseif(SYMBOL_SIZE EQUAL 4)
     set(CXX_SYMBOL_TYPE "unsigned int")
     set(PYTHON_SYMBOL_TYPE "int")
+else()
+    message(FATAL_ERROR "SYMBOL_SIZE must be 1, 2 or 4.")
+endif()
+
+# Setup complex type
+
+if(NOT COMPLEX_SIZE)
+    set(COMPLEX_SIZE 8)
+endif()
+
+if(COMPLEX_SIZE EQUAL 8)
+    set(COMPLEX_BASE "float")
+    set(COMPLEX_TYPE "fc32")
+elseif(COMPLEX_SIZE EQUAL 16)
+    set(COMPLEX_BASE "double")
+    set(COMPLEX_TYPE "fc64")
+else()
+    message(FATAL_ERROR "COMPLEX_SIZE must be 8 or 16.")
 endif()
 
 # Set compile flags for gcc and clang

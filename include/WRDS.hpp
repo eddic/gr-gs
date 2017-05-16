@@ -2,11 +2,11 @@
  * @file      WRDS.hpp
  * @brief     Declares the gr::gs::GuidedScrambling::WRDS class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 8, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 16, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -43,7 +43,7 @@ namespace gr
         {
             //! Performs %WRDS (word running digital sum) analysis of a codeword
             /*!
-             * @date    March 10, 2015
+             * @date    May 16, 2017
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             class WRDS: public Analyzer
@@ -54,7 +54,7 @@ namespace gr
                  * Here is where we store and pass on the RDS (running digital
                  * sum) value remaining at the end of the analysis.
                  *
-                 * @date March 10, 2015
+                 * @date May 16, 2017
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 class Feedback: public Analyzer::Feedback
@@ -72,7 +72,7 @@ namespace gr
                     Feedback();
 
                     //! RDS (running digital sum) value at end of codeword
-                    std::complex<float> RDS;
+                    std::complex<double> RDS;
                 };
 
                 //! Perform %WRDS analysis on a codeword
@@ -88,13 +88,13 @@ namespace gr
                  * @param [in] constellation This is a direct mapping of
                  *                             symbols (as vector indices) to
                  *                             constellation points.
-                 * @date March 10, 2015
+                 * @date May 16, 2017
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 void analyze(
                         const Word& codeword,
                         const Analyzer::Feedback& feedback,
-                        const std::vector<std::complex<float>>& constellation);
+                        const std::vector<Complex>& constellation);
 
                 //! Extract feedback from %WRDS analysis
                 /*!
@@ -115,10 +115,10 @@ namespace gr
                  *
                  * @return Floating point representation of the codeword's %WRDS
                  *         analysis. Lower is better.
-                 * @date March 10, 2015
+                 * @date May 16, 2017
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
-                float analysis() const;
+                double analysis() const;
 
             private:
                 //! %Feedback from %WRDS analysis

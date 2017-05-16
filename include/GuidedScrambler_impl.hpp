@@ -2,11 +2,11 @@
  * @file      GuidedScrambler_impl.hpp
  * @brief     Declares the "Guided Scrambler" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 19, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 16, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -48,7 +48,7 @@ namespace gr
              * This class allows us to perform guided scrambling in an
              * efficient multi threaded fashion
              *
-             * @date   August 19, 2016
+             * @date   May 16, 2017
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             class GuidedScrambler_impl: public GuidedScrambler
@@ -72,9 +72,9 @@ namespace gr
                 bool continuous() const;
                 void set_continuous(bool continuous);
 
-                const std::vector<std::complex<float>>& constellation() const;
+                const std::vector<Complex>& constellation() const;
                 void set_constellation(
-                        const std::vector<std::complex<float>>& constellation);
+                        const std::vector<Complex>& constellation);
 
                 const std::string& selectionMethod() const;
                 void set_selectionMethod(const std::string& method);
@@ -122,7 +122,7 @@ namespace gr
                         const bool continuous,
                         const Word& divider,
                         const unsigned int threads,
-                        const std::vector<std::complex<float>>& constellation,
+                        const std::vector<Complex>& constellation,
                         const std::string& selectionMethod,
                         const std::string& framingTag);
 

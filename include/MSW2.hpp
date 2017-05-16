@@ -2,11 +2,11 @@
  * @file      MSW2.hpp
  * @brief     Declares the gr::gs::GuidedScrambling::MSW2 class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 8, 2016
+ * @date      May 16, 2017
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -43,7 +43,7 @@ namespace gr
         {
             //! Performs %MSW2 (mean squared weight dc^2) analysis of a codeword
             /*!
-             * @date   March 10, 2015
+             * @date   May 16, 2017
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             class MSW2: public Analyzer
@@ -55,7 +55,7 @@ namespace gr
                  * sum) and RDSS (running digital sum-sum) value remaining at
                  * the end of the analysis.
                  *
-                 * @date   March 10, 2015
+                 * @date   May 16, 2017
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 class Feedback: public Analyzer::Feedback
@@ -65,7 +65,7 @@ namespace gr
                     /*!
                      * @return Pointer to dynamically allocated %MSW2 Feedback
                      *         copy.
-                     * @date   March 10, 2015
+                     * @date   March 16, 2017
                      * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                      */
                     Analyzer::Feedback* clone() const;
@@ -73,10 +73,10 @@ namespace gr
                     Feedback();
 
                     //! RDS (running digital sum) value at end of codeword
-                    std::complex<float> RDS;
+                    std::complex<double> RDS;
 
                     //! RDSS (running digital sum-sum) value at end of codeword
-                    std::complex<float> RDSS;
+                    std::complex<double> RDSS;
                 };
 
                 //! Perform %MSW2 analysis on a codeword
@@ -92,13 +92,13 @@ namespace gr
                  * @param  [in] constellation This is a direct mapping of
                  *                            symbols (as vector indices) to
                  *                            constellation points.
-                 * @date   March 10, 2015
+                 * @date   May 16, 2017
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 void analyze(
                         const Word& codeword,
                         const Analyzer::Feedback& feedback,
-                        const std::vector<std::complex<float>>& constellation);
+                        const std::vector<Complex>& constellation);
 
                 //! Extract feedback from %MSW2 analysis
                 /*!
@@ -120,17 +120,17 @@ namespace gr
                  * @return Floating point representation of the codeword's
                  *         %MSW2 analysis. Lower is better.
                  *
-                 * @date   March 10, 2015
+                 * @date   May 16, 2017
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
-                float analysis() const;
+                double analysis() const;
 
             private:
                 //! %Feedback from %MSW2 analysis
                 Feedback m_feedback;
 
                 //! Actual result from %MSW2 analysis
-                float m_analysis;
+                double m_analysis;
             };
         }
     }

@@ -19,12 +19,12 @@
     </param>
     <sink>
         <name>in</name>
-        <type>float</type>
+        <type>f32</type>
         <vlen>$vectorSize</vlen>
     </sink>
     <source>
         <name>out</name>
-        <type>float</type>
+        <type>f32</type>
         <vlen>$vectorSize</vlen>
     </source>
     <doc>This block averages a sequence of float vectors over all time. The output is a vector in which all received input vectors carry equal weight in the average.</doc>

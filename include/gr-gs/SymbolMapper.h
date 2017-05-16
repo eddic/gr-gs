@@ -2,11 +2,11 @@
  * @file      SymbolMapper.h
  * @brief     Declares the "Symbol Mapper" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 17, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 16, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -48,7 +48,7 @@ namespace gr
          * See the members functions for further information on the parameters
          * and their meaning.
          *
-         * @date    August 17, 2016
+         * @date    May 16, 2017
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         class GS_API SymbolMapper: virtual public gr::sync_block
@@ -59,8 +59,7 @@ namespace gr
              * @return Constant reference to symbol to constellation mapping
              *         vector
              */
-            virtual const std::vector<std::complex<float>>&
-            constellation() const =0;
+            virtual const std::vector<Complex>& constellation() const =0;
 
             //! Set symbol to constellation mapping vector
             /*!
@@ -68,7 +67,7 @@ namespace gr
              *              mapping vector
              */
             virtual void set_constellation(
-                    const std::vector<std::complex<float>>& constellation) =0;
+                    const std::vector<Complex>& constellation) =0;
 
             //! Shared pointer to this
             typedef boost::shared_ptr<SymbolMapper> sptr;
@@ -80,7 +79,7 @@ namespace gr
              * @return Shared pointer to newly allocated pulse generator
              */
             static sptr make(
-                    const std::vector<std::complex<float>>& constellation
+                    const std::vector<Complex>& constellation
                         = gr::gs::defaultConstellation(4));
         };
     }

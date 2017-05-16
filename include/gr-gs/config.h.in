@@ -2,11 +2,11 @@
  * @file      config.h
  * @brief     Defines some basic parameters for the module
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 11, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 16, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -50,8 +50,11 @@ namespace gr
         //! Pi
         const double pi = 3.141592653589793238462643383279502884197169399375105;
 
+        //! Type to use for basic complex numbers
+        typedef std::complex<@COMPLEX_BASE@> Complex;
+
         //! Get a default constellation pattern for a field size
-        GS_API std::vector<std::complex<float>> defaultConstellation(
+        GS_API std::vector<Complex> defaultConstellation(
                 unsigned int fieldSize);
 
         //! Type to use for representation of symbols
@@ -68,7 +71,7 @@ namespace gr
         namespace GuidedScrambling
         {
             //! Starting RDS for codeword analysis
-            const std::complex<float> startingRDS={1,0};
+            const std::complex<double> startingRDS={1,0};
 
             //! Maximum field size defined
             const unsigned int maxFieldSize=16;

@@ -2,11 +2,11 @@
  * @file      GuidedScrambler_impl.cpp
  * @brief     Defines the "Guided Scrambler" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 19, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 16, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -132,7 +132,7 @@ gr::gs::GuidedScrambling::GuidedScrambler_impl::GuidedScrambler_impl(
         const bool continuous,
         const Word& divider,
         const unsigned int threads,
-        const std::vector<std::complex<float>>& constellation,
+        const std::vector<Complex>& constellation,
         const std::string& selectionMethod,
         const std::string& framingTag):
     gr::block("Guided Scrambler",
@@ -181,7 +181,7 @@ void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_selectionMethod(
 }
 
 void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_constellation(
-        const std::vector<std::complex<float>>& constellation)
+        const std::vector<Complex>& constellation)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_codeword = nullptr;
@@ -269,7 +269,7 @@ void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_continuous(
     killThreads();
 }
 
-const std::vector<std::complex<float>>&
+const std::vector<gr::gs::Complex>&
 gr::gs::GuidedScrambling::GuidedScrambler_impl::constellation() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -478,7 +478,7 @@ gr::gs::GuidedScrambler::sptr gr::gs::GuidedScrambler::make(
         const bool continuous,
         const Word& divider,
         const unsigned int threads,
-        const std::vector<std::complex<float>>& constellation,
+        const std::vector<Complex>& constellation,
         const std::string& selectionMethod,
         const std::string& framingTag)
 {

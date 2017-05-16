@@ -2,11 +2,11 @@
  * @file      ScramblerGroup.hpp
  * @brief     Declares the gr::gs::GuidedScrambling::ScramblerGroup class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 8, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 16, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -50,7 +50,7 @@ namespace gr
              * into a single execution group. The intention is for each group
              * to be given is own thread to allow for concurrent scrambling.
              *
-             * @date   March 8, 2015
+             * @date   May 16, 2017
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             class ScramblerGroup
@@ -130,7 +130,7 @@ namespace gr
                  * @param  [in] constellation This is a direct mapping of
                  *                            symbols (as vector indices) to
                  *                            constellation points.
-                 * @date   March 8, 2015
+                 * @date   May 16, 2017
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 void scramble(
@@ -138,7 +138,7 @@ namespace gr
                         const Word& input,
                         const Word& remainder,
                         const Analyzer::Feedback& feedback,
-                        const std::vector<std::complex<float>>& constellation)
+                        const std::vector<Complex>& constellation)
                 {
                     m_winner = &m_scramblers.front();
                     for(auto& scrambler: m_scramblers)
@@ -189,7 +189,7 @@ namespace gr
                     std::unique_ptr<const Analyzer::Feedback> feedback;
 
                     //! This is a direct mapping of symbols (as vector indices) to constellation points
-                    std::vector<std::complex<float>> constellation;
+                    std::vector<Complex> constellation;
                 };
 
                 //! Handler function for scrambler group thread
