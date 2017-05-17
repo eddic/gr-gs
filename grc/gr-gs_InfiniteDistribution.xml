@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<block>
+    <name>Infinite Distribution</name>
+    <key>InfiniteDistribution</key>
+    <category>Guided Scrambling</category>
+    <import>import gr_gs as gs</import>
+    <make>gs.InfiniteDistribution($bins, $binSize, $leftBinCenter, $decimation)</make>
+    <param>
+        <name>Number of Bins</name>
+        <key>bins</key>
+        <value>25</value>
+        <type>int</type>
+    </param>
+    <param>
+        <name>Size of Bins</name>
+        <key>binSize</key>
+        <value>1</value>
+        <type>float</type>
+    </param>
+    <param>
+        <name>Center of Leftmost Bin</name>
+        <key>leftBinCenter</key>
+        <value>-12</value>
+        <type>float</type>
+    </param>
+    <param>
+        <name>Decimation</name>
+        <key>decimation</key>
+        <value>1024</value>
+        <type>int</type>
+    </param>
+    <sink>
+        <name>in</name>
+        <type>f32</type>
+    </sink>
+    <source>
+        <name>out</name>
+        <type>f32</type>
+        <vlen>$bins</vlen>
+    </source>
+    <doc>This block generates a probability distribution of the input values.</doc>
+</block>

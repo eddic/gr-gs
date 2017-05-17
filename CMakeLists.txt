@@ -90,6 +90,8 @@ add_library(gnuradio-gs SHARED
     src/SymbolGenerator_impl.cpp
     src/SymbolMapper_impl.cpp
     src/InfiniteAverage_impl.cpp
+    src/InfiniteDistribution_impl.cpp
+    src/InfiniteIntegrate_impl.cpp
     src/ErrorCount_impl.cpp)
 set_target_properties(gnuradio-gs PROPERTIES DEFINE_SYMBOL "gnuradio_gs_EXPORTS")
 target_link_libraries(gnuradio-gs PUBLIC
@@ -103,6 +105,8 @@ install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/SymbolGenerator.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/SymbolMapper.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/InfiniteAverage.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/InfiniteDistribution.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/InfiniteIntegrate.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/ErrorCount.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Primitives.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/exceptions.h"
@@ -265,6 +269,8 @@ install(FILES
     "${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_SymbolMapper.xml"
     "${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_SymbolGenerator.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_InfiniteAverage.xml"
+    "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_InfiniteDistribution.xml"
+    "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_InfiniteIntegrate.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_primitive.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_defaultConstellation.xml"
     "${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_ErrorCount.xml"

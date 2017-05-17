@@ -10,6 +10,8 @@
 #include "gr-gs/SymbolMapper.h"
 #include "gr-gs/SymbolGenerator.h"
 #include "gr-gs/InfiniteAverage.h"
+#include "gr-gs/InfiniteDistribution.h"
+#include "gr-gs/InfiniteIntegrate.h"
 #include "gr-gs/ErrorCount.h"
 #include "gr-gs/Primitives.h"
 #include "gr-gs/exceptions.h"
@@ -28,5 +30,9 @@ GR_SWIG_BLOCK_MAGIC2(gs, SymbolMapper);
 GR_SWIG_BLOCK_MAGIC2(gs, SymbolGenerator);
 %include "gr-gs/InfiniteAverage.h"
 GR_SWIG_BLOCK_MAGIC2(gs, InfiniteAverage);
+%include "gr-gs/InfiniteDistribution.h"
+GR_SWIG_BLOCK_MAGIC2(gs, InfiniteDistribution);
+%include "gr-gs/InfiniteIntegrate.h"
+GR_SWIG_BLOCK_MAGIC2(gs, InfiniteIntegrate);
 %include "gr-gs/ErrorCount.h"
 GR_SWIG_BLOCK_MAGIC2(gs, ErrorCount);

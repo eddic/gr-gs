@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<block>
+    <name>Integrate</name>
+    <key>InfiniteIntegrate</key>
+    <category>Guided Scrambling</category>
+    <import>import gr_gs as gs</import>
+    <make>gs.InfiniteIntegrate($decimation)</make>
+    <param>
+        <name>Decimation</name>
+        <key>decimation</key>
+        <value>1</value>
+        <type>int</type>
+    </param>
+    <sink>
+        <name>in</name>
+        <type>f32</type>
+    </sink>
+    <source>
+        <name>out</name>
+        <type>f32</type>
+    </source>
+    <doc>This block simply continously integrates without reset.</doc>
+</block>
