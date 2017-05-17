@@ -370,11 +370,13 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
                     inputSize -= offset;
                     input += offset;
                 }
+
+                auto location = this->nitems_written(0);
+                if(m_codeword != nullptr)
+                    location += unsigned(m_codeword->end()-m_codewordIt);
                 this->add_item_tag(
                         0,
-                        this->nitems_written(0)
-                            +m_codeword==nullptr?0:unsigned(
-                                m_codeword->end()-m_codewordIt),
+                        location,
                         tag->key,
                         tag->value);
                 ++tag;
