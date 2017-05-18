@@ -1,8 +1,8 @@
 /*!
- * @file      InfiniteDistribution_impl.cpp
- * @brief     Defines the "Infinite Distribution" GNU Radio block implementation
+ * @file      Distribution_impl.cpp
+ * @brief     Defines the "Distribution" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 16, 2017
+ * @date      May 18, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -25,11 +25,11 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "InfiniteDistribution_impl.hpp"
+#include "Distribution_impl.hpp"
 
 #include <gnuradio/io_signature.h>
 
-int gr::gs::Implementations::InfiniteDistribution_impl::work(
+int gr::gs::Implementations::Distribution_impl::work(
         int noutput_items,
         gr_vector_const_void_star &input_items,
         gr_vector_void_star &output_items)
@@ -66,12 +66,12 @@ int gr::gs::Implementations::InfiniteDistribution_impl::work(
     return noutput_items;
 }
 
-gr::gs::Implementations::InfiniteDistribution_impl::InfiniteDistribution_impl(
+gr::gs::Implementations::Distribution_impl::Distribution_impl(
         const unsigned bins,
         const double binSize,
         const double leftBinCenter,
         const unsigned decimation):
-    gr::sync_decimator("Infinite Distribution",
+    gr::sync_decimator("Distribution",
         io_signature::make(1,1,sizeof(float)),
         io_signature::make(1,1,sizeof(float)*bins),
         decimation),
@@ -84,14 +84,14 @@ gr::gs::Implementations::InfiniteDistribution_impl::InfiniteDistribution_impl(
     this->enable_update_rate(false);
 }
 
-gr::gs::InfiniteDistribution::sptr gr::gs::InfiniteDistribution::make(
+gr::gs::Distribution::sptr gr::gs::Distribution::make(
         const unsigned bins,
         const double binSize,
         const double leftBinCenter,
         const unsigned decimation)
 {
     return gnuradio::get_initial_sptr(
-            new Implementations::InfiniteDistribution_impl(
+            new Implementations::Distribution_impl(
                 bins,
                 binSize,
                 leftBinCenter,
@@ -99,13 +99,13 @@ gr::gs::InfiniteDistribution::sptr gr::gs::InfiniteDistribution::make(
 }
 
 const std::vector<float>&
-gr::gs::Implementations::InfiniteDistribution_impl::distribution() const
+gr::gs::Implementations::Distribution_impl::distribution() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_distribution;
 }
 
-void gr::gs::Implementations::InfiniteDistribution_impl::reset()
+void gr::gs::Implementations::Distribution_impl::reset()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_count = 0;

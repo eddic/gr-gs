@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <block>
-    <name>Infinite Average</name>
-    <key>InfiniteAverage</key>
-    <category>Guided Scrambling</category>
+    <name>Average</name>
+    <key>gr_gs_Average</key>
+    <category>[gr-gs]/Miscellaneous</category>
     <import>import gr_gs as gs</import>
-    <make>gs.InfiniteAverage($vectorSize, $decimation)</make>
+    <make>gs.Average($vectorSize, $decimation)</make>
     <param>
         <name>Vector Size</name>
         <key>vectorSize</key>

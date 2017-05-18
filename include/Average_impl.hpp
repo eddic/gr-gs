@@ -1,8 +1,8 @@
 /*!
- * @file      InfiniteDistribution_impl.hpp
- * @brief     Declares the "Infinite Distribution" GNU Radio block implementation
+ * @file      Average_impl.hpp
+ * @brief     Declares the "Average" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 16, 2017
+ * @date      May 18, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -25,10 +25,10 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GR_GS_INFINITEDISTRIBUTION_IMPL_HPP
-#define GR_GS_INFINITEDISTRIBUTION_IMPL_HPP
+#ifndef GR_GS_AVERAGE_IMPL_HPP
+#define GR_GS_AVERAGE_IMPL_HPP
 
-#include "gr-gs/InfiniteDistribution.h"
+#include "gr-gs/Average.h"
 
 #include <mutex>
 
@@ -41,63 +41,52 @@ namespace gr
         //! All block implementation too trivial for their own namespace
         namespace Implementations
         {
-            //! "Infinite Distribution" GNU Radio block implementation
+            //! "Average" GNU Radio block implementation
             /*!
-             * Implements gr::gs::InfiniteDistribution
+             * Implements gr::gs::Average
              *
-             * @date    May 16, 2017
+             * @date    August 11, 2015
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
-            class InfiniteDistribution_impl: public InfiniteDistribution
+            class Average_impl: public Average
             {
             public:
                 //! No copying allowed
-                InfiniteDistribution_impl(const InfiniteDistribution_impl& x)
-                    = delete;
+                Average_impl(const Average_impl& x) = delete;
                 //! No copying allowed
-                InfiniteDistribution_impl& operator=(
-                        const InfiniteDistribution_impl& x) = delete;
+                Average_impl& operator=(const Average_impl& x)
+                    = delete;
 
                 //! GNU Radio work function
                 int work(int noutput_items,
                         gr_vector_const_void_star &input_items,
                         gr_vector_void_star &output_items);
 
-                //! Initialize an infinite distribution block
+                //! Initialize an average block
                 /*!
-                 * @param [in] bins Number of bins in the distribution
-                 * @param [in] binSize Width of each bin
-                 * @param [in] leftBinCenter The center point of the left most
-                 *                           (most negative) bin.
+                 * @param [in] vectorSize Number of elements in the vector
                  * @param [in] decimation Should we decimate the output?
+                 * @return Shared pointer to newly allocated pulse generator
                  */
-                inline InfiniteDistribution_impl(
-                        const unsigned bins,
-                        const double binSize,
-                        const double leftBinCenter,
+                inline Average_impl(
+                        const unsigned vectorSize,
                         const unsigned decimation);
 
-                virtual const std::vector<float>& distribution() const;
+                virtual const std::vector<float>& average() const;
                 virtual void reset();
 
             private:
                 //! Let's be thread safe
                 mutable std::mutex m_mutex;
 
-                //! The bins themselves
-                std::vector<unsigned long long> m_bins;
+                //! Sum of all vectors
+                std::vector<double> m_sum;
 
-                //! Left edge of leftmost bin
-                const double m_leftEdge;
-
-                //! Size of bins
-                const double m_binSize;
-
-                //! Count of samples
+                //! Vector count
                 unsigned long long m_count;
 
-                //! Current distribution
-                std::vector<float> m_distribution;
+                //! Current average
+                std::vector<float> m_average;
             };
         }
     }

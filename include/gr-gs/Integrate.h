@@ -1,12 +1,12 @@
 /*!
- * @file      InfiniteAverage.h
- * @brief     Declares the "Infinite Average" GNU Radio block
+ * @file      Integrate.h
+ * @brief     Declares the "Integrate" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 11, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 18, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GR_GS_INFINITEAVERAGE_H
-#define GR_GS_INFINITEAVERAGE_H
+#ifndef GR_GS_INTEGRATE_H
+#define GR_GS_INTEGRATE_H
 
 #include "gr-gs/config.h"
 
@@ -39,35 +39,28 @@ namespace gr
     //! Contains all blocks for the Guided Scrambling GNU Radio Module
     namespace gs
     {
-        //! "Infinite Average" GNU Radio block
+        //! "Integrate" GNU Radio block
         /*!
-         * This block averages a sequence of float vectors over all time. The
-         * output is a vector in which all received input vectors carry equal
-         * weight in the average.
+         * This block takes in a sequence of numbers and continually integrates
+         * them without reset.
          *
-         * @date    August 11, 2016
+         * @date    May 16, 2017
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
-        class GS_API InfiniteAverage: virtual public gr::sync_decimator
+        class GS_API Integrate: virtual public gr::sync_decimator
         {
         public:
             //! Shared pointer to this
-            typedef boost::shared_ptr<InfiniteAverage> sptr;
+            typedef boost::shared_ptr<Integrate> sptr;
 
-            //! Manufacture an infinite average block
+            //! Manufacture an integrate block
             /*!
-             * @param [in] vectorSize Number of elements in the vector
              * @param [in] decimation Should we decimate the output?
-             * @return Shared pointer to newly allocated pulse generator
+             * @return Shared pointer to newly allocated integrate block
              */
-            static sptr make(
-                    const unsigned vectorSize,
-                    const unsigned decimation = 1);
+            static sptr make(const unsigned decimation = 1);
 
-            //! See the current average
-            virtual const std::vector<float>& average() const =0;
-
-            //! Reset the current average
+            //! Reset the current integration
             virtual void reset() =0;
         };
     }

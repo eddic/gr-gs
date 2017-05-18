@@ -1,12 +1,12 @@
 /*!
- * @file      InfiniteAverage_impl.hpp
- * @brief     Declares the "Infinite Average" GNU Radio block implementation
+ * @file      Distribution_impl.hpp
+ * @brief     Declares the "Distribution" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 11, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 18, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -25,10 +25,10 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GR_GS_INFINITEAVERAGE_IMPL_HPP
-#define GR_GS_INFINITEAVERAGE_IMPL_HPP
+#ifndef GR_GS_DISTRIBUTION_IMPL_HPP
+#define GR_GS_DISTRIBUTION_IMPL_HPP
 
-#include "gr-gs/InfiniteAverage.h"
+#include "gr-gs/Distribution.h"
 
 #include <mutex>
 
@@ -41,52 +41,63 @@ namespace gr
         //! All block implementation too trivial for their own namespace
         namespace Implementations
         {
-            //! "Infinite Average" GNU Radio block implementation
+            //! "Distribution" GNU Radio block implementation
             /*!
-             * Implements gr::gs::InfiniteAverage
+             * Implements gr::gs::Distribution
              *
-             * @date    August 11, 2015
+             * @date    May 16, 2017
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
-            class InfiniteAverage_impl: public InfiniteAverage
+            class Distribution_impl: public Distribution
             {
             public:
                 //! No copying allowed
-                InfiniteAverage_impl(const InfiniteAverage_impl& x) = delete;
-                //! No copying allowed
-                InfiniteAverage_impl& operator=(const InfiniteAverage_impl& x)
+                Distribution_impl(const Distribution_impl& x)
                     = delete;
+                //! No copying allowed
+                Distribution_impl& operator=(
+                        const Distribution_impl& x) = delete;
 
                 //! GNU Radio work function
                 int work(int noutput_items,
                         gr_vector_const_void_star &input_items,
                         gr_vector_void_star &output_items);
 
-                //! Initialize an infinite average block
+                //! Initialize an distribution block
                 /*!
-                 * @param [in] vectorSize Number of elements in the vector
+                 * @param [in] bins Number of bins in the distribution
+                 * @param [in] binSize Width of each bin
+                 * @param [in] leftBinCenter The center point of the left most
+                 *                           (most negative) bin.
                  * @param [in] decimation Should we decimate the output?
-                 * @return Shared pointer to newly allocated pulse generator
                  */
-                inline InfiniteAverage_impl(
-                        const unsigned vectorSize,
+                inline Distribution_impl(
+                        const unsigned bins,
+                        const double binSize,
+                        const double leftBinCenter,
                         const unsigned decimation);
 
-                virtual const std::vector<float>& average() const;
+                virtual const std::vector<float>& distribution() const;
                 virtual void reset();
 
             private:
                 //! Let's be thread safe
                 mutable std::mutex m_mutex;
 
-                //! Sum of all vectors
-                std::vector<double> m_sum;
+                //! The bins themselves
+                std::vector<unsigned long long> m_bins;
 
-                //! Vector count
+                //! Left edge of leftmost bin
+                const double m_leftEdge;
+
+                //! Size of bins
+                const double m_binSize;
+
+                //! Count of samples
                 unsigned long long m_count;
 
-                //! Current average
-                std::vector<float> m_average;
+                //! Current distribution
+                std::vector<float> m_distribution;
             };
         }
     }

@@ -1,6 +1,6 @@
 /*!
- * @file      InfiniteIntegrate_impl.hpp
- * @brief     Declares the "Infinite Integrate" GNU Radio block implementation
+ * @file      Integrate_impl.hpp
+ * @brief     Declares the "Integrate" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
  * @date      May 16, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
@@ -25,10 +25,10 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GR_GS_INFINITEINTEGRATE_IMPL_HPP
-#define GR_GS_INFINITEINTEGRATE_IMPL_HPP
+#ifndef GR_GS_INTEGRATE_IMPL_HPP
+#define GR_GS_INTEGRATE_IMPL_HPP
 
-#include "gr-gs/InfiniteIntegrate.h"
+#include "gr-gs/Integrate.h"
 
 #include <mutex>
 
@@ -41,33 +41,33 @@ namespace gr
         //! All block implementation too trivial for their own namespace
         namespace Implementations
         {
-            //! "Infinite Integrate" GNU Radio block implementation
+            //! "Integrate" GNU Radio block implementation
             /*!
-             * Implements gr::gs::InfiniteIntegrate
+             * Implements gr::gs::Integrate
              *
              * @date    May 16, 2017
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
-            class InfiniteIntegrate_impl: public InfiniteIntegrate
+            class Integrate_impl: public Integrate
             {
             public:
                 //! No copying allowed
-                InfiniteIntegrate_impl(const InfiniteIntegrate_impl& x)
+                Integrate_impl(const Integrate_impl& x)
                     = delete;
                 //! No copying allowed
-                InfiniteIntegrate_impl& operator=(
-                        const InfiniteIntegrate_impl& x) = delete;
+                Integrate_impl& operator=(
+                        const Integrate_impl& x) = delete;
 
                 //! GNU Radio work function
                 int work(int noutput_items,
                         gr_vector_const_void_star &input_items,
                         gr_vector_void_star &output_items);
 
-                //! Initialize an infinite integrate block
+                //! Initialize an integrate block
                 /*!
                  * @param [in] decimation Should we decimate the output?
                  */
-                inline InfiniteIntegrate_impl(const unsigned decimation);
+                inline Integrate_impl(const unsigned decimation);
 
                 virtual void reset();
 

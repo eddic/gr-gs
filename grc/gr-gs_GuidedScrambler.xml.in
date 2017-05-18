@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <block>
     <name>Guided Scrambler</name>
-    <key>GuidedScrambler</key>
-    <category>Guided Scrambling</category>
+    <key>gr_gs_GuidedScrambler</key>
+    <category>[gr-gs]/Guided Scrambling</category>
     <import>import gr_gs as gs</import>
     <make>gs.GuidedScrambler($fieldSize, $codewordLength, $augmentingLength, $continuous, $divider, $threads, $constellation, $selectionMethod, $framingTag)</make>
     <callback>set_fieldSize($fieldSize)</callback>

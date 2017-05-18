@@ -186,7 +186,7 @@ receiveRotator = blocks.rotator_cc(-args.rotation)
 log10 = blocks.nlog10_ff(10, args.window_size, -10*math.log10(args.samples_per_symbol).real)
 complex_to_mag_squared = blocks.complex_to_mag_squared(args.window_size)
 symbolMapper = gs.SymbolMapper(args.constellation)
-infiniteAverage = gs.InfiniteAverage(args.window_size, 16)
+average = gs.Average(args.window_size, 16)
 errorCount = gs.ErrorCount(frameTag)
 descrambler = gs.Descrambler(
         args.field_size,
@@ -216,4 +216,4 @@ if args.noise != 0:
 top.connect((transmitEnd, 0), (vectorizer, 0))
 top.connect((vectorizer, 0), (psdFFT, 0))
 top.connect((psdFFT, 0), (complex_to_mag_squared, 0))
-top.connect((complex_to_mag_squared, 0), (infiniteAverage, 0))
+top.connect((complex_to_mag_squared, 0), (average, 0))

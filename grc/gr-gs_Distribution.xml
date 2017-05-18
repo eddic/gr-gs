@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <block>
-    <name>Infinite Distribution</name>
-    <key>InfiniteDistribution</key>
-    <category>Guided Scrambling</category>
+    <name>Distribution</name>
+    <key>gr_gs_Distribution</key>
+    <category>[gr-gs]/Miscellaneous</category>
     <import>import gr_gs as gs</import>
-    <make>gs.InfiniteDistribution($bins, $binSize, $leftBinCenter, $decimation)</make>
+    <make>gs.Distribution($bins, $binSize, $leftBinCenter, $decimation)</make>
     <param>
         <name>Number of Bins</name>
         <key>bins</key>

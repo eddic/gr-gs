@@ -1,8 +1,8 @@
 /*!
- * @file      InfiniteIntegrate_impl.cpp
- * @brief     Defines the "Infinite Integrate" GNU Radio block implementation
+ * @file      Integrate_impl.cpp
+ * @brief     Defines the "Integrate" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 16, 2017
+ * @date      May 18, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -26,11 +26,11 @@
  */
 
 #include <iostream>
-#include "InfiniteIntegrate_impl.hpp"
+#include "Integrate_impl.hpp"
 
 #include <gnuradio/io_signature.h>
 
-int gr::gs::Implementations::InfiniteIntegrate_impl::work(
+int gr::gs::Implementations::Integrate_impl::work(
         int noutput_items,
         gr_vector_const_void_star &input_items,
         gr_vector_void_star &output_items)
@@ -51,9 +51,9 @@ int gr::gs::Implementations::InfiniteIntegrate_impl::work(
     return noutput_items;
 }
 
-gr::gs::Implementations::InfiniteIntegrate_impl::InfiniteIntegrate_impl(
+gr::gs::Implementations::Integrate_impl::Integrate_impl(
         const unsigned decimation):
-    gr::sync_decimator("Infinite Integrate",
+    gr::sync_decimator("Integrate",
         io_signature::make(1,1,sizeof(float)),
         io_signature::make(1,1,sizeof(float)),
         decimation),
@@ -62,14 +62,14 @@ gr::gs::Implementations::InfiniteIntegrate_impl::InfiniteIntegrate_impl(
     this->enable_update_rate(false);
 }
 
-gr::gs::InfiniteIntegrate::sptr gr::gs::InfiniteIntegrate::make(
+gr::gs::Integrate::sptr gr::gs::Integrate::make(
         const unsigned decimation)
 {
     return gnuradio::get_initial_sptr(
-            new Implementations::InfiniteIntegrate_impl(decimation));
+            new Implementations::Integrate_impl(decimation));
 }
 
-void gr::gs::Implementations::InfiniteIntegrate_impl::reset()
+void gr::gs::Implementations::Integrate_impl::reset()
 {
     m_sum = 0;
 }

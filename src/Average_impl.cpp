@@ -1,12 +1,12 @@
 /*!
- * @file      InfiniteAverage_impl.cpp
- * @brief     Defines the "Infinite Average" GNU Radio block implementation
+ * @file      Average_impl.cpp
+ * @brief     Defines the "Average" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 11, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 18, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -25,12 +25,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "InfiniteAverage_impl.hpp"
+#include "Average_impl.hpp"
 
 #include <gnuradio/io_signature.h>
 #include <array>
 
-int gr::gs::Implementations::InfiniteAverage_impl::work(
+int gr::gs::Implementations::Average_impl::work(
         int noutput_items,
         gr_vector_const_void_star &input_items,
         gr_vector_void_star &output_items)
@@ -59,10 +59,10 @@ int gr::gs::Implementations::InfiniteAverage_impl::work(
     return noutput_items;
 }
 
-gr::gs::Implementations::InfiniteAverage_impl::InfiniteAverage_impl(
+gr::gs::Implementations::Average_impl::Average_impl(
         const unsigned vectorSize,
         const unsigned decimation):
-    gr::sync_decimator("Infinite Average",
+    gr::sync_decimator("Average",
         io_signature::make(1,1,sizeof(float)*vectorSize),
         io_signature::make(1,1,sizeof(float)*vectorSize),
         decimation),
@@ -73,24 +73,24 @@ gr::gs::Implementations::InfiniteAverage_impl::InfiniteAverage_impl(
     this->enable_update_rate(false);
 }
 
-gr::gs::InfiniteAverage::sptr gr::gs::InfiniteAverage::make(
+gr::gs::Average::sptr gr::gs::Average::make(
         const unsigned vectorSize,
         const unsigned decimation)
 {
     return gnuradio::get_initial_sptr(
-            new Implementations::InfiniteAverage_impl(
+            new Implementations::Average_impl(
                 vectorSize,
                 decimation));
 }
 
 const std::vector<float>&
-gr::gs::Implementations::InfiniteAverage_impl::average() const
+gr::gs::Implementations::Average_impl::average() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_average;
 }
 
-void gr::gs::Implementations::InfiniteAverage_impl::reset()
+void gr::gs::Implementations::Average_impl::reset()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_count = 0;

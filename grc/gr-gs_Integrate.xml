@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <block>
     <name>Integrate</name>
-    <key>InfiniteIntegrate</key>
-    <category>Guided Scrambling</category>
+    <key>gr_gs_Integrate</key>
+    <category>[gr-gs]/Miscellaneous</category>
     <import>import gr_gs as gs</import>
-    <make>gs.InfiniteIntegrate($decimation)</make>
+    <make>gs.Integrate($decimation)</make>
     <param>
         <name>Decimation</name>
         <key>decimation</key>

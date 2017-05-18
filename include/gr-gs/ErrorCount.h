@@ -53,7 +53,7 @@ namespace gr
             //! Shared pointer to this
             typedef boost::shared_ptr<ErrorCount> sptr;
 
-            //! Manufacture an infinite average block
+            //! Manufacture an error count block
             /*!
              * @param [in] framingTag Desired string to use for the "key" of the
              *                        tag indicating frame starts. Use a zero

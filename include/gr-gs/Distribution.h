@@ -1,8 +1,8 @@
 /*!
- * @file      InfiniteIntegrate.h
- * @brief     Declares the "Infinite Integrate" GNU Radio block
+ * @file      Distribution.h
+ * @brief     Declares the "Distribution" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 16, 2017
+ * @date      May 18, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -25,8 +25,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GR_GS_INFINITEINTEGRATE_H
-#define GR_GS_INFINITEINTEGRATE_H
+#ifndef GR_GS_DISTRIBUTION_H
+#define GR_GS_DISTRIBUTION_H
 
 #include "gr-gs/config.h"
 
@@ -39,29 +39,40 @@ namespace gr
     //! Contains all blocks for the Guided Scrambling GNU Radio Module
     namespace gs
     {
-        //! "Infinite Integrate" GNU Radio block
+        //! "Distribution" GNU Radio block
         /*!
-         * This block takes in a sequence of numbers and continually integrates
-         * them without reset.
+         * This block takes in a sequence of real numbers and assigns then to
+         * bins in a probability distribution. It basically creates the
+         * necessary output vector to be used as a histogram.
          *
          * @date    May 16, 2017
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
-        class GS_API InfiniteIntegrate: virtual public gr::sync_decimator
+        class GS_API Distribution: virtual public gr::sync_decimator
         {
         public:
             //! Shared pointer to this
-            typedef boost::shared_ptr<InfiniteIntegrate> sptr;
+            typedef boost::shared_ptr<Distribution> sptr;
 
-            //! Manufacture an infinite integrate block
+            //! Manufacture an distribution block
             /*!
+             * @param [in] bins Number of bins in the distribution
+             * @param [in] binSize Width of each bin
+             * @param [in] leftBinCenter The center point of the left most (most
+             *                           negative) bin.
              * @param [in] decimation Should we decimate the output?
-             * @return Shared pointer to newly allocated infinite integrate
-             *         block
+             * @return Shared pointer to newly allocated distribution
              */
-            static sptr make(const unsigned decimation = 1);
+            static sptr make(
+                    const unsigned bins,
+                    const double binSize,
+                    const double leftBinCenter,
+                    const unsigned decimation = 1);
 
-            //! Reset the current integration
+            //! See the current distribution
+            virtual const std::vector<float>& distribution() const =0;
+
+            //! Reset the current distribution
             virtual void reset() =0;
         };
     }
