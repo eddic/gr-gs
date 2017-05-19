@@ -12,6 +12,7 @@
 #include "gr-gs/Average.h"
 #include "gr-gs/Distribution.h"
 #include "gr-gs/Integrate.h"
+#include "gr-gs/Autocovariance.h"
 #include "gr-gs/ErrorCount.h"
 #include "gr-gs/Primitives.h"
 #include "gr-gs/exceptions.h"
@@ -59,6 +60,12 @@ GR_SWIG_BLOCK_MAGIC2(gs, SymbolGenerator_i);
 GR_SWIG_BLOCK_MAGIC2(gs, ErrorCount_bf);
 GR_SWIG_BLOCK_MAGIC2(gs, ErrorCount_sf);
 GR_SWIG_BLOCK_MAGIC2(gs, ErrorCount_if);
+
+%include "gr-gs/Autocovariance.h"
+%template(Autocovariance_ff) gr::gs::Autocovariance<float>;
+%template(Autocovariance_cc) gr::gs::Autocovariance<std::complex<float>>;
+GR_SWIG_BLOCK_MAGIC2(gs, Autocovariance_ff);
+GR_SWIG_BLOCK_MAGIC2(gs, Autocovariance_cc);
 
 %include "gr-gs/Average.h"
 GR_SWIG_BLOCK_MAGIC2(gs, Average);

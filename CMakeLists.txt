@@ -71,6 +71,7 @@ add_library(gnuradio-gs SHARED
     src/SymbolMapper_impl.cpp
     src/Average_impl.cpp
     src/Distribution_impl.cpp
+    src/Autocovariance_impl.cpp
     src/Integrate_impl.cpp
     src/ErrorCount_impl.cpp)
 set_target_properties(gnuradio-gs PROPERTIES DEFINE_SYMBOL "gnuradio_gs_EXPORTS")
@@ -86,6 +87,7 @@ install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/SymbolMapper.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Average.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Distribution.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Autocovariance.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Integrate.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/ErrorCount.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Primitives.h"
@@ -235,6 +237,7 @@ install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_SymbolGenerator.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Average.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Distribution.xml"
+    "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Autocovariance.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Integrate.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_primitive.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_defaultConstellation.xml"

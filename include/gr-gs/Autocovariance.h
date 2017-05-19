@@ -1,0 +1,95 @@
+/*!
+ * @file      Autocovariance.h
+ * @brief     Declares the "Autocovariance" GNU Radio block
+ * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
+ * @date      May 19, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
+ *            the GNU General Public License Version 3.
+ */
+/* Copyright (C) 2017 Eddie Carle
+ *
+ * This file is part of the Guided Scrambling GNU Radio Module
+ *
+ * The Guided Scrambling GNU Radio Module is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation, either version 3 of
+ * the License, or (at your option) any later version.
+ *
+ * The Guided Scrambling GNU Radio Module is distributed in the hope that it
+ * will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+ * Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * The Guided Scrambling GNU Radio Module.  If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef GR_GS_AUTOCOVARIANCE_H
+#define GR_GS_AUTOCOVARIANCE_H
+
+#include "gr-gs/config.h"
+
+#include <gnuradio/sync_decimator.h>
+#include <vector>
+
+//! GNU Radio Namespace
+namespace gr
+{
+    //! Contains all blocks for the Guided Scrambling GNU Radio Module
+    namespace gs
+    {
+        //! "Autocovariance" GNU Radio block
+        /*!
+         * This block computes the autocovariance of a signal. It outputs a
+         * vector for every sample it receives. In the case of a complex valued
+         * signal this assumes zero correlation between the imaginary and real
+         * components.
+         *
+         * @tparam T Base signal type. Can be float or std::complex<float>.
+         * @date    May 19, 2017
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        template<typename T>
+        class GS_API Autocovariance: virtual public gr::sync_decimator
+        {
+        public:
+            //! Shared pointer to this
+            typedef boost::shared_ptr<Autocovariance> sptr;
+
+            //! Get the set mean value of the signal
+            /*!
+             * This does not calculate the signal mean. It simply returns the
+             * mean you already supplied.
+             */
+            virtual T mean() const =0;
+
+            //! Set the mean value of the signal
+            /*!
+             * This mean value is needed to accurately compute the
+             * autocovariance.
+             */
+            virtual void set_mean(T mean) =0;
+
+            //! Manufacture an integrate block
+            /*!
+             * @param [in] length This decides how far back we look to calculate
+             *                    the autocovariance. This, of course, will
+             *                    equal the lengths of the vectors being spit
+             *                    out of this thing.
+             * @param [in] mean The mean value of the signal.
+             * @param [in] decimation Should we decimate the output?
+             * @return Shared pointer to newly allocated integrate block
+             */
+            static sptr make(
+                    unsigned length,
+                    T mean = 0,
+                    const unsigned decimation = 1);
+        };
+
+        typedef Autocovariance<float> Autocovariance_ff;
+        typedef Autocovariance<std::complex<float>> Autocovariance_cc;
+    }
+}
+
+#endif
