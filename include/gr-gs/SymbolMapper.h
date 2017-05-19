@@ -2,7 +2,7 @@
  * @file      SymbolMapper.h
  * @brief     Declares the "Symbol Mapper" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 16, 2017
+ * @date      May 19, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -48,9 +48,12 @@ namespace gr
          * See the members functions for further information on the parameters
          * and their meaning.
          *
-         * @date    May 16, 2017
+         * @tparam Symbol Base type to use for symbol type. Can be unsigned
+         *                char, unsigned short, or unsigned int.
+         * @date    May 19, 2017
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
+        template<typename Symbol>
         class GS_API SymbolMapper: virtual public gr::sync_block
         {
         public:
@@ -82,6 +85,10 @@ namespace gr
                     const std::vector<Complex>& constellation
                         = gr::gs::defaultConstellation(4));
         };
+
+        typedef SymbolMapper<unsigned char> SymbolMapper_bc;
+        typedef SymbolMapper<unsigned short> SymbolMapper_sc;
+        typedef SymbolMapper<unsigned int> SymbolMapper_ic;
     }
 }
 

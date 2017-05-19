@@ -2,11 +2,11 @@
  * @file      SymbolGenerator_impl.hpp
  * @brief     Declares the "Random Symbol Generator" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 19, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 19, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -46,10 +46,13 @@ namespace gr
             /*!
              * Implements gr::gs::SymbolGenerator
              *
+             * @tparam Symbol Base type to use for symbol type. Can be unsigned
+             *                char, unsigned short, or unsigned int.
              * @date   August 19, 2016
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
-            class SymbolGenerator_impl: public SymbolGenerator
+            template<typename Symbol>
+            class SymbolGenerator_impl: public SymbolGenerator<Symbol>
             {
             public:
                 const std::vector<double>& weightings() const;

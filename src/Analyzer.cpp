@@ -2,11 +2,11 @@
  * @file      Analyzer.cpp
  * @brief     Defines the gr::gs::GuidedScrambling::Analyzer class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 8, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 18, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -32,40 +32,62 @@
 #include "WRDS.hpp"
 #include "MSW2.hpp"
 
-const std::vector<std::string> gr::gs::GuidedScrambling::Analyzer::names
+const std::vector<std::string> gr::gs::GuidedScrambling::selectionMethods
 {
      "MSW",
      "WRDS",
      "MSW2"
 };
 
-gr::gs::GuidedScrambling::Analyzer*
+template gr::gs::GuidedScrambling::Analyzer<unsigned char>*
+gr::gs::GuidedScrambling::manufactureAnalyzer<unsigned char>(
+        const unsigned int method);
+template gr::gs::GuidedScrambling::Analyzer<unsigned short>*
+gr::gs::GuidedScrambling::manufactureAnalyzer<unsigned short>(
+        const unsigned int method);
+template gr::gs::GuidedScrambling::Analyzer<unsigned int>*
+gr::gs::GuidedScrambling::manufactureAnalyzer<unsigned int>(
+        const unsigned int method);
+template<typename Symbol> gr::gs::GuidedScrambling::Analyzer<Symbol>*
 gr::gs::GuidedScrambling::manufactureAnalyzer(const unsigned int method)
 {
     switch(method)
     {
         case 0:
-            return new gr::gs::GuidedScrambling::MSW;
+            return new gr::gs::GuidedScrambling::MSW<Symbol>;
         case 1:
-            return new gr::gs::GuidedScrambling::WRDS;
+            return new gr::gs::GuidedScrambling::WRDS<Symbol>;
         case 2:
-            return new gr::gs::GuidedScrambling::MSW2;
+            return new gr::gs::GuidedScrambling::MSW2<Symbol>;
         default:
             throw Exceptions::BadSelectionMethod();
     }
 }
 
-gr::gs::GuidedScrambling::Analyzer::Feedback*
+template typename gr::gs::GuidedScrambling::Analyzer<unsigned char>::Feedback*
+gr::gs::GuidedScrambling::manufactureFeedback<unsigned char>(
+        const unsigned int method);
+template typename gr::gs::GuidedScrambling::Analyzer<unsigned short>::Feedback*
+gr::gs::GuidedScrambling::manufactureFeedback<unsigned short>(
+        const unsigned int method);
+template typename gr::gs::GuidedScrambling::Analyzer<unsigned int>::Feedback*
+gr::gs::GuidedScrambling::manufactureFeedback<unsigned int>(
+        const unsigned int method);
+template<typename Symbol>
+typename gr::gs::GuidedScrambling::Analyzer<Symbol>::Feedback*
 gr::gs::GuidedScrambling::manufactureFeedback(const unsigned int method)
 {
     switch(method)
     {
         case 0:
-            return new gr::gs::GuidedScrambling::MSW::Feedback;
+            return new typename
+                gr::gs::GuidedScrambling::MSW<Symbol>::Feedback;
         case 1:
-            return new gr::gs::GuidedScrambling::WRDS::Feedback;
+            return new typename
+                gr::gs::GuidedScrambling::WRDS<Symbol>::Feedback;
         case 2:
-            return new gr::gs::GuidedScrambling::MSW2::Feedback;
+            return new typename
+                gr::gs::GuidedScrambling::MSW2<Symbol>::Feedback;
         default:
             throw Exceptions::BadSelectionMethod();
     }

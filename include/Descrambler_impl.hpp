@@ -2,11 +2,11 @@
  * @file      Descrambler_impl.hpp
  * @brief     Declares the "Descrambler" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 19, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 19, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -45,10 +45,13 @@ namespace gr
         {
             //! Guided Scrambling "Descrambler" GNU Radio block implementation
             /*!
-             * @date   August 19, 2016
+             * @tparam Symbol Base type to use for symbol type. Can be unsigned
+             *                char, unsigned short, or unsigned int.
+             * @date   May 19, 2017
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
-            class Descrambler_impl: public Descrambler
+            template<typename Symbol>
+            class Descrambler_impl: public Descrambler<Symbol>
             {
             public:
                 //! Initialize the descrambler
@@ -65,7 +68,7 @@ namespace gr
                     const unsigned int codewordLength,
                     const unsigned int augmentingLength,
                     const bool continuous,
-                    const Word& multiplier,
+                    const std::vector<Symbol>& multiplier,
                     const std::string& framingTag);
 
                 //! No copying allowed
@@ -85,8 +88,8 @@ namespace gr
                 bool continuous() const;
                 void set_continuous(bool continuous);
 
-                const Word& multiplier() const;
-                void set_multiplier(const Word& multiplier);
+                const std::vector<Symbol>& multiplier() const;
+                void set_multiplier(const std::vector<Symbol>& multiplier);
 
                 const std::string& framingTag() const;
                 void set_framingTag(const std::string& tag);
@@ -103,10 +106,10 @@ namespace gr
                  *                   of this word \a must equal the codeword
                  *                   length.
                  */
-                void descramble(const Word& input);
+                void descramble(const std::vector<Symbol>& input);
 
-                const Word output() const;
-                const Word& product() const;
+                const std::vector<Symbol> output() const;
+                const std::vector<Symbol>& product() const;
 
                 //! GNU Radio work function
                 int general_work(int noutput_items,
@@ -125,19 +128,19 @@ namespace gr
                 mutable std::mutex m_mutex;
 
                 //! Buffer to store up input codeword
-                Word m_codeword;
+                std::vector<Symbol> m_codeword;
 
                 //! Codeword buffer write position
-                Word::iterator m_codewordIt;
+                typename std::vector<Symbol>::iterator m_codewordIt;
 
                 //! The actual product of multiplication
-                Word m_product;
+                std::vector<Symbol> m_product;
 
                 //! Output sourceword read position
-                Word::const_iterator m_productIt;
+                typename std::vector<Symbol>::const_iterator m_productIt;
 
                 //! The multiplication remainder
-                Word m_remainder;
+                std::vector<Symbol> m_remainder;
 
                 //! The codeword length
                 unsigned int m_codewordLength;
@@ -146,7 +149,7 @@ namespace gr
                 unsigned int m_augmentingLength;
 
                 //! The multiplier used to descramble
-                Word m_multiplier;
+                std::vector<Symbol> m_multiplier;
 
                 //! True if we're doing continuous multiplication
                 bool m_continuous;
@@ -165,10 +168,10 @@ namespace gr
 
                 //! The actual multiplying function to use
                 std::function<void(
-                    const Word&,
-                    const Word&,
-                    Word&,
-                    Word&,
+                    const std::vector<Symbol>&,
+                    const std::vector<Symbol>&,
+                    std::vector<Symbol>&,
+                    std::vector<Symbol>&,
                     bool)> m_multiply;
 
                 //! Setup the descrambler

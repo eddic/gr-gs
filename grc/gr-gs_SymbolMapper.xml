@@ -4,8 +4,28 @@
     <key>gr_gs_SymbolMapper</key>
     <category>[gr-gs]/Miscellaneous</category>
     <import>import gr_gs as gs</import>
-    <make>gs.SymbolMapper($constellation)</make>
+    <make>gs.SymbolMapper_$(symbolType.fcn)($constellation)</make>
     <callback>set_constellation($constellation)</callback>
+	<param>
+		<name>Symbol Type</name>
+		<key>symbolType</key>
+		<type>enum</type>
+		<option>
+			<name>Byte</name>
+			<key>byte</key>
+			<opt>fcn:bc</opt>
+		</option>
+		<option>
+			<name>Short</name>
+			<key>short</key>
+			<opt>fcn:sc</opt>
+		</option>
+		<option>
+			<name>Int</name>
+			<key>int</key>
+			<opt>fcn:ic</opt>
+		</option>
+	</param>
     <param>
         <name>Constellation</name>
         <key>constellation</key>
@@ -14,11 +34,11 @@
     </param>
     <sink>
         <name>in</name>
-        <type>@PYTHON_SYMBOL_TYPE@</type>
+        <type>$symbolType</type>
     </sink>
     <source>
         <name>out</name>
-        <type>@COMPLEX_TYPE@</type>
+        <type>complex</type>
     </source>
     <doc>This block generates a sequence of constellation points from a sequence of digital symbols.</doc>
 </block>

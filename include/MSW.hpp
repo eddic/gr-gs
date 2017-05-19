@@ -2,7 +2,7 @@
  * @file      MSW.hpp
  * @brief     Declares the gr::gs::GuidedScrambling::MSW class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 16, 2017
+ * @date      May 18, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -50,10 +50,13 @@ namespace gr
              *     DC-free multi-mode codes,” *IEEE Transactions on
              *     Communications*, vol. 45, no. 3, pp. 293-299, 1997.
              *
-             * @date   May 16, 2017
+             * @tparam Symbol Base type to use for symbol type. Can be unsigned
+             *                char, unsigned short, or unsigned int.
+             * @date   May 18, 2017
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
-            class MSW: public Analyzer
+            template<typename Symbol>
+            class MSW: public Analyzer<Symbol>
             {
             public:
                 //! %Feedback mechanism for %MSW codeword analysis
@@ -61,20 +64,20 @@ namespace gr
                  * Here is where we store and pass on the RDS (running digital
                  * sum) value remaining at the end of the analysis.
                  *
-                 * @date   May 16, 2017
+                 * @date   May 18, 2017
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
-                class Feedback: public Analyzer::Feedback
+                class Feedback: public Analyzer<Symbol>::Feedback
                 {
                 public:
                     //! Clone %MSW feedback data
                     /*!
                      * @return Pointer to dynamically allocated %MSW Feedback
                      *         copy.
-                     * @date   March 3, 2015
+                     * @date   May 18, 2017
                      * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                      */
-                    Analyzer::Feedback* clone() const;
+                    typename Analyzer<Symbol>::Feedback* clone() const;
 
                     Feedback();
 
@@ -95,12 +98,12 @@ namespace gr
                  * @param  [in] constellation This is a direct mapping of
                  *                            symbols (as vector indices) to
                  *                            constellation points.
-                 * @date   May 16, 2017
+                 * @date   May 18, 2017
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 void analyze(
-                        const Word& codeword,
-                        const Analyzer::Feedback& feedback,
+                        const std::vector<Symbol>& codeword,
+                        const typename Analyzer<Symbol>::Feedback& feedback,
                         const std::vector<Complex>& constellation);
 
                 //! Extract feedback from %MSW analysis
@@ -109,10 +112,10 @@ namespace gr
                  * call to the analyze() function.
                  *
                  * @return Constant reference to internal Feedback object.
-                 * @date   March 3, 2015
+                 * @date   May 18, 2017
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
-                const Analyzer::Feedback& feedback() const;
+                const typename Analyzer<Symbol>::Feedback& feedback() const;
 
                 //! Extract result from %MSW analysis
                 /*!
@@ -122,7 +125,7 @@ namespace gr
                  *
                  * @return Floating point representation of the codeword's %MSW
                  *         analysis. Lower is better.
-                 * @date   May 16, 2017
+                 * @date   May 18, 2017
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 double analysis() const;

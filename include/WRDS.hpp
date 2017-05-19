@@ -2,7 +2,7 @@
  * @file      WRDS.hpp
  * @brief     Declares the gr::gs::GuidedScrambling::WRDS class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 16, 2017
+ * @date      May 18, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -43,10 +43,13 @@ namespace gr
         {
             //! Performs %WRDS (word running digital sum) analysis of a codeword
             /*!
-             * @date    May 16, 2017
+             * @tparam Symbol Base type to use for symbol type. Can be unsigned
+             *                char, unsigned short, or unsigned int.
+             * @date    May 18, 2017
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
-            class WRDS: public Analyzer
+            template<typename Symbol>
+            class WRDS: public Analyzer<Symbol>
             {
             public:
                 //! %Feedback mechanism for %WRDS codeword analysis
@@ -54,20 +57,20 @@ namespace gr
                  * Here is where we store and pass on the RDS (running digital
                  * sum) value remaining at the end of the analysis.
                  *
-                 * @date May 16, 2017
+                 * @date May 18, 2017
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
-                class Feedback: public Analyzer::Feedback
+                class Feedback: public Analyzer<Symbol>::Feedback
                 {
                 public:
                     //! Clone %WRDS feedback data
                     /*!
                      * @return Pointer to dynamically allocated %WRDS Feedback
                      *         copy.
-                     * @date March 10, 2015
+                     * @date May 18, 2017
                      * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                      */
-                    Analyzer::Feedback* clone() const;
+                    typename Analyzer<Symbol>::Feedback* clone() const;
 
                     Feedback();
 
@@ -88,12 +91,10 @@ namespace gr
                  * @param [in] constellation This is a direct mapping of
                  *                             symbols (as vector indices) to
                  *                             constellation points.
-                 * @date May 16, 2017
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 void analyze(
-                        const Word& codeword,
-                        const Analyzer::Feedback& feedback,
+                        const std::vector<Symbol>& codeword,
+                        const typename Analyzer<Symbol>::Feedback& feedback,
                         const std::vector<Complex>& constellation);
 
                 //! Extract feedback from %WRDS analysis
@@ -102,10 +103,8 @@ namespace gr
                  * call to the analyze() function.
                  *
                  * @return Constant reference to internal Feedback object.
-                 * @date March 10, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
-                const Analyzer::Feedback& feedback() const;
+                const typename Analyzer<Symbol>::Feedback& feedback() const;
 
                 //! Extract result from %WRDS analysis
                 /*!
@@ -115,8 +114,6 @@ namespace gr
                  *
                  * @return Floating point representation of the codeword's %WRDS
                  *         analysis. Lower is better.
-                 * @date May 16, 2017
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 double analysis() const;
 

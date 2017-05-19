@@ -2,7 +2,7 @@
  * @file      Scrambler.hpp
  * @brief     Declares the gr::gs::GuidedScrambling::Scrambler class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 16, 2017
+ * @date      May 19, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -51,9 +51,12 @@ namespace gr
              * ScramblerGroup objects for the purpose of keeping them in
              * execution groups.
              *
-             * @date    May 16, 2017
+             * @tparam Symbol Base type to use for symbol type. Can be unsigned
+             *                char, unsigned short, or unsigned int.
+             * @date    May 19, 2017
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
+            template<typename Symbol>
             class Scrambler
             {
             public:
@@ -78,8 +81,6 @@ namespace gr
                  *                              divisor word minus one.
                  * @param  [in] method The desired analysis method to use.
                  * @param  [in] fieldSize Desired field size
-                 * @date   March 3, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 void configure(
                         const unsigned int length,
@@ -102,12 +103,10 @@ namespace gr
                  * @param  [in] input Input to be scrambled. The size of this
                  *                    word \a must equal length-augmentingLength
                  *                    (both set in configure()).
-                 * @date   March 3, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 void scramble(
-                        const Word& divider,
-                        const Word& input)
+                        const std::vector<Symbol>& divider,
+                        const std::vector<Symbol>& input)
                 {
                     std::copy(
                             input.begin(),
@@ -138,10 +137,8 @@ namespace gr
                  * @param  [in] remainder Input remainder word. The size of this
                  *                        word \a must equal remainderLength
                  *                        (set in configure()).
-                 * @date   March 3, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
-                void setRemainder(const Word& remainder)
+                void setRemainder(const std::vector<Symbol>& remainder)
                 {
                     if(&m_remainder != &remainder)
                         std::copy(
@@ -157,11 +154,8 @@ namespace gr
                  *
                  * Use this to see the resulting remainder from a scramble
                  * operation.
-                 *
-                 * @date    March 3, 2015
-                 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
-                const Word& remainder() const
+                const std::vector<Symbol>& remainder() const
                 {
                     return m_remainder;
                 }
@@ -172,11 +166,8 @@ namespace gr
                  * scramble() function.
                  *
                  * Use this to see the result of a call to scramble().
-                 *
-                 * @date    March 3, 2015
-                 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
-                const Word& output() const
+                const std::vector<Symbol>& output() const
                 {
                     return m_output;
                 }
@@ -189,11 +180,8 @@ namespace gr
                  * Use of this accessor is primarily for debug and purposes as
                  * it allows us to see the actual input word (including the
                  * augmenting portion) used in the last call to scramble().
-                 *
-                 * @date    March 3, 2015
-                 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
-                const Word& dividend() const
+                const std::vector<Symbol>& dividend() const
                 {
                     return m_dividend;
                 }
@@ -205,11 +193,9 @@ namespace gr
                  * @param  [in] constellation This is a direct mapping of
                  *                            symbols (as vector indices) to
                  *                            constellation points.
-                 * @date   May 16, 2017
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 void analyze(
-                        const Analyzer::Feedback& feedback,
+                        const typename Analyzer<Symbol>::Feedback& feedback,
                         const std::vector<Complex>& constellation)
                 {
                     m_analyzer->analyze(m_output, feedback, constellation);
@@ -221,10 +207,8 @@ namespace gr
                  * call to the analyze() function.
                  *
                  * @return Constant reference to Feedback object.
-                 * @date   March 3, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
-                const Analyzer::Feedback& feedback() const
+                const typename Analyzer<Symbol>::Feedback& feedback() const
                 {
                     return m_analyzer->feedback();
                 }
@@ -247,23 +231,23 @@ namespace gr
 
             protected:
                 //! Actual input to division operation
-                Word m_dividend;
+                std::vector<Symbol> m_dividend;
 
                 //! Output resulting from division operation
-                Word m_output;
+                std::vector<Symbol> m_output;
 
                 //! Remainder word used in division operation
-                Word m_remainder;
+                std::vector<Symbol> m_remainder;
 
                 //! Analyzer object
-                std::unique_ptr<Analyzer> m_analyzer;
+                std::unique_ptr<Analyzer<Symbol>> m_analyzer;
 
                 //! Divide function we'll be using
                 std::function<void(
-                        const Word& dividend,
-                        const Word& divider,
-                        Word& quotient,
-                        Word& remainder)> m_divide;
+                        const std::vector<Symbol>& dividend,
+                        const std::vector<Symbol>& divider,
+                        std::vector<Symbol>& quotient,
+                        std::vector<Symbol>& remainder)> m_divide;
             };
         }
     }

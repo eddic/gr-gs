@@ -2,7 +2,7 @@
  * @file      config.h
  * @brief     Defines some basic parameters for the module
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 16, 2017
+ * @date      May 19, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -56,16 +56,6 @@ namespace gr
         //! Get a default constellation pattern for a field size
         GS_API std::vector<Complex> defaultConstellation(
                 unsigned int fieldSize);
-
-        //! Type to use for representation of symbols
-        typedef @CXX_SYMBOL_TYPE@ Symbol;
-
-        //! Type to use for representation of a word of symbols
-        /*!
-         * In this context the '0' position represents the most significant
-         * symbol.
-         */
-        typedef std::vector<Symbol> Word;
 
         //! Stuff needed for the GuidedScrambler and Descrambler blocks
         namespace GuidedScrambling

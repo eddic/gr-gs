@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -25,6 +25,8 @@
 #include "GF4.hpp"
 #include "Words.hpp"
 
+typedef unsigned char Symbol;
+
 int main()
 {
     using namespace gr::gs;
@@ -36,7 +38,7 @@ int main()
     {
         std::cout.flush();
 
-        GuidedScrambler_impl scrambler(
+        GuidedScrambler_impl<Symbol> scrambler(
                 2,
                 12,
                 3,
@@ -47,7 +49,7 @@ int main()
                 "MSW",
                 "");
 
-        Descrambler_impl descrambler(
+        Descrambler_impl<Symbol> descrambler(
                 scrambler.fieldSize(),
                 scrambler.codewordLength(),
                 scrambler.augmentingLength(),
@@ -55,13 +57,12 @@ int main()
                 scrambler.divider(),
                 "");
 
-        Word input(scrambler.codewordLength()-scrambler.augmentingLength());
-        Words::randomize<GF2>(input);
+        std::vector<Symbol> input(scrambler.codewordLength()-scrambler.augmentingLength());
 
         for(unsigned int i=0; i<64; ++i)
         {
-            Words::randomize<GF2>(input);
-            const Word& output = scrambler.scramble(input);
+            Words::randomize<GF2<Symbol>>(input);
+            const std::vector<Symbol>& output = scrambler.scramble(input);
             descrambler.descramble(output);
             if(descrambler.output() != input)
             {
@@ -77,7 +78,7 @@ int main()
     {
         std::cout.flush();
 
-        GuidedScrambler_impl scrambler(
+        GuidedScrambler_impl<Symbol> scrambler(
                 2,
                 12,
                 3,
@@ -88,7 +89,7 @@ int main()
                 "MSW",
                 "");
 
-        Descrambler_impl descrambler(
+        Descrambler_impl<Symbol> descrambler(
                 scrambler.fieldSize(),
                 scrambler.codewordLength(),
                 scrambler.augmentingLength(),
@@ -96,13 +97,12 @@ int main()
                 scrambler.divider(),
                 "");
 
-        Word input(scrambler.codewordLength()-scrambler.augmentingLength());
-        Words::randomize<GF2>(input);
+        std::vector<Symbol> input(scrambler.codewordLength()-scrambler.augmentingLength());
 
         for(unsigned int i=0; i<64; ++i)
         {
-            Words::randomize<GF2>(input);
-            const Word& output = scrambler.scramble(input);
+            Words::randomize<GF2<Symbol>>(input);
+            const std::vector<Symbol>& output = scrambler.scramble(input);
             descrambler.descramble(output);
             if(descrambler.output() != input)
             {
@@ -118,7 +118,7 @@ int main()
     {
         std::cout.flush();
 
-        GuidedScrambler_impl scrambler(
+        GuidedScrambler_impl<Symbol> scrambler(
                 4,
                 12,
                 3,
@@ -129,7 +129,7 @@ int main()
                 "MSW",
                 "");
 
-        Descrambler_impl descrambler(
+        Descrambler_impl<Symbol> descrambler(
                 scrambler.fieldSize(),
                 scrambler.codewordLength(),
                 scrambler.augmentingLength(),
@@ -137,13 +137,12 @@ int main()
                 scrambler.divider(),
                 "");
 
-        Word input(scrambler.codewordLength()-scrambler.augmentingLength());
-        Words::randomize<GF4>(input);
+        std::vector<Symbol> input(scrambler.codewordLength()-scrambler.augmentingLength());
 
         for(unsigned int i=0; i<64; ++i)
         {
-            Words::randomize<GF4>(input);
-            const Word& output = scrambler.scramble(input);
+            Words::randomize<GF4<Symbol>>(input);
+            const std::vector<Symbol>& output = scrambler.scramble(input);
             descrambler.descramble(output);
             if(descrambler.output() != input)
             {
@@ -159,7 +158,7 @@ int main()
     {
         std::cout.flush();
 
-        GuidedScrambler_impl scrambler(
+        GuidedScrambler_impl<Symbol> scrambler(
                 4,
                 12,
                 3,
@@ -170,7 +169,7 @@ int main()
                 "MSW",
                 "");
 
-        Descrambler_impl descrambler(
+        Descrambler_impl<Symbol> descrambler(
                 scrambler.fieldSize(),
                 scrambler.codewordLength(),
                 scrambler.augmentingLength(),
@@ -178,13 +177,12 @@ int main()
                 scrambler.divider(),
                 "");
 
-        Word input(scrambler.codewordLength()-scrambler.augmentingLength());
-        Words::randomize<GF4>(input);
+        std::vector<Symbol> input(scrambler.codewordLength()-scrambler.augmentingLength());
 
         for(unsigned int i=0; i<64; ++i)
         {
-            Words::randomize<GF4>(input);
-            const Word& output = scrambler.scramble(input);
+            Words::randomize<GF4<Symbol>>(input);
+            const std::vector<Symbol>& output = scrambler.scramble(input);
             descrambler.descramble(output);
             if(descrambler.output() != input)
             {

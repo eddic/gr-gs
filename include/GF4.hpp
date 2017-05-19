@@ -2,11 +2,11 @@
  * @file      GF4.hpp
  * @brief     Declares the gr::gs::GuidedScrambling::GF4 class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 8, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 18, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -51,20 +51,23 @@ namespace gr
              * actually represent valid symbols. Should they not, the behaviour
              * is undefined.
              *
-             * @date   March 3, 2015
+             * @tparam T Base type to use for symbol type. Can be unsigned char,
+             *           unsigned short, or unsigned int.
+             * @date   May 18, 2017
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
+            template<typename T>
             class GF4
             {
             public:
+                typedef T Symbol;
+
                 //! Size of symbol
                 static const unsigned int fieldSize=4;
 
                 //! Initialize symbol from it's integer representation
                 /*!
                  * @param  [in] x Source integer.
-                 * @date   March 3, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 GF4(const Symbol x):
                     m_data(x)
@@ -74,8 +77,6 @@ namespace gr
                 /*!
                  * @param  [in] x Right hand summand.
                  * @return Galois Field (4) sum of *this and argument.
-                 * @date   March 3, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 GF4 operator+(const GF4 x) const
                 {
@@ -93,8 +94,6 @@ namespace gr
                 /*!
                  * @param  [in] x Subtrahend in subtraction operation.
                  * @return Galois Field (4) difference of *this and the argument
-                 * @date   March 3, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 GF4 operator-(const GF4 x) const
                 {
@@ -104,8 +103,6 @@ namespace gr
                 //! Perform Galois Field (4) negation
                 /*!
                  * @return The Galois Field (4) additive inverse of *this
-                 * @date   March 3, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 GF4 operator-() const
                 {
@@ -116,8 +113,6 @@ namespace gr
                 /*!
                  * @param  [in] x Multiplier in multiplication operation.
                  * @return Galois Field (4) product of *this and the argument
-                 * @date   March 3, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 GF4 operator*(const GF4 x) const
                 {
@@ -135,8 +130,6 @@ namespace gr
                 /*!
                  * @param  [in] x Divider in division operation.
                  * @return Galois Field (4) quotient of *this and the argument
-                 * @date   March 3, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 GF4 operator/(const GF4 x) const
                 {
@@ -158,8 +151,6 @@ namespace gr
                  * intended entirely for debug and testing purposes.
                  *
                  * @return Randomly generated Galois Field (4) symbol.
-                 * @date   March 3, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 static GF4 random()
                 {
@@ -173,8 +164,6 @@ namespace gr
                 //! Access internal Symbol
                 /*!
                  * @return Internal Symbol
-                 * @date   March 3, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 operator Symbol() const
                 {

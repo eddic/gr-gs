@@ -2,11 +2,11 @@
  * @file      Scrambler.cpp
  * @brief     Defines the gr::gs::GuidedScrambling::Scrambler class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 21, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 19, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -28,7 +28,9 @@
 #include "Scrambler.hpp"
 #include "Words.hpp"
 
-void gr::gs::GuidedScrambling::Scrambler::configure(
+
+template<typename Symbol>
+void gr::gs::GuidedScrambling::Scrambler<Symbol>::configure(
         const unsigned int length,
         unsigned int index,
         const unsigned int augmentingLength,
@@ -40,8 +42,8 @@ void gr::gs::GuidedScrambling::Scrambler::configure(
     m_output.resize(length);
     m_remainder.resize(remainderLength);
     std::fill(m_remainder.begin(), m_remainder.end(), 0);
-    m_analyzer.reset(manufactureAnalyzer(method));
-    m_divide = Words::getDivide(fieldSize);
+    m_analyzer.reset(manufactureAnalyzer<Symbol>(method));
+    m_divide = Words::getDivide<Symbol>(fieldSize);
 
     for(int i=augmentingLength-1; i>=0; --i)
     {
@@ -49,3 +51,7 @@ void gr::gs::GuidedScrambling::Scrambler::configure(
         index /= fieldSize;
     }
 }
+
+template class gr::gs::GuidedScrambling::Scrambler<unsigned char>;
+template class gr::gs::GuidedScrambling::Scrambler<unsigned short>;
+template class gr::gs::GuidedScrambling::Scrambler<unsigned int>;

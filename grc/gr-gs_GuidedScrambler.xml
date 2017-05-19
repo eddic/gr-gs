@@ -4,7 +4,7 @@
     <key>gr_gs_GuidedScrambler</key>
     <category>[gr-gs]/Guided Scrambling</category>
     <import>import gr_gs as gs</import>
-    <make>gs.GuidedScrambler($fieldSize, $codewordLength, $augmentingLength, $continuous, $divider, $threads, $constellation, $selectionMethod, $framingTag)</make>
+    <make>gs.GuidedScrambler_$(symbolType.fcn)($fieldSize, $codewordLength, $augmentingLength, $continuous, $divider, $threads, $constellation, $selectionMethod, $framingTag)</make>
     <callback>set_fieldSize($fieldSize)</callback>
     <callback>set_codewordLength($codewordLength)</callback>
     <callback>set_augmentingLength($augmentingLength)</callback>
@@ -14,6 +14,26 @@
     <callback>set_constellation($constellation)</callback>
     <callback>set_selectionMethod($selectionMethod)</callback>
     <callback>set_framingTag($framingTag)</callback>
+	<param>
+		<name>Symbol Type</name>
+		<key>symbolType</key>
+		<type>enum</type>
+		<option>
+			<name>Byte</name>
+			<key>byte</key>
+			<opt>fcn:bb</opt>
+		</option>
+		<option>
+			<name>Short</name>
+			<key>short</key>
+			<opt>fcn:ss</opt>
+		</option>
+		<option>
+			<name>Int</name>
+			<key>int</key>
+			<opt>fcn:ii</opt>
+		</option>
+	</param>
     <param>
         <name>Field Size</name>
         <key>fieldSize</key>
@@ -100,10 +120,10 @@
     </param>
     <sink>
         <name>in</name>
-        <type>@PYTHON_SYMBOL_TYPE@</type>
+        <type>$symbolType</type>
     </sink>
     <source>
         <name>out</name>
-        <type>@PYTHON_SYMBOL_TYPE@</type>
+        <type>$symbolType</type>
     </source>
 </block>

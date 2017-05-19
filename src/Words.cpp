@@ -2,7 +2,7 @@
  * @file      Words.cpp
  * @brief     Defines the gr::gs::GuidedScrambling::Words namespace.
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 16, 2017
+ * @date      May 18, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -83,14 +83,14 @@ std::vector<gr::gs::Complex> gr::gs::defaultConstellation(
 
 template<typename Field>
 void gr::gs::GuidedScrambling::Words::divide(
-        const Word& dividend,
-        const Word& divider,
-        Word& quotient,
-        Word& remainder)
+        const std::vector<typename Field::Symbol>& dividend,
+        const std::vector<typename Field::Symbol>& divider,
+        std::vector<typename Field::Symbol>& quotient,
+        std::vector<typename Field::Symbol>& remainder)
 {
     for(unsigned int i=0; i<quotient.size(); ++i)
     {
-        Symbol& output=quotient[i];
+        typename Field::Symbol& output=quotient[i];
         output =
             (
                 Field(dividend[i])+Field(remainder.front())
@@ -105,14 +105,14 @@ void gr::gs::GuidedScrambling::Words::divide(
 
 template<typename Field>
 void gr::gs::GuidedScrambling::Words::delayedDivide(
-        const Word& dividend,
-        const Word& divider,
-        Word& quotient,
-        Word& remainder)
+        const std::vector<typename Field::Symbol>& dividend,
+        const std::vector<typename Field::Symbol>& divider,
+        std::vector<typename Field::Symbol>& quotient,
+        std::vector<typename Field::Symbol>& remainder)
 {
     for(unsigned int i=0; i<quotient.size(); ++i)
     {
-        Symbol& output=quotient[i];
+        typename Field::Symbol& output=quotient[i];
         output = Field(remainder.front())/Field(divider.front());
 
         for(unsigned int j=1; j<remainder.size(); ++j)
@@ -124,28 +124,54 @@ void gr::gs::GuidedScrambling::Words::delayedDivide(
     }
 }
 
+template
 std::function<void(
-    const gr::gs::Word& dividend,
-    const gr::gs::Word& divider,
-    gr::gs::Word& quotient,
-    gr::gs::Word& remainder)>
-gr::gs::GuidedScrambling::Words::getDivide(unsigned fieldSize, bool delayed)
+    const std::vector<unsigned char>& dividend,
+    const std::vector<unsigned char>& divider,
+    std::vector<unsigned char>& quotient,
+    std::vector<unsigned char>& remainder)>
+gr::gs::GuidedScrambling::Words::getDivide<unsigned char>(
+        unsigned fieldSize,
+        bool delayed);
+template
+std::function<void(
+    const std::vector<unsigned short>& dividend,
+    const std::vector<unsigned short>& divider,
+    std::vector<unsigned short>& quotient,
+    std::vector<unsigned short>& remainder)>
+gr::gs::GuidedScrambling::Words::getDivide<unsigned short>(
+        unsigned fieldSize,
+        bool delayed);
+template
+std::function<void(
+    const std::vector<unsigned int>& dividend,
+    const std::vector<unsigned int>& divider,
+    std::vector<unsigned int>& quotient,
+    std::vector<unsigned int>& remainder)>
+gr::gs::GuidedScrambling::Words::getDivide<unsigned int>(
+        unsigned fieldSize,
+        bool delayed);
+template<typename Symbol>
+std::function<void(
+    const std::vector<Symbol>& dividend,
+    const std::vector<Symbol>& divider,
+    std::vector<Symbol>& quotient,
+    std::vector<Symbol>& remainder)>
+gr::gs::GuidedScrambling::Words::getDivide(
+        unsigned fieldSize,
+        bool delayed)
 {
     if(delayed)
         switch(fieldSize)
         {
             case 2:
-                return Words::delayedDivide<GF2>;
-                break;
+                return Words::delayedDivide<GF2<Symbol>>;
             case 4:
-                return Words::delayedDivide<GF4>;
-                break;
+                return Words::delayedDivide<GF4<Symbol>>;
             case 8:
-                return Words::delayedDivide<GF8>;
-                break;
+                return Words::delayedDivide<GF8<Symbol>>;
             case 16:
-                return Words::delayedDivide<GF16>;
-                break;
+                return Words::delayedDivide<GF16<Symbol>>;
             default:
                 throw Exceptions::BadFieldSize();
         }
@@ -153,17 +179,13 @@ gr::gs::GuidedScrambling::Words::getDivide(unsigned fieldSize, bool delayed)
         switch(fieldSize)
         {
             case 2:
-                return Words::divide<GF2>;
-                break;
+                return Words::divide<GF2<Symbol>>;
             case 4:
-                return Words::divide<GF4>;
-                break;
+                return Words::divide<GF4<Symbol>>;
             case 8:
-                return Words::divide<GF8>;
-                break;
+                return Words::divide<GF8<Symbol>>;
             case 16:
-                return Words::divide<GF16>;
-                break;
+                return Words::divide<GF16<Symbol>>;
             default:
                 throw Exceptions::BadFieldSize();
         }
@@ -171,10 +193,10 @@ gr::gs::GuidedScrambling::Words::getDivide(unsigned fieldSize, bool delayed)
 
 template<typename Field>
 void gr::gs::GuidedScrambling::Words::multiply(
-        const Word& multiplicand,
-        const Word& multiplier,
-        Word& product,
-        Word& remainder,
+        const std::vector<typename Field::Symbol>& multiplicand,
+        const std::vector<typename Field::Symbol>& multiplier,
+        std::vector<typename Field::Symbol>& product,
+        std::vector<typename Field::Symbol>& remainder,
         bool continuous)
 {
     std::fill(product.begin(), product.end(), 0);
@@ -182,11 +204,11 @@ void gr::gs::GuidedScrambling::Words::multiply(
     const unsigned int remainderSize=remainder.size();
     for(unsigned int i=0; i<productSize; ++i)
     {
-        Symbol& output=product[i];
+        typename Field::Symbol& output=product[i];
         for(unsigned int j=0; j<=remainderSize; ++j)
         {
             const unsigned int ijSum = i+j;
-            const Symbol& input =
+            const typename Field::Symbol& input =
                 (ijSum<remainderSize)?
                 remainder[ijSum]
                 :multiplicand[ijSum-remainderSize];
@@ -201,28 +223,52 @@ void gr::gs::GuidedScrambling::Words::multiply(
                 remainder.begin());
 }
 
+template
 std::function<void(
-    const gr::gs::Word&,
-    const gr::gs::Word&,
-    gr::gs::Word&,
-    gr::gs::Word&,
+    const std::vector<unsigned char>&,
+    const std::vector<unsigned char>&,
+    std::vector<unsigned char>&,
+    std::vector<unsigned char>&,
+    bool)>
+gr::gs::GuidedScrambling::Words::getMultiply<unsigned char>(
+        unsigned fieldSize);
+template
+std::function<void(
+    const std::vector<unsigned short>&,
+    const std::vector<unsigned short>&,
+    std::vector<unsigned short>&,
+    std::vector<unsigned short>&,
+    bool)>
+gr::gs::GuidedScrambling::Words::getMultiply<unsigned short>(
+        unsigned fieldSize);
+template
+std::function<void(
+    const std::vector<unsigned int>&,
+    const std::vector<unsigned int>&,
+    std::vector<unsigned int>&,
+    std::vector<unsigned int>&,
+    bool)>
+gr::gs::GuidedScrambling::Words::getMultiply<unsigned int>(
+        unsigned fieldSize);
+template<typename Symbol>
+std::function<void(
+    const std::vector<Symbol>&,
+    const std::vector<Symbol>&,
+    std::vector<Symbol>&,
+    std::vector<Symbol>&,
     bool)>
 gr::gs::GuidedScrambling::Words::getMultiply(unsigned fieldSize)
 {
     switch(fieldSize)
     {
         case 2:
-            return Words::multiply<GF2>;
-            break;
+            return Words::multiply<GF2<Symbol>>;
         case 4:
-            return Words::multiply<GF4>;
-            break;
+            return Words::multiply<GF4<Symbol>>;
         case 8:
-            return Words::multiply<GF8>;
-            break;
+            return Words::multiply<GF8<Symbol>>;
         case 16:
-            return Words::multiply<GF16>;
-            break;
+            return Words::multiply<GF16<Symbol>>;
         default:
             throw Exceptions::BadFieldSize();
     }

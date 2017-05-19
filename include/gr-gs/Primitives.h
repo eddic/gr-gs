@@ -2,11 +2,11 @@
  * @file      Primitives.h
  * @brief     Declares the gr::gs::Primitives namespace.
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 23, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 19, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -40,72 +40,35 @@ namespace gr
     namespace gs
     {
         //! Tools for finding primitive polynomials
-        /*!
-         * @date   August 23, 2016
-         * @author Eddie Carle &lt;eddie@isatec.ca&gt;
-         */
         namespace Primitives
         {
-            struct Irreducible
-            {
-                Word word;
-                bool primitive;
-            };
-
-            //! Comparison class needed for words
-            struct IrreducibleLess
-            {
-                bool operator()(
-                        const Irreducible& x,
-                        const Irreducible& y) const
-                {
-                    if(x.word.size() == y.word.size())
-                    {
-                        for(
-                                Word::const_iterator
-                                    i = x.word.cbegin(),
-                                    j = y.word.cbegin();
-                                i != x.word.cend();
-                                ++i, ++j)
-                            if(*i < *j)
-                                return true;
-                    }
-                    else
-                        return x.word.size() < y.word.size();
-                    return false;
-                }
-
-                bool operator()(
-                        const Irreducible& polynomial,
-                        const unsigned length) const
-                {
-                    return polynomial.word.size() < length;
-                }
-
-                bool operator()(
-                        const unsigned length,
-                        const Irreducible& polynomial) const
-                {
-                    return length < polynomial.word.size();
-                }
-            };
-
-            //! An ordered set for words
-            typedef std::vector<Irreducible> Irreducibles;
-
-            //! Populate a set of irreducibles
-            GS_API void populateIrreducibles(
+            //! Get a set of primitives of a specific length with 1-byte symbols
+            GS_API std::vector<std::vector<unsigned char>> findPrimitives_b(
                     const unsigned fieldSize,
-                    const unsigned length,
-                    Irreducibles& irreducibles);
+                    const unsigned length);
 
-            //! Find a set of primitives of a specific length
-            GS_API std::vector<Word> findPrimitives(
+            //! Get a set of primitives of a specific length with 2-byte symbols
+            GS_API std::vector<std::vector<unsigned short>> findPrimitives_s(
+                    const unsigned fieldSize,
+                    const unsigned length);
+
+            //! Get a set of primitives of a specific length with 4-byte symbols
+            GS_API std::vector<std::vector<unsigned int>> findPrimitives_i(
                     const unsigned fieldSize,
                     const unsigned length);
 
             //! Find a primitive of a specific length with the least terms
-            GS_API Word findPrimitive(
+            GS_API std::vector<unsigned char> findPrimitive_b(
+                    const unsigned fieldSize,
+                    const unsigned length);
+
+            //! Find a primitive of a specific length with the least terms
+            GS_API std::vector<unsigned short> findPrimitive_s(
+                    const unsigned fieldSize,
+                    const unsigned length);
+
+            //! Find a primitive of a specific length with the least terms
+            GS_API std::vector<unsigned int> findPrimitive_i(
                     const unsigned fieldSize,
                     const unsigned length);
         }

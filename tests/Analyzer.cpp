@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -25,6 +25,8 @@
 #include "GF2.hpp"
 #include "GF4.hpp"
 
+typedef unsigned char Symbol;
+
 int main()
 {
     using namespace gr::gs;
@@ -36,9 +38,9 @@ int main()
     {
         std::cout.flush();
 
-        const Word codeword{1,1,0,1,0,1,1,1,0,1,0,0,1,1,1,1,1,1,0};
+        const std::vector<Symbol> codeword{1,1,0,1,0,1,1,1,0,1,0,0,1,1,1,1,1,1,0};
 
-        std::unique_ptr<Analyzer> analyzer(manufactureAnalyzer(0));
+        std::unique_ptr<Analyzer<Symbol>> analyzer(manufactureAnalyzer<Symbol>(0));
         analyzer->analyze(codeword, analyzer->feedback(), defaultConstellation(2));
 
         if(analyzer->analysis() != 481)
@@ -54,8 +56,8 @@ int main()
     {
         std::cout.flush();
 
-        const Word codeword{3,1,1,1,0,0,1,1,3,2,2,3,3,3,1,1,2,3,3,1,0,2,3};
-        std::unique_ptr<Analyzer> analyzer(manufactureAnalyzer(0));
+        const std::vector<Symbol> codeword{3,1,1,1,0,0,1,1,3,2,2,3,3,3,1,1,2,3,3,1,0,2,3};
+        std::unique_ptr<Analyzer<Symbol>> analyzer(manufactureAnalyzer<Symbol>(0));
         analyzer->analyze(codeword, analyzer->feedback(), defaultConstellation(4));
 
         if(analyzer->analysis() != 429)

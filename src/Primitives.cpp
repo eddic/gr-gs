@@ -2,11 +2,11 @@
  * @file      Primitives.cpp
  * @brief     Declares the gr::gs::Primitives namespace.
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 23, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 19, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -31,42 +31,139 @@
 #include "Words.hpp"
 
 #include <algorithm>
-#include <iostream>
 #include <cmath>
 
+//! GNU Radio Namespace
+namespace gr
+{
+    //! Contains all blocks for the Guided Scrambling GNU Radio Module
+    namespace gs
+    {
+        //! Tools for finding primitive polynomials
+        namespace Primitives
+        {
+            template<typename Symbol>
+            struct Irreducible
+            {
+                std::vector<Symbol> word;
+                bool primitive;
+            };
+
+            //! An ordered set for words
+            template<typename Symbol> using Irreducibles
+                = std::vector<Irreducible<Symbol>>;
+
+            //! Populate a set of irreducibles with 1-byte symbols
+            GS_API void populateIrreducibles_b(
+                    const unsigned fieldSize,
+                    const unsigned length,
+                    Irreducibles<unsigned char>& irreducibles);
+
+            //! Populate a set of irreducibles with 2-byte symbols
+            GS_API void populateIrreducibles_s(
+                    const unsigned fieldSize,
+                    const unsigned length,
+                    Irreducibles<unsigned short>& irreducibles);
+
+            //! Populate a set of irreducibles with 4-byte symbols
+            GS_API void populateIrreducibles_i(
+                    const unsigned fieldSize,
+                    const unsigned length,
+                    Irreducibles<unsigned int>& irreducibles);
+
+            //! Comparison class needed for words
+            template<typename Symbol>
+            struct IrreducibleLess
+            {
+                bool operator()(
+                        const Irreducible<Symbol>& x,
+                        const Irreducible<Symbol>& y) const
+                {
+                    if(x.word.size() == y.word.size())
+                    {
+                        for(
+                                typename std::vector<Symbol>::const_iterator
+                                    i = x.word.cbegin(),
+                                    j = y.word.cbegin();
+                                i != x.word.cend();
+                                ++i, ++j)
+                            if(*i < *j)
+                                return true;
+                    }
+                    else
+                        return x.word.size() < y.word.size();
+                    return false;
+                }
+
+                bool operator()(
+                        const Irreducible<Symbol>& polynomial,
+                        const unsigned length) const
+                {
+                    return polynomial.word.size() < length;
+                }
+
+                bool operator()(
+                        const unsigned length,
+                        const Irreducible<Symbol>& polynomial) const
+                {
+                    return length < polynomial.word.size();
+                }
+            };
+
+            //! Populate a set of irreducibles
+            template<typename Symbol>
+            inline void populateIrreducibles(
+                    const unsigned fieldSize,
+                    const unsigned length,
+                    Irreducibles<Symbol>& irreducibles);
+
+            //! Find a set of primitives of a specific length
+            template<typename Symbol>
+            inline std::vector<std::vector<Symbol>> findPrimitives(
+                    const unsigned fieldSize,
+                    const unsigned length);
+
+            //! Find a primitive of a specific length with the least terms
+            template<typename Symbol>
+            inline std::vector<Symbol> findPrimitive(
+                    const unsigned fieldSize,
+                    const unsigned length);
+        }
+    }
+}
+
+template<typename Symbol>
 void gr::gs::Primitives::populateIrreducibles(
         const unsigned fieldSize,
         const unsigned length,
-        Irreducibles& irreducibles)
+        Irreducibles<Symbol>& irreducibles)
 {
-    //using namespace GuidedScrambling::Words;
     const std::function<void(
-            const Word& dividend,
-            const Word& divider,
-            Word& quotient,
-            Word& remainder)> divide
-        = GuidedScrambling::Words::getDivide(fieldSize, true);
+            const std::vector<Symbol>& dividend,
+            const std::vector<Symbol>& divider,
+            std::vector<Symbol>& quotient,
+            std::vector<Symbol>& remainder)> divide
+        = GuidedScrambling::Words::getDivide<Symbol>(fieldSize, true);
 
     const unsigned startingLength
         = irreducibles.empty()?2:irreducibles.crbegin()->word.size()+1;
 
     for(unsigned i=startingLength; i<=length; ++i)
     {
-        Irreducibles newIrreducibles;
+        Irreducibles<Symbol> newIrreducibles;
 
-        Word polynomial(i, 0);
+        std::vector<Symbol> polynomial(i, 0);
         polynomial.front() = 1;
 
-        Word quotient(i, 0);
+        std::vector<Symbol> quotient(i, 0);
 
         while(polynomial.front() != 0)
         {
-            //std::cout << "Trying " << to_string(polynomial);
             // Try dividing all the lesser degree irreducibles
             bool foundFactor = false;
             for(const auto& divider: irreducibles)
             {
-                Word remainder(divider.word.size()-1, 0);
+                std::vector<Symbol> remainder(divider.word.size()-1, 0);
                 divide(
                         polynomial,
                         divider.word,
@@ -77,7 +174,6 @@ void gr::gs::Primitives::populateIrreducibles(
                             remainder.cend(),
                             [](const Symbol& x) { return x==0; }))
                 {
-                    //std::cout << " but found factor " << to_string(divider.word) << " with quotient " << to_string(quotient) << std::endl;;
                     foundFactor = true;
                     break;
                 }
@@ -85,18 +181,17 @@ void gr::gs::Primitives::populateIrreducibles(
 
             if(!foundFactor)
             {
-                //std::cout << " and it is irreducible";
                 // It's irreducible, but is it primitive?
                 bool isPrimitive = true;
                 unsigned maxDegree = fieldSize;
                 for(unsigned j=2; j<polynomial.size(); ++j)
                     maxDegree *= fieldSize;
 
-                Word quotient(maxDegree);
-                Word dividend(maxDegree);
+                std::vector<Symbol> quotient(maxDegree);
+                std::vector<Symbol> dividend(maxDegree);
                 dividend.front()=1;
                 dividend.back()=1;
-                Word remainder(polynomial.size()-1, 0);
+                std::vector<Symbol> remainder(polynomial.size()-1, 0);
                 divide(
                         dividend,
                         polynomial,
@@ -126,7 +221,6 @@ void gr::gs::Primitives::populateIrreducibles(
                                         remainder.cend(),
                                         [](const Symbol& x) { return x==0; }))
                             {
-                                //std::cout << " but a factor of " << to_string(dividend) << std::endl;
                                 isPrimitive = false;
                                 break;
                             }
@@ -134,14 +228,10 @@ void gr::gs::Primitives::populateIrreducibles(
                 }
                 else
                 {
-                    //std::cout << " but not a factor of " << to_string(dividend) << std::endl;
                     isPrimitive = false;
                 }
 
-                //if(isPrimitive)
-                //    std::cout << " and primitive." << std::endl;
-
-                Irreducible newIrreducible;
+                Irreducible<Symbol> newIrreducible;
                 newIrreducible.word = polynomial;
                 newIrreducible.primitive = isPrimitive;
                 newIrreducibles.push_back(std::move(newIrreducible));
@@ -169,20 +259,45 @@ void gr::gs::Primitives::populateIrreducibles(
     }
 }
 
-std::vector<gr::gs::Word> gr::gs::Primitives::findPrimitives(
+void gr::gs::Primitives::populateIrreducibles_b(
+        const unsigned fieldSize,
+        const unsigned length,
+        Irreducibles<unsigned char>& irreducibles)
+{
+    populateIrreducibles<unsigned char>(fieldSize, length, irreducibles);
+}
+
+void gr::gs::Primitives::populateIrreducibles_s(
+        const unsigned fieldSize,
+        const unsigned length,
+        Irreducibles<unsigned short>& irreducibles)
+{
+    populateIrreducibles<unsigned short>(fieldSize, length, irreducibles);
+}
+
+void gr::gs::Primitives::populateIrreducibles_i(
+        const unsigned fieldSize,
+        const unsigned length,
+        Irreducibles<unsigned int>& irreducibles)
+{
+    populateIrreducibles<unsigned int>(fieldSize, length, irreducibles);
+}
+
+template<typename Symbol>
+std::vector<std::vector<Symbol>> gr::gs::Primitives::findPrimitives(
         const unsigned fieldSize,
         const unsigned length)
 {
-    Irreducibles irreducibles;
+    Irreducibles<Symbol> irreducibles;
     populateIrreducibles(fieldSize, length, irreducibles);
 
     auto range = std::equal_range(
             irreducibles.cbegin(),
             irreducibles.cend(),
             length,
-            IrreducibleLess());
+            IrreducibleLess<Symbol>());
 
-    std::vector<Word> subset;
+    std::vector<std::vector<Symbol>> subset;
     subset.reserve(range.second-range.first);
     for(auto irreducible=range.first; irreducible!=range.second; ++irreducible)
         if(irreducible->primitive)
@@ -191,18 +306,40 @@ std::vector<gr::gs::Word> gr::gs::Primitives::findPrimitives(
     return subset;
 }
 
-gr::gs::Word gr::gs::Primitives::findPrimitive(
+std::vector<std::vector<unsigned char>> gr::gs::Primitives::findPrimitives_b(
         const unsigned fieldSize,
         const unsigned length)
 {
-    Irreducibles irreducibles;
+    return findPrimitives<unsigned char>(fieldSize, length);
+}
+
+std::vector<std::vector<unsigned short>> gr::gs::Primitives::findPrimitives_s(
+        const unsigned fieldSize,
+        const unsigned length)
+{
+    return findPrimitives<unsigned short>(fieldSize, length);
+}
+
+std::vector<std::vector<unsigned int>> gr::gs::Primitives::findPrimitives_i(
+        const unsigned fieldSize,
+        const unsigned length)
+{
+    return findPrimitives<unsigned int>(fieldSize, length);
+}
+
+template<typename Symbol>
+std::vector<Symbol> gr::gs::Primitives::findPrimitive(
+        const unsigned fieldSize,
+        const unsigned length)
+{
+    Irreducibles<Symbol> irreducibles;
     populateIrreducibles(fieldSize, length, irreducibles);
 
     auto range = std::equal_range(
             irreducibles.cbegin(),
             irreducibles.cend(),
             length,
-            IrreducibleLess());
+            IrreducibleLess<Symbol>());
 
     auto primitive=range.second;
     unsigned leastTerms=0xffffffffU;
@@ -225,5 +362,26 @@ gr::gs::Word gr::gs::Primitives::findPrimitive(
     if(primitive != range.second)
         return std::move(primitive->word);
     else
-        return Word();
+        return std::vector<Symbol>();
+}
+
+std::vector<unsigned char> gr::gs::Primitives::findPrimitive_b(
+        const unsigned fieldSize,
+        const unsigned length)
+{
+    return findPrimitive<unsigned char>(fieldSize, length);
+}
+
+std::vector<unsigned short> gr::gs::Primitives::findPrimitive_s(
+        const unsigned fieldSize,
+        const unsigned length)
+{
+    return findPrimitive<unsigned short>(fieldSize, length);
+}
+
+std::vector<unsigned int> gr::gs::Primitives::findPrimitive_i(
+        const unsigned fieldSize,
+        const unsigned length)
+{
+    return findPrimitive<unsigned int>(fieldSize, length);
 }

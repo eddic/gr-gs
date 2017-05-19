@@ -2,7 +2,7 @@
  * @file      GuidedScrambler.h
  * @brief     Declares the "Guided Scrambler" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 16, 2017
+ * @date      May 18, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -53,9 +53,12 @@ namespace gr
          *     through guided scrambling,” *IET Communications*, vol. 9, no. 11,
          *     pp. 1404-1411, July 2015.
          *
-         * @date   May 16, 2017
+         * @tparam Symbol Base type to use for symbol type. Can be unsigned
+         *                char, unsigned short, or unsigned int.
+         * @date   May 18, 2017
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
+        template<typename Symbol>
         class GS_API GuidedScrambler: virtual public gr::block
         {
         public:
@@ -150,13 +153,13 @@ namespace gr
             /*!
              * @return Divider word (polynomial)
              */
-            virtual const Word& divider() const =0;
+            virtual const std::vector<Symbol>& divider() const =0;
 
             //! Set divider word
             /*!
              * @param  [in] divider Desired divider word (polynomial)
              */
-            virtual void set_divider(const Word& divider) =0;
+            virtual void set_divider(const std::vector<Symbol>& divider) =0;
 
             //! Access number of concurrent scrambling threads
             /*!
@@ -214,13 +217,17 @@ namespace gr
                     const unsigned int codewordLength = 12,
                     const unsigned int augmentingLength = 3,
                     const bool continuous = true,
-                    const Word& divider = {1,0,0,1},
+                    const std::vector<Symbol>& divider = {1,0,0,1},
                     const unsigned int threads = 0,
                     const std::vector<Complex>& constellation =
                         gr::gs::defaultConstellation(4),
                     const std::string& selectionMethod = "MSW",
                     const std::string& framingTag = "");
         };
+
+        typedef GuidedScrambler<unsigned char> GuidedScrambler_bb;
+        typedef GuidedScrambler<unsigned short> GuidedScrambler_ss;
+        typedef GuidedScrambler<unsigned int> GuidedScrambler_ii;
     }
 }
 

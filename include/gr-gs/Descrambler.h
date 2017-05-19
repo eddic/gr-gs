@@ -2,11 +2,11 @@
  * @file      Descrambler.h
  * @brief     Declares the "Descrambler" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 19, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 19, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -52,9 +52,12 @@ namespace gr
          *     Transaction on Communications*, vol. 39, no. 2, pp. 289-297,
          *     February 1991.
          *
-         * @date   August 19, 2016
+         * @tparam Symbol Base type to use for symbol type. Can be unsigned
+         *                char, unsigned short, or unsigned int.
+         * @date   May 19, 2017
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
+        template<typename Symbol>
         class GS_API Descrambler: virtual public gr::block
         {
         public:
@@ -116,14 +119,14 @@ namespace gr
             /*!
              * @return Multiplier word (polynomial)
              */
-            virtual const Word& multiplier() const =0;
+            virtual const std::vector<Symbol>& multiplier() const =0;
 
             //! Set multiplier polynomial
             /*!
              * @param  [in] multiplier Desired multiplier word (polynomial)
              */
             virtual void set_multiplier(
-                    const Word& multiplier) =0;
+                    const std::vector<Symbol>& multiplier) =0;
 
             //! Access the framing tag name
             virtual const std::string& framingTag() const =0;
@@ -158,9 +161,13 @@ namespace gr
                     const unsigned int codewordLength = 12,
                     const unsigned int augmentingLength = 3,
                     const bool continuous = true,
-                    const Word& multiplier = {1,0,0,1},
+                    const std::vector<Symbol>& multiplier = {1,0,0,1},
                     const std::string& framingTag = "");
         };
+
+        typedef Descrambler<unsigned char> Descrambler_bb;
+        typedef Descrambler<unsigned short> Descrambler_ss;
+        typedef Descrambler<unsigned int> Descrambler_ii;
     }
 }
 

@@ -2,7 +2,7 @@
  * @file      WRDS.cpp
  * @brief     Defines the gr::gs::GuidedScrambling::WRDS class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 16, 2017
+ * @date      May 18, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -28,19 +28,22 @@
 #include "gr-gs/config.h"
 #include "WRDS.hpp"
 
-gr::gs::GuidedScrambling::Analyzer::Feedback*
-gr::gs::GuidedScrambling::WRDS::Feedback::clone() const
+template<typename Symbol>
+typename gr::gs::GuidedScrambling::Analyzer<Symbol>::Feedback*
+gr::gs::GuidedScrambling::WRDS<Symbol>::Feedback::clone() const
 {
     return new Feedback(*this);
 }
 
-gr::gs::GuidedScrambling::WRDS::Feedback::Feedback():
+template<typename Symbol>
+gr::gs::GuidedScrambling::WRDS<Symbol>::Feedback::Feedback():
     RDS(startingRDS)
 {}
 
-void gr::gs::GuidedScrambling::WRDS::analyze(
-        const Word& codeword,
-        const Analyzer::Feedback& feedback,
+template<typename Symbol>
+void gr::gs::GuidedScrambling::WRDS<Symbol>::analyze(
+        const std::vector<Symbol>& codeword,
+        const typename Analyzer<Symbol>::Feedback& feedback,
         const std::vector<Complex>& constellation)
 {
     m_feedback.RDS = static_cast<const Feedback&>(feedback).RDS;
@@ -49,13 +52,19 @@ void gr::gs::GuidedScrambling::WRDS::analyze(
         m_feedback.RDS += constellation[symbol];
 }
 
-const gr::gs::GuidedScrambling::Analyzer::Feedback&
-gr::gs::GuidedScrambling::WRDS::feedback() const
+template<typename Symbol>
+const typename gr::gs::GuidedScrambling::Analyzer<Symbol>::Feedback&
+gr::gs::GuidedScrambling::WRDS<Symbol>::feedback() const
 {
     return m_feedback;
 }
 
-double gr::gs::GuidedScrambling::WRDS::analysis() const
+template<typename Symbol>
+double gr::gs::GuidedScrambling::WRDS<Symbol>::analysis() const
 {
     return std::abs(m_feedback.RDS);
 }
+
+template class gr::gs::GuidedScrambling::WRDS<unsigned char>;
+template class gr::gs::GuidedScrambling::WRDS<unsigned short>;
+template class gr::gs::GuidedScrambling::WRDS<unsigned int>;

@@ -2,11 +2,11 @@
  * @file      Words.hpp
  * @brief     Declares the gr::gs::GuidedScrambling::Words namespace.
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 22, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 18, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -43,10 +43,6 @@ namespace gr
         namespace GuidedScrambling
         {
             //! Handles Galois Field words.
-            /*!
-             * @date   August 22, 2016
-             * @author Eddie Carle &lt;eddie@isatec.ca&gt;
-             */
             namespace Words
             {
                 //! Arithmetic multiplication of words
@@ -67,7 +63,7 @@ namespace gr
                  * word will be updated at the end of the multiplication
                  * operation.
                  *
-                 * @tparam GF Field Type.
+                 * @tparam Field GF Field Type.
                  * @param  [in] multiplicand Multiplicand in multiplication
                  *                           operation.
                  * @param  [in] multiplier Multiplier in multiplication
@@ -83,23 +79,24 @@ namespace gr
                  *                           one or bad things will happen.
                  * @param  [in] continuous If set to true, the remainder word is
                  *                         updated with the new remainder.
-                 * @date   March 3, 2015
+                 * @date   May 18, 2017
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 template<typename Field>
                 void multiply(
-                        const Word& multiplicand,
-                        const Word& multiplier,
-                        Word& product,
-                        Word& remainder,
+                        const std::vector<typename Field::Symbol>& multiplicand,
+                        const std::vector<typename Field::Symbol>& multiplier,
+                        std::vector<typename Field::Symbol>& product,
+                        std::vector<typename Field::Symbol>& remainder,
                         bool continuous=true);
 
                 //! Get the multiplying function we need from a field size
+                template<typename Symbol>
                 std::function<void(
-                    const Word&,
-                    const Word&,
-                    Word&,
-                    Word&,
+                    const std::vector<Symbol>&,
+                    const std::vector<Symbol>&,
+                    std::vector<Symbol>&,
+                    std::vector<Symbol>&,
                     bool)> getMultiply(unsigned fieldSize);
 
                 //! Arithmetic division of words
@@ -124,7 +121,7 @@ namespace gr
                  * 3. The implementer must be conscious of the contents of the
                  *    remainder word before calling this function.
                  *
-                 * @tparam  GF Field Type.
+                 * @tparam Field GF Field Type.
                  * @param [in] dividend Dividend in division operation.
                  * @param [in] divider Divider in division operation.
                  * @param [out] quotient Quotient of division operation. This
@@ -136,15 +133,15 @@ namespace gr
                  *                          (length) of this word \a must equal
                  *                          the size of the divider minus one or
                  *                          bad things will happen.
-                 * @date March 3, 2015
+                 * @date May 18, 2017
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 template<typename Field>
                 void divide(
-                        const Word& dividend,
-                        const Word& divider,
-                        Word& quotient,
-                        Word& remainder);
+                        const std::vector<typename Field::Symbol>& dividend,
+                        const std::vector<typename Field::Symbol>& divider,
+                        std::vector<typename Field::Symbol>& quotient,
+                        std::vector<typename Field::Symbol>& remainder);
 
                 //! Delayed arithmetic division of words
                 /*!
@@ -166,7 +163,7 @@ namespace gr
                  * 3. The implementer must be conscious of the contents of the
                  *    remainder word before calling this function.
                  *
-                 * @tparam  GF Field Type.
+                 * @tparam Field GF Field Type.
                  * @param [in] dividend Dividend in division operation.
                  * @param [in] divider Divider in division operation.
                  * @param [out] quotient Quotient of division operation. This
@@ -178,22 +175,23 @@ namespace gr
                  *                          (length) of this word \a must equal
                  *                          the size of the divider minus one or
                  *                          bad things will happen.
-                 * @date August 22, 2016
+                 * @date May 18, 2017
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 template<typename Field>
                 void delayedDivide(
-                        const Word& dividend,
-                        const Word& divider,
-                        Word& quotient,
-                        Word& remainder);
+                        const std::vector<typename Field::Symbol>& dividend,
+                        const std::vector<typename Field::Symbol>& divider,
+                        std::vector<typename Field::Symbol>& quotient,
+                        std::vector<typename Field::Symbol>& remainder);
 
                 //! Get the dividing function we need from a field size
+                template<typename Symbol>
                 std::function<void(
-                    const Word& dividend,
-                    const Word& divider,
-                    Word& quotient,
-                    Word& remainder)> getDivide(
+                    const std::vector<Symbol>& dividend,
+                    const std::vector<Symbol>& divider,
+                    std::vector<Symbol>& quotient,
+                    std::vector<Symbol>& remainder)> getDivide(
                         unsigned fieldSize,
                         bool delayed=false);
 
@@ -201,13 +199,17 @@ namespace gr
                 /*!
                  * This is intended for debug and testing purposes.
                  *
+                 * @tparam Symbol Base type to use for symbol type. Can be
+                 *                unsigned char, unsigned short, or unsigned
+                 *                int.
                  * @param [in] word Input word.
                  * @return Double quote enclosed sequence of space separated
                  *         numeric symbol representations.
-                 * @date March 3, 2015
+                 * @date May 18, 2017
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
-                inline std::string to_string(const Word& word)
+                template<typename Symbol>
+                inline std::string to_string(const std::vector<Symbol>& word)
                 {
                     std::string output("\"");
                     for(unsigned int i=0; i<word.size(); ++i)
@@ -228,15 +230,18 @@ namespace gr
                  * can it's statistics by controlled. It is intended entirely
                  * for debug and testing purposes.
                  *
-                 * @tparam GF Field Type.
+                 * @tparam Symbol Base type to use for symbol type. Can be
+                 *                unsigned char, unsigned short, or unsigned
+                 *                int.
+                 * @tparam Field GF Field Type.
                  * @param [in] word Input word.
-                 * @date March 3, 2015
+                 * @date May 18, 2017
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 template<typename Field>
-                void randomize(Word& word)
+                void randomize(std::vector<typename Field::Symbol>& word)
                 {
-                    for(Symbol& symbol: word)
+                    for(typename Field::Symbol& symbol: word)
                         symbol = Field::random();
                 }
             }

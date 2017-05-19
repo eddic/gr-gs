@@ -2,7 +2,7 @@
  * @file      SymbolMapper_impl.cpp
  * @brief     Defines the "Symbol Mapper" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 16, 2017
+ * @date      May 19, 2017
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -29,21 +29,23 @@
 
 #include <gnuradio/io_signature.h>
 
-const std::vector<gr::gs::Complex>&
-gr::gs::Implementations::SymbolMapper_impl::constellation() const
+template<typename Symbol> const std::vector<gr::gs::Complex>&
+gr::gs::Implementations::SymbolMapper_impl<Symbol>::constellation() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_constellation;
 }
 
-void gr::gs::Implementations::SymbolMapper_impl::set_constellation(
+template<typename Symbol>
+void gr::gs::Implementations::SymbolMapper_impl<Symbol>::set_constellation(
         const std::vector<Complex>& constellation)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_constellation = constellation;
 }
 
-int gr::gs::Implementations::SymbolMapper_impl::work(
+template<typename Symbol>
+int gr::gs::Implementations::SymbolMapper_impl<Symbol>::work(
         int noutput_items,
         gr_vector_const_void_star &input_items,
         gr_vector_void_star &output_items)
@@ -62,7 +64,8 @@ int gr::gs::Implementations::SymbolMapper_impl::work(
     return noutput_items;
 }
 
-gr::gs::Implementations::SymbolMapper_impl::SymbolMapper_impl(
+template<typename Symbol>
+gr::gs::Implementations::SymbolMapper_impl<Symbol>::SymbolMapper_impl(
         const std::vector<Complex>& constellation):
     gr::sync_block("Symbol Mapper",
         io_signature::make(1,1,sizeof(Symbol)),
@@ -72,10 +75,15 @@ gr::gs::Implementations::SymbolMapper_impl::SymbolMapper_impl(
     this->enable_update_rate(false);
 }
 
-gr::gs::SymbolMapper::sptr gr::gs::SymbolMapper::make(
+template<typename Symbol>
+typename gr::gs::SymbolMapper<Symbol>::sptr gr::gs::SymbolMapper<Symbol>::make(
         const std::vector<Complex>& constellation)
 {
     return gnuradio::get_initial_sptr(
-            new Implementations::SymbolMapper_impl(
+            new Implementations::SymbolMapper_impl<Symbol>(
                 constellation));
 }
+
+template class gr::gs::SymbolMapper<unsigned char>;
+template class gr::gs::SymbolMapper<unsigned short>;
+template class gr::gs::SymbolMapper<unsigned int>;

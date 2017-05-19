@@ -2,11 +2,11 @@
  * @file      SymbolGenerator_impl.cpp
  * @brief     Defines the "Random Symbol Generator" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 19, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 19, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -28,14 +28,15 @@
 #include "SymbolGenerator_impl.hpp"
 #include <gnuradio/io_signature.h>
 
-const std::vector<double>&
-gr::gs::Implementations::SymbolGenerator_impl::weightings() const
+template<typename Symbol> const std::vector<double>&
+gr::gs::Implementations::SymbolGenerator_impl<Symbol>::weightings() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_weightings;
 }
 
-void gr::gs::Implementations::SymbolGenerator_impl::set_weightings(
+template<typename Symbol>
+void gr::gs::Implementations::SymbolGenerator_impl<Symbol>::set_weightings(
         const std::vector<double>& weightings)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -47,14 +48,15 @@ void gr::gs::Implementations::SymbolGenerator_impl::set_weightings(
     m_distribution.param(distribution.param());
 }
 
-const std::string&
-gr::gs::Implementations::SymbolGenerator_impl::framingTag() const
+template<typename Symbol> const std::string&
+gr::gs::Implementations::SymbolGenerator_impl<Symbol>::framingTag() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_framingTag;
 }
 
-void gr::gs::Implementations::SymbolGenerator_impl::set_framingTag(
+template<typename Symbol>
+void gr::gs::Implementations::SymbolGenerator_impl<Symbol>::set_framingTag(
         const std::string& tag)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -62,21 +64,23 @@ void gr::gs::Implementations::SymbolGenerator_impl::set_framingTag(
     m_framingTagPMT = pmt::string_to_symbol(tag);
 }
 
-const unsigned int
-gr::gs::Implementations::SymbolGenerator_impl::frameLength() const
+template<typename Symbol> const unsigned int
+gr::gs::Implementations::SymbolGenerator_impl<Symbol>::frameLength() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_frameLength;
 }
 
-void gr::gs::Implementations::SymbolGenerator_impl::set_frameLength(
+template<typename Symbol>
+void gr::gs::Implementations::SymbolGenerator_impl<Symbol>::set_frameLength(
         const unsigned int length)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_frameLength = length;
 }
 
-int gr::gs::Implementations::SymbolGenerator_impl::work(
+template<typename Symbol>
+int gr::gs::Implementations::SymbolGenerator_impl<Symbol>::work(
         int noutput_items,
         gr_vector_const_void_star &input_items,
         gr_vector_void_star &output_items)
@@ -107,7 +111,8 @@ int gr::gs::Implementations::SymbolGenerator_impl::work(
     return noutput_items;
 }
 
-gr::gs::Implementations::SymbolGenerator_impl::SymbolGenerator_impl(
+template<typename Symbol>
+gr::gs::Implementations::SymbolGenerator_impl<Symbol>::SymbolGenerator_impl(
         const std::vector<double>& weightings,
         const std::string& framingTag,
         const unsigned int frameLength):
@@ -126,14 +131,19 @@ gr::gs::Implementations::SymbolGenerator_impl::SymbolGenerator_impl(
     this->enable_update_rate(false);
 }
 
-gr::gs::SymbolGenerator::sptr gr::gs::SymbolGenerator::make(
+template<typename Symbol> typename gr::gs::SymbolGenerator<Symbol>::sptr
+gr::gs::SymbolGenerator<Symbol>::make(
         const std::vector<double>& weightings,
         const std::string& framingTag,
         const unsigned int frameLength)
 {
     return gnuradio::get_initial_sptr(
-            new Implementations::SymbolGenerator_impl(
+            new Implementations::SymbolGenerator_impl<Symbol>(
                 weightings,
                 framingTag,
                 frameLength));
 }
+
+template class gr::gs::SymbolGenerator<unsigned char>;
+template class gr::gs::SymbolGenerator<unsigned short>;
+template class gr::gs::SymbolGenerator<unsigned int>;

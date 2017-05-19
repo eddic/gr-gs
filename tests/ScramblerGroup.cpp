@@ -25,6 +25,8 @@
 #include "GF4.hpp"
 #include "Words.hpp"
 
+typedef unsigned char Symbol;
+
 int main()
 {
     using namespace gr::gs;
@@ -36,19 +38,19 @@ int main()
     {
         std::cout.flush();
 
-        const Word divider({1,0,1,1,0,1,1});
-        Word input;
+        const std::vector<Symbol> divider({1,0,1,1,0,1,1});
+        std::vector<Symbol> input;
         input.resize(32);
 
-        const Word remainder(divider.size()-1);
+        const std::vector<Symbol> remainder(divider.size()-1);
 
         const unsigned int indexStart=3;
         const unsigned int indexEnd=14;
 
-        ScramblerGroup scramblers;
+        ScramblerGroup<Symbol> scramblers;
         scramblers.configure(input.size()+4,indexStart,indexEnd,4,divider.size()-1, 0, 2);
 
-        Descrambler_impl descrambler(
+        Descrambler_impl<Symbol> descrambler(
                 2,
                 input.size()+4,
                 4,
@@ -61,7 +63,7 @@ int main()
 
         for(unsigned int i=0; i<64; ++i)
         {
-            Words::randomize<GF2>(input);
+            Words::randomize<GF2<Symbol>>(input);
             scramblers.scramble(divider, input, remainder, scramblers.winner()->feedback(), defaultConstellation(2));
             descrambler.descramble(scramblers.winner()->output());
             if(descrambler.output() != input)
@@ -78,18 +80,18 @@ int main()
     {
         std::cout.flush();
 
-        const Word divider({1,0,1,1,0,1,1});
-        Word remainder(divider.size()-1);
-        Word input;
+        const std::vector<Symbol> divider({1,0,1,1,0,1,1});
+        std::vector<Symbol> remainder(divider.size()-1);
+        std::vector<Symbol> input;
         input.resize(32);
 
         const unsigned int indexStart=3;
         const unsigned int indexEnd=14;
 
-        ScramblerGroup scramblers;
+        ScramblerGroup<Symbol> scramblers;
         scramblers.configure(input.size()+4,indexStart,indexEnd,4,divider.size()-1, 0, 2);
 
-        Descrambler_impl descrambler(
+        Descrambler_impl<Symbol> descrambler(
                 2,
                 input.size()+4,
                 4,
@@ -99,7 +101,7 @@ int main()
 
         for(unsigned int i=0; i<64; ++i)
         {
-            Words::randomize<GF2>(input);
+            Words::randomize<GF2<Symbol>>(input);
             scramblers.scramble(divider, input, remainder, scramblers.winner()->feedback(), defaultConstellation(2));
             remainder = scramblers.winner()->remainder();
             descrambler.descramble(scramblers.winner()->output());
@@ -118,19 +120,19 @@ int main()
     {
         std::cout.flush();
 
-        const Word divider({2,3,1,1,3,3});
-        Word input;
+        const std::vector<Symbol> divider({2,3,1,1,3,3});
+        std::vector<Symbol> input;
         input.resize(32);
 
-        const Word remainder(divider.size()-1);
+        const std::vector<Symbol> remainder(divider.size()-1);
 
         const unsigned int indexStart=3;
         const unsigned int indexEnd=14;
 
-        ScramblerGroup scramblers;
+        ScramblerGroup<Symbol> scramblers;
         scramblers.configure(input.size()+4,indexStart,indexEnd,4,divider.size()-1, 0, 4);
 
-        Descrambler_impl descrambler(
+        Descrambler_impl<Symbol> descrambler(
                 4,
                 input.size()+4,
                 4,
@@ -143,7 +145,7 @@ int main()
 
         for(unsigned int i=0; i<64; ++i)
         {
-            Words::randomize<GF4>(input);
+            Words::randomize<GF4<Symbol>>(input);
             scramblers.scramble(divider, input, remainder, scramblers.winner()->feedback(), defaultConstellation(2));
             descrambler.descramble(scramblers.winner()->output());
             if(descrambler.output() != input)
@@ -160,18 +162,18 @@ int main()
     {
         std::cout.flush();
 
-        const Word divider({1,0,1,1,0,1,1});
-        Word remainder(divider.size()-1,0);
-        Word input;
+        const std::vector<Symbol> divider({1,0,1,1,0,1,1});
+        std::vector<Symbol> remainder(divider.size()-1,0);
+        std::vector<Symbol> input;
         input.resize(32);
 
         const unsigned int indexStart=3;
         const unsigned int indexEnd=14;
 
-        ScramblerGroup scramblers;
+        ScramblerGroup<Symbol> scramblers;
         scramblers.configure(input.size()+4,indexStart,indexEnd,4,divider.size()-1, 0, 4);
 
-        Descrambler_impl descrambler(
+        Descrambler_impl<Symbol> descrambler(
                 4,
                 input.size()+4,
                 4,
@@ -181,7 +183,7 @@ int main()
 
         for(unsigned int i=0; i<64; ++i)
         {
-            Words::randomize<GF4>(input);
+            Words::randomize<GF4<Symbol>>(input);
 
             scramblers.scramble(divider, input, remainder, scramblers.winner()->feedback(), defaultConstellation(2));
             remainder = scramblers.winner()->remainder();

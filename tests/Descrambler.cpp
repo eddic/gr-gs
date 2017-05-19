@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -21,6 +21,8 @@
 
 #include "Descrambler_impl.hpp"
 
+typedef unsigned char Symbol;
+
 int main()
 {
     using namespace gr::gs;
@@ -31,11 +33,11 @@ int main()
     std::cout << "Testing Descrambler_impl::descrambler() in GF2... ";
     {
         std::cout.flush();
-        const Word output({0,1,0,0,1,1,0,1,0,0,0,1});
-        const Word product({1,0,0,1,0,1,0,0,1,1,0,1,0,0,0,1});
-        const Word input({1,1,1,1,0,0,1,1,0,0,1,0,0,1,1,0});
+        const std::vector<Symbol> output({0,1,0,0,1,1,0,1,0,0,0,1});
+        const std::vector<Symbol> product({1,0,0,1,0,1,0,0,1,1,0,1,0,0,0,1});
+        const std::vector<Symbol> input({1,1,1,1,0,0,1,1,0,0,1,0,0,1,1,0});
 
-        Descrambler_impl descrambler(
+        Descrambler_impl<Symbol> descrambler(
                 2,
                 input.size(),
                 input.size()-output.size(),
@@ -56,11 +58,11 @@ int main()
     std::cout << "Testing Descrambler_impl::descrambler() in GF4... ";
     {
         std::cout.flush();
-        const Word output({3,1,1,1,0,0,1,1,3,2,2,3,3,3,1,1,2,3,3,1,0,2,3});
-        const Word product({0,0,2,1,3,1,1,1,0,0,1,1,3,2,2,3,3,3,1,1,2,3,3,1,0,2,3});
-        const Word input({0,0,1,1,3,2,3,1,2,0,3,0,1,2,0,1,3,1,3,1,1,2,2,1,2,1,2});
+        const std::vector<Symbol> output({3,1,1,1,0,0,1,1,3,2,2,3,3,3,1,1,2,3,3,1,0,2,3});
+        const std::vector<Symbol> product({0,0,2,1,3,1,1,1,0,0,1,1,3,2,2,3,3,3,1,1,2,3,3,1,0,2,3});
+        const std::vector<Symbol> input({0,0,1,1,3,2,3,1,2,0,3,0,1,2,0,1,3,1,3,1,1,2,2,1,2,1,2});
 
-        Descrambler_impl descrambler(
+        Descrambler_impl<Symbol> descrambler(
                 4,
                 input.size(),
                 input.size()-output.size(),

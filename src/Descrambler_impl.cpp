@@ -2,11 +2,11 @@
  * @file      Descrambler_impl.cpp
  * @brief     Defines the "Descrambler" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 19, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 19, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -31,7 +31,8 @@
 #include <algorithm>
 #include "Words.hpp"
 
-void gr::gs::GuidedScrambling::Descrambler_impl::setup()
+template<typename Symbol>
+void gr::gs::GuidedScrambling::Descrambler_impl<Symbol>::setup()
 {
     if(m_augmentingLength < 1)
         throw Exceptions::AugmentingLengthTooSmall();
@@ -46,7 +47,7 @@ void gr::gs::GuidedScrambling::Descrambler_impl::setup()
         if(symbol >= m_fieldSize)
             symbol = m_fieldSize-1;
 
-    m_multiply = Words::getMultiply(m_fieldSize);
+    m_multiply = Words::getMultiply<Symbol>(m_fieldSize);
     m_codeword.resize(m_codewordLength);
     m_codewordIt = m_codeword.begin();
     m_product.resize(m_codewordLength);
@@ -56,12 +57,13 @@ void gr::gs::GuidedScrambling::Descrambler_impl::setup()
     m_valid=true;
 }
 
-gr::gs::GuidedScrambling::Descrambler_impl::Descrambler_impl(
+template<typename Symbol>
+gr::gs::GuidedScrambling::Descrambler_impl<Symbol>::Descrambler_impl(
         const unsigned int fieldSize,
         const unsigned int codewordLength,
         const unsigned int augmentingLength,
         const bool continuous,
-        const Word& multiplier,
+        const std::vector<Symbol>& multiplier,
         const std::string& framingTag):
     gr::block("Guided Scrambling Descrambler",
         gr::io_signature::make(1,1,sizeof(Symbol)),
@@ -77,11 +79,12 @@ gr::gs::GuidedScrambling::Descrambler_impl::Descrambler_impl(
 {
     this->set_relative_rate(
             double(codewordLength-augmentingLength)/codewordLength);
-    set_tag_propagation_policy(gr::block::TPP_DONT);
+    this->set_tag_propagation_policy(gr::block::TPP_DONT);
 }
 
-void gr::gs::GuidedScrambling::Descrambler_impl::descramble(
-        const Word& input)
+template<typename Symbol>
+void gr::gs::GuidedScrambling::Descrambler_impl<Symbol>::descramble(
+        const std::vector<Symbol>& input)
 {
     if(!m_valid)
         setup();
@@ -94,13 +97,15 @@ void gr::gs::GuidedScrambling::Descrambler_impl::descramble(
             m_continuous);
 }
 
-unsigned int gr::gs::GuidedScrambling::Descrambler_impl::fieldSize() const
+template<typename Symbol> unsigned int
+gr::gs::GuidedScrambling::Descrambler_impl<Symbol>::fieldSize() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_fieldSize;
 }
 
-void gr::gs::GuidedScrambling::Descrambler_impl::set_fieldSize(
+template<typename Symbol>
+void gr::gs::GuidedScrambling::Descrambler_impl<Symbol>::set_fieldSize(
         const unsigned int size)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -108,13 +113,15 @@ void gr::gs::GuidedScrambling::Descrambler_impl::set_fieldSize(
     m_valid=false;
 }
 
-unsigned int gr::gs::GuidedScrambling::Descrambler_impl::codewordLength() const
+template<typename Symbol> unsigned int
+gr::gs::GuidedScrambling::Descrambler_impl<Symbol>::codewordLength() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_codewordLength;
 }
 
-void gr::gs::GuidedScrambling::Descrambler_impl::set_codewordLength(
+template<typename Symbol>
+void gr::gs::GuidedScrambling::Descrambler_impl<Symbol>::set_codewordLength(
         const unsigned int length)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -124,13 +131,15 @@ void gr::gs::GuidedScrambling::Descrambler_impl::set_codewordLength(
     m_valid=false;
 }
 
-unsigned int gr::gs::GuidedScrambling::Descrambler_impl::augmentingLength() const
+template<typename Symbol> unsigned int
+gr::gs::GuidedScrambling::Descrambler_impl<Symbol>::augmentingLength() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_augmentingLength;
 }
 
-void gr::gs::GuidedScrambling::Descrambler_impl::set_augmentingLength(
+template<typename Symbol>
+void gr::gs::GuidedScrambling::Descrambler_impl<Symbol>::set_augmentingLength(
         const unsigned int length)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -140,42 +149,47 @@ void gr::gs::GuidedScrambling::Descrambler_impl::set_augmentingLength(
     m_valid=false;
 }
 
-bool gr::gs::GuidedScrambling::Descrambler_impl::continuous() const
+template<typename Symbol>
+bool gr::gs::GuidedScrambling::Descrambler_impl<Symbol>::continuous() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_continuous;
 }
 
-void gr::gs::GuidedScrambling::Descrambler_impl::set_continuous(bool continuous)
+template<typename Symbol>
+void gr::gs::GuidedScrambling::Descrambler_impl<Symbol>::set_continuous(
+        bool continuous)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_continuous = continuous;
     m_valid=false;
 }
 
-const std::vector<gr::gs::Symbol>&
-gr::gs::GuidedScrambling::Descrambler_impl::multiplier() const
+template<typename Symbol> const std::vector<Symbol>&
+gr::gs::GuidedScrambling::Descrambler_impl<Symbol>::multiplier() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_multiplier;
 }
 
-void gr::gs::GuidedScrambling::Descrambler_impl::set_multiplier(
-        const Word& multiplier)
+template<typename Symbol>
+void gr::gs::GuidedScrambling::Descrambler_impl<Symbol>::set_multiplier(
+        const std::vector<Symbol>& multiplier)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_multiplier = multiplier;
     m_valid=false;
 }
 
-const std::string&
-gr::gs::GuidedScrambling::Descrambler_impl::framingTag() const
+template<typename Symbol> const std::string&
+gr::gs::GuidedScrambling::Descrambler_impl<Symbol>::framingTag() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_framingTag;
 }
 
-void gr::gs::GuidedScrambling::Descrambler_impl::set_framingTag(
+template<typename Symbol>
+void gr::gs::GuidedScrambling::Descrambler_impl<Symbol>::set_framingTag(
         const std::string& tag)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -183,11 +197,11 @@ void gr::gs::GuidedScrambling::Descrambler_impl::set_framingTag(
     m_framingTagPMT = pmt::string_to_symbol(tag);
 }
 
-const std::vector<gr::gs::Symbol>
-gr::gs::GuidedScrambling::Descrambler_impl::output() const
+template<typename Symbol> const std::vector<Symbol>
+gr::gs::GuidedScrambling::Descrambler_impl<Symbol>::output() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    Word output;
+    std::vector<Symbol> output;
     if(m_valid)
     {
         output.resize(m_codewordLength-m_augmentingLength);
@@ -199,14 +213,15 @@ gr::gs::GuidedScrambling::Descrambler_impl::output() const
     return output;
 }
 
-const std::vector<gr::gs::Symbol>&
-gr::gs::GuidedScrambling::Descrambler_impl::product() const
+template<typename Symbol> const std::vector<Symbol>&
+gr::gs::GuidedScrambling::Descrambler_impl<Symbol>::product() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_product;
 }
 
-int gr::gs::GuidedScrambling::Descrambler_impl::general_work(
+template<typename Symbol>
+int gr::gs::GuidedScrambling::Descrambler_impl<Symbol>::general_work(
         int noutput_items,
         gr_vector_int &ninput_items,
         gr_vector_const_void_star &input_items,
@@ -216,7 +231,8 @@ int gr::gs::GuidedScrambling::Descrambler_impl::general_work(
     if(!m_valid)
         setup();
 
-    const Symbol* const& inputStart = reinterpret_cast<const Symbol*>(input_items[0]);
+    const Symbol* const& inputStart
+        = reinterpret_cast<const Symbol*>(input_items[0]);
     const Symbol* input = inputStart;
     unsigned int inputSize = ninput_items[0];
 
@@ -335,7 +351,8 @@ int gr::gs::GuidedScrambling::Descrambler_impl::general_work(
     return noutput_items-outputSize;
 }
 
-void gr::gs::GuidedScrambling::Descrambler_impl::forecast(
+template<typename Symbol>
+void gr::gs::GuidedScrambling::Descrambler_impl<Symbol>::forecast(
         int noutput_items,
         gr_vector_int& ninput_items_required)
 {
@@ -357,16 +374,17 @@ void gr::gs::GuidedScrambling::Descrambler_impl::forecast(
         ninput_items_required[0] = 0;
 }
 
-gr::gs::Descrambler::sptr gr::gs::Descrambler::make(
+template<typename Symbol>
+typename gr::gs::Descrambler<Symbol>::sptr gr::gs::Descrambler<Symbol>::make(
         const unsigned int fieldSize,
         const unsigned int codewordLength,
         const unsigned int augmentingLength,
         const bool continuous,
-        const Word& multiplier,
+        const std::vector<Symbol>& multiplier,
         const std::string& framingTag)
 {
     return gnuradio::get_initial_sptr(
-            new ::gr::gs::GuidedScrambling::Descrambler_impl(
+            new ::gr::gs::GuidedScrambling::Descrambler_impl<Symbol>(
                 fieldSize,
                 codewordLength,
                 augmentingLength,
@@ -374,3 +392,10 @@ gr::gs::Descrambler::sptr gr::gs::Descrambler::make(
                 multiplier,
                 framingTag));
 }
+
+template class gr::gs::Descrambler<unsigned char>;
+template class gr::gs::GuidedScrambling::Descrambler_impl<unsigned char>;
+template class gr::gs::Descrambler<unsigned short>;
+template class gr::gs::GuidedScrambling::Descrambler_impl<unsigned short>;
+template class gr::gs::Descrambler<unsigned int>;
+template class gr::gs::GuidedScrambling::Descrambler_impl<unsigned int>;

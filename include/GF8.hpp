@@ -2,11 +2,11 @@
  * @file      GF8.hpp
  * @brief     Declares the gr::gs::GuidedScrambling::GF8 class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 23, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 18, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -47,16 +47,17 @@ namespace gr
              * allows for some basic arithmetic operations needed to perform
              * scrambling.
              *
-             * Be aware that no checks occur to ensure that the integer values
-             * actually represent valid symbols. Should they not, the behaviour
-             * is undefined.
-             *
-             * @date   August 23, 2016
+             * @tparam T Base type to use for symbol type. Can be unsigned char,
+             *           unsigned short, or unsigned int.
+             * @date   May 18, 2017
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
+            template<typename T>
             class GF8
             {
             public:
+                typedef T Symbol;
+
                 //! Size of symbol
                 static const unsigned int fieldSize=8;
 

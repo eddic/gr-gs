@@ -1,25 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(gr-gs CXX)
 
-# Setup symbol type
-
-if(NOT SYMBOL_SIZE)
-    set(SYMBOL_SIZE 1)
-endif()
-
-if(SYMBOL_SIZE EQUAL 1)
-    set(CXX_SYMBOL_TYPE "unsigned char")
-    set(PYTHON_SYMBOL_TYPE "byte")
-elseif(SYMBOL_SIZE EQUAL 2)
-    set(CXX_SYMBOL_TYPE "unsigned short")
-    set(PYTHON_SYMBOL_TYPE "short")
-elseif(SYMBOL_SIZE EQUAL 4)
-    set(CXX_SYMBOL_TYPE "unsigned int")
-    set(PYTHON_SYMBOL_TYPE "int")
-else()
-    message(FATAL_ERROR "SYMBOL_SIZE must be 1, 2 or 4.")
-endif()
-
 # Setup complex type
 
 if(NOT COMPLEX_SIZE)
@@ -28,10 +9,8 @@ endif()
 
 if(COMPLEX_SIZE EQUAL 8)
     set(COMPLEX_BASE "float")
-    set(COMPLEX_TYPE "fc32")
 elseif(COMPLEX_SIZE EQUAL 16)
     set(COMPLEX_BASE "double")
-    set(COMPLEX_TYPE "fc64")
 else()
     message(FATAL_ERROR "COMPLEX_SIZE must be 8 or 16.")
 endif()
@@ -42,7 +21,8 @@ if(UNIX)
     set(CMAKE_CXX_FLAGS
         "$ENV{CXXFLAGS} -std=c++14 -Wall -Werror -pthread -fvisibility-inlines-hidden -fvisibility=hidden")
     set(CMAKE_CXX_FLAGS_RELEASE
-        "$ENV{CXXFLAGS} -O3 -fomit-frame-pointer -std=c++14 -Wall -Werror -pthread -fvisibility-inlines-hidden -fvisibility=hidden")
+        #"$ENV{CXXFLAGS} -O3 -fomit-frame-pointer -std=c++14 -Wall -Werror -pthread -fvisibility-inlines-hidden -fvisibility=hidden")
+        "$ENV{CXXFLAGS} -O3 -fomit-frame-pointer -std=c++14 -Wall -Werror -pthread")
     set(CMAKE_CXX_FLAGS_DEBUG
         "$ENV{CXXFLAGS} -Og -fno-omit-frame-pointer -g -ggdb -std=c++14 -Wall -Werror -pthread")
 endif()
@@ -248,32 +228,17 @@ install(FILES ${CMAKE_BINARY_DIR}/gr_gs.py DESTINATION ${PYTHON_SITE_PACKAGES})
 
 # GNU Radio Companion
 
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_GuidedScrambler.xml.in
-    ${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_GuidedScrambler.xml @ONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Descrambler.xml.in
-    ${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_Descrambler.xml @ONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_SymbolMapper.xml.in
-    ${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_SymbolMapper.xml @ONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_SymbolGenerator.xml.in
-    ${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_SymbolGenerator.xml @ONLY)
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_ErrorCount.xml.in
-    ${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_ErrorCount.xml @ONLY)
 install(FILES
-    "${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_GuidedScrambler.xml"
-    "${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_Descrambler.xml"
-    "${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_SymbolMapper.xml"
-    "${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_SymbolGenerator.xml"
+    "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_GuidedScrambler.xml"
+    "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Descrambler.xml"
+    "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_SymbolMapper.xml"
+    "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_SymbolGenerator.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Average.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Distribution.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Integrate.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_primitive.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_defaultConstellation.xml"
-    "${CMAKE_CURRENT_BINARY_DIR}/grc/gr-gs_ErrorCount.xml"
+    "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_ErrorCount.xml"
     DESTINATION "share/gnuradio/grc/blocks/")
 install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gs_demo.grc"

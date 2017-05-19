@@ -21,18 +21,48 @@
 %include "gr-gs/Primitives.h"
 
 %include "gr-gs/GuidedScrambler.h"
-GR_SWIG_BLOCK_MAGIC2(gs, GuidedScrambler);
+%template(GuidedScrambler_bb) gr::gs::GuidedScrambler<unsigned char>;
+%template(GuidedScrambler_ss) gr::gs::GuidedScrambler<unsigned short>;
+%template(GuidedScrambler_ii) gr::gs::GuidedScrambler<unsigned int>;
+GR_SWIG_BLOCK_MAGIC2(gs, GuidedScrambler_bb);
+GR_SWIG_BLOCK_MAGIC2(gs, GuidedScrambler_ss);
+GR_SWIG_BLOCK_MAGIC2(gs, GuidedScrambler_ii);
+
 %include "gr-gs/Descrambler.h"
-GR_SWIG_BLOCK_MAGIC2(gs, Descrambler);
+%template(Descrambler_bb) gr::gs::Descrambler<unsigned char>;
+%template(Descrambler_ss) gr::gs::Descrambler<unsigned short>;
+%template(Descrambler_ii) gr::gs::Descrambler<unsigned int>;
+GR_SWIG_BLOCK_MAGIC2(gs, Descrambler_bb);
+GR_SWIG_BLOCK_MAGIC2(gs, Descrambler_ss);
+GR_SWIG_BLOCK_MAGIC2(gs, Descrambler_ii);
+
 %include "gr-gs/SymbolMapper.h"
-GR_SWIG_BLOCK_MAGIC2(gs, SymbolMapper);
+%template(SymbolMapper_bc) gr::gs::SymbolMapper<unsigned char>;
+%template(SymbolMapper_sc) gr::gs::SymbolMapper<unsigned short>;
+%template(SymbolMapper_ic) gr::gs::SymbolMapper<unsigned int>;
+GR_SWIG_BLOCK_MAGIC2(gs, SymbolMapper_bc);
+GR_SWIG_BLOCK_MAGIC2(gs, SymbolMapper_sc);
+GR_SWIG_BLOCK_MAGIC2(gs, SymbolMapper_ic);
+
 %include "gr-gs/SymbolGenerator.h"
-GR_SWIG_BLOCK_MAGIC2(gs, SymbolGenerator);
+%template(SymbolGenerator_b) gr::gs::SymbolGenerator<unsigned char>;
+%template(SymbolGenerator_s) gr::gs::SymbolGenerator<unsigned short>;
+%template(SymbolGenerator_i) gr::gs::SymbolGenerator<unsigned int>;
+GR_SWIG_BLOCK_MAGIC2(gs, SymbolGenerator_b);
+GR_SWIG_BLOCK_MAGIC2(gs, SymbolGenerator_s);
+GR_SWIG_BLOCK_MAGIC2(gs, SymbolGenerator_i);
+
+%include "gr-gs/ErrorCount.h"
+%template(ErrorCount_bf) gr::gs::ErrorCount<unsigned char>;
+%template(ErrorCount_sf) gr::gs::ErrorCount<unsigned short>;
+%template(ErrorCount_if) gr::gs::ErrorCount<unsigned int>;
+GR_SWIG_BLOCK_MAGIC2(gs, ErrorCount_bf);
+GR_SWIG_BLOCK_MAGIC2(gs, ErrorCount_sf);
+GR_SWIG_BLOCK_MAGIC2(gs, ErrorCount_if);
+
 %include "gr-gs/Average.h"
 GR_SWIG_BLOCK_MAGIC2(gs, Average);
 %include "gr-gs/Distribution.h"
 GR_SWIG_BLOCK_MAGIC2(gs, Distribution);
 %include "gr-gs/Integrate.h"
 GR_SWIG_BLOCK_MAGIC2(gs, Integrate);
-%include "gr-gs/ErrorCount.h"
-GR_SWIG_BLOCK_MAGIC2(gs, ErrorCount);

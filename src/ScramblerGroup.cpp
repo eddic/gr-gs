@@ -2,11 +2,11 @@
  * @file      ScramblerGroup.cpp
  * @brief     Defines the gr::gs::GuidedScrambling::ScramblerGroup class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      July 8, 2016
- * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
+ * @date      May 18, 2017
+ * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2016 Eddie Carle
+/* Copyright (C) 2017 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -27,7 +27,8 @@
 
 #include "ScramblerGroup.hpp"
 
-void gr::gs::GuidedScrambling::ScramblerGroup::handler(
+template<typename Symbol>
+void gr::gs::GuidedScrambling::ScramblerGroup<Symbol>::handler(
         HandlerArguments& args,
         const HandlerConstArguments& cargs)
 {
@@ -54,7 +55,8 @@ void gr::gs::GuidedScrambling::ScramblerGroup::handler(
     }
 }
 
-void gr::gs::GuidedScrambling::ScramblerGroup::configure(
+template<typename Symbol>
+void gr::gs::GuidedScrambling::ScramblerGroup<Symbol>::configure(
         const unsigned int length,
         unsigned int indexStart,
         const unsigned int indexEnd,
@@ -74,3 +76,7 @@ void gr::gs::GuidedScrambling::ScramblerGroup::configure(
                 fieldSize);
     m_winner = &m_scramblers.front();
 }
+
+template class gr::gs::GuidedScrambling::ScramblerGroup<unsigned char>;
+template class gr::gs::GuidedScrambling::ScramblerGroup<unsigned short>;
+template class gr::gs::GuidedScrambling::ScramblerGroup<unsigned int>;

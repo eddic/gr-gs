@@ -2,7 +2,7 @@
  * @file      MSW2.cpp
  * @brief     Defines the gr::gs::GuidedScrambling::MSW2 class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 16, 2017
+ * @date      May 18, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -28,19 +28,22 @@
 #include "gr-gs/config.h"
 #include "MSW2.hpp"
 
-gr::gs::GuidedScrambling::Analyzer::Feedback*
-gr::gs::GuidedScrambling::MSW2::Feedback::clone() const
+template<typename Symbol>
+typename gr::gs::GuidedScrambling::Analyzer<Symbol>::Feedback*
+gr::gs::GuidedScrambling::MSW2<Symbol>::Feedback::clone() const
 {
     return new Feedback(*this);
 }
 
-gr::gs::GuidedScrambling::MSW2::Feedback::Feedback():
+template<typename Symbol>
+gr::gs::GuidedScrambling::MSW2<Symbol>::Feedback::Feedback():
     RDS(startingRDS)
 {}
 
-void gr::gs::GuidedScrambling::MSW2::analyze(
-        const Word& codeword,
-        const Analyzer::Feedback& feedback,
+template<typename Symbol>
+void gr::gs::GuidedScrambling::MSW2<Symbol>::analyze(
+        const std::vector<Symbol>& codeword,
+        const typename Analyzer<Symbol>::Feedback& feedback,
         const std::vector<Complex>& constellation)
 {
     m_feedback.RDS = static_cast<const Feedback&>(feedback).RDS;
@@ -55,13 +58,19 @@ void gr::gs::GuidedScrambling::MSW2::analyze(
     }
 }
 
-const gr::gs::GuidedScrambling::Analyzer::Feedback&
-gr::gs::GuidedScrambling::MSW2::feedback() const
+template<typename Symbol>
+const typename gr::gs::GuidedScrambling::Analyzer<Symbol>::Feedback&
+gr::gs::GuidedScrambling::MSW2<Symbol>::feedback() const
 {
     return m_feedback;
 }
 
-double gr::gs::GuidedScrambling::MSW2::analysis() const
+template<typename Symbol>
+double gr::gs::GuidedScrambling::MSW2<Symbol>::analysis() const
 {
     return m_analysis;
 }
+
+template class gr::gs::GuidedScrambling::MSW2<unsigned char>;
+template class gr::gs::GuidedScrambling::MSW2<unsigned short>;
+template class gr::gs::GuidedScrambling::MSW2<unsigned int>;

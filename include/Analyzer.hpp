@@ -43,20 +43,23 @@ namespace gr
         //! Stuff needed for the GuidedScrambler and Descrambler blocks
         namespace GuidedScrambling
         {
+            //! A vector of all the different selection method names
+            extern const std::vector<std::string> selectionMethods;
+
             //! For performing selection analysis of a codeword
             /*!
              * This class should be derived from to implement different codeword
              * selection methods.
              *
-             * @date   May 16, 2017
+             * @tparam Symbol Base type to use for symbol type. Can be unsigned
+             *                char, unsigned short, or unsigned int.
+             * @date   May 18, 2017
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
+            template<typename Symbol>
             class Analyzer
             {
             public:
-                //! A vector of all the different selection method names
-                static const std::vector<std::string> names;
-
                 //! %Feedback mechanism for analysis
                 /*!
                  * This class allows for the management of feedback data between
@@ -66,7 +69,7 @@ namespace gr
                  * analyzer to all the next ones. One simply needs to define the
                  * clone() function to to allow the feedback data to be copied.
                  *
-                 * @date    March 3, 2015
+                 * @date    May 18, 2017
                  * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 class Feedback
@@ -82,8 +85,6 @@ namespace gr
                      *
                      * @return Pointer to dynamically allocated Feedback copy
                      *         child.
-                     * @date   March 3, 2015
-                     * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                      */
                     virtual Feedback* clone() const =0;
 
@@ -108,11 +109,9 @@ namespace gr
                  * @param  [in] constellation This is a direct mapping of
                  *                            symbols (as vector indices) to
                  *                            constellation points.
-                 * @date   May 16, 2017
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 virtual void analyze(
-                        const Word& codeword,
+                        const std::vector<Symbol>& codeword,
                         const Feedback& feedback,
                         const std::vector<Complex>& constellation)
                     =0;
@@ -123,8 +122,6 @@ namespace gr
                  * call to the analyze() function.
                  *
                  * @return  Constant reference to internal Feedback object.
-                 * @date    March 3, 2015
-                 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 virtual const Feedback& feedback() const =0;
 
@@ -136,8 +133,6 @@ namespace gr
                  *
                  * @return Floating point representation of the codeword's
                  *         selection analysis. Lower value wins.
-                 * @date   March 3, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 virtual double analysis() const =0;
             };
@@ -148,12 +143,13 @@ namespace gr
              * returns a pointer to it. It is the responsibility of the caller
              * to clean up when finished.
              *
+             * @tparam Symbol Base type to use for symbol type. Can be unsigned
+             *                char, unsigned short, or unsigned int.
              * @param   [in] method The desired analysis method to allocate
              * @return  Pointer to newly allocated Analyzer object
-             * @date    March 3, 2015
-             * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
-            Analyzer* manufactureAnalyzer(const unsigned int method);
+            template<typename Symbol> Analyzer<Symbol>*
+            manufactureAnalyzer(const unsigned int method);
 
             //! Manufacture a Feedback object
             /*!
@@ -161,12 +157,13 @@ namespace gr
              * returns a pointer to it. It is the responsibility of the caller
              * to clean up when finished.
              *
+             * @tparam Symbol Base type to use for symbol type. Can be unsigned
+             *                char, unsigned short, or unsigned int.
              * @param   [in] method The desired analysis method to base off of
              * @return  Pointer Newly created Feedback object
-             * @date    March 3, 2015
-             * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
-            Analyzer::Feedback* manufactureFeedback(const unsigned int method);
+            template<typename Symbol> typename Analyzer<Symbol>::Feedback*
+            manufactureFeedback(const unsigned int method);
         }
     }
 }

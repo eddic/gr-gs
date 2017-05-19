@@ -2,7 +2,7 @@
  * @file      ScramblerGroup.hpp
  * @brief     Declares the gr::gs::GuidedScrambling::ScramblerGroup class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 16, 2017
+ * @date      May 18, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -50,9 +50,12 @@ namespace gr
              * into a single execution group. The intention is for each group
              * to be given is own thread to allow for concurrent scrambling.
              *
-             * @date   May 16, 2017
+             * @tparam Symbol Base type to use for symbol type. Can be unsigned
+             *                char, unsigned short, or unsigned int.
+             * @date   May 18, 2017
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
+            template<typename Symbol>
             class ScramblerGroup
             {
             public:
@@ -84,8 +87,6 @@ namespace gr
                  *                              divider word minus one.
                  * @param  [in] method The desired analysis method to use.
                  * @param  [in] fieldSize Desired field size
-                 * @date   March 8, 2015
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 void configure(
                         const unsigned int length,
@@ -130,14 +131,12 @@ namespace gr
                  * @param  [in] constellation This is a direct mapping of
                  *                            symbols (as vector indices) to
                  *                            constellation points.
-                 * @date   May 16, 2017
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 void scramble(
-                        const Word& divider,
-                        const Word& input,
-                        const Word& remainder,
-                        const Analyzer::Feedback& feedback,
+                        const std::vector<Symbol>& divider,
+                        const std::vector<Symbol>& input,
+                        const std::vector<Symbol>& remainder,
+                        const typename Analyzer<Symbol>::Feedback& feedback,
                         const std::vector<Complex>& constellation)
                 {
                     m_winner = &m_scramblers.front();
@@ -177,16 +176,17 @@ namespace gr
                     bool sleep;
 
                     //! Input dividing word
-                    Word divider;
+                    std::vector<Symbol> divider;
 
                     //! Input to be scrambled
-                    const Word* input;
+                    const std::vector<Symbol>* input;
 
                     //! Input remainder word
-                    Word remainder;
+                    std::vector<Symbol> remainder;
 
                     //! The feedback from the previous winning codeword to start the analysis with
-                    std::unique_ptr<const Analyzer::Feedback> feedback;
+                    std::unique_ptr<const typename Analyzer<Symbol>::Feedback>
+                        feedback;
 
                     //! This is a direct mapping of symbols (as vector indices) to constellation points
                     std::vector<Complex> constellation;
@@ -196,8 +196,6 @@ namespace gr
                 /*!
                  * @param   [inout] args Collection of non-constant arguments
                  * @param   [in] cargs Collection of constant arguments
-                 * @date    March 8, 2015
-                 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 void handler(
                         HandlerArguments& args,
@@ -209,10 +207,8 @@ namespace gr
                  * call to the scramble() function.
                  *
                  * @return  Constant pointer to winning scrambler
-                 * @date    March 8, 2015
-                 * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
-                const Scrambler* winner() const
+                const Scrambler<Symbol>* winner() const
                 {
                     return m_winner;
                 }
@@ -220,10 +216,10 @@ namespace gr
 
             private:
                 //! Vector of scramblers
-                std::vector<Scrambler> m_scramblers;
+                std::vector<Scrambler<Symbol>> m_scramblers;
 
                 //! Winning Scrambler
-                const Scrambler* m_winner;
+                const Scrambler<Symbol>* m_winner;
             };
         }
     }

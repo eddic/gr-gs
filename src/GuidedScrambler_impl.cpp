@@ -2,7 +2,7 @@
  * @file      GuidedScrambler_impl.cpp
  * @brief     Defines the "Guided Scrambler" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 16, 2017
+ * @date      May 19, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -36,7 +36,8 @@
 #include "gr-gs/exceptions.h"
 #include "Words.hpp"
 
-void gr::gs::GuidedScrambling::GuidedScrambler_impl::killThreads()
+template<typename Symbol>
+void gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::killThreads()
 {
     if(m_threads.size())
     {
@@ -51,9 +52,9 @@ void gr::gs::GuidedScrambling::GuidedScrambler_impl::killThreads()
     }
 }
 
-const std::vector<gr::gs::Symbol>&
-gr::gs::GuidedScrambling::GuidedScrambler_impl::scramble(
-        const Word& input)
+template<typename Symbol> const std::vector<Symbol>&
+gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::scramble(
+        const std::vector<Symbol>& input)
 {
     std::unique_lock<std::mutex> sleepLock(m_args.sleepMutex);
     if(!m_threads.size())
@@ -76,7 +77,7 @@ gr::gs::GuidedScrambling::GuidedScrambler_impl::scramble(
         m_cargs.remainder.resize(m_cargs.divider.size()-1);
         std::fill(m_cargs.remainder.begin(), m_cargs.remainder.end(), 0);
         m_cargs.sleep=true;
-        m_cargs.feedback.reset(manufactureFeedback(m_selectionMethod));
+        m_cargs.feedback.reset(manufactureFeedback<Symbol>(m_selectionMethod));
 
         const unsigned int groupSize = (totalScramblers-1)/m_groups+1;
         for(unsigned int i=0; i<m_groups; ++i)
@@ -90,7 +91,7 @@ gr::gs::GuidedScrambling::GuidedScrambler_impl::scramble(
                     m_selectionMethod,
                     m_fieldSize);
             m_threads[i] = std::thread(
-                    &::gr::gs::GuidedScrambling::ScramblerGroup::handler,
+                    &::gr::gs::GuidedScrambling::ScramblerGroup<Symbol>::handler,
                     &m_scramblerGroups[i],
                     std::ref(m_args),
                     std::cref(m_cargs));
@@ -125,12 +126,13 @@ gr::gs::GuidedScrambling::GuidedScrambler_impl::scramble(
     return winner->output();
 }
 
-gr::gs::GuidedScrambling::GuidedScrambler_impl::GuidedScrambler_impl(
+template<typename Symbol>
+gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::GuidedScrambler_impl(
         const unsigned int fieldSize,
         const unsigned int codewordLength,
         const unsigned int augmentingLength,
         const bool continuous,
-        const Word& divider,
+        const std::vector<Symbol>& divider,
         const unsigned int threads,
         const std::vector<Complex>& constellation,
         const std::string& selectionMethod,
@@ -141,9 +143,9 @@ gr::gs::GuidedScrambling::GuidedScrambler_impl::GuidedScrambler_impl(
     m_codewordLength(codewordLength),
     m_augmentingLength(augmentingLength),
     m_selectionMethod(std::find(
-            Analyzer::names.cbegin(),
-            Analyzer::names.cend(),
-            selectionMethod) - Analyzer::names.cbegin()),
+            selectionMethods.cbegin(),
+            selectionMethods.cend(),
+            selectionMethod) - selectionMethods.cbegin()),
     m_groups(threads==0?std::thread::hardware_concurrency():threads),
     m_fieldSize(fieldSize),
     m_continuous(continuous),
@@ -155,32 +157,34 @@ gr::gs::GuidedScrambling::GuidedScrambler_impl::GuidedScrambler_impl(
 {
     this->set_relative_rate(
             double(codewordLength)/(codewordLength-augmentingLength));
-    set_tag_propagation_policy(gr::block::TPP_DONT);
+    this->set_tag_propagation_policy(gr::block::TPP_DONT);
     set_divider(divider);
     set_constellation(constellation);
 }
 
-const std::string&
-gr::gs::GuidedScrambling::GuidedScrambler_impl::selectionMethod() const
+template<typename Symbol> const std::string&
+gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::selectionMethod() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    return Analyzer::names[m_selectionMethod];
+    return selectionMethods[m_selectionMethod];
 }
 
-void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_selectionMethod(
+template<typename Symbol> void
+gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::set_selectionMethod(
         const std::string& method)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_codeword = nullptr;
     auto result = std::find(
-            Analyzer::names.begin(),
-            Analyzer::names.end(),
+            selectionMethods.begin(),
+            selectionMethods.end(),
             method);
-    m_selectionMethod = result - Analyzer::names.begin();
+    m_selectionMethod = result - selectionMethods.begin();
     killThreads();
 }
 
-void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_constellation(
+template<typename Symbol>
+void gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::set_constellation(
         const std::vector<Complex>& constellation)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -195,7 +199,8 @@ void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_constellation(
     killThreads();
 }
 
-void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_fieldSize(
+template<typename Symbol>
+void gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::set_fieldSize(
         const unsigned int size)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -208,20 +213,22 @@ void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_fieldSize(
     killThreads();
 }
 
-unsigned int gr::gs::GuidedScrambling::GuidedScrambler_impl::fieldSize() const
+template<typename Symbol> unsigned int
+gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::fieldSize() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_fieldSize;
 }
 
-unsigned int
-gr::gs::GuidedScrambling::GuidedScrambler_impl::codewordLength() const
+template<typename Symbol> unsigned int
+gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::codewordLength() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_codewordLength;
 }
 
-void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_codewordLength(
+template<typename Symbol>
+void gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::set_codewordLength(
         const unsigned int length)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -234,14 +241,15 @@ void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_codewordLength(
     killThreads();
 }
 
-unsigned int
-gr::gs::GuidedScrambling::GuidedScrambler_impl::augmentingLength() const
+template<typename Symbol> unsigned int
+gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::augmentingLength() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_augmentingLength;
 }
 
-void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_augmentingLength(
+template<typename Symbol> void
+gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::set_augmentingLength(
         const unsigned int length)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -254,13 +262,15 @@ void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_augmentingLength(
     killThreads();
 }
 
-bool gr::gs::GuidedScrambling::GuidedScrambler_impl::continuous() const
+template<typename Symbol>
+bool gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::continuous() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_continuous;
 }
 
-void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_continuous(
+template<typename Symbol>
+void gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::set_continuous(
         bool continuous)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -269,22 +279,23 @@ void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_continuous(
     killThreads();
 }
 
-const std::vector<gr::gs::Complex>&
-gr::gs::GuidedScrambling::GuidedScrambler_impl::constellation() const
+template<typename Symbol> const std::vector<gr::gs::Complex>&
+gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::constellation() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_cargs.constellation;
 }
 
-const std::vector<gr::gs::Symbol>&
-gr::gs::GuidedScrambling::GuidedScrambler_impl::divider() const
+template<typename Symbol> const std::vector<Symbol>&
+gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::divider() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_cargs.divider;
 }
 
-void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_divider(
-        const Word& divider)
+template<typename Symbol>
+void gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::set_divider(
+        const std::vector<Symbol>& divider)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_codeword = nullptr;
@@ -292,13 +303,15 @@ void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_divider(
     killThreads();
 }
 
-unsigned int gr::gs::GuidedScrambling::GuidedScrambler_impl::threads() const
+template<typename Symbol> unsigned int
+gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::threads() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_groups;
 }
 
-void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_threads(
+template<typename Symbol>
+void gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::set_threads(
         unsigned int number)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -310,14 +323,15 @@ void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_threads(
     killThreads();
 }
 
-const std::string&
-gr::gs::GuidedScrambling::GuidedScrambler_impl::framingTag() const
+template<typename Symbol> const std::string&
+gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::framingTag() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_framingTag;
 }
 
-void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_framingTag(
+template<typename Symbol>
+void gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::set_framingTag(
         const std::string& tag)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -325,13 +339,15 @@ void gr::gs::GuidedScrambling::GuidedScrambler_impl::set_framingTag(
     m_framingTagPMT = pmt::string_to_symbol(tag);
 }
 
-gr::gs::GuidedScrambling::GuidedScrambler_impl::~GuidedScrambler_impl()
+template<typename Symbol>
+gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::~GuidedScrambler_impl()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     killThreads();
 }
 
-int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
+template<typename Symbol>
+int gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::general_work(
         int noutput_items,
         gr_vector_int &ninput_items,
         gr_vector_const_void_star &input_items,
@@ -454,7 +470,8 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl::general_work(
     return noutput_items-outputSize;
 }
 
-void gr::gs::GuidedScrambling::GuidedScrambler_impl::forecast(
+template<typename Symbol>
+void gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::forecast(
         int noutput_items,
         gr_vector_int& ninput_items_required)
 {
@@ -473,19 +490,20 @@ void gr::gs::GuidedScrambling::GuidedScrambler_impl::forecast(
         ninput_items_required[0] = 0;
 }
 
-gr::gs::GuidedScrambler::sptr gr::gs::GuidedScrambler::make(
+template<typename Symbol> typename gr::gs::GuidedScrambler<Symbol>::sptr
+gr::gs::GuidedScrambler<Symbol>::make(
         const unsigned int fieldSize,
         const unsigned int codewordLength,
         const unsigned int augmentingLength,
         const bool continuous,
-        const Word& divider,
+        const std::vector<Symbol>& divider,
         const unsigned int threads,
         const std::vector<Complex>& constellation,
         const std::string& selectionMethod,
         const std::string& framingTag)
 {
     return gnuradio::get_initial_sptr(
-            new ::gr::gs::GuidedScrambling::GuidedScrambler_impl(
+            new ::gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>(
                     fieldSize,
                     codewordLength,
                     augmentingLength,
@@ -497,7 +515,15 @@ gr::gs::GuidedScrambler::sptr gr::gs::GuidedScrambler::make(
                     framingTag));
 }
 
-const std::vector<std::string>& gr::gs::GuidedScrambler::selectionMethods()
+template<typename Symbol> const std::vector<std::string>&
+gr::gs::GuidedScrambler<Symbol>::selectionMethods()
 {
-    return GuidedScrambling::Analyzer::names;
+    return gr::gs::GuidedScrambling::selectionMethods;
 }
+
+template class gr::gs::GuidedScrambler<unsigned char>;
+template class gr::gs::GuidedScrambling::GuidedScrambler_impl<unsigned char>;
+template class gr::gs::GuidedScrambler<unsigned short>;
+template class gr::gs::GuidedScrambling::GuidedScrambler_impl<unsigned short>;
+template class gr::gs::GuidedScrambler<unsigned int>;
+template class gr::gs::GuidedScrambling::GuidedScrambler_impl<unsigned int>;

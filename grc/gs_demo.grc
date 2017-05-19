@@ -178,7 +178,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(800, 93)</value>
+      <value>(712, 92)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -213,7 +213,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1112, 8)</value>
+      <value>(1040, 8)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -364,7 +364,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(960, 9)</value>
+      <value>(880, 8)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -434,7 +434,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(808, 14)</value>
+      <value>(712, 8)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -447,6 +447,10 @@
     <param>
       <key>length</key>
       <value>6</value>
+    </param>
+    <param>
+      <key>symbolType</key>
+      <value>byte</value>
     </param>
   </block>
   <block>
@@ -1153,6 +1157,10 @@
       <key>multiplier</key>
       <value>scramblingPolynomial</value>
     </param>
+    <param>
+      <key>symbolType</key>
+      <value>byte</value>
+    </param>
   </block>
   <block>
     <key>gr_gs_Distribution</key>
@@ -1306,6 +1314,10 @@
       <key>minoutbuf</key>
       <value>0</value>
     </param>
+    <param>
+      <key>symbolType</key>
+      <value>byte</value>
+    </param>
   </block>
   <block>
     <key>gr_gs_Integrate</key>
@@ -1435,6 +1447,10 @@
       <key>minoutbuf</key>
       <value>0</value>
     </param>
+    <param>
+      <key>symbolType</key>
+      <value>byte</value>
+    </param>
   </block>
   <block>
     <key>gr_gs_SymbolMapper</key>
@@ -1477,6 +1493,10 @@
     <param>
       <key>minoutbuf</key>
       <value>0</value>
+    </param>
+    <param>
+      <key>symbolType</key>
+      <value>byte</value>
     </param>
   </block>
   <block>
@@ -1548,6 +1568,10 @@
     <param>
       <key>selectionMethod</key>
       <value>MSW</value>
+    </param>
+    <param>
+      <key>symbolType</key>
+      <value>byte</value>
     </param>
     <param>
       <key>threads</key>
@@ -3096,6 +3120,10 @@
     <param>
       <key>minoutbuf</key>
       <value>0</value>
+    </param>
+    <param>
+      <key>symbolType</key>
+      <value>byte</value>
     </param>
     <param>
       <key>weightings</key>

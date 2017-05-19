@@ -2,7 +2,7 @@
  * @file      GuidedScrambler_impl.hpp
  * @brief     Declares the "Guided Scrambler" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 16, 2017
+ * @date      May 19, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -48,10 +48,13 @@ namespace gr
              * This class allows us to perform guided scrambling in an
              * efficient multi threaded fashion
              *
-             * @date   May 16, 2017
+             * @tparam Symbol Base type to use for symbol type. Can be unsigned
+             *                char, unsigned short, or unsigned int.
+             * @date   May 19, 2017
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
-            class GuidedScrambler_impl: public GuidedScrambler
+            template<typename Symbol>
+            class GuidedScrambler_impl: public GuidedScrambler<Symbol>
             {
             public:
                 //! No copying allowed
@@ -79,8 +82,8 @@ namespace gr
                 const std::string& selectionMethod() const;
                 void set_selectionMethod(const std::string& method);
 
-                const Word& divider() const;
-                void set_divider(const Word& divider);
+                const std::vector<Symbol>& divider() const;
+                void set_divider(const std::vector<Symbol>& divider);
 
                 unsigned int threads() const;
                 void set_threads(unsigned int number=0);
@@ -100,8 +103,8 @@ namespace gr
                  *                    length minus the augmenting length.
                  * @return Constant reference code word.
                  */
-                const Word& scramble(
-                        const Word& input);
+                const std::vector<Symbol>& scramble(
+                        const std::vector<Symbol>& input);
 
                 //! Initialize the guided scrambler
                 /*!
@@ -120,7 +123,7 @@ namespace gr
                         const unsigned int codewordLength,
                         const unsigned int augmentingLength,
                         const bool continuous,
-                        const Word& divider,
+                        const std::vector<Symbol>& divider,
                         const unsigned int threads,
                         const std::vector<Complex>& constellation,
                         const std::string& selectionMethod,
@@ -167,28 +170,28 @@ namespace gr
                 std::vector<std::thread> m_threads;
 
                 //! Vector of active scrambler groups
-                std::vector<ScramblerGroup> m_scramblerGroups;
+                std::vector<ScramblerGroup<Symbol>> m_scramblerGroups;
 
                 //! True if we're doing continuous encoding
                 bool m_continuous;
 
                 //! Arguments for ScramblerGroup::handler()
-                ScramblerGroup::HandlerArguments m_args;
+                typename ScramblerGroup<Symbol>::HandlerArguments m_args;
 
                 //! Constant arguments for ScramblerGroup::handler()
-                ScramblerGroup::HandlerConstArguments m_cargs;
+                typename ScramblerGroup<Symbol>::HandlerConstArguments m_cargs;
 
                 //! Pointer to current codeword
-                const Word* m_codeword;
+                const std::vector<Symbol>* m_codeword;
 
                 //! Iterator to codeword read position
-                Word::const_iterator m_codewordIt;
+                typename std::vector<Symbol>::const_iterator m_codewordIt;
 
                 //! Buffered source word
-                Word m_sourceword;
+                std::vector<Symbol> m_sourceword;
 
                 //! Iterator to sourceword write position
-                Word::iterator m_sourcewordIt;
+                typename std::vector<Symbol>::iterator m_sourcewordIt;
 
                 //! Framing tag name/key
                 std::string m_framingTag;
