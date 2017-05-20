@@ -28,7 +28,6 @@
 #include "Average_impl.hpp"
 
 #include <gnuradio/io_signature.h>
-#include <array>
 
 int gr::gs::Implementations::Average_impl::work(
         int noutput_items,

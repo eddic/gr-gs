@@ -21,8 +21,7 @@ if(UNIX)
     set(CMAKE_CXX_FLAGS
         "$ENV{CXXFLAGS} -std=c++14 -Wall -Werror -pthread -fvisibility-inlines-hidden -fvisibility=hidden")
     set(CMAKE_CXX_FLAGS_RELEASE
-        #"$ENV{CXXFLAGS} -O3 -fomit-frame-pointer -std=c++14 -Wall -Werror -pthread -fvisibility-inlines-hidden -fvisibility=hidden")
-        "$ENV{CXXFLAGS} -O3 -fomit-frame-pointer -std=c++14 -Wall -Werror -pthread")
+        "$ENV{CXXFLAGS} -O3 -fomit-frame-pointer -std=c++14 -Wall -Werror -pthread -fvisibility-inlines-hidden -fvisibility=hidden")
     set(CMAKE_CXX_FLAGS_DEBUG
         "$ENV{CXXFLAGS} -Og -fno-omit-frame-pointer -g -ggdb -std=c++14 -Wall -Werror -pthread")
 endif()
@@ -70,6 +69,7 @@ add_library(gnuradio-gs SHARED
     src/SymbolGenerator_impl.cpp
     src/SymbolMapper_impl.cpp
     src/Average_impl.cpp
+    src/Terminator_impl.cpp
     src/Distribution_impl.cpp
     src/Autocovariance_impl.cpp
     src/Integrate_impl.cpp
@@ -86,6 +86,7 @@ install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/SymbolGenerator.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/SymbolMapper.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Average.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Terminator.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Distribution.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Autocovariance.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Integrate.h"
@@ -236,6 +237,7 @@ install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_SymbolMapper.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_SymbolGenerator.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Average.xml"
+    "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Terminator.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Distribution.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Autocovariance.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Integrate.xml"

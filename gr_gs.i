@@ -10,6 +10,7 @@
 #include "gr-gs/SymbolMapper.h"
 #include "gr-gs/SymbolGenerator.h"
 #include "gr-gs/Average.h"
+#include "gr-gs/Terminator.h"
 #include "gr-gs/Distribution.h"
 #include "gr-gs/Integrate.h"
 #include "gr-gs/Autocovariance.h"
@@ -69,6 +70,8 @@ GR_SWIG_BLOCK_MAGIC2(gs, Autocovariance_cc);
 
 %include "gr-gs/Average.h"
 GR_SWIG_BLOCK_MAGIC2(gs, Average);
+%include "gr-gs/Terminator.h"
+GR_SWIG_BLOCK_MAGIC2(gs, Terminator);
 %include "gr-gs/Distribution.h"
 GR_SWIG_BLOCK_MAGIC2(gs, Distribution);
 %include "gr-gs/Integrate.h"

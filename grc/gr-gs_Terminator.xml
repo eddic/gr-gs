@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<block>
+    <name>Terminator</name>
+    <key>gr_gs_Terminator</key>
+    <category>[gr-gs]/Miscellaneous</category>
+    <import>import gr_gs as gs</import>
+    <make>gs.Terminator($vlen*$type.size, $samples)</make>
+	<param>
+		<name>Input Type</name>
+		<key>type</key>
+		<type>enum</type>
+		<option>
+			<name>Byte</name>
+			<key>byte</key>
+			<opt>size:gr.sizeof_char</opt>
+		</option>
+		<option>
+			<name>Short</name>
+			<key>short</key>
+			<opt>size:gr.sizeof_short</opt>
+		</option>
+		<option>
+			<name>Int</name>
+			<key>int</key>
+			<opt>size:gr.sizeof_int</opt>
+		</option>
+		<option>
+			<name>Float</name>
+			<key>float</key>
+			<opt>size:gr.sizeof_float</opt>
+		</option>
+		<option>
+			<name>Complex</name>
+			<key>complex</key>
+			<opt>size:gr.sizeof_gr_complex</opt>
+		</option>
+	</param>
+    <param>
+        <name>Vector Length</name>
+        <key>vlen</key>
+        <value>1</value>
+        <type>int</type>
+    </param>
+    <param>
+        <name>Samples</name>
+        <key>samples</key>
+        <type>int</type>
+    </param>
+    <sink>
+        <name>in</name>
+        <type>$type</type>
+        <vlen>$vlen</vlen>
+    </sink>
+    <doc>This block terminates the flowgraph after a specified amount of samples.</doc>
+</block>

@@ -1,6 +1,6 @@
 /*!
- * @file      Average_impl.hpp
- * @brief     Declares the "Average" GNU Radio block implementation
+ * @file      Terminator_impl.hpp
+ * @brief     Declares the "Terminator" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
  * @date      May 20, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
@@ -25,10 +25,10 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GR_GS_AVERAGE_IMPL_HPP
-#define GR_GS_AVERAGE_IMPL_HPP
+#ifndef GR_GS_TERMINATOR_IMPL_HPP
+#define GR_GS_TERMINATOR_IMPL_HPP
 
-#include "gr-gs/Average.h"
+#include "gr-gs/Terminator.h"
 
 #include <mutex>
 
@@ -41,20 +41,20 @@ namespace gr
         //! All block implementation too trivial for their own namespace
         namespace Implementations
         {
-            //! "Average" GNU Radio block implementation
+            //! "Terminator" GNU Radio block implementation
             /*!
-             * Implements gr::gs::Average
+             * Implements gr::gs::Terminator
              *
              * @date    May 20, 2017
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
-            class Average_impl: public Average
+            class Terminator_impl: public Terminator
             {
             public:
                 //! No copying allowed
-                Average_impl(const Average_impl& x) = delete;
+                Terminator_impl(const Terminator_impl& x) = delete;
                 //! No copying allowed
-                Average_impl& operator=(const Average_impl& x)
+                Terminator_impl& operator=(const Terminator_impl& x)
                     = delete;
 
                 //! GNU Radio work function
@@ -64,29 +64,26 @@ namespace gr
 
                 //! Initialize an average block
                 /*!
-                 * @param [in] vectorSize Number of elements in the vector
-                 * @param [in] decimation Should we decimate the output?
-                 * @return Shared pointer to newly allocated average block
+                 * @param [in] sampleSize Number of bytes per sample (vector
+                 *                        included).
+                 * @param [in] sampleCount Number of samples until we terminate
                  */
-                inline Average_impl(
-                        const unsigned vectorSize,
-                        const unsigned decimation);
+                inline Terminator_impl(
+                        const unsigned sampleSize,
+                        const unsigned long long sampleCount);
 
-                virtual const std::vector<double>& average() const;
-                virtual void reset();
+                //! How many samples have we sunk?
+                unsigned long long samples() const;
 
             private:
                 //! Let's be thread safe
                 mutable std::mutex m_mutex;
 
-                //! Sum of all vectors
-                std::vector<double> m_sum;
+                //! End point for sample count
+                const unsigned long long m_end;
 
-                //! Vector count
-                unsigned long long m_count;
-
-                //! Current average
-                std::vector<double> m_average;
+                //! Current sample count
+                unsigned long long m_samples;
             };
         }
     }
