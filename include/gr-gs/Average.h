@@ -2,7 +2,7 @@
  * @file      Average.h
  * @brief     Declares the "Average" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 18, 2017
+ * @date      May 20, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -45,7 +45,7 @@ namespace gr
          * output is a vector in which all received input vectors carry equal
          * weight in the average.
          *
-         * @date    August 11, 2016
+         * @date    May 20, 2017
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         class GS_API Average: virtual public gr::sync_decimator
@@ -65,7 +65,7 @@ namespace gr
                     const unsigned decimation = 1);
 
             //! See the current average
-            virtual const std::vector<float>& average() const =0;
+            virtual const std::vector<double>& average() const =0;
 
             //! Reset the current average
             virtual void reset() =0;

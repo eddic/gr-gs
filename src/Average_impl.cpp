@@ -2,7 +2,7 @@
  * @file      Average_impl.cpp
  * @brief     Defines the "Average" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 18, 2017
+ * @date      May 20, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -52,7 +52,7 @@ int gr::gs::Implementations::Average_impl::work(
             }
         }
 
-        for(const float& value: m_average)
+        for(const double& value: m_average)
             *output++ = value;
     }
 
@@ -83,7 +83,7 @@ gr::gs::Average::sptr gr::gs::Average::make(
                 decimation));
 }
 
-const std::vector<float>&
+const std::vector<double>&
 gr::gs::Implementations::Average_impl::average() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -94,7 +94,7 @@ void gr::gs::Implementations::Average_impl::reset()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_count = 0;
-    for(float& value: m_average)
+    for(double& value: m_average)
         value=0;
     for(double& value: m_sum)
         value=0;
