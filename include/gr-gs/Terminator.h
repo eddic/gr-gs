@@ -62,10 +62,10 @@ namespace gr
              */
             static sptr make(
                     const unsigned sampleSize,
-                    const unsigned long long sampleCount);
+                    const unsigned sampleCount);
 
             //! How many samples have we sunk?
-            virtual unsigned long long samples() const =0;
+            virtual unsigned samples() const =0;
         };
     }
 }
