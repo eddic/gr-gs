@@ -48,7 +48,7 @@ int gr::gs::Implementations::Terminator_impl::work(
 
 gr::gs::Implementations::Terminator_impl::Terminator_impl(
         const unsigned sampleSize,
-        const unsigned sampleCount):
+        const unsigned long long sampleCount):
     gr::sync_block("Terminator",
         io_signature::make(1,1,sampleSize),
         io_signature::make(0,0,0)),
@@ -60,7 +60,7 @@ gr::gs::Implementations::Terminator_impl::Terminator_impl(
 
 gr::gs::Terminator::sptr gr::gs::Terminator::make(
         const unsigned sampleSize,
-        const unsigned sampleCount)
+        const unsigned long long sampleCount)
 {
     return gnuradio::get_initial_sptr(
             new Implementations::Terminator_impl(
@@ -68,7 +68,7 @@ gr::gs::Terminator::sptr gr::gs::Terminator::make(
                 sampleCount));
 }
 
-unsigned gr::gs::Implementations::Terminator_impl::samples() const
+unsigned long long gr::gs::Implementations::Terminator_impl::samples() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_samples;

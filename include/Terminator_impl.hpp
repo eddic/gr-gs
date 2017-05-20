@@ -70,20 +70,20 @@ namespace gr
                  */
                 inline Terminator_impl(
                         const unsigned sampleSize,
-                        const unsigned sampleCount);
+                        const unsigned long long sampleCount);
 
                 //! How many samples have we sunk?
-                unsigned samples() const;
+                unsigned long long samples() const;
 
             private:
                 //! Let's be thread safe
                 mutable std::mutex m_mutex;
 
                 //! End point for sample count
-                const unsigned m_end;
+                const unsigned long long m_end;
 
                 //! Current sample count
-                unsigned m_samples;
+                unsigned long long m_samples;
             };
         }
     }
