@@ -1567,6 +1567,49 @@
     </param>
   </block>
   <block>
+    <key>gr_gs_Terminator</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(296, 676)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>gr_gs_Terminator_0</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>byte</value>
+    </param>
+    <param>
+      <key>samples</key>
+      <value>long(1e7)</value>
+    </param>
+    <param>
+      <key>vlen</key>
+      <value>1</value>
+    </param>
+  </block>
+  <block>
     <key>gr_gs_GuidedScrambler</key>
     <param>
       <key>augmentingLength</key>
@@ -3399,6 +3442,12 @@
   <connection>
     <source_block_id>guidedScrambler</source_block_id>
     <sink_block_id>gr_gs_SymbolMapper_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>guidedScrambler</source_block_id>
+    <sink_block_id>gr_gs_Terminator_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
