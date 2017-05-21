@@ -72,8 +72,9 @@ namespace gr
                         const unsigned sampleSize,
                         const unsigned long long sampleCount);
 
-                //! How many samples have we sunk?
-                unsigned long long samples() const;
+                virtual unsigned long long samples() const;
+                virtual bool finished() const;
+                virtual void reset();
 
             private:
                 //! Let's be thread safe

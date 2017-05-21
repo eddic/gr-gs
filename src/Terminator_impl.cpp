@@ -73,3 +73,15 @@ unsigned long long gr::gs::Implementations::Terminator_impl::samples() const
     std::lock_guard<std::mutex> lock(m_mutex);
     return m_samples;
 }
+
+bool gr::gs::Implementations::Terminator_impl::finished() const
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return m_samples >= m_end;
+}
+
+void gr::gs::Implementations::Terminator_impl::reset()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_samples = 0;
+}

@@ -66,6 +66,12 @@ namespace gr
 
             //! How many samples have we sunk?
             virtual unsigned long long samples() const =0;
+
+            //! Check if we have reach our end point
+            virtual bool finished() const =0;
+
+            //! Reset so we can run it again
+            virtual void reset() =0;
         };
     }
 }
