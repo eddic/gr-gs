@@ -2,7 +2,7 @@
  * @file      Autocovariance_impl.hpp
  * @brief     Declares the "Autocovariance" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 19, 2017
+ * @date      May 22, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -46,7 +46,7 @@ namespace gr
              * Implements gr::gs::Autocovariance
              *
              * @tparam T Base signal type. Can be float or std::complex<float>.
-             * @date    May 19, 2017
+             * @date    May 22, 2017
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename T>
@@ -73,11 +73,18 @@ namespace gr
                  *                    vectors being spit out of this thing.
                  * @param [in] mean The mean value of the signal.
                  * @param [in] decimation Should we decimate the output?
+                 * @param [in] offset This should be a value between 0 and
+                 *                    decimation. 0 means we're taking the
+                 *                    autocorrelation just for the first sample
+                 *                    in the chunk. You can use this to
+                 *                    calculate autocorrelations in
+                 *                    cyclostationary signals.
                  */
                 inline Autocovariance_impl(
                         unsigned length,
                         T mean,
-                        const unsigned decimation);
+                        const unsigned decimation,
+                        const unsigned offset);
 
                 T mean() const;
                 void set_mean(T mean);
@@ -91,6 +98,9 @@ namespace gr
 
                 //! Vector length
                 const unsigned m_length;
+
+                //! Offset within decimation chunk
+                const unsigned m_offset;
             };
         }
     }

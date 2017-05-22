@@ -4,7 +4,7 @@
     <key>gr_gs_Autocovariance</key>
     <category>[gr-gs]/Miscellaneous</category>
     <import>import gr_gs as gs</import>
-    <make>gs.Autocovariance_$(sampleType.fcn)($length, $mean, $decimation)</make>
+    <make>gs.Autocovariance_$(sampleType.fcn)($length, $mean, $decimation, $offset)</make>
 	<param>
 		<name>Sample Type</name>
 		<key>sampleType</key>
@@ -36,6 +36,12 @@
         <name>Decimation</name>
         <key>decimation</key>
         <value>1</value>
+        <type>int</type>
+    </param>
+    <param>
+        <name>Offset</name>
+        <key>offset</key>
+        <value>0</value>
         <type>int</type>
     </param>
     <sink>
