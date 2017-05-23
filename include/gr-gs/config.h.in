@@ -61,7 +61,7 @@ namespace gr
         namespace GuidedScrambling
         {
             //! Starting RDS for codeword analysis
-            const std::complex<double> startingRDS={1,0};
+            const std::complex<double> startingRDS={0,0};
 
             //! Maximum field size defined
             const unsigned int maxFieldSize=16;

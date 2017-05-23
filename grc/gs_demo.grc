@@ -481,49 +481,6 @@
     </param>
   </block>
   <block>
-    <key>blocks_complex_to_imag</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(416, 544)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>blocks_complex_to_imag_0_0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>vlen</key>
-      <value>1</value>
-    </param>
-  </block>
-  <block>
     <key>blocks_complex_to_mag_squared</key>
     <param>
       <key>alias</key>
@@ -564,6 +521,49 @@
     <param>
       <key>vlen</key>
       <value>window_size</value>
+    </param>
+  </block>
+  <block>
+    <key>blocks_complex_to_real</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(416, 544)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>blocks_complex_to_real_0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>vlen</key>
+      <value>1</value>
     </param>
   </block>
   <block>
@@ -684,7 +684,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -1209,6 +1209,10 @@
       <value>0</value>
     </param>
     <param>
+      <key>offset</key>
+      <value>0</value>
+    </param>
+    <param>
       <key>sampleType</key>
       <value>float</value>
     </param>
@@ -1382,7 +1386,7 @@
     </param>
     <param>
       <key>leftBinCenter</key>
-      <value>-12</value>
+      <value>-(25-1)/2</value>
     </param>
     <param>
       <key>comment</key>
@@ -2300,7 +2304,7 @@
     <key>qtgui_vector_sink_f</key>
     <param>
       <key>autoscale</key>
-      <value>False</value>
+      <value>True</value>
     </param>
     <param>
       <key>average</key>
@@ -2827,7 +2831,7 @@
     </param>
     <param>
       <key>ymin</key>
-      <value>-30</value>
+      <value>-60</value>
     </param>
     <param>
       <key>y_axis_label</key>
@@ -3296,14 +3300,14 @@
     </param>
   </block>
   <connection>
-    <source_block_id>blocks_complex_to_imag_0_0</source_block_id>
-    <sink_block_id>gr_gs_Integrate_0_0</sink_block_id>
+    <source_block_id>blocks_complex_to_mag_squared_0</source_block_id>
+    <sink_block_id>gr_gs_Average_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>blocks_complex_to_mag_squared_0</source_block_id>
-    <sink_block_id>gr_gs_Average_0</sink_block_id>
+    <source_block_id>blocks_complex_to_real_0</source_block_id>
+    <sink_block_id>gr_gs_Integrate_0_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -3429,7 +3433,7 @@
   </connection>
   <connection>
     <source_block_id>gr_gs_SymbolMapper_0</source_block_id>
-    <sink_block_id>blocks_complex_to_imag_0_0</sink_block_id>
+    <sink_block_id>blocks_complex_to_real_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
