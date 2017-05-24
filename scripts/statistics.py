@@ -15,8 +15,6 @@ from optparse import OptionParser
 import gr_gs as gs
 import numpy as np
 import sys, time
-from scipy.optimize import curve_fit
-
 
 class gs_stats(gr.top_block):
 
@@ -121,7 +119,7 @@ class gs_stats(gr.top_block):
     def distribution(self, index):
         return self.distributions[index].distribution()
 
-symbolCount = 1e9
+symbolCount = 1e10
 distributionWidth = 129
 autocovarianceLength = 64
 
@@ -129,7 +127,7 @@ fieldSizes = [2]
 codewordLengths = [24]
 augmentingLengths = range(1,10)
 maxRate = 0.5
-maxScramblers = 256
+maxScramblers = 512
 
 for fieldSize in fieldSizes:
     print("Computing set with field size = {:d}".format(fieldSize))
@@ -185,21 +183,30 @@ for fieldSize in fieldSizes:
             file.close()
 
             # Model error stuff
-            xdata = (
-                    np.array(range((distributionWidth-1)/2), dtype=float)*2
-                        - (distributionWidth-1)/2+1,
-                    np.array(range((distributionWidth-1)/2+1), dtype=float)*2
-                        - (distributionWidth-1)/2)
             for position in range(codewordLength):
-                ydata = np.array(tb.distribution(position))
-                ydata = ydata[(position+1)%2::2]
-                def gaussian(x, a, b):
-                    return a*np.exp(-x**2/b)
-                popt, pcov = curve_fit(gaussian, xdata[position%2], ydata)
+                initial_ydata = np.array(tb.distribution(position))
+                size = np.count_nonzero(initial_ydata)
+                xdata = np.empty(size, dtype=float)
+                ydata = np.empty(size, dtype=float)
+                sourceIndex = 0
+                sinkIndex = 0
+                while sinkIndex < size:
+                    if initial_ydata[sourceIndex] != 0:
+                        ydata[sinkIndex] = initial_ydata[sourceIndex]
+                        xdata[sinkIndex] = sourceIndex - (distributionWidth-1)/2
+                        sinkIndex += 1
+                    sourceIndex += 1
+
+                def PMF(x, a, b):
+                    return a*np.exp(-x**2/(2*b))
+                variance = np.sum(ydata * xdata**2)
+                constant = 1/np.sum(PMF(xdata, 1, variance))
                 error = 0.0
-                for i in range(len(ydata)):
-                    error += (ydata[i] - gaussian(xdata[position%2][i], popt[0], popt[1]))**2
+                for i in range(size):
+                    error += (ydata[i] - PMF(xdata[i], constant, variance))**2
+                error /= size
                 error = np.sqrt(error)
+                error /= ydata.mean()
                 modelError[-1].append(error)
 
             # Second order statistics
@@ -221,11 +228,11 @@ for fieldSize in fieldSizes:
         if len(modelError) == 0:
             continue
         file = open("RDS Gaussian model RMS error for field size = {:d}, codeword length = {:d} and symbol count = {:.0e}.dat".format(fieldSize, codewordLength, symbolCount), 'w')
-        file.write(" pos ")
+        file.write(" pos")
         for index in range(len(modelError)):
-            file.write(" augmentingLength={:.0f} ".format(modelError[index][0]))
+            file.write(" augmentingLength={:.0f}".format(modelError[index][0]))
         for position in range(codewordLength):
             file.write("\n{: 4d}".format(position))
             for index in range(len(modelError)):
-                file.write(" {:+.12e}".format(modelError[index][position+1]))
+                file.write(" {:.12e}".format(modelError[index][position+1]))
         file.close()
