@@ -17,7 +17,6 @@ import numpy as np
 import sys, time
 
 class gs_stats(gr.top_block):
-
     def __init__(
             self,
             fieldSize = 4,
@@ -119,7 +118,7 @@ class gs_stats(gr.top_block):
     def distribution(self, index):
         return self.distributions[index].distribution()
 
-symbolCount = 1e10
+symbolCount = 1e7
 distributionWidth = 129
 autocovarianceLength = 64
 
@@ -129,10 +128,25 @@ augmentingLengths = range(1,10)
 maxRate = 0.5
 maxScramblers = 512
 
+dataFile = open("RDSautocorrelations.hpp", 'w')
+dataFile.write('{')
+
 for fieldSize in fieldSizes:
     print("Computing set with field size = {:d}".format(fieldSize))
+
+    if fieldSize != fieldSizes[0]:
+        dataFile.write(',')
+    dataFile.write("\n    {{{0:d}, // Field size = {0:d}".format(fieldSize))
+    dataFile.write("\n        {")
+
     for codewordLength in codewordLengths:
         print("  Computing subset with codeword length = {:d}".format(codewordLength))
+
+        if codewordLength != codewordLengths[0]:
+            dataFile.write(',')
+        dataFile.write("\n            {{{0:d}, // Codeword length = {0:d}".format(codewordLength))
+        dataFile.write("\n                {")
+
         modelError = []
 
         for augmentingLength in augmentingLengths:
@@ -200,14 +214,17 @@ for fieldSize in fieldSizes:
                 def PMF(x, a, b):
                     return a*np.exp(-x**2/(2*b))
                 variance = np.sum(ydata * xdata**2)
-                constant = 1/np.sum(PMF(xdata, 1, variance))
-                error = 0.0
-                for i in range(size):
-                    error += (ydata[i] - PMF(xdata[i], constant, variance))**2
-                error /= size
-                error = np.sqrt(error)
-                error /= ydata.mean()
-                modelError[-1].append(error)
+                if variance > 0:
+                    constant = 1/np.sum(PMF(xdata, 1, variance))
+                    error = 0.0
+                    for i in range(size):
+                        error += (ydata[i] - PMF(xdata[i], constant, variance))**2
+                    error /= size
+                    error = np.sqrt(error)
+                    error /= ydata.mean()
+                    modelError[-1].append(error)
+                else:
+                    modelError[-1].append(0)
 
             # Second order statistics
             file = open("RDS autocovariances for field size = {:d}, codeword length = {:d}, augmenting length = {:d}, and symbol count = {:.0e}.dat".format(
@@ -224,7 +241,28 @@ for fieldSize in fieldSizes:
                 for position in range(codewordLength):
                     file.write(" {:+.12e}".format(
                         tb.autocovariance(position)[autocovarianceLength-1-tau]))
+
+            
             file.close()
+
+            # Write to our dataFile
+            if augmentingLength != augmentingLengths[0]:
+                dataFile.write(',')
+            dataFile.write("\n                    {{{0:d}, // Augmenting symbols = {0:d}".format(augmentingLength))
+            dataFile.write("\n                        {")
+            for position in range(codewordLength):
+                if position != 0:
+                    dataFile.write(',')
+                dataFile.write("\n                            {{ // Codeword Position = {:d}".format(position))
+                for tau in range(autocovarianceLength):
+                    dataFile.write("\n                                {:.16e}".format(tb.autocovariance(position)[autocovarianceLength-1-tau]))
+                    if tau < autocovarianceLength-1:
+                        dataFile.write(',')
+                    dataFile.write(" // Tau = {:d}".format(-tau))
+                dataFile.write("\n                            }")
+            dataFile.write("\n                        }")
+            dataFile.write("\n                    }")
+
         if len(modelError) == 0:
             continue
         file = open("RDS Gaussian model RMS error for field size = {:d}, codeword length = {:d} and symbol count = {:.0e}.dat".format(fieldSize, codewordLength, symbolCount), 'w')
@@ -236,3 +274,11 @@ for fieldSize in fieldSizes:
             for index in range(len(modelError)):
                 file.write(" {:.12e}".format(modelError[index][position+1]))
         file.close()
+
+        dataFile.write("\n                }")
+        dataFile.write("\n            }")
+
+    dataFile.write("\n        }")
+    dataFile.write("\n    }")
+
+dataFile.write('\n};\n')
