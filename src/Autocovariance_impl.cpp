@@ -51,7 +51,7 @@ int gr::gs::Implementations::Autocovariance_impl<T>::work(
         const T* pastValue = input - this->history();
 
         while(output<outputEnd)
-            *output++ = currentValue * (*pastValue++ - m_mean);
+            *output++ = currentValue * conj(*pastValue++ - m_mean);
 
         input += this->decimation();
     }

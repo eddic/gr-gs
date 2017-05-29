@@ -102,6 +102,16 @@ namespace gr
                 //! Offset within decimation chunk
                 const unsigned m_offset;
             };
+
+            inline float conj(float x)
+            {
+                return x;
+            }
+
+            inline std::complex<float> conj(std::complex<float> x)
+            {
+                return std::conj(x);
+            }
         }
     }
 }
