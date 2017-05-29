@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<?grc format='1' created='3.7.10'?>
+<?grc format='1' created='3.7.11'?>
 <flow_graph>
   <timestamp>Sat Jul 23 17:48:44 2016</timestamp>
   <block>
@@ -1260,6 +1260,10 @@
       <value>0</value>
     </param>
     <param>
+      <key>sampleType</key>
+      <value>float</value>
+    </param>
+    <param>
       <key>vectorSize</key>
       <value>window_size</value>
     </param>
@@ -1305,6 +1309,10 @@
     <param>
       <key>minoutbuf</key>
       <value>0</value>
+    </param>
+    <param>
+      <key>sampleType</key>
+      <value>float</value>
     </param>
     <param>
       <key>vectorSize</key>

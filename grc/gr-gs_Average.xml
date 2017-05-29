@@ -4,11 +4,26 @@
     <key>gr_gs_Average</key>
     <category>[gr-gs]/Miscellaneous</category>
     <import>import gr_gs as gs</import>
-    <make>gs.Average($vectorSize, $decimation)</make>
+    <make>gs.Average_$(sampleType.fcn)($vectorSize, $decimation)</make>
+	<param>
+		<name>Sample Type</name>
+		<key>sampleType</key>
+		<type>enum</type>
+		<option>
+			<name>Float</name>
+			<key>float</key>
+			<opt>fcn:ff</opt>
+		</option>
+		<option>
+			<name>Complex</name>
+			<key>complex</key>
+			<opt>fcn:cc</opt>
+		</option>
+	</param>
     <param>
         <name>Vector Size</name>
         <key>vectorSize</key>
-        <value>4096</value>
+        <value>1</value>
         <type>int</type>
     </param>
     <param>
@@ -19,13 +34,13 @@
     </param>
     <sink>
         <name>in</name>
-        <type>f32</type>
+        <type>$sampleType</type>
         <vlen>$vectorSize</vlen>
     </sink>
     <source>
         <name>out</name>
-        <type>f32</type>
+        <type>$sampleType</type>
         <vlen>$vectorSize</vlen>
     </source>
-    <doc>This block averages a sequence of float vectors over all time. The output is a vector in which all received input vectors carry equal weight in the average.</doc>
+    <doc>This block averages a sequence of vectors over all time. The output is a vector in which all received input vectors carry equal weight in the average.</doc>
 </block>

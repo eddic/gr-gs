@@ -2,7 +2,7 @@
  * @file      Average_impl.hpp
  * @brief     Declares the "Average" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 20, 2017
+ * @date      May 29, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -45,10 +45,14 @@ namespace gr
             /*!
              * Implements gr::gs::Average
              *
-             * @date    May 20, 2017
+             * @tparam Internal Internal storage type (may be of higher
+             *                  accuracy).
+             * @tparam External External stype for talking with GNU Radio.
+             * @date    May 29, 2017
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
-            class Average_impl: public Average
+            template<typename Internal, typename External>
+            class Average_impl: public Average<Internal, External>
             {
             public:
                 //! No copying allowed
@@ -72,7 +76,7 @@ namespace gr
                         const unsigned vectorSize,
                         const unsigned decimation);
 
-                virtual const std::vector<double>& average() const;
+                virtual const std::vector<Internal>& average() const;
                 virtual void reset();
 
             private:
@@ -80,13 +84,13 @@ namespace gr
                 mutable std::mutex m_mutex;
 
                 //! Sum of all vectors
-                std::vector<double> m_sum;
+                std::vector<Internal> m_sum;
 
                 //! Vector count
                 unsigned long long m_count;
 
                 //! Current average
-                std::vector<double> m_average;
+                std::vector<Internal> m_average;
             };
         }
     }

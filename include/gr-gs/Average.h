@@ -2,7 +2,7 @@
  * @file      Average.h
  * @brief     Declares the "Average" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 20, 2017
+ * @date      May 29, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -41,13 +41,16 @@ namespace gr
     {
         //! "Average" GNU Radio block
         /*!
-         * This block averages a sequence of float vectors over all time. The
-         * output is a vector in which all received input vectors carry equal
-         * weight in the average.
+         * This block averages a sequence of vectors over all time. The output
+         * is a vector in which all received input vectors carry equal weight
+         * in the average.
          *
-         * @date    May 20, 2017
+         * @tparam Internal Internal storage type (may be of higher accuracy).
+         * @tparam External External stype for talking with GNU Radio.
+         * @date    May 29, 2017
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
+        template<typename Internal, typename External>
         class GS_API Average: virtual public gr::sync_decimator
         {
         public:
@@ -65,11 +68,14 @@ namespace gr
                     const unsigned decimation = 1);
 
             //! See the current average
-            virtual const std::vector<double>& average() const =0;
+            virtual const std::vector<Internal>& average() const =0;
 
             //! Reset the current average
             virtual void reset() =0;
         };
+
+        typedef Average<double, float> Average_ff;
+        typedef Average<std::complex<double>, std::complex<float>> Average_cc;
     }
 }
 
