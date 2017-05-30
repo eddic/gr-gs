@@ -2,7 +2,7 @@
  * @file      Integrate.h
  * @brief     Declares the "Integrate" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 18, 2017
+ * @date      May 29, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -44,9 +44,12 @@ namespace gr
          * This block takes in a sequence of numbers and continually integrates
          * them without reset.
          *
-         * @date    May 16, 2017
+         * @tparam Internal Internal storage type (may be of higher accuracy).
+         * @tparam External External stype for talking with GNU Radio.
+         * @date    May 29, 2017
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
+        template<typename Internal, typename External>
         class GS_API Integrate: virtual public gr::sync_decimator
         {
         public:
@@ -63,6 +66,9 @@ namespace gr
             //! Reset the current integration
             virtual void reset() =0;
         };
+
+        typedef Integrate<double, float> Integrate_ff;
+        typedef Integrate<std::complex<double>, std::complex<float>> Integrate_cc;
     }
 }
 

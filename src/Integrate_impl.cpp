@@ -2,7 +2,7 @@
  * @file      Integrate_impl.cpp
  * @brief     Defines the "Integrate" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 18, 2017
+ * @date      May 29, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -30,15 +30,16 @@
 
 #include <gnuradio/io_signature.h>
 
-int gr::gs::Implementations::Integrate_impl::work(
+template<typename Internal, typename External>
+int gr::gs::Implementations::Integrate_impl<Internal, External>::work(
         int noutput_items,
         gr_vector_const_void_star &input_items,
         gr_vector_void_star &output_items)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    const float* input = reinterpret_cast<const float*>(input_items[0]);
-    float* output = reinterpret_cast<float*>(output_items[0]);
+    const External* input = reinterpret_cast<const External*>(input_items[0]);
+    External* output = reinterpret_cast<External*>(output_items[0]);
 
     for(int i=0; i<noutput_items; ++i)
     {
@@ -51,25 +52,36 @@ int gr::gs::Implementations::Integrate_impl::work(
     return noutput_items;
 }
 
-gr::gs::Implementations::Integrate_impl::Integrate_impl(
+template<typename Internal, typename External>
+gr::gs::Implementations::Integrate_impl<Internal, External>::Integrate_impl(
         const unsigned decimation):
     gr::sync_decimator("Integrate",
-        io_signature::make(1,1,sizeof(float)),
-        io_signature::make(1,1,sizeof(float)),
+        io_signature::make(1,1,sizeof(External)),
+        io_signature::make(1,1,sizeof(External)),
         decimation),
     m_sum(0)
 {
     this->enable_update_rate(false);
 }
 
-gr::gs::Integrate::sptr gr::gs::Integrate::make(
+template<typename Internal, typename External>
+typename gr::gs::Integrate<Internal, External>::sptr
+gr::gs::Integrate<Internal, External>::make(
         const unsigned decimation)
 {
     return gnuradio::get_initial_sptr(
-            new Implementations::Integrate_impl(decimation));
+            new Implementations::Integrate_impl<Internal, External>(decimation));
 }
 
-void gr::gs::Implementations::Integrate_impl::reset()
+template<typename Internal, typename External>
+void gr::gs::Implementations::Integrate_impl<Internal, External>::reset()
 {
     m_sum = 0;
 }
+
+template class gr::gs::Implementations::Integrate_impl<double, float>;
+template class gr::gs::Implementations::Integrate_impl<
+    std::complex<double>,
+    std::complex<float>>;
+template class gr::gs::Integrate<double, float>;
+template class gr::gs::Integrate<std::complex<double>, std::complex<float>>;

@@ -4,7 +4,22 @@
     <key>gr_gs_Integrate</key>
     <category>[gr-gs]/Miscellaneous</category>
     <import>import gr_gs as gs</import>
-    <make>gs.Integrate($decimation)</make>
+    <make>gs.Integrate_$(sampleType.fcn)($decimation)</make>
+	<param>
+		<name>Sample Type</name>
+		<key>sampleType</key>
+		<type>enum</type>
+		<option>
+			<name>Float</name>
+			<key>float</key>
+			<opt>fcn:ff</opt>
+		</option>
+		<option>
+			<name>Complex</name>
+			<key>complex</key>
+			<opt>fcn:cc</opt>
+		</option>
+	</param>
     <param>
         <name>Decimation</name>
         <key>decimation</key>
@@ -13,11 +28,11 @@
     </param>
     <sink>
         <name>in</name>
-        <type>f32</type>
+        <type>$sampleType</type>
     </sink>
     <source>
         <name>out</name>
-        <type>f32</type>
+        <type>$sampleType</type>
     </source>
     <doc>This block simply continously integrates without reset.</doc>
 </block>

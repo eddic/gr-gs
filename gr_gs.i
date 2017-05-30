@@ -74,9 +74,13 @@ GR_SWIG_BLOCK_MAGIC2(gs, Autocovariance_cc);
 GR_SWIG_BLOCK_MAGIC2(gs, Average_ff);
 GR_SWIG_BLOCK_MAGIC2(gs, Average_cc);
 
+%include "gr-gs/Integrate.h"
+%template(Integrate_ff) gr::gs::Integrate<double, float>;
+%template(Integrate_cc) gr::gs::Integrate<std::complex<double>, std::complex<float>>;
+GR_SWIG_BLOCK_MAGIC2(gs, Integrate_ff);
+GR_SWIG_BLOCK_MAGIC2(gs, Integrate_cc);
+
 %include "gr-gs/Terminator.h"
 GR_SWIG_BLOCK_MAGIC2(gs, Terminator);
 %include "gr-gs/Distribution.h"
 GR_SWIG_BLOCK_MAGIC2(gs, Distribution);
-%include "gr-gs/Integrate.h"
-GR_SWIG_BLOCK_MAGIC2(gs, Integrate);

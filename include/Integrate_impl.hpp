@@ -2,7 +2,7 @@
  * @file      Integrate_impl.hpp
  * @brief     Declares the "Integrate" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 16, 2017
+ * @date      May 29, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -45,10 +45,14 @@ namespace gr
             /*!
              * Implements gr::gs::Integrate
              *
-             * @date    May 16, 2017
+             * @tparam Internal Internal storage type (may be of higher
+             *                  accuracy).
+             * @tparam External External stype for talking with GNU Radio.
+             * @date    May 29, 2017
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
-            class Integrate_impl: public Integrate
+            template<typename Internal, typename External>
+            class Integrate_impl: public Integrate<Internal, External>
             {
             public:
                 //! No copying allowed
@@ -76,7 +80,7 @@ namespace gr
                 mutable std::mutex m_mutex;
 
                 //! Our current sum
-                double m_sum;
+                Internal m_sum;
             };
         }
     }

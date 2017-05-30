@@ -178,7 +178,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(712, 92)</value>
+      <value>(712, 100)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -524,6 +524,49 @@
     </param>
   </block>
   <block>
+    <key>blocks_complex_to_mag_squared</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(704, 396)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>blocks_complex_to_mag_squared_1</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>vlen</key>
+      <value>16</value>
+    </param>
+  </block>
+  <block>
     <key>blocks_complex_to_real</key>
     <param>
       <key>alias</key>
@@ -543,7 +586,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(416, 544)</value>
+      <value>(480, 544)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -551,7 +594,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>blocks_complex_to_real_0</value>
+      <value>blocks_complex_to_real_1</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -637,7 +680,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(944, 524)</value>
+      <value>(896, 524)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -688,7 +731,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(928, 340)</value>
+      <value>(888, 380)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -716,7 +759,7 @@
     </param>
     <param>
       <key>n</key>
-      <value>10</value>
+      <value>5</value>
     </param>
   </block>
   <block>
@@ -1182,7 +1225,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(568, 340)</value>
+      <value>(360, 372)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1214,7 +1257,7 @@
     </param>
     <param>
       <key>sampleType</key>
-      <value>float</value>
+      <value>complex</value>
     </param>
   </block>
   <block>
@@ -1292,7 +1335,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(752, 348)</value>
+      <value>(528, 388)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1312,7 +1355,7 @@
     </param>
     <param>
       <key>sampleType</key>
-      <value>float</value>
+      <value>complex</value>
     </param>
     <param>
       <key>vectorSize</key>
@@ -1414,7 +1457,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(736, 520)</value>
+      <value>(656, 516)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1512,7 +1555,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(592, 540)</value>
+      <value>(320, 540)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1529,6 +1572,10 @@
     <param>
       <key>minoutbuf</key>
       <value>0</value>
+    </param>
+    <param>
+      <key>sampleType</key>
+      <value>complex</value>
     </param>
   </block>
   <block>
@@ -2336,7 +2383,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1088, 492)</value>
+      <value>(1080, 484)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -3314,8 +3361,14 @@
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>blocks_complex_to_real_0</source_block_id>
-    <sink_block_id>gr_gs_Integrate_0_0</sink_block_id>
+    <source_block_id>blocks_complex_to_mag_squared_1</source_block_id>
+    <sink_block_id>blocks_nlog10_ff_1_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>blocks_complex_to_real_1</source_block_id>
+    <sink_block_id>gr_gs_Distribution_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -3405,7 +3458,7 @@
   </connection>
   <connection>
     <source_block_id>gr_gs_Average_1</source_block_id>
-    <sink_block_id>blocks_nlog10_ff_1_0</sink_block_id>
+    <sink_block_id>blocks_complex_to_mag_squared_1</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -3429,25 +3482,25 @@
   </connection>
   <connection>
     <source_block_id>gr_gs_Integrate_0_0</source_block_id>
-    <sink_block_id>gr_gs_Autocovariance_0</sink_block_id>
+    <sink_block_id>blocks_complex_to_real_1</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
     <source_block_id>gr_gs_Integrate_0_0</source_block_id>
-    <sink_block_id>gr_gs_Distribution_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>gr_gs_SymbolMapper_0</source_block_id>
-    <sink_block_id>blocks_complex_to_real_0</sink_block_id>
+    <sink_block_id>gr_gs_Autocovariance_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
     <source_block_id>gr_gs_SymbolMapper_0</source_block_id>
     <sink_block_id>blocks_rotator_cc_1</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>gr_gs_SymbolMapper_0</source_block_id>
+    <sink_block_id>gr_gs_Integrate_0_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
