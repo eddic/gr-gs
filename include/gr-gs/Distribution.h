@@ -2,7 +2,7 @@
  * @file      Distribution.h
  * @brief     Declares the "Distribution" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 18, 2017
+ * @date      May 29, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -39,20 +39,20 @@ namespace gr
     //! Contains all blocks for the Guided Scrambling GNU Radio Module
     namespace gs
     {
-        //! "Distribution" GNU Radio block
+        //! "Distribution" GNU Radio block for real values
         /*!
          * This block takes in a sequence of real numbers and assigns then to
          * bins in a probability distribution. It basically creates the
          * necessary output vector to be used as a histogram.
          *
-         * @date    May 16, 2017
+         * @date    May 29, 2017
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
-        class GS_API Distribution: virtual public gr::sync_decimator
+        class GS_API Distribution_ff: virtual public gr::sync_decimator
         {
         public:
             //! Shared pointer to this
-            typedef boost::shared_ptr<Distribution> sptr;
+            typedef boost::shared_ptr<Distribution_ff> sptr;
 
             //! Manufacture an distribution block
             /*!
@@ -70,7 +70,44 @@ namespace gr
                     const unsigned decimation = 1);
 
             //! See the current distribution
-            virtual const std::vector<float>& distribution() const =0;
+            virtual std::vector<double> distribution() const =0;
+
+            //! Reset the current distribution
+            virtual void reset() =0;
+        };
+
+        //! "Distribution" GNU Radio block for complex values
+        /*!
+         * This block takes in a sequence of real numbers and assigns then to
+         * bins in a probability distribution. It basically creates the
+         * necessary output vector to be used as a histogram.
+         *
+         * @date    May 29, 2017
+         * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+         */
+        class GS_API Distribution_cc: virtual public gr::sync_decimator
+        {
+        public:
+            //! Shared pointer to this
+            typedef boost::shared_ptr<Distribution_cc> sptr;
+
+            //! Manufacture an distribution block
+            /*!
+             * @param [in] bins Number of bins in the distribution
+             * @param [in] binSize Width of each bin
+             * @param [in] leastBinCenter The center point of the least (most
+             *                            negative) bin.
+             * @param [in] decimation Should we decimate the output?
+             * @return Shared pointer to newly allocated distribution
+             */
+            static sptr make(
+                    const unsigned bins,
+                    const double binSize,
+                    const std::complex<double> leastBinCenter,
+                    const unsigned decimation = 1);
+
+            //! See the current distribution
+            virtual std::vector<std::vector<double>> distribution() const =0;
 
             //! Reset the current distribution
             virtual void reset() =0;

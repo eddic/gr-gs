@@ -80,7 +80,9 @@ GR_SWIG_BLOCK_MAGIC2(gs, Average_cc);
 GR_SWIG_BLOCK_MAGIC2(gs, Integrate_ff);
 GR_SWIG_BLOCK_MAGIC2(gs, Integrate_cc);
 
+%include "gr-gs/Distribution.h"
+GR_SWIG_BLOCK_MAGIC2(gs, Distribution_ff);
+GR_SWIG_BLOCK_MAGIC2(gs, Distribution_cc);
+
 %include "gr-gs/Terminator.h"
 GR_SWIG_BLOCK_MAGIC2(gs, Terminator);
-%include "gr-gs/Distribution.h"
-GR_SWIG_BLOCK_MAGIC2(gs, Distribution);

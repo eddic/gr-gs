@@ -2,7 +2,7 @@
  * @file      Distribution_impl.hpp
  * @brief     Declares the "Distribution" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 18, 2017
+ * @date      May 29, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -41,22 +41,22 @@ namespace gr
         //! All block implementation too trivial for their own namespace
         namespace Implementations
         {
-            //! "Distribution" GNU Radio block implementation
+            //! "Distribution" for real values GNU Radio block implementation
             /*!
-             * Implements gr::gs::Distribution
+             * Implements gr::gs::Distribution_ff
              *
-             * @date    May 16, 2017
+             * @date    May 29, 2017
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
-            class Distribution_impl: public Distribution
+            class Distribution_ff_impl: public Distribution_ff
             {
             public:
                 //! No copying allowed
-                Distribution_impl(const Distribution_impl& x)
+                Distribution_ff_impl(const Distribution_ff_impl& x)
                     = delete;
                 //! No copying allowed
-                Distribution_impl& operator=(
-                        const Distribution_impl& x) = delete;
+                Distribution_ff_impl& operator=(
+                        const Distribution_ff_impl& x) = delete;
 
                 //! GNU Radio work function
                 int work(int noutput_items,
@@ -71,13 +71,13 @@ namespace gr
                  *                           (most negative) bin.
                  * @param [in] decimation Should we decimate the output?
                  */
-                inline Distribution_impl(
+                inline Distribution_ff_impl(
                         const unsigned bins,
                         const double binSize,
                         const double leftBinCenter,
                         const unsigned decimation);
 
-                virtual const std::vector<float>& distribution() const;
+                virtual std::vector<double> distribution() const;
                 virtual void reset();
 
             private:
@@ -95,9 +95,65 @@ namespace gr
 
                 //! Count of samples
                 unsigned long long m_count;
+            };
 
-                //! Current distribution
-                std::vector<float> m_distribution;
+            //! "Distribution" for complex values GNU Radio block implementation
+            /*!
+             * Implements gr::gs::Distribution_cc
+             *
+             * @date    May 29, 2017
+             * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
+             */
+            class Distribution_cc_impl: public Distribution_cc
+            {
+            public:
+                //! No copying allowed
+                Distribution_cc_impl(const Distribution_cc_impl& x)
+                    = delete;
+                //! No copying allowed
+                Distribution_cc_impl& operator=(
+                        const Distribution_cc_impl& x) = delete;
+
+                //! GNU Radio work function
+                int work(int noutput_items,
+                        gr_vector_const_void_star &input_items,
+                        gr_vector_void_star &output_items);
+
+                //! Initialize an distribution block
+                /*!
+                 * @param [in] bins Number of bins in the distribution
+                 * @param [in] binSize Width of each bin
+                 * @param [in] leastBinCenter The center point of the least
+                 *                           (most negative) bin.
+                 * @param [in] decimation Should we decimate the output?
+                 */
+                inline Distribution_cc_impl(
+                        const unsigned bins,
+                        const double binSize,
+                        const std::complex<double> leastBinCenter,
+                        const unsigned decimation);
+
+                virtual std::vector<std::vector<double>> distribution() const;
+                virtual void reset();
+
+            private:
+                //! Let's be thread safe
+                mutable std::mutex m_mutex;
+
+                //! How many bins?
+                const unsigned m_binCount;
+
+                //! The bins themselves
+                std::vector<std::vector<unsigned long long>> m_bins;
+
+                //! Left edge of leftmost bin
+                const std::complex<double> m_leastEdge;
+
+                //! Size of bins
+                const double m_binSize;
+
+                //! Count of samples
+                unsigned long long m_count;
             };
         }
     }

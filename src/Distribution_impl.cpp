@@ -1,8 +1,8 @@
 /*!
- * @file      Distribution_impl.cpp
- * @brief     Defines the "Distribution" GNU Radio block implementation
+ * @file      Distribution_ff_impl.cpp
+ * @brief     Defines the "Distribution_ff" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 18, 2017
+ * @date      May 29, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -29,7 +29,9 @@
 
 #include <gnuradio/io_signature.h>
 
-int gr::gs::Implementations::Distribution_impl::work(
+// Real Values
+
+int gr::gs::Implementations::Distribution_ff_impl::work(
         int noutput_items,
         gr_vector_const_void_star &input_items,
         gr_vector_void_star &output_items)
@@ -55,62 +57,159 @@ int gr::gs::Implementations::Distribution_impl::work(
         }
 
         for(unsigned j=0; j<m_bins.size(); ++j)
-        {
-            const double probability = static_cast<double>(m_bins[j])
-                / static_cast<double>(m_count);
-            m_distribution[j] = static_cast<float>(probability);
-            *output++ = m_distribution[j];
-        }
+            *output++ = static_cast<float>(m_bins[j])
+                / static_cast<float>(m_count);
     }
 
     return noutput_items;
 }
 
-gr::gs::Implementations::Distribution_impl::Distribution_impl(
+gr::gs::Implementations::Distribution_ff_impl::Distribution_ff_impl(
         const unsigned bins,
         const double binSize,
         const double leftBinCenter,
         const unsigned decimation):
-    gr::sync_decimator("Distribution",
+    gr::sync_decimator("Distribution_ff",
         io_signature::make(1,1,sizeof(float)),
         io_signature::make(1,1,sizeof(float)*bins),
         decimation),
     m_bins(bins),
     m_leftEdge(leftBinCenter-binSize/2),
     m_binSize(binSize),
-    m_count(0),
-    m_distribution(bins)
+    m_count(0)
 {
     this->enable_update_rate(false);
 }
 
-gr::gs::Distribution::sptr gr::gs::Distribution::make(
+gr::gs::Distribution_ff::sptr gr::gs::Distribution_ff::make(
         const unsigned bins,
         const double binSize,
         const double leftBinCenter,
         const unsigned decimation)
 {
     return gnuradio::get_initial_sptr(
-            new Implementations::Distribution_impl(
+            new Implementations::Distribution_ff_impl(
                 bins,
                 binSize,
                 leftBinCenter,
                 decimation));
 }
 
-const std::vector<float>&
-gr::gs::Implementations::Distribution_impl::distribution() const
+std::vector<double>
+gr::gs::Implementations::Distribution_ff_impl::distribution() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    return m_distribution;
+    std::vector<double> dist(m_bins.size());
+    for(unsigned index=0; index<m_bins.size(); ++index)
+        dist[index] = static_cast<double>(m_bins[index])
+            / static_cast<double>(m_count);
+    return dist;
 }
 
-void gr::gs::Implementations::Distribution_impl::reset()
+void gr::gs::Implementations::Distribution_ff_impl::reset()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_count = 0;
-    for(auto& value: m_distribution)
-        value=0;
     for(auto& value: m_bins)
         value=0;
+}
+
+// Complex Values
+
+int gr::gs::Implementations::Distribution_cc_impl::work(
+        int noutput_items,
+        gr_vector_const_void_star &input_items,
+        gr_vector_void_star &output_items)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    const Complex* input = reinterpret_cast<const Complex*>(input_items[0]);
+    Complex* output = reinterpret_cast<Complex*>(output_items[0]);
+
+    for(int i=0; i<noutput_items; ++i)
+    {
+        for(unsigned j=0; j<this->decimation(); ++j)
+        {
+            ++m_count;
+            
+            double index;
+
+            index = input->imag();
+            index -= m_leastEdge.imag();
+            index /= m_binSize;
+            const ssize_t imagIndex = static_cast<ssize_t>(index);                        
+
+            index = input->real();
+            index -= m_leastEdge.real();
+            index /= m_binSize;
+            const ssize_t realIndex = static_cast<ssize_t>(index);                        
+
+            ++input;
+
+            if(0 <= index && index < static_cast<ssize_t>(m_bins.size()))
+                ++m_bins[imagIndex][realIndex];
+        }
+
+        for(unsigned imag=0; imag<m_binCount; ++imag)
+            for(unsigned real=0; real<m_binCount; ++real)
+                *output++ = static_cast<float>(m_bins[imag][real])
+                    / static_cast<float>(m_count);
+    }
+
+    return noutput_items;
+}
+
+gr::gs::Implementations::Distribution_cc_impl::Distribution_cc_impl(
+        const unsigned bins,
+        const double binSize,
+        const std::complex<double> leastBinCenter,
+        const unsigned decimation):
+    gr::sync_decimator("Distribution_cc",
+        io_signature::make(1,1,sizeof(Complex)),
+        io_signature::make(1,1,sizeof(Complex)*bins*bins),
+        decimation),
+    m_binCount(bins),
+    m_bins(bins, std::vector<unsigned long long>(bins, 0)),
+    m_leastEdge(leastBinCenter-std::complex<double>(binSize/2, binSize/2)),
+    m_binSize(binSize),
+    m_count(0)
+{
+    this->enable_update_rate(false);
+}
+
+gr::gs::Distribution_cc::sptr gr::gs::Distribution_cc::make(
+        const unsigned bins,
+        const double binSize,
+        const std::complex<double> leftBinCenter,
+        const unsigned decimation)
+{
+    return gnuradio::get_initial_sptr(
+            new Implementations::Distribution_cc_impl(
+                bins,
+                binSize,
+                leftBinCenter,
+                decimation));
+}
+
+std::vector<std::vector<double>>
+gr::gs::Implementations::Distribution_cc_impl::distribution() const
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    std::vector<std::vector<double>> dist(
+            m_binCount,
+            std::vector<double>(m_binCount));
+    for(unsigned imag=0; imag<m_binCount; ++imag)
+        for(unsigned real=0; real<m_binCount; ++real)
+            dist[imag][real] = static_cast<double>(m_bins[imag][real])
+                / static_cast<double>(m_count);
+    return dist;
+}
+
+void gr::gs::Implementations::Distribution_cc_impl::reset()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_count = 0;
+    for(auto& row: m_bins)
+        for(auto& column: row)
+            column=0;
 }

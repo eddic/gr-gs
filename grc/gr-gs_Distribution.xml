@@ -4,11 +4,30 @@
     <key>gr_gs_Distribution</key>
     <category>[gr-gs]/Miscellaneous</category>
     <import>import gr_gs as gs</import>
-    <make>gs.Distribution($bins, $binSize, $leftBinCenter, $decimation)</make>
+    <make>gs.Distribution_$(sampleType.fcn)($bins, $binSize, $leastBinCenter, $decimation)</make>
+	<param>
+		<name>Sample Type</name>
+		<key>sampleType</key>
+		<type>enum</type>
+		<option>
+			<name>Float</name>
+			<key>float</key>
+			<opt>fcn:ff</opt>
+			<opt>power:1</opt>
+			<opt>imag:0</opt>
+		</option>
+		<option>
+			<name>Complex</name>
+			<key>complex</key>
+			<opt>fcn:cc</opt>
+			<opt>power:2</opt>
+			<opt>imag:1j</opt>
+		</option>
+	</param>
     <param>
         <name>Number of Bins</name>
         <key>bins</key>
-        <value>25</value>
+        <value>32</value>
         <type>int</type>
     </param>
     <param>
@@ -18,10 +37,10 @@
         <type>float</type>
     </param>
     <param>
-        <name>Center of Leftmost Bin</name>
-        <key>leftBinCenter</key>
-        <value>-12</value>
-        <type>float</type>
+        <name>Center of least most Bin</name>
+        <key>leastBinCenter</key>
+        <value>-$bins * (1+$(sampleType.imag))/2</value>
+        <type>$sampleType</type>
     </param>
     <param>
         <name>Decimation</name>
@@ -31,12 +50,12 @@
     </param>
     <sink>
         <name>in</name>
-        <type>f32</type>
+        <type>$sampleType</type>
     </sink>
     <source>
         <name>out</name>
-        <type>f32</type>
-        <vlen>$bins</vlen>
+        <type>float</type>
+        <vlen>$bins**$(sampleType.power)</vlen>
     </source>
     <doc>This block generates a probability distribution of the input values.</doc>
 </block>
