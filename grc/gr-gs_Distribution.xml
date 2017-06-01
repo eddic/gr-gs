@@ -13,14 +13,12 @@
 			<name>Float</name>
 			<key>float</key>
 			<opt>fcn:ff</opt>
-			<opt>power:1</opt>
 			<opt>imag:0</opt>
 		</option>
 		<option>
 			<name>Complex</name>
 			<key>complex</key>
-			<opt>fcn:cc</opt>
-			<opt>power:2</opt>
+			<opt>fcn:cf</opt>
 			<opt>imag:1j</opt>
 		</option>
 	</param>
@@ -55,7 +53,7 @@
     <source>
         <name>out</name>
         <type>float</type>
-        <vlen>$bins**$(sampleType.power)</vlen>
+        <vlen>$bins</vlen>
     </source>
     <doc>This block generates a probability distribution of the input values.</doc>
 </block>

@@ -2,7 +2,7 @@
  * @file      Distribution_impl.hpp
  * @brief     Declares the "Distribution" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 29, 2017
+ * @date      May 31, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -99,20 +99,20 @@ namespace gr
 
             //! "Distribution" for complex values GNU Radio block implementation
             /*!
-             * Implements gr::gs::Distribution_cc
+             * Implements gr::gs::Distribution_cf
              *
-             * @date    May 29, 2017
+             * @date    May 31, 2017
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
-            class Distribution_cc_impl: public Distribution_cc
+            class Distribution_cf_impl: public Distribution_cf
             {
             public:
                 //! No copying allowed
-                Distribution_cc_impl(const Distribution_cc_impl& x)
+                Distribution_cf_impl(const Distribution_cf_impl& x)
                     = delete;
                 //! No copying allowed
-                Distribution_cc_impl& operator=(
-                        const Distribution_cc_impl& x) = delete;
+                Distribution_cf_impl& operator=(
+                        const Distribution_cf_impl& x) = delete;
 
                 //! GNU Radio work function
                 int work(int noutput_items,
@@ -127,7 +127,7 @@ namespace gr
                  *                           (most negative) bin.
                  * @param [in] decimation Should we decimate the output?
                  */
-                inline Distribution_cc_impl(
+                inline Distribution_cf_impl(
                         const unsigned bins,
                         const double binSize,
                         const std::complex<double> leastBinCenter,
@@ -151,6 +151,9 @@ namespace gr
 
                 //! Size of bins
                 const double m_binSize;
+
+                //! Imag(x) = 0 row number
+                const size_t m_zeroRow;
 
                 //! Count of samples
                 unsigned long long m_count;

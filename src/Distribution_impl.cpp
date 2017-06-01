@@ -116,7 +116,7 @@ void gr::gs::Implementations::Distribution_ff_impl::reset()
 
 // Complex Values
 
-int gr::gs::Implementations::Distribution_cc_impl::work(
+int gr::gs::Implementations::Distribution_cf_impl::work(
         int noutput_items,
         gr_vector_const_void_star &input_items,
         gr_vector_void_star &output_items)
@@ -124,7 +124,7 @@ int gr::gs::Implementations::Distribution_cc_impl::work(
     std::lock_guard<std::mutex> lock(m_mutex);
 
     const Complex* input = reinterpret_cast<const Complex*>(input_items[0]);
-    Complex* output = reinterpret_cast<Complex*>(output_items[0]);
+    float* output = reinterpret_cast<float*>(output_items[0]);
 
     for(int i=0; i<noutput_items; ++i)
     {
@@ -146,45 +146,49 @@ int gr::gs::Implementations::Distribution_cc_impl::work(
 
             ++input;
 
-            if(0 <= index && index < static_cast<ssize_t>(m_bins.size()))
+            if(
+                    0 <= realIndex &&
+                    realIndex < static_cast<ssize_t>(m_binCount) &&
+                    0 <= imagIndex &&
+                    imagIndex < static_cast<ssize_t>(m_binCount))
                 ++m_bins[imagIndex][realIndex];
         }
 
-        for(unsigned imag=0; imag<m_binCount; ++imag)
-            for(unsigned real=0; real<m_binCount; ++real)
-                *output++ = static_cast<float>(m_bins[imag][real])
-                    / static_cast<float>(m_count);
+        for(unsigned real=0; real<m_binCount; ++real)
+            *output++ = static_cast<float>(m_bins[m_zeroRow][real])
+                / static_cast<float>(m_count);
     }
 
     return noutput_items;
 }
 
-gr::gs::Implementations::Distribution_cc_impl::Distribution_cc_impl(
+gr::gs::Implementations::Distribution_cf_impl::Distribution_cf_impl(
         const unsigned bins,
         const double binSize,
         const std::complex<double> leastBinCenter,
         const unsigned decimation):
-    gr::sync_decimator("Distribution_cc",
+    gr::sync_decimator("Distribution_cf",
         io_signature::make(1,1,sizeof(Complex)),
-        io_signature::make(1,1,sizeof(Complex)*bins*bins),
+        io_signature::make(1,1,sizeof(float)*bins),
         decimation),
     m_binCount(bins),
     m_bins(bins, std::vector<unsigned long long>(bins, 0)),
     m_leastEdge(leastBinCenter-std::complex<double>(binSize/2, binSize/2)),
     m_binSize(binSize),
+    m_zeroRow(static_cast<size_t>(-m_leastEdge.imag()/m_binSize)),
     m_count(0)
 {
     this->enable_update_rate(false);
 }
 
-gr::gs::Distribution_cc::sptr gr::gs::Distribution_cc::make(
+gr::gs::Distribution_cf::sptr gr::gs::Distribution_cf::make(
         const unsigned bins,
         const double binSize,
         const std::complex<double> leftBinCenter,
         const unsigned decimation)
 {
     return gnuradio::get_initial_sptr(
-            new Implementations::Distribution_cc_impl(
+            new Implementations::Distribution_cf_impl(
                 bins,
                 binSize,
                 leftBinCenter,
@@ -192,7 +196,7 @@ gr::gs::Distribution_cc::sptr gr::gs::Distribution_cc::make(
 }
 
 std::vector<std::vector<double>>
-gr::gs::Implementations::Distribution_cc_impl::distribution() const
+gr::gs::Implementations::Distribution_cf_impl::distribution() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     std::vector<std::vector<double>> dist(
@@ -205,7 +209,7 @@ gr::gs::Implementations::Distribution_cc_impl::distribution() const
     return dist;
 }
 
-void gr::gs::Implementations::Distribution_cc_impl::reset()
+void gr::gs::Implementations::Distribution_cf_impl::reset()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_count = 0;

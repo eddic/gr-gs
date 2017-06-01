@@ -93,7 +93,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(336, 69)</value>
+      <value>(224, 68)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -120,7 +120,34 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(216, 5)</value>
+      <value>(560, 68)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>autocovarianceLength</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>16</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(184, 4)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -147,7 +174,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(216, 69)</value>
+      <value>(104, 68)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -178,7 +205,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(712, 100)</value>
+      <value>(736, 108)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -252,7 +279,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(464, 69)</value>
+      <value>(360, 68)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -265,6 +292,33 @@
     <param>
       <key>value</key>
       <value>True</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(632, 628)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>distributionSize</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>32</value>
     </param>
   </block>
   <block>
@@ -306,7 +360,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(552, 69)</value>
+      <value>(456, 68)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -333,7 +387,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(536, 5)</value>
+      <value>(520, 4)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -364,7 +418,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(880, 8)</value>
+      <value>(888, 12)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -403,7 +457,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(304, 5)</value>
+      <value>(272, 4)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -434,7 +488,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(712, 8)</value>
+      <value>(736, 12)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -465,7 +519,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(440, 5)</value>
+      <value>(416, 4)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -478,6 +532,49 @@
     <param>
       <key>value</key>
       <value>8192</value>
+    </param>
+  </block>
+  <block>
+    <key>blocks_complex_to_float</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(712, 384)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>blocks_complex_to_float_0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>vlen</key>
+      <value>autocovarianceLength</value>
     </param>
   </block>
   <block>
@@ -521,49 +618,6 @@
     <param>
       <key>vlen</key>
       <value>window_size</value>
-    </param>
-  </block>
-  <block>
-    <key>blocks_complex_to_mag_squared</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(704, 396)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>blocks_complex_to_mag_squared_1</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>vlen</key>
-      <value>16</value>
     </param>
   </block>
   <block>
@@ -637,7 +691,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(832, 524)</value>
+      <value>(824, 524)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -657,7 +711,7 @@
     </param>
     <param>
       <key>vlen</key>
-      <value>32**2</value>
+      <value>distributionSize</value>
     </param>
     <param>
       <key>k</key>
@@ -688,7 +742,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(888, 380)</value>
+      <value>(904, 300)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -708,7 +762,7 @@
     </param>
     <param>
       <key>vlen</key>
-      <value>16</value>
+      <value>autocovarianceLength</value>
     </param>
     <param>
       <key>k</key>
@@ -716,7 +770,7 @@
     </param>
     <param>
       <key>n</key>
-      <value>5</value>
+      <value>10</value>
     </param>
   </block>
   <block>
@@ -771,6 +825,57 @@
     </param>
   </block>
   <block>
+    <key>blocks_nlog10_ff</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(904, 404)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>blocks_nlog10_ff_1_0_1</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>vlen</key>
+      <value>autocovarianceLength</value>
+    </param>
+    <param>
+      <key>k</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>n</key>
+      <value>10</value>
+    </param>
+  </block>
+  <block>
     <key>blocks_rotator_cc</key>
     <param>
       <key>alias</key>
@@ -790,7 +895,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(880, 196)</value>
+      <value>(896, 196)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -986,7 +1091,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(648, 196)</value>
+      <value>(664, 196)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1194,7 +1299,7 @@
     </param>
     <param>
       <key>length</key>
-      <value>16</value>
+      <value>autocovarianceLength</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -1316,7 +1421,7 @@
     </param>
     <param>
       <key>vectorSize</key>
-      <value>16</value>
+      <value>autocovarianceLength</value>
     </param>
   </block>
   <block>
@@ -1359,7 +1464,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(464, 168)</value>
+      <value>(464, 164)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1394,7 +1499,7 @@
     </param>
     <param>
       <key>leastBinCenter</key>
-      <value>-32*(1+1j)/2</value>
+      <value>-distributionSize*(1+1j)/2</value>
     </param>
     <param>
       <key>comment</key>
@@ -1414,7 +1519,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(512, 516)</value>
+      <value>(528, 516)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1434,7 +1539,7 @@
     </param>
     <param>
       <key>bins</key>
-      <value>32</value>
+      <value>distributionSize</value>
     </param>
     <param>
       <key>sampleType</key>
@@ -1842,7 +1947,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(8, 192)</value>
+      <value>(0, 188)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -2320,7 +2425,7 @@
     <key>qtgui_vector_sink_f</key>
     <param>
       <key>autoscale</key>
-      <value>True</value>
+      <value>False</value>
     </param>
     <param>
       <key>average</key>
@@ -2344,7 +2449,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1080, 484)</value>
+      <value>(1032, 484)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -2552,15 +2657,15 @@
     </param>
     <param>
       <key>vlen</key>
-      <value>25</value>
+      <value>distributionSize</value>
     </param>
     <param>
       <key>x_axis_label</key>
-      <value>"Im(RDS)"</value>
+      <value>"Re(RDS) when Im(RDS)=0"</value>
     </param>
     <param>
       <key>x_start</key>
-      <value>-12</value>
+      <value>-distributionSize/2</value>
     </param>
     <param>
       <key>x_step</key>
@@ -2576,7 +2681,7 @@
     </param>
     <param>
       <key>ymin</key>
-      <value>-200</value>
+      <value>-180</value>
     </param>
     <param>
       <key>y_axis_label</key>
@@ -2643,7 +2748,7 @@
     </param>
     <param>
       <key>label1</key>
-      <value></value>
+      <value>Real</value>
     </param>
     <param>
       <key>width1</key>
@@ -2675,7 +2780,7 @@
     </param>
     <param>
       <key>label2</key>
-      <value></value>
+      <value>Imaginary</value>
     </param>
     <param>
       <key>width2</key>
@@ -2807,7 +2912,7 @@
     </param>
     <param>
       <key>nconnections</key>
-      <value>1</value>
+      <value>2</value>
     </param>
     <param>
       <key>ref_level</key>
@@ -2823,7 +2928,7 @@
     </param>
     <param>
       <key>vlen</key>
-      <value>16</value>
+      <value>autocovarianceLength</value>
     </param>
     <param>
       <key>x_axis_label</key>
@@ -2831,7 +2936,7 @@
     </param>
     <param>
       <key>x_start</key>
-      <value>-15</value>
+      <value>-(autocovarianceLength-1)</value>
     </param>
     <param>
       <key>x_step</key>
@@ -2886,7 +2991,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(640, 252)</value>
+      <value>(664, 252)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -3316,14 +3421,20 @@
     </param>
   </block>
   <connection>
-    <source_block_id>blocks_complex_to_mag_squared_0</source_block_id>
-    <sink_block_id>gr_gs_Average_0</sink_block_id>
+    <source_block_id>blocks_complex_to_float_0</source_block_id>
+    <sink_block_id>blocks_nlog10_ff_1_0_1</sink_block_id>
+    <source_key>1</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>blocks_complex_to_float_0</source_block_id>
+    <sink_block_id>blocks_nlog10_ff_1_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>blocks_complex_to_mag_squared_1</source_block_id>
-    <sink_block_id>blocks_nlog10_ff_1_0</sink_block_id>
+    <source_block_id>blocks_complex_to_mag_squared_0</source_block_id>
+    <sink_block_id>gr_gs_Average_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -3350,6 +3461,12 @@
     <sink_block_id>qtgui_number_sink_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>blocks_nlog10_ff_1_0_1</source_block_id>
+    <sink_block_id>qtgui_vector_sink_f_1_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>1</sink_key>
   </connection>
   <connection>
     <source_block_id>blocks_rotator_cc_0</source_block_id>
@@ -3413,7 +3530,7 @@
   </connection>
   <connection>
     <source_block_id>gr_gs_Average_1</source_block_id>
-    <sink_block_id>blocks_complex_to_mag_squared_1</sink_block_id>
+    <sink_block_id>blocks_complex_to_float_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>

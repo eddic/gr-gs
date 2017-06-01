@@ -2,7 +2,7 @@
  * @file      Distribution.h
  * @brief     Declares the "Distribution" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 29, 2017
+ * @date      May 31, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -78,18 +78,20 @@ namespace gr
 
         //! "Distribution" GNU Radio block for complex values
         /*!
-         * This block takes in a sequence of real numbers and assigns then to
-         * bins in a probability distribution. It basically creates the
-         * necessary output vector to be used as a histogram.
+         * This block takes in a sequence of complex numbers and assigns then to
+         * bins in a probability distribution. The 2-dimensional distribution
+         * can be accessed with the distribution() function while the vector
+         * that gets outputted portwise is a two-dimentional slice of the
+         * distribution along the real number line.
          *
-         * @date    May 29, 2017
+         * @date    May 31, 2017
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
-        class GS_API Distribution_cc: virtual public gr::sync_decimator
+        class GS_API Distribution_cf: virtual public gr::sync_decimator
         {
         public:
             //! Shared pointer to this
-            typedef boost::shared_ptr<Distribution_cc> sptr;
+            typedef boost::shared_ptr<Distribution_cf> sptr;
 
             //! Manufacture an distribution block
             /*!
