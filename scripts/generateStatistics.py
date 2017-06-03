@@ -19,11 +19,11 @@ import sys, time
 class gs_stats(gr.top_block):
     def __init__(
             self,
+            scrambler,
             fieldSize = 4,
             codewordLength = 12,
             augmentingLength = 3,
             continuous = True,
-            scramblerLength = 6,
             autocovarianceLength = 32,
             distributionWidth = 32,
             symbols = long(1e7),
@@ -33,9 +33,7 @@ class gs_stats(gr.top_block):
         ##################################################
         # Variables
         ##################################################
-        self.scramblingPolynomial = scramblingPolynomial = gs.findPrimitive_b(
-                fieldSize,
-                6)
+        scramblingPolynomial = scrambler
         self.constellation = constellation = gs.defaultConstellation(fieldSize)
 
         ##################################################
@@ -149,32 +147,63 @@ class gs_stats(gr.top_block):
 
 symbolCount = 1e7
 distributionWidth = 128
-autocovarianceLength = 128
+autocovarianceLength = 64
 
-fieldSizes = [2,4]
-codewordLengths = [24]
-augmentingLengths = [4]#range(1,10)
+fieldSizes = [2,4,16]
+codewordLengths = range(6,25)
+augmentingLengths = range(1,11)
 maxRate = 0.5
 maxScramblers = 512
+scramblerLength = 6
 
 cppFile = open("RDSautocovariances.hpp", 'w')
+cppFile.write("// This file was automatically generated with generateStatistics.py\n")
+cppFile.write("// Date: {:s}\n".format(time.strftime("%B %d, %Y at %H:%M %Z")))
+cppFile.write("// Symbols: {:.0e}\n".format(symbolCount))
+cppFile.write("// Selection Method: MSW\n")
+cppFile.write("// Primitive Scrambler Length: {:d}\n".format(scramblerLength))
 cppFile.write('{')
+
+pythonFile = open("gs_stats.py", 'w')
+pythonFile.write("# This file was automatically generated with generateStatistics.py\n")
+pythonFile.write("# Date: {:s}\n".format(time.strftime("%B %d, %Y at %H:%M %Z")))
+pythonFile.write("# Symbols: {:.0e}\n".format(symbolCount))
+pythonFile.write("# Selection Method: MSW\n")
+pythonFile.write("# Primitive Scrambler Length: {:d}\n".format(scramblerLength))
+pythonFile.write("import numpy\n\n")
+pythonFile.write("autocovariance={")
+
+distributions={}
 
 for fieldSize in fieldSizes:
     print("Computing set with field size = {:d}".format(fieldSize))
+    sys.stdout.write("  Generating primitive scrambler... ")
+    sys.stdout.flush()
+    scrambler = gs.findPrimitive_b(
+            fieldSize,
+            scramblerLength)
+    print("done")
 
     if fieldSize != fieldSizes[0]:
         cppFile.write(',')
+        pythonFile.write(',')
     cppFile.write("\n    {{{0:d}, // Field size = {0:d}".format(fieldSize))
     cppFile.write("\n        {")
+    pythonFile.write("\n    {0:d}: {{ # Field size = {0:d}".format(fieldSize))
+
+    distributions[fieldSize] = {}
 
     for codewordLength in codewordLengths:
         print("  Computing subset with codeword length = {:d}".format(codewordLength))
 
         if codewordLength != codewordLengths[0]:
             cppFile.write(',')
+            pythonFile.write(',')
         cppFile.write("\n            {{{0:d}, // Codeword length = {0:d}".format(codewordLength))
         cppFile.write("\n                {")
+        pythonFile.write("\n        {0:d}: {{ # Codeword length = {0:d}".format(codewordLength))
+
+        distributions[fieldSize][codewordLength] = {}
 
         for augmentingLength in augmentingLengths:
             rate = float(augmentingLength)/float(codewordLength)
@@ -184,6 +213,7 @@ for fieldSize in fieldSizes:
             
             tb = gs_stats(
                     fieldSize = fieldSize,
+                    scrambler = scrambler,
                     codewordLength = codewordLength,
                     augmentingLength = augmentingLength,
                     autocovarianceLength = autocovarianceLength,
@@ -201,34 +231,96 @@ for fieldSize in fieldSizes:
             tb.wait()
             print("\033[5Ddone  ")
 
+            # First order statistics
+            distributions[fieldSize][codewordLength][augmentingLength] = np.empty(
+                    [codewordLength, distributionWidth, distributionWidth],
+                    dtype=float)
+            for position in range(codewordLength):
+                distribution = tb.distribution(position)
+                for real in range(distributionWidth):
+                    for imag in range(distributionWidth):
+                        distributions[fieldSize][codewordLength][augmentingLength][
+                                position, imag, real] = distribution[imag][real]
+
             # Second order statistics
             if augmentingLength != augmentingLengths[0]:
                 cppFile.write(',')
+                pythonFile.write(',')
             cppFile.write("\n                    {{{0:d}, // Augmenting symbols = {0:d}".format(augmentingLength))
             cppFile.write("\n                        {")
+            pythonFile.write("\n            {0:d}: numpy.array([ # Augmenting symbols = {0:d}".format(augmentingLength))
             for position in range(codewordLength):
                 if position != 0:
                     cppFile.write(',')
-                cppFile.write("\n                            {{ // Codeword Position = {:d}".format(position))
+                    pythonFile.write(',')
+                cppFile.write("\n                            {{{{ // Codeword Position = {:d}".format(position))
+                pythonFile.write("\n                [ # Codeword Position = {:d}".format(position))
                 for tau in range(autocovarianceLength):
                     cppFile.write("\n                                {{{{ // Tau = {:d}".format(-tau))
+                    pythonFile.write("\n                    [ # Tau = {:d}".format(-tau))
                     cppFile.write("\n                                    {{{{{:.16e}, {:.16e}}}}},".format(
+                        tb.XX(position)[autocovarianceLength-1-tau],
+                        tb.XY(position)[autocovarianceLength-1-tau]))
+                    pythonFile.write("\n                        [{:.16e}, {:.16e}],".format(
                         tb.XX(position)[autocovarianceLength-1-tau],
                         tb.XY(position)[autocovarianceLength-1-tau]))
                     cppFile.write("\n                                    {{{{{:.16e}, {:.16e}}}}}".format(
                         tb.YX(position)[autocovarianceLength-1-tau],
                         tb.YY(position)[autocovarianceLength-1-tau]))
+                    pythonFile.write("\n                        [{:.16e}, {:.16e}]".format(
+                        tb.YX(position)[autocovarianceLength-1-tau],
+                        tb.YY(position)[autocovarianceLength-1-tau]))
                     cppFile.write("\n                                }}")
+                    pythonFile.write("\n                    ]")
                     if tau < autocovarianceLength-1:
                         cppFile.write(',')
-                cppFile.write("\n                            }")
+                        pythonFile.write(',')
+                cppFile.write("\n                            }}")
+                pythonFile.write("\n                ]")
             cppFile.write("\n                        }")
             cppFile.write("\n                    }")
+            pythonFile.write("\n            ],dtype=float)")
 
         cppFile.write("\n                }")
         cppFile.write("\n            }")
+        pythonFile.write("\n        }")
 
     cppFile.write("\n        }")
     cppFile.write("\n    }")
+    pythonFile.write("\n    }")
 
 cppFile.write('\n}\n')
+pythonFile.write("\n}\n")
+
+pythonFile.write("distributionWidth = {:d}\n".format(distributionWidth))
+pythonFile.write("distribution={")
+for fieldSize, codewordLengthDict in distributions.iteritems():
+    if fieldSize != fieldSizes[0]:
+        pythonFile.write(',')
+    pythonFile.write("\n    {0:d}: {{ # Field size = {0:d}".format(fieldSize))
+    for codewordLength, augmentingLengthDict in codewordLengthDict.iteritems():
+        if codewordLength != codewordLengths[0]:
+            pythonFile.write(',')
+        pythonFile.write("\n        {0:d}: {{ # Codeword length = {0:d}".format(codewordLength))
+        for augmentingLength, distribution in augmentingLengthDict.iteritems():
+            if augmentingLength != augmentingLengths[0]:
+                pythonFile.write(',')
+            pythonFile.write("\n            {0:d}: numpy.array([ # Augmenting symbols = {0:d}".format(augmentingLength))
+            for position in range(codewordLength):
+                if position != 0:
+                    pythonFile.write(',')
+                pythonFile.write("\n                [ # Codeword Position = {:d}".format(position))
+                for imag in range(distributionWidth):
+                    if imag != 0:
+                        pythonFile.write(',')
+                    pythonFile.write("\n                    [")
+                    for real in range(distributionWidth):
+                        if real != 0:
+                            pythonFile.write(',')
+                        pythonFile.write("{:.16e}".format(distribution[position,imag,real]))
+                    pythonFile.write("]")
+                pythonFile.write("\n                ]")
+            pythonFile.write("\n            ],dtype=float)")
+        pythonFile.write("\n        }")
+    pythonFile.write("\n    }")
+pythonFile.write("\n}\n")
