@@ -2,7 +2,7 @@
  * @file      Autocovariance_impl.hpp
  * @brief     Declares the "Autocovariance" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 22, 2017
+ * @date      June 2, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -90,6 +90,8 @@ namespace gr
                 void set_mean(T mean);
 
             private:
+                static inline int streams();
+
                 //! Let's be thread safe
                 mutable std::mutex m_mutex;
 
@@ -102,16 +104,6 @@ namespace gr
                 //! Offset within decimation chunk
                 const unsigned m_offset;
             };
-
-            inline float conj(float x)
-            {
-                return x;
-            }
-
-            inline std::complex<float> conj(std::complex<float> x)
-            {
-                return std::conj(x);
-            }
         }
     }
 }

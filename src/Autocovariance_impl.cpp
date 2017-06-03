@@ -2,7 +2,7 @@
  * @file      Autocovariance_impl.cpp
  * @brief     Defines the "Autocovariance" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 22, 2017
+ * @date      June 2, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -28,35 +28,110 @@
 #include "Autocovariance_impl.hpp"
 
 #include <gnuradio/io_signature.h>
+#include <array>
 
-template<typename T>
-int gr::gs::Implementations::Autocovariance_impl<T>::work(
-        int noutput_items,
-        gr_vector_const_void_star &input_items,
-        gr_vector_void_star &output_items)
+//! GNU Radio Namespace
+namespace gr
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
-
-    const T* input
-        =reinterpret_cast<const T*>(input_items[0])+this->history()+m_offset;
-    const T* const inputEnd = input + noutput_items*this->decimation();
-
-    T* output = reinterpret_cast<T*>(output_items[0]);
-
-    while(input<inputEnd)
+    //! Contains all blocks for the Guided Scrambling GNU Radio Module
+    namespace gs
     {
-        T currentValue = *input - m_mean;
+        //! All block implementation too trivial for their own namespace
+        namespace Implementations
+        {
+            template<>
+            int gr::gs::Implementations::Autocovariance_impl<float>::work(
+                    int noutput_items,
+                    gr_vector_const_void_star &input_items,
+                    gr_vector_void_star &output_items)
+            {
+                std::lock_guard<std::mutex> lock(m_mutex);
 
-        T* const outputEnd = output + m_length;
-        const T* pastValue = input - this->history();
+                const float* input = 
+                    reinterpret_cast<const float*>(input_items[0])
+                    +this->history()+m_offset;
+                const float* const inputEnd =
+                    input + noutput_items*this->decimation();
 
-        while(output<outputEnd)
-            *output++ = currentValue * conj(*pastValue++ - m_mean);
+                float* output = reinterpret_cast<float*>(output_items[0]);
 
-        input += this->decimation();
+                while(input<inputEnd)
+                {
+                    float currentValue = *input - m_mean;
+
+                    float* const outputEnd = output + m_length;
+                    const float* pastValue = input - this->history();
+
+                    while(output<outputEnd)
+                        *output++ = currentValue * (*pastValue++ - m_mean);
+
+                    input += this->decimation();
+                }
+
+                return (output-reinterpret_cast<float*>(output_items[0]))
+                    /m_length;
+            }
+
+            template<>
+            int gr::gs::Implementations::Autocovariance_impl<gr::gs::Complex>
+                ::work(
+                    int noutput_items,
+                    gr_vector_const_void_star &input_items,
+                    gr_vector_void_star &output_items)
+            {
+                std::lock_guard<std::mutex> lock(m_mutex);
+
+                const Complex* input = 
+                    reinterpret_cast<const Complex*>(input_items[0])
+                    +this->history()+m_offset;
+                const Complex* const inputEnd =
+                    input + noutput_items*this->decimation();
+
+                std::array<float*,4> output
+                {
+                    reinterpret_cast<float*>(output_items[0]),
+                    reinterpret_cast<float*>(output_items[1]),
+                    reinterpret_cast<float*>(output_items[2]),
+                    reinterpret_cast<float*>(output_items[3])
+                };
+
+                while(input<inputEnd)
+                {
+                    Complex currentValue = *input - m_mean;
+
+                    float* const outputEnd = output[0] + m_length;
+                    const Complex* pastValue_ptr = input - this->history();
+
+                    while(output[0]<outputEnd)
+                    {
+                        const Complex pastValue = *pastValue_ptr++ - m_mean;
+                        *output[0]++ = currentValue.real() * pastValue.real();
+                        *output[1]++ = currentValue.real() * pastValue.imag();
+                        *output[2]++ = currentValue.imag() * pastValue.real();
+                        *output[3]++ = currentValue.imag() * pastValue.imag();
+                    }
+
+                    input += this->decimation();
+                }
+
+                return (output[0]-reinterpret_cast<float*>(output_items[0]))
+                    /m_length;
+            }
+
+            template<>
+            int gr::gs::Implementations::Autocovariance_impl<float>::streams()
+            {
+                return 1;
+            }
+
+            template<>
+            int gr::gs::Implementations::Autocovariance_impl<gr::gs::Complex>::
+                streams()
+            {
+                return 4;
+            }
+        }
     }
-
-    return (output-reinterpret_cast<T*>(output_items[0]))/m_length;
 }
 
 template<typename T>
@@ -67,7 +142,7 @@ gr::gs::Implementations::Autocovariance_impl<T>::Autocovariance_impl(
         const unsigned offset):
     gr::sync_decimator("Autocovariance",
         io_signature::make(1,1,sizeof(T)),
-        io_signature::make(1,1,sizeof(T)*length),
+        io_signature::make(streams(),streams(),sizeof(float)*length),
         decimation),
     m_mean(mean),
     m_length(length),
@@ -107,6 +182,6 @@ void gr::gs::Implementations::Autocovariance_impl<T>::set_mean(T mean)
 }
 
 template class gr::gs::Implementations::Autocovariance_impl<float>;
-template class gr::gs::Implementations::Autocovariance_impl<std::complex<float>>;
+template class gr::gs::Implementations::Autocovariance_impl<gr::gs::Complex>;
 template class gr::gs::Autocovariance<float>;
-template class gr::gs::Autocovariance<std::complex<float>>;
+template class gr::gs::Autocovariance<gr::gs::Complex>;

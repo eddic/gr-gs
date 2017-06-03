@@ -2,7 +2,7 @@
  * @file      Autocovariance.h
  * @brief     Declares the "Autocovariance" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 22, 2017
+ * @date      June 2, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -42,12 +42,19 @@ namespace gr
         //! "Autocovariance" GNU Radio block
         /*!
          * This block computes the autocovariance of a signal. It outputs a
-         * vector for every sample it receives. In the case of a complex valued
-         * signal this assumes zero correlation between the imaginary and real
-         * components.
+         * vector of the length requested for every sample it receives. For the
+         * floating point case, there is a single output port that gives you the
+         * product of the current sample with past samples.
+         *
+         * The complex case is similar but with four output port corresponding
+         * to the covariance matrix.
+         * * output[0] = real(x(n))*real(x(n-k))
+         * * output[1] = real(x(n))*imag(x(n-k))
+         * * output[2] = imag(x(n))*real(x(n-k))
+         * * output[3] = imag(x(n))*imag(x(n-k))
          *
          * @tparam T Base signal type. Can be float or std::complex<float>.
-         * @date    May 22, 2017
+         * @date    June 2, 2017
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         template<typename T>
@@ -94,7 +101,7 @@ namespace gr
         };
 
         typedef Autocovariance<float> Autocovariance_ff;
-        typedef Autocovariance<std::complex<float>> Autocovariance_cc;
+        typedef Autocovariance<std::complex<float>> Autocovariance_cf;
     }
 }
 

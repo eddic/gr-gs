@@ -64,9 +64,9 @@ GR_SWIG_BLOCK_MAGIC2(gs, ErrorCount_if);
 
 %include "gr-gs/Autocovariance.h"
 %template(Autocovariance_ff) gr::gs::Autocovariance<float>;
-%template(Autocovariance_cc) gr::gs::Autocovariance<std::complex<float>>;
+%template(Autocovariance_cf) gr::gs::Autocovariance<std::complex<float>>;
 GR_SWIG_BLOCK_MAGIC2(gs, Autocovariance_ff);
-GR_SWIG_BLOCK_MAGIC2(gs, Autocovariance_cc);
+GR_SWIG_BLOCK_MAGIC2(gs, Autocovariance_cf);
 
 %include "gr-gs/Average.h"
 %template(Average_ff) gr::gs::Average<double, float>;
