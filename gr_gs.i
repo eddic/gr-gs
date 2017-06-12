@@ -86,3 +86,61 @@ GR_SWIG_BLOCK_MAGIC2(gs, Distribution_cf);
 
 %include "gr-gs/Terminator.h"
 GR_SWIG_BLOCK_MAGIC2(gs, Terminator);
+
+%pythoncode %{
+def getData(
+        fieldSize,
+        codewordLength,
+        augmentingLength,
+        key,
+        dimensions):
+    import numpy, os, zlib, exceptions
+    path = os.path.join(
+            dataPath,
+            "{:02d}".format(fieldSize),
+            "{:02d}".format(codewordLength),
+            "{:02d}-{:s}.dat".format(augmentingLength, key))
+    metaPath = os.path.join(
+            dataPath,
+            "{:02d}".format(fieldSize),
+            "{:02d}".format(codewordLength),
+            "{:02d}.txt".format(augmentingLength))
+    data = numpy.fromfile(
+            path,
+            dtype=numpy.dtype((numpy.float64, dimensions)))
+    metaFile = open(metaPath, 'r')
+    hash = None
+    for line in metaFile.readlines():
+        line = line.split(' ')
+        if line[0].lower() == key and line[1] == 'CRC:':
+            hash = int(line[2], 16)
+    if zlib.crc32(data.tobytes())&0xffffffff == hash:
+        return data
+    raise exceptions.Exception(
+        "CRC32 failed on {:s} data for {:s}".format(key, path))
+
+
+def distributionData(fieldSize, codewordLength, augmentingLength):
+    return getData(
+            fieldSize,
+            codewordLength,
+            augmentingLength,
+            "distribution",
+            (distributionDataWidth, distributionDataWidth))
+
+def autocovarianceData(fieldSize, codewordLength, augmentingLength):
+    return getData(
+            fieldSize,
+            codewordLength,
+            augmentingLength,
+            "autocovariance",
+            (autocovarianceDataLength, 2, 2))
+
+def psdData(fieldSize, codewordLength, augmentingLength):
+    return getData(
+            fieldSize,
+            codewordLength,
+            augmentingLength,
+            "psd",
+            2)
+%}

@@ -1,0 +1,6 @@
+Symbols: 1e+06
+Date: June 11, 2017 at 08:18 MDT
+Selection Method: MSW
+Distribution CRC: 0xa13f1154
+Autocovariance CRC: 0x44e060a8
+PSD CRC: 0x1da6cc4f

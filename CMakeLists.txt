@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
 project(gr-gs CXX)
 
+set(DATA_FFT_WINDOW_SIZE 16384)
+set(DATA_SYMBOL_COUNT "1e6")
+set(DATA_DISTRIBUTION_WIDTH 128)
+set(DATA_AUTOCOVARIANCE_LENGTH 64)
+
 # Setup complex type
 
 if(NOT COMPLEX_SIZE)
@@ -29,6 +34,11 @@ include_directories(
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
     "${CMAKE_CURRENT_BINARY_DIR}/include")
 
+# Zlib
+
+find_package(ZLIB 1.0.0 REQUIRED)
+include_directories("${ZLIB_INCLUDE_DIRS}")
+
 # Find Boost
 
 set(Boost_ADDITIONAL_VERSIONS
@@ -45,7 +55,7 @@ include_directories("${Boost_INCLUDE_DIRS}")
 
 # Find GNU Radio
 
-set(GR_REQUIRED_COMPONENTS RUNTIME FILTER)
+set(GR_REQUIRED_COMPONENTS RUNTIME)
 find_package(Gnuradio "3.7.0" REQUIRED)
 include_directories("${GNURADIO_RUNTIME_INCLUDE_DIRS}")
 
@@ -73,11 +83,12 @@ add_library(gnuradio-gs SHARED
     src/Distribution_impl.cpp
     src/Autocovariance_impl.cpp
     src/Integrate_impl.cpp
+    src/Data.cpp
     src/ErrorCount_impl.cpp)
 set_target_properties(gnuradio-gs PROPERTIES DEFINE_SYMBOL "gnuradio_gs_EXPORTS")
 target_link_libraries(gnuradio-gs PUBLIC
     "${Boost_LIBRARIES}"
-    "${GNURADIO_FILTER_LIBRARIES}"
+    "${ZLIB_LIBRARIES}"
     "${GNURADIO_RUNTIME_LIBRARIES}")
 install(TARGETS gnuradio-gs LIBRARY DESTINATION lib)
 install(FILES
@@ -92,6 +103,7 @@ install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Integrate.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/ErrorCount.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Primitives.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Data.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/exceptions.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/gr-gs/config.h"
     DESTINATION "include/gr-gs")
@@ -199,6 +211,15 @@ if(DOXYGEN_FOUND)
         OPTIONAL)
 endif(DOXYGEN_FOUND)
 
+# Our data
+
+add_custom_target(data "${CMAKE_CURRENT_SOURCE_DIR}/scripts/generateData.py"
+    "${CMAKE_CURRENT_SOURCE_DIR}/data" "${DATA_SYMBOL_COUNT}"
+    "${DATA_AUTOCOVARIANCE_LENGTH}" "${DATA_DISTRIBUTION_WIDTH}"
+    "${DATA_FFT_WINDOW_SIZE}" COMMENT "Building Simulation Data" VERBATIM)
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data" DESTINATION
+    share/gr-gs)
+
 # Swig
 
 find_package(SWIG REQUIRED)
@@ -215,12 +236,7 @@ set(CMAKE_SWIG_FLAGS -fvirtual -modern -keyword -w511)
 set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/gr_gs.i"
     PROPERTIES CPLUSPLUS ON)
 swig_add_module(gr_gs python "${CMAKE_CURRENT_SOURCE_DIR}/gr_gs.i")
-swig_link_libraries(gr_gs
-    gnuradio-gs
-    "${PYTHON_LIBRARIES}"
-    "${Boost_LIBRARIES}"
-    "${GNURADIO_FILTER_LIBRARIES}"
-    "${GNURADIO_RUNTIME_LIBRARIES}")
+swig_link_libraries(gr_gs gnuradio-gs "${PYTHON_LIBRARIES}")
 
 execute_process(COMMAND python2 -c "
 from distutils import sysconfig

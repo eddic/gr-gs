@@ -2,7 +2,7 @@
  * @file      config.h
  * @brief     Defines some basic parameters for the module
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 19, 2017
+ * @date      June 10, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -31,6 +31,7 @@
 #include <cstdint>
 #include <vector>
 #include <complex>
+#include <string>
 
 #ifndef GS_API
 #include <gnuradio/attributes.h>
@@ -66,6 +67,18 @@ namespace gr
             //! Maximum field size defined
             const unsigned int maxFieldSize=16;
         }
+
+        //! Path to data folder
+        const char dataPath[] = "@CMAKE_INSTALL_PREFIX@/share/gr-gs/data";
+
+        //! PSD Data Width
+        const unsigned psdDataWidth = @DATA_FFT_WINDOW_SIZE@/2+1;
+
+        //! Autocovariance Data Length
+        const unsigned autocovarianceDataLength = @DATA_AUTOCOVARIANCE_LENGTH@;
+
+        //! Distribution Data Width
+        const unsigned distributionDataWidth = @DATA_DISTRIBUTION_WIDTH@;
     }
 }
 
