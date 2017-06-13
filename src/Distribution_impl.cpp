@@ -39,7 +39,10 @@ int gr::gs::Implementations::Distribution_ff_impl::work(
     std::lock_guard<std::mutex> lock(m_mutex);
 
     const float* input = reinterpret_cast<const float*>(input_items[0]);
-    float* output = reinterpret_cast<float*>(output_items[0]);
+    float* output = nullptr;
+    
+    if(m_output)
+        output = reinterpret_cast<float*>(output_items[0]);
 
     for(int i=0; i<noutput_items; ++i)
     {
@@ -56,9 +59,10 @@ int gr::gs::Implementations::Distribution_ff_impl::work(
                 ++m_bins[index];
         }
 
-        for(unsigned j=0; j<m_bins.size(); ++j)
-            *output++ = static_cast<float>(m_bins[j])
-                / static_cast<float>(m_count);
+        if(m_output)
+            for(unsigned j=0; j<m_bins.size(); ++j)
+                *output++ = static_cast<float>(m_bins[j])
+                    / static_cast<float>(m_count);
     }
 
     return noutput_items;
@@ -68,11 +72,16 @@ gr::gs::Implementations::Distribution_ff_impl::Distribution_ff_impl(
         const unsigned bins,
         const double binSize,
         const double leftBinCenter,
+        const bool output,
         const unsigned decimation):
     gr::sync_decimator("Distribution_ff",
         io_signature::make(1,1,sizeof(float)),
-        io_signature::make(1,1,sizeof(float)*bins),
+        io_signature::make(
+            output?1:0,
+            output?1:0,
+            sizeof(float)*bins),
         decimation),
+    m_output(output),
     m_bins(bins),
     m_leftEdge(leftBinCenter-binSize/2),
     m_binSize(binSize),
@@ -85,6 +94,7 @@ gr::gs::Distribution_ff::sptr gr::gs::Distribution_ff::make(
         const unsigned bins,
         const double binSize,
         const double leftBinCenter,
+        const bool output,
         const unsigned decimation)
 {
     return gnuradio::get_initial_sptr(
@@ -92,6 +102,7 @@ gr::gs::Distribution_ff::sptr gr::gs::Distribution_ff::make(
                 bins,
                 binSize,
                 leftBinCenter,
+                output,
                 decimation));
 }
 
@@ -124,7 +135,9 @@ int gr::gs::Implementations::Distribution_cf_impl::work(
     std::lock_guard<std::mutex> lock(m_mutex);
 
     const Complex* input = reinterpret_cast<const Complex*>(input_items[0]);
-    float* output = reinterpret_cast<float*>(output_items[0]);
+    float* output = nullptr;
+    if(m_output)
+        output = reinterpret_cast<float*>(output_items[0]);
 
     for(int i=0; i<noutput_items; ++i)
     {
@@ -154,9 +167,10 @@ int gr::gs::Implementations::Distribution_cf_impl::work(
                 ++m_bins[imagIndex][realIndex];
         }
 
-        for(unsigned real=0; real<m_binCount; ++real)
-            *output++ = static_cast<float>(m_bins[m_zeroRow][real])
-                / static_cast<float>(m_count);
+        if(m_output)
+            for(unsigned real=0; real<m_binCount; ++real)
+                *output++ = static_cast<float>(m_bins[m_zeroRow][real])
+                    / static_cast<float>(m_count);
     }
 
     return noutput_items;
@@ -166,11 +180,16 @@ gr::gs::Implementations::Distribution_cf_impl::Distribution_cf_impl(
         const unsigned bins,
         const double binSize,
         const std::complex<double> leastBinCenter,
+        const bool output,
         const unsigned decimation):
     gr::sync_decimator("Distribution_cf",
         io_signature::make(1,1,sizeof(Complex)),
-        io_signature::make(1,1,sizeof(float)*bins),
+        io_signature::make(
+            output?1:0,
+            output?1:0,
+            sizeof(float)*bins),
         decimation),
+    m_output(output),
     m_binCount(bins),
     m_bins(bins, std::vector<unsigned long long>(bins, 0)),
     m_leastEdge(leastBinCenter-std::complex<double>(binSize/2, binSize/2)),
@@ -185,6 +204,7 @@ gr::gs::Distribution_cf::sptr gr::gs::Distribution_cf::make(
         const unsigned bins,
         const double binSize,
         const std::complex<double> leftBinCenter,
+        const bool output,
         const unsigned decimation)
 {
     return gnuradio::get_initial_sptr(
@@ -192,6 +212,7 @@ gr::gs::Distribution_cf::sptr gr::gs::Distribution_cf::make(
                 bins,
                 binSize,
                 leftBinCenter,
+                output,
                 decimation));
 }
 

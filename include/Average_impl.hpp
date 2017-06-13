@@ -2,7 +2,7 @@
  * @file      Average_impl.hpp
  * @brief     Declares the "Average" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 29, 2017
+ * @date      June 12, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -69,17 +69,23 @@ namespace gr
                 //! Initialize an average block
                 /*!
                  * @param [in] vectorSize Number of elements in the vector
+                 * @param [in] output Should we output the average or just store
+                 *                    it?
                  * @param [in] decimation Should we decimate the output?
                  * @return Shared pointer to newly allocated average block
                  */
                 inline Average_impl(
                         const unsigned vectorSize,
+                        const bool output,
                         const unsigned decimation);
 
                 virtual const std::vector<Internal>& average() const;
                 virtual void reset();
 
             private:
+                //! Are we outputting?
+                const bool m_output;
+
                 //! Let's be thread safe
                 mutable std::mutex m_mutex;
 

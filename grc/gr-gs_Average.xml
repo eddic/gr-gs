@@ -4,7 +4,7 @@
     <key>gr_gs_Average</key>
     <category>[gr-gs]/Miscellaneous</category>
     <import>import gr_gs as gs</import>
-    <make>gs.Average_$(sampleType.fcn)($vectorSize, $decimation)</make>
+    <make>gs.Average_$(sampleType.fcn)($vectorSize, True, $decimation)</make>
 	<param>
 		<name>Sample Type</name>
 		<key>sampleType</key>

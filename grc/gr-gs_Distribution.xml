@@ -4,7 +4,7 @@
     <key>gr_gs_Distribution</key>
     <category>[gr-gs]/Miscellaneous</category>
     <import>import gr_gs as gs</import>
-    <make>gs.Distribution_$(sampleType.fcn)($bins, $binSize, $leastBinCenter, $decimation)</make>
+    <make>gs.Distribution_$(sampleType.fcn)($bins, $binSize, $leastBinCenter, True, $decimation)</make>
 	<param>
 		<name>Sample Type</name>
 		<key>sampleType</key>

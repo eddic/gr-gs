@@ -2,7 +2,7 @@
  * @file      Distribution.h
  * @brief     Declares the "Distribution" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 31, 2017
+ * @date      June 12, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -45,7 +45,7 @@ namespace gr
          * bins in a probability distribution. It basically creates the
          * necessary output vector to be used as a histogram.
          *
-         * @date    May 29, 2017
+         * @date    June 12, 2017
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         class GS_API Distribution_ff: virtual public gr::sync_decimator
@@ -60,6 +60,7 @@ namespace gr
              * @param [in] binSize Width of each bin
              * @param [in] leftBinCenter The center point of the left most (most
              *                           negative) bin.
+             * @param [in] output Should we output the average or just store it?
              * @param [in] decimation Should we decimate the output?
              * @return Shared pointer to newly allocated distribution
              */
@@ -67,6 +68,7 @@ namespace gr
                     const unsigned bins,
                     const double binSize,
                     const double leftBinCenter,
+                    const bool output = false,
                     const unsigned decimation = 1);
 
             //! See the current distribution
@@ -84,7 +86,7 @@ namespace gr
          * that gets outputted portwise is a two-dimentional slice of the
          * distribution along the real number line.
          *
-         * @date    May 31, 2017
+         * @date    June 12, 2017
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         class GS_API Distribution_cf: virtual public gr::sync_decimator
@@ -99,6 +101,7 @@ namespace gr
              * @param [in] binSize Width of each bin
              * @param [in] leastBinCenter The center point of the least (most
              *                            negative) bin.
+             * @param [in] output Should we output the average or just store it?
              * @param [in] decimation Should we decimate the output?
              * @return Shared pointer to newly allocated distribution
              */
@@ -106,6 +109,7 @@ namespace gr
                     const unsigned bins,
                     const double binSize,
                     const std::complex<double> leastBinCenter,
+                    const bool output = false,
                     const unsigned decimation = 1);
 
             //! See the current distribution

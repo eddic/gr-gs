@@ -18,7 +18,7 @@
 		<option>
 			<name>Complex</name>
 			<key>complex</key>
-			<opt>fcn:cc</opt>
+			<opt>fcn:cf</opt>
             <opt>ports:4</opt>
 		</option>
 	</param>

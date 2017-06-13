@@ -68,13 +68,8 @@ class gs_stats(gr.top_block):
         self.XYaverages = []
         self.YXaverages = []
         self.YYaverages = []
-        self.XXnullSinks = []
-        self.XYnullSinks = []
-        self.YXnullSinks = []
-        self.YYnullSinks = []
 
         self.distributions = []
-        self.distributionNullSinks = []
 
         for i in range(codewordLength):
             self.autocovariances.append(gs.Autocovariance_cf(
@@ -82,26 +77,16 @@ class gs_stats(gr.top_block):
                 0,
                 codewordLength,
                 i))
-            self.XXaverages.append(gs.Average_ff(autocovarianceLength, 2048))
-            self.XYaverages.append(gs.Average_ff(autocovarianceLength, 2048))
-            self.YXaverages.append(gs.Average_ff(autocovarianceLength, 2048))
-            self.YYaverages.append(gs.Average_ff(autocovarianceLength, 2048))
-            self.XXnullSinks.append(blocks.null_sink(
-                gr.sizeof_float*autocovarianceLength))
-            self.XYnullSinks.append(blocks.null_sink(
-                gr.sizeof_float*autocovarianceLength))
-            self.YXnullSinks.append(blocks.null_sink(
-                gr.sizeof_float*autocovarianceLength))
-            self.YYnullSinks.append(blocks.null_sink(
-                gr.sizeof_float*autocovarianceLength))
+            self.XXaverages.append(gs.Average_ff(autocovarianceLength, False))
+            self.XYaverages.append(gs.Average_ff(autocovarianceLength, False))
+            self.YXaverages.append(gs.Average_ff(autocovarianceLength, False))
+            self.YYaverages.append(gs.Average_ff(autocovarianceLength, False))
 
             self.distributions.append(gs.Distribution_cf(
                     distributionWidth,
                     1,
                     -distributionWidth*(1+1j)/2,
-                    1024))
-            self.distributionNullSinks.append(blocks.null_sink(
-                    gr.sizeof_float*distributionWidth))
+                    False))
 
         self.fftStreamToVector = blocks.stream_to_vector(
                 gr.sizeof_gr_complex,
@@ -113,8 +98,7 @@ class gs_stats(gr.top_block):
                 True,
                 8)
         self.complexToMagSquared = blocks.complex_to_mag_squared(windowSize)
-        self.fftAverage = gs.Average_ff(windowSize, 16)
-        self.fftNullSink = blocks.null_sink(gr.sizeof_float*windowSize)
+        self.fftAverage = gs.Average_ff(windowSize, False)
 
 
         ##################################################
@@ -130,22 +114,16 @@ class gs_stats(gr.top_block):
         for i in range(codewordLength):
             self.connect((self.integrate, 0), (self.autocovariances[i], 0))    
             self.connect((self.autocovariances[i], 0), (self.XXaverages[i], 0))    
-            self.connect((self.XXaverages[i], 0), (self.XXnullSinks[i], 0))    
             self.connect((self.autocovariances[i], 1), (self.XYaverages[i], 0))    
-            self.connect((self.XYaverages[i], 0), (self.XYnullSinks[i], 0))    
             self.connect((self.autocovariances[i], 2), (self.YXaverages[i], 0))    
-            self.connect((self.YXaverages[i], 0), (self.YXnullSinks[i], 0))    
             self.connect((self.autocovariances[i], 3), (self.YYaverages[i], 0))    
-            self.connect((self.YYaverages[i], 0), (self.YYnullSinks[i], 0))    
 
             self.connect((self.vectorToStreams, i), (self.distributions[i], 0))    
-            self.connect((self.distributions[i], 0), (self.distributionNullSinks[i], 0))    
 
         self.connect((self.symbolMapper, 0), (self.fftStreamToVector, 0))    
         self.connect((self.fftStreamToVector, 0), (self.fft, 0))    
         self.connect((self.fft, 0), (self.complexToMagSquared, 0))    
         self.connect((self.complexToMagSquared, 0), (self.fftAverage, 0))    
-        self.connect((self.fftAverage, 0), (self.fftNullSink, 0))    
 
     def symbols(self):
         return self.terminator.samples()

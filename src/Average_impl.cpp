@@ -38,7 +38,9 @@ int gr::gs::Implementations::Average_impl<Internal, External>::work(
     std::lock_guard<std::mutex> lock(m_mutex);
 
     const External* input = reinterpret_cast<const External*>(input_items[0]);
-    External* output = reinterpret_cast<External*>(output_items[0]);
+    External* output(nullptr);
+    if(m_output)
+        output = reinterpret_cast<External*>(output_items[0]);
 
     for(int i=0; i<noutput_items; ++i)
     {
@@ -52,8 +54,9 @@ int gr::gs::Implementations::Average_impl<Internal, External>::work(
             }
         }
 
-        for(const Internal& value: m_average)
-            *output++ = value;
+        if(m_output)
+            for(const Internal& value: m_average)
+                *output++ = value;
     }
 
     return noutput_items;
@@ -62,11 +65,16 @@ int gr::gs::Implementations::Average_impl<Internal, External>::work(
 template<typename Internal, typename External>
 gr::gs::Implementations::Average_impl<Internal, External>::Average_impl(
         const unsigned vectorSize,
+        const bool output,
         const unsigned decimation):
     gr::sync_decimator("Average",
         io_signature::make(1,1,sizeof(External)*vectorSize),
-        io_signature::make(1,1,sizeof(External)*vectorSize),
+        io_signature::make(
+            output?1:0,
+            output?1:0,
+            sizeof(External)*vectorSize),
         decimation),
+    m_output(output),
     m_sum(vectorSize),
     m_count(0),
     m_average(vectorSize)
@@ -78,11 +86,13 @@ template<typename Internal, typename External>
 typename gr::gs::Average<Internal, External>::sptr
 gr::gs::Average<Internal, External>::make(
         const unsigned vectorSize,
+        const bool output,
         const unsigned decimation)
 {
     return gnuradio::get_initial_sptr(
             new Implementations::Average_impl<Internal, External>(
                 vectorSize,
+                output,
                 decimation));
 }
 

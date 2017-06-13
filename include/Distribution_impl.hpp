@@ -2,7 +2,7 @@
  * @file      Distribution_impl.hpp
  * @brief     Declares the "Distribution" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 31, 2017
+ * @date      June 12, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -45,7 +45,7 @@ namespace gr
             /*!
              * Implements gr::gs::Distribution_ff
              *
-             * @date    May 29, 2017
+             * @date    June 12, 2017
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             class Distribution_ff_impl: public Distribution_ff
@@ -69,18 +69,24 @@ namespace gr
                  * @param [in] binSize Width of each bin
                  * @param [in] leftBinCenter The center point of the left most
                  *                           (most negative) bin.
+                 * @param [in] output Should we output the average or just store
+                 *                    it?
                  * @param [in] decimation Should we decimate the output?
                  */
                 inline Distribution_ff_impl(
                         const unsigned bins,
                         const double binSize,
                         const double leftBinCenter,
+                        const bool output,
                         const unsigned decimation);
 
                 virtual std::vector<double> distribution() const;
                 virtual void reset();
 
             private:
+                //! Are we outputting?
+                const bool m_output;
+
                 //! Let's be thread safe
                 mutable std::mutex m_mutex;
 
@@ -125,18 +131,24 @@ namespace gr
                  * @param [in] binSize Width of each bin
                  * @param [in] leastBinCenter The center point of the least
                  *                           (most negative) bin.
+                 * @param [in] output Should we output the average or just store
+                 *                    it?
                  * @param [in] decimation Should we decimate the output?
                  */
                 inline Distribution_cf_impl(
                         const unsigned bins,
                         const double binSize,
                         const std::complex<double> leastBinCenter,
+                        const bool output,
                         const unsigned decimation);
 
                 virtual std::vector<std::vector<double>> distribution() const;
                 virtual void reset();
 
             private:
+                //! Are we outputting?
+                const bool m_output;
+
                 //! Let's be thread safe
                 mutable std::mutex m_mutex;
 
