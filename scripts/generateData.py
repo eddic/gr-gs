@@ -77,10 +77,10 @@ class gs_stats(gr.top_block):
                 0,
                 codewordLength,
                 i))
-            self.XXaverages.append(gs.Average_ff(autocovarianceLength, False))
-            self.XYaverages.append(gs.Average_ff(autocovarianceLength, False))
-            self.YXaverages.append(gs.Average_ff(autocovarianceLength, False))
-            self.YYaverages.append(gs.Average_ff(autocovarianceLength, False))
+            self.XXaverages.append(gs.Average_ff(autocovarianceLength))
+            self.XYaverages.append(gs.Average_ff(autocovarianceLength))
+            self.YXaverages.append(gs.Average_ff(autocovarianceLength))
+            self.YYaverages.append(gs.Average_ff(autocovarianceLength))
 
             self.distributions.append(gs.Distribution_cf(
                     distributionWidth,
@@ -98,7 +98,10 @@ class gs_stats(gr.top_block):
                 True,
                 8)
         self.complexToMagSquared = blocks.complex_to_mag_squared(windowSize)
-        self.fftAverage = gs.Average_ff(windowSize, False)
+        self.fftAverage = gs.Average_ff(windowSize)
+
+        self.powerComplexToMagSquared = blocks.complex_to_mag_squared(1)
+        self.powerAverage = gs.Average_ff(1)
 
 
         ##################################################
@@ -123,7 +126,10 @@ class gs_stats(gr.top_block):
         self.connect((self.symbolMapper, 0), (self.fftStreamToVector, 0))    
         self.connect((self.fftStreamToVector, 0), (self.fft, 0))    
         self.connect((self.fft, 0), (self.complexToMagSquared, 0))    
-        self.connect((self.complexToMagSquared, 0), (self.fftAverage, 0))    
+        self.connect((self.complexToMagSquared, 0), (self.fftAverage, 0))
+
+        self.connect((self.symbolMapper, 0), (self.powerComplexToMagSquared, 0))    
+        self.connect((self.powerComplexToMagSquared, 0), (self.powerAverage, 0))
 
     def symbols(self):
         return self.terminator.samples()
@@ -152,8 +158,12 @@ class gs_stats(gr.top_block):
 
         for i in range(tb.windowSize/2+1):
             data[i,0] = float(i)/tb.windowSize
-            data[i,1] = fft[tb.windowSize/2-i]/tb.windowSize
+            data[i,1] = fft[tb.windowSize/2-i]/(
+                    tb.windowSize*self.powerAverage.average()[0])
         return data
+
+    def power(self):
+        return self.powerAverage.average()[0]
 
 dataPath = sys.argv[1]
 symbolCount = float(sys.argv[2]) #1e8
@@ -281,6 +291,7 @@ for fieldSize in fieldSizes:
             metaFile.write("Symbols: {:.0e}\n".format(symbolCount))
             metaFile.write("Date: {:s}\n".format(time.strftime("%B %d, %Y at %H:%M %Z")))
             metaFile.write("Selection Method: MSW\n")
+            metaFile.write("Constellation Power: {:.16e}\n".format(tb.power()))
             metaFile.write("Distribution CRC: 0x{:08x}\n".format(
                 zlib.crc32(distributions.tobytes())&0xffffffff))
             metaFile.write("Autocovariance CRC: 0x{:08x}\n".format(
