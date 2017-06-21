@@ -58,6 +58,18 @@ namespace gr
         GS_API std::vector<Complex> defaultConstellation(
                 unsigned int fieldSize);
 
+        //! Get the default scrambling polynomial for a field size
+        GS_API std::vector<unsigned char> defaultScrambler_b(
+                unsigned int fieldSize);
+
+        //! Get the default scrambling polynomial for a field size
+        GS_API std::vector<unsigned short> defaultScrambler_s(
+                unsigned int fieldSize);
+
+        //! Get the default scrambling polynomial for a field size
+        GS_API std::vector<unsigned int> defaultScrambler_i(
+                unsigned int fieldSize);
+
         //! Stuff needed for the GuidedScrambler and Descrambler blocks
         namespace GuidedScrambling
         {

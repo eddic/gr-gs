@@ -205,7 +205,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(736, 108)</value>
+      <value>(720, 84)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -473,7 +473,7 @@
     </param>
   </block>
   <block>
-    <key>variable_gr_gs_primitivePolynomial</key>
+    <key>variable_gr_gs_defaultScrambler</key>
     <param>
       <key>comment</key>
       <value></value>
@@ -488,7 +488,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(736, 12)</value>
+      <value>(720, 4)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -497,10 +497,6 @@
     <param>
       <key>id</key>
       <value>scramblingPolynomial</value>
-    </param>
-    <param>
-      <key>length</key>
-      <value>6</value>
     </param>
     <param>
       <key>symbolType</key>
@@ -648,7 +644,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(816, 668)</value>
+      <value>(920, 652)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1142,7 +1138,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(296, 408)</value>
+      <value>(504, 408)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1244,7 +1240,7 @@
     </param>
     <param>
       <key>decimation</key>
-      <value>2048</value>
+      <value>512</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -1295,7 +1291,7 @@
     </param>
     <param>
       <key>decimation</key>
-      <value>2048</value>
+      <value>512</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -1346,7 +1342,7 @@
     </param>
     <param>
       <key>decimation</key>
-      <value>2048</value>
+      <value>512</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -1397,7 +1393,7 @@
     </param>
     <param>
       <key>decimation</key>
-      <value>2048</value>
+      <value>512</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -1430,6 +1426,57 @@
     <param>
       <key>vectorSize</key>
       <value>autocovarianceLength</value>
+    </param>
+  </block>
+  <block>
+    <key>gr_gs_Average</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>decimation</key>
+      <value>256</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(340, 488)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>90</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>gr_gs_Average_2</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>sampleType</key>
+      <value>float</value>
+    </param>
+    <param>
+      <key>vectorSize</key>
+      <value>1</value>
     </param>
   </block>
   <block>
@@ -1519,7 +1566,7 @@
     </param>
     <param>
       <key>decimation</key>
-      <value>2048</value>
+      <value>512</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -1527,7 +1574,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(528, 660)</value>
+      <value>(672, 644)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1556,6 +1603,69 @@
     <param>
       <key>binSize</key>
       <value>1</value>
+    </param>
+  </block>
+  <block>
+    <key>gr_gs_Entropy</key>
+    <param>
+      <key>augmentingLength</key>
+      <value>augmentingLength</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>codewordLength</key>
+      <value>codewordLength</value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>fieldSize</key>
+      <value>fieldSize</value>
+    </param>
+    <param>
+      <key>framingTag</key>
+      <value>frame</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(271, 668)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>gr_gs_Entropy_0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minCorrelation</key>
+      <value>0.01</value>
+    </param>
+    <param>
+      <key>symbolType</key>
+      <value>byte</value>
     </param>
   </block>
   <block>
@@ -1629,7 +1739,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(272, 684)</value>
+      <value>(520, 764)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1959,7 +2069,7 @@
     </param>
     <param>
       <key>gui_hint</key>
-      <value>0,1,2,1</value>
+      <value>0,1,1,1</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2148,6 +2258,237 @@
     <param>
       <key>name</key>
       <value>"Symbol Error Rate (dB)"</value>
+    </param>
+    <param>
+      <key>nconnections</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>update_time</key>
+      <value>1</value>
+    </param>
+  </block>
+  <block>
+    <key>qtgui_number_sink</key>
+    <param>
+      <key>autoscale</key>
+      <value>False</value>
+    </param>
+    <param>
+      <key>avg</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(24, 420)</value>
+    </param>
+    <param>
+      <key>gui_hint</key>
+      <value>1,1,1,1</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>180</value>
+    </param>
+    <param>
+      <key>graph_type</key>
+      <value>qtgui.NUM_GRAPH_VERT</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>qtgui_number_sink_0_0</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>float</value>
+    </param>
+    <param>
+      <key>color1</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor1</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label1</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit1</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color10</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor10</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label10</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit10</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color2</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor2</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label2</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit2</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color3</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor3</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label3</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit3</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color4</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor4</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label4</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit4</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color5</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor5</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label5</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit5</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color6</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor6</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label6</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit6</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color7</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor7</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label7</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit7</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color8</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor8</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label8</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit8</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color9</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor9</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label9</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit9</key>
+      <value></value>
+    </param>
+    <param>
+      <key>max</key>
+      <value>math.log10(fieldSize)/math.log10(2)</value>
+    </param>
+    <param>
+      <key>min</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>name</key>
+      <value>"Entropy (bits/symbol)"</value>
     </param>
     <param>
       <key>nconnections</key>
@@ -3555,6 +3896,12 @@
     <sink_key>3</sink_key>
   </connection>
   <connection>
+    <source_block_id>gr_gs_Average_2</source_block_id>
+    <sink_block_id>qtgui_number_sink_0_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
     <source_block_id>gr_gs_Descrambler_0</source_block_id>
     <sink_block_id>gr_gs_ErrorCount_0</sink_block_id>
     <source_key>0</source_key>
@@ -3563,6 +3910,12 @@
   <connection>
     <source_block_id>gr_gs_Distribution_0</source_block_id>
     <sink_block_id>blocks_nlog10_ff_1</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>gr_gs_Entropy_0</source_block_id>
+    <sink_block_id>gr_gs_Average_2</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -3593,6 +3946,12 @@
   <connection>
     <source_block_id>gr_gs_SymbolMapper_0</source_block_id>
     <sink_block_id>gr_gs_Integrate_0_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>guidedScrambler</source_block_id>
+    <sink_block_id>gr_gs_Entropy_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>

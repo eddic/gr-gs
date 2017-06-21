@@ -159,3 +159,45 @@ gr::gs::Data::PSD gr::gs::Data::psd(
 
     return data;
 }
+
+std::vector<unsigned int> gr::gs::defaultScrambler_i(unsigned fieldSize)
+{
+    std::ostringstream path;
+    path << dataPath << '/' << std::setfill('0') << std::right
+         << std::setw(2) << fieldSize << "/scrambler.txt";
+
+    std::ifstream file;
+    file.exceptions(std::ifstream::badbit);
+    file.open(path.str());
+
+    std::vector<unsigned int> scrambler;
+
+    while(true)
+    {
+        unsigned int value;
+        file >> value;
+        if(file.eof())
+            break;
+        scrambler.push_back(value);
+    }
+
+    return scrambler;
+}
+
+std::vector<unsigned short> gr::gs::defaultScrambler_s(unsigned fieldSize)
+{
+    const auto bigone = defaultScrambler_i(fieldSize);
+    std::vector<unsigned short> smallOne(bigone.size());
+    for(unsigned i=0; i<bigone.size(); ++i)
+        smallOne[i] = static_cast<unsigned short>(bigone[i]);
+    return smallOne;
+}
+
+std::vector<unsigned char> gr::gs::defaultScrambler_b(unsigned fieldSize)
+{
+    const auto bigone = defaultScrambler_i(fieldSize);
+    std::vector<unsigned char> smallOne(bigone.size());
+    for(unsigned i=0; i<bigone.size(); ++i)
+        smallOne[i] = static_cast<unsigned char>(bigone[i]);
+    return smallOne;
+}

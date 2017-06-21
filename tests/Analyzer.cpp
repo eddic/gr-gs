@@ -43,7 +43,7 @@ int main()
         std::unique_ptr<Analyzer<Symbol>> analyzer(manufactureAnalyzer<Symbol>(0));
         analyzer->analyze(codeword, analyzer->feedback(), defaultConstellation(2));
 
-        if(analyzer->analysis() != 481)
+        if(analyzer->analysis() != 326)
         {
             std::cout << "failed!" << std::endl;
             return 1;
@@ -60,7 +60,7 @@ int main()
         std::unique_ptr<Analyzer<Symbol>> analyzer(manufactureAnalyzer<Symbol>(0));
         analyzer->analyze(codeword, analyzer->feedback(), defaultConstellation(4));
 
-        if(analyzer->analysis() != 429)
+        if(analyzer->analysis() != 492)
         {
             std::cout << "failed!" << std::endl;
             return 1;

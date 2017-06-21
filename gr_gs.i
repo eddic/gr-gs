@@ -10,6 +10,7 @@
 #include "gr-gs/SymbolMapper.h"
 #include "gr-gs/SymbolGenerator.h"
 #include "gr-gs/Average.h"
+#include "gr-gs/Entropy.h"
 #include "gr-gs/Terminator.h"
 #include "gr-gs/Distribution.h"
 #include "gr-gs/Integrate.h"
@@ -45,6 +46,14 @@ GR_SWIG_BLOCK_MAGIC2(gs, Descrambler_ii);
 GR_SWIG_BLOCK_MAGIC2(gs, SymbolMapper_bc);
 GR_SWIG_BLOCK_MAGIC2(gs, SymbolMapper_sc);
 GR_SWIG_BLOCK_MAGIC2(gs, SymbolMapper_ic);
+
+%include "gr-gs/Entropy.h"
+%template(Entropy_bf) gr::gs::Entropy<unsigned char>;
+%template(Entropy_sf) gr::gs::Entropy<unsigned short>;
+%template(Entropy_if) gr::gs::Entropy<unsigned int>;
+GR_SWIG_BLOCK_MAGIC2(gs, Entropy_bf);
+GR_SWIG_BLOCK_MAGIC2(gs, Entropy_sf);
+GR_SWIG_BLOCK_MAGIC2(gs, Entropy_if);
 
 %include "gr-gs/SymbolGenerator.h"
 %template(SymbolGenerator_b) gr::gs::SymbolGenerator<unsigned char>;

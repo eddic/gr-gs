@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 project(gr-gs CXX)
 
 set(DATA_FFT_WINDOW_SIZE 16384)
-set(DATA_SYMBOL_COUNT "1e6")
+set(DATA_SYMBOL_COUNT "1e7")
 set(DATA_DISTRIBUTION_WIDTH 128)
 set(DATA_AUTOCOVARIANCE_LENGTH 64)
 
@@ -39,6 +39,11 @@ include_directories(
 find_package(ZLIB 1.0.0 REQUIRED)
 include_directories("${ZLIB_INCLUDE_DIRS}")
 
+# GSL
+
+find_package(GSL 1.0.0 REQUIRED)
+include_directories("${GSL_INCLUDE_DIRS}")
+
 # Find Boost
 
 set(Boost_ADDITIONAL_VERSIONS
@@ -73,22 +78,24 @@ add_library(gnuradio-gs SHARED
     src/Primitives.cpp
     src/Scrambler.cpp
     src/ScramblerGroup.cpp
-    src/ScramblerGroup.cpp
     src/GuidedScrambler_impl.cpp
     src/Descrambler_impl.cpp
     src/SymbolGenerator_impl.cpp
     src/SymbolMapper_impl.cpp
     src/Average_impl.cpp
+    src/Entropy_impl.cpp
     src/Terminator_impl.cpp
     src/Distribution_impl.cpp
     src/Autocovariance_impl.cpp
     src/Integrate_impl.cpp
     src/Data.cpp
+    src/ProbabilityMapper.cpp
     src/ErrorCount_impl.cpp)
 set_target_properties(gnuradio-gs PROPERTIES DEFINE_SYMBOL "gnuradio_gs_EXPORTS")
 target_link_libraries(gnuradio-gs PUBLIC
     "${Boost_LIBRARIES}"
     "${ZLIB_LIBRARIES}"
+    "${GSL_LIBRARIES}"
     "${GNURADIO_RUNTIME_LIBRARIES}")
 install(TARGETS gnuradio-gs LIBRARY DESTINATION lib)
 install(FILES
@@ -101,6 +108,7 @@ install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Distribution.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Autocovariance.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Integrate.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Entropy.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/ErrorCount.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Primitives.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Data.h"
@@ -253,12 +261,14 @@ install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_SymbolMapper.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_SymbolGenerator.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Average.xml"
+    "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Entropy.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Terminator.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Distribution.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Autocovariance.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Integrate.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_primitive.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_defaultConstellation.xml"
+    "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_defaultScrambler.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_ErrorCount.xml"
     DESTINATION "share/gnuradio/grc/blocks/")
 install(FILES

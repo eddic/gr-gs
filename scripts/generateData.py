@@ -182,31 +182,8 @@ for fieldSize in fieldSizes:
     print("Computing set with field size = {:d}".format(fieldSize))
 
     fieldPath = os.path.join(dataPath, "{:02d}".format(fieldSize))
-    if os.path.exists(fieldPath):
-        if not os.path.isdir(fieldPath):
-            print("{:s} exists but isn't a directory".format(fieldPath))
-    else:
-        os.mkdir(fieldPath)
 
-    scrambler = None
-    scramblerPath = os.path.join(fieldPath, "scrambler.txt")
-    if os.path.exists(scramblerPath):
-        scramblerFile = open(scramblerPath, 'r')
-        scrambler = scramblerFile.readlines()[0].split(' ')
-        scrambler = map(int, scrambler)
-        scramblerFile.close()
-    else:
-        sys.stdout.write("  Generating primitive scrambler... ")
-        sys.stdout.flush()
-        scrambler = gs.findPrimitive_b(
-                fieldSize,
-                scramblerLength/int(np.sqrt(fieldSize)))
-        print("done")
-        scramblerFile = open(scramblerPath, 'w')
-        scramblerFile.write("{:d}".format(scrambler[0]))
-        for i in range(1,len(scrambler)):
-            scramblerFile.write(" {:d}".format(scrambler[i]))
-        scramblerFile.close()
+    scrambler = gs.defaultScrambler_b(fieldSize)
 
     for codewordLength in codewordLengths:
         print("  Computing subset with codeword length = {:d}".format(codewordLength))
