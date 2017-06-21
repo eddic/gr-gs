@@ -21,7 +21,14 @@
 %}
 
 %include "gr-gs/config.h"
+
 %include "gr-gs/Primitives.h"
+%template(verifyPrimitive_b) gr::gs::verifyPrimitive<unsigned char>;
+%template(verifyPrimitive_s) gr::gs::verifyPrimitive<unsigned short>;
+%template(verifyPrimitive_i) gr::gs::verifyPrimitive<unsigned int>;
+%template(findPrimitive_b) gr::gs::findPrimitive<unsigned char>;
+%template(findPrimitive_s) gr::gs::findPrimitive<unsigned short>;
+%template(findPrimitive_i) gr::gs::findPrimitive<unsigned int>;
 
 %include "gr-gs/GuidedScrambler.h"
 %template(GuidedScrambler_bb) gr::gs::GuidedScrambler<unsigned char>;

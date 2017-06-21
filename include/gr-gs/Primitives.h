@@ -1,8 +1,8 @@
 /*!
  * @file      Primitives.h
- * @brief     Declares the gr::gs::Primitives namespace.
+ * @brief     Declares some primitive polynomial functions
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 19, 2017
+ * @date      June 21, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -30,7 +30,6 @@
 
 #include "gr-gs/config.h"
 
-#include <functional>
 #include <vector>
 
 //! GNU Radio Namespace
@@ -39,39 +38,17 @@ namespace gr
     //! Contains all blocks for the Guided Scrambling GNU Radio Module
     namespace gs
     {
-        //! Tools for finding primitive polynomials
-        namespace Primitives
-        {
-            //! Get a set of primitives of a specific length with 1-byte symbols
-            GS_API std::vector<std::vector<unsigned char>> findPrimitives_b(
-                    const unsigned fieldSize,
-                    const unsigned length);
+        //! Find a primitive of a specific length with the least terms
+        template<typename Symbol>
+        GS_API std::vector<Symbol> findPrimitive(
+                const unsigned fieldSize,
+                const unsigned length);
 
-            //! Get a set of primitives of a specific length with 2-byte symbols
-            GS_API std::vector<std::vector<unsigned short>> findPrimitives_s(
-                    const unsigned fieldSize,
-                    const unsigned length);
-
-            //! Get a set of primitives of a specific length with 4-byte symbols
-            GS_API std::vector<std::vector<unsigned int>> findPrimitives_i(
-                    const unsigned fieldSize,
-                    const unsigned length);
-
-            //! Find a primitive of a specific length with the least terms
-            GS_API std::vector<unsigned char> findPrimitive_b(
-                    const unsigned fieldSize,
-                    const unsigned length);
-
-            //! Find a primitive of a specific length with the least terms
-            GS_API std::vector<unsigned short> findPrimitive_s(
-                    const unsigned fieldSize,
-                    const unsigned length);
-
-            //! Find a primitive of a specific length with the least terms
-            GS_API std::vector<unsigned int> findPrimitive_i(
-                    const unsigned fieldSize,
-                    const unsigned length);
-        }
+        //! Verify that a polynomial is primitive
+        template<typename Symbol>
+        GS_API bool verifyPrimitive(
+                const unsigned fieldSize,
+                const std::vector<Symbol>& word);
     }
 }
 
