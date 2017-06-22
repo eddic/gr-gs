@@ -23,6 +23,7 @@
 #include "Descrambler_impl.hpp"
 #include "GF2.hpp"
 #include "GF4.hpp"
+#include "GF16.hpp"
 #include "Words.hpp"
 
 typedef unsigned char Symbol;
@@ -206,6 +207,40 @@ int main()
         for(unsigned int i=0; i<64; ++i)
         {
             Words::randomize<GF4<Symbol>>(input);
+            scrambler.scramble(divider, input);
+            descrambler.descramble(scrambler.output());
+            if(descrambler.output() != input)
+            {
+                std::cout << "failed!" << std::endl;
+                return 1;
+            }
+        }
+
+        std::cout << "success." << std::endl;
+    }
+
+    std::cout << "Testing random continuous scrambling->descrambling cycle in GF16 with gr::gs::GuidedScrambling::Scrambler... ";
+    {
+        std::cout.flush();
+
+        const std::vector<Symbol> divider({1,0,0,0,2,4});
+        std::vector<Symbol> input;
+        input.resize(32);
+
+        Scrambler<Symbol> scrambler;
+        scrambler.configure(input.size()+4,11,4,divider.size()-1, 0, 16);
+
+        Descrambler_impl<Symbol> descrambler(
+                16,
+                input.size()+4,
+                4,
+                true,
+                divider,
+                "");
+
+        for(unsigned int i=0; i<64; ++i)
+        {
+            Words::randomize<GF16<Symbol>>(input);
             scrambler.scramble(divider, input);
             descrambler.descramble(scrambler.output());
             if(descrambler.output() != input)
