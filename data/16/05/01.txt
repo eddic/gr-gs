@@ -1,7 +1,7 @@
-Symbols: 1e+07
-Date: June 20, 2017 at 15:23 MDT
+Symbols: 2e+06
+Date: June 26, 2017 at 15:18 MDT
 Selection Method: MSW
-Constellation Power: 9.0888939752295208e+00
-Distribution CRC: 0x5744a143
-Autocovariance CRC: 0x444932dd
-PSD CRC: 0x8837f832
+Constellation Power: 8.8524388593142795e+00
+Distribution CRC: 0xa11fee7f
+Autocovariance CRC: 0x52f08032
+PSD CRC: 0x8cf9922a

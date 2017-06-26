@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 project(gr-gs CXX)
 
-set(DATA_FFT_WINDOW_SIZE 16384)
-set(DATA_SYMBOL_COUNT "1e7")
+set(DATA_FFT_WINDOW_SIZE 32768)
 set(DATA_DISTRIBUTION_WIDTH 128)
 set(DATA_AUTOCOVARIANCE_LENGTH 64)
 
@@ -219,12 +218,18 @@ if(DOXYGEN_FOUND)
         OPTIONAL)
 endif(DOXYGEN_FOUND)
 
+# Our scramblers
+
+add_custom_target(scramblers "${CMAKE_CURRENT_SOURCE_DIR}/scripts/findScramblers.py"
+    "${CMAKE_CURRENT_SOURCE_DIR}/data"
+    COMMENT "Finding optimal scramblers" VERBATIM)
+
 # Our data
 
 add_custom_target(data "${CMAKE_CURRENT_SOURCE_DIR}/scripts/generateData.py"
-    "${CMAKE_CURRENT_SOURCE_DIR}/data" "${DATA_SYMBOL_COUNT}"
-    "${DATA_AUTOCOVARIANCE_LENGTH}" "${DATA_DISTRIBUTION_WIDTH}"
-    "${DATA_FFT_WINDOW_SIZE}" COMMENT "Building Simulation Data" VERBATIM)
+    "${CMAKE_CURRENT_SOURCE_DIR}/data" "${DATA_AUTOCOVARIANCE_LENGTH}"
+    "${DATA_DISTRIBUTION_WIDTH}" "${DATA_FFT_WINDOW_SIZE}"
+    COMMENT "Building Simulation Data" VERBATIM)
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data" DESTINATION
     share/gr-gs)
 

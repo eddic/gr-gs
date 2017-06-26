@@ -2,7 +2,7 @@
  * @file      Data.cpp
  * @brief     Defines the Data namespace
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      June 10, 2017
+ * @date      June 23, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -32,6 +32,25 @@
 #include <iomanip>
 #include <zlib.h>
 #include <string>
+
+//! GNU Radio Namespace
+namespace gr
+{
+    //! Contains all blocks for the Guided Scrambling GNU Radio Module
+    namespace gs
+    {
+        namespace Data
+        {
+            void raw(
+                    const unsigned fieldSize,
+                    const unsigned codewordLength,
+                    const unsigned augmentingLength,
+                    const std::string& key,
+                    char* data,
+                    size_t dataSize);
+        }
+    }
+}
 
 void gr::gs::Data::raw(
         const unsigned fieldSize,
@@ -160,17 +179,40 @@ gr::gs::Data::PSD gr::gs::Data::psd(
     return data;
 }
 
-std::vector<unsigned int> gr::gs::defaultScrambler_i(unsigned fieldSize)
+template
+std::vector<unsigned char> gr::gs::defaultScrambler(
+        const unsigned fieldSize,
+        const unsigned codewordLength,
+        const unsigned augmentingLength);
+template
+std::vector<unsigned short> gr::gs::defaultScrambler(
+        const unsigned fieldSize,
+        const unsigned codewordLength,
+        const unsigned augmentingLength);
+template
+std::vector<unsigned int> gr::gs::defaultScrambler(
+        const unsigned fieldSize,
+        const unsigned codewordLength,
+        const unsigned augmentingLength);
+template<typename Symbol>
+std::vector<Symbol> gr::gs::defaultScrambler(
+        const unsigned fieldSize,
+        const unsigned codewordLength,
+        const unsigned augmentingLength)
 {
     std::ostringstream path;
-    path << dataPath << '/' << std::setfill('0') << std::right
-         << std::setw(2) << fieldSize << "/scrambler.txt";
+    path << dataPath << std::setfill('0') << std::right
+         << '/' << std::setw(2) << fieldSize
+         << '/' << std::setw(2) << codewordLength
+         << '/' << std::setw(2) << augmentingLength
+         << "-scrambler.txt";
 
     std::ifstream file;
-    file.exceptions(std::ifstream::badbit);
+    file.exceptions(std::ifstream::badbit | std::ifstream::failbit);
     file.open(path.str());
+    file.exceptions(std::ifstream::badbit);
 
-    std::vector<unsigned int> scrambler;
+    std::vector<Symbol> scrambler;
 
     while(true)
     {
@@ -178,26 +220,14 @@ std::vector<unsigned int> gr::gs::defaultScrambler_i(unsigned fieldSize)
         file >> value;
         if(file.eof())
             break;
-        scrambler.push_back(value);
+        if(file.fail())
+        {
+            file.clear();
+            file.exceptions(std::ifstream::badbit | std::ifstream::failbit);
+            file >> value;
+        }
+        scrambler.push_back(static_cast<Symbol>(value));
     }
 
     return scrambler;
-}
-
-std::vector<unsigned short> gr::gs::defaultScrambler_s(unsigned fieldSize)
-{
-    const auto bigone = defaultScrambler_i(fieldSize);
-    std::vector<unsigned short> smallOne(bigone.size());
-    for(unsigned i=0; i<bigone.size(); ++i)
-        smallOne[i] = static_cast<unsigned short>(bigone[i]);
-    return smallOne;
-}
-
-std::vector<unsigned char> gr::gs::defaultScrambler_b(unsigned fieldSize)
-{
-    const auto bigone = defaultScrambler_i(fieldSize);
-    std::vector<unsigned char> smallOne(bigone.size());
-    for(unsigned i=0; i<bigone.size(); ++i)
-        smallOne[i] = static_cast<unsigned char>(bigone[i]);
-    return smallOne;
 }

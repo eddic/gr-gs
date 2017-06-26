@@ -2,7 +2,7 @@
  * @file      config.h
  * @brief     Defines some basic parameters for the module
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      June 10, 2017
+ * @date      June 23, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -56,19 +56,14 @@ namespace gr
 
         //! Get a default constellation pattern for a field size
         GS_API std::vector<Complex> defaultConstellation(
-                unsigned int fieldSize);
+                const unsigned int fieldSize);
 
         //! Get the default scrambling polynomial for a field size
-        GS_API std::vector<unsigned char> defaultScrambler_b(
-                unsigned int fieldSize);
-
-        //! Get the default scrambling polynomial for a field size
-        GS_API std::vector<unsigned short> defaultScrambler_s(
-                unsigned int fieldSize);
-
-        //! Get the default scrambling polynomial for a field size
-        GS_API std::vector<unsigned int> defaultScrambler_i(
-                unsigned int fieldSize);
+        template<typename Symbol>
+        GS_API std::vector<Symbol> defaultScrambler(
+                const unsigned int fieldSize,
+                const unsigned int codewordLength,
+                const unsigned int augmentingLength);
 
         //! Stuff needed for the GuidedScrambler and Descrambler blocks
         namespace GuidedScrambling

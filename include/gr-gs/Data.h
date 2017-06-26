@@ -2,7 +2,7 @@
  * @file      Data.h
  * @brief     Declares the Data namespace
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      June 10, 2017
+ * @date      June 23, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -71,14 +71,6 @@ namespace gr
                     const unsigned fieldSize,
                     const unsigned codewordLength,
                     const unsigned augmentingLength);
-
-            void raw(
-                    const unsigned fieldSize,
-                    const unsigned codewordLength,
-                    const unsigned augmentingLength,
-                    const std::string& key,
-                    char* data,
-                    size_t dataSize);
         }
     }
 }

@@ -91,10 +91,14 @@ class gs_stats(gr.top_block):
         self.fftStreamToVector = blocks.stream_to_vector(
                 gr.sizeof_gr_complex,
                 windowSize)
+
+        fftWindow = window.hanning(windowSize)
+        self.windowConstant = np.sum(np.array(fftWindow)**2)
+
         self.fft = gr_fft.fft_vcc(
                 windowSize,
                 True,
-                (window.rectangular(windowSize)),
+                (fftWindow),
                 True,
                 8)
         self.complexToMagSquared = blocks.complex_to_mag_squared(windowSize)
@@ -159,17 +163,17 @@ class gs_stats(gr.top_block):
         for i in range(tb.windowSize/2+1):
             data[i,0] = float(i)/tb.windowSize
             data[i,1] = fft[tb.windowSize/2-i]/(
-                    tb.windowSize*self.powerAverage.average()[0])
+                    tb.windowConstant*self.powerAverage.average()[0])
         return data
 
     def power(self):
         return self.powerAverage.average()[0]
 
 dataPath = sys.argv[1]
-symbolCount = float(sys.argv[2]) #1e8
-autocovarianceLength = int(sys.argv[3]) #64
-distributionWidth = int(sys.argv[4]) #128
-fftSize = int(sys.argv[5]) #16384
+symbolCount = 2e6
+autocovarianceLength = int(sys.argv[2]) #64
+distributionWidth = int(sys.argv[3]) #128
+fftSize = int(sys.argv[4]) #16384
 
 fieldSizes = [2,4,16]
 codewordLengths = range(2,25)
@@ -182,8 +186,6 @@ for fieldSize in fieldSizes:
     print("Computing set with field size = {:d}".format(fieldSize))
 
     fieldPath = os.path.join(dataPath, "{:02d}".format(fieldSize))
-
-    scrambler = gs.defaultScrambler_b(fieldSize)
 
     for codewordLength in codewordLengths:
         print("  Computing subset with codeword length = {:d}".format(codewordLength))
@@ -200,6 +202,11 @@ for fieldSize in fieldSizes:
             scramblers = fieldSize**augmentingLength
             if rate > maxRate or scramblers > maxScramblers:
                 continue
+
+            scrambler = gs.defaultScrambler_b(
+                    fieldSize,
+                    codewordLength,
+                    augmentingLength)
 
             metaPath = os.path.join(codewordPath, "{:02d}.txt".format(augmentingLength))
             if os.path.exists(metaPath):

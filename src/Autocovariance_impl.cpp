@@ -49,7 +49,7 @@ namespace gr
 
                 const float* input = 
                     reinterpret_cast<const float*>(input_items[0])
-                    +this->history()+m_offset;
+                    +this->history()-1+m_offset;
                 const float* const inputEnd =
                     input + noutput_items*this->decimation();
 
@@ -60,7 +60,7 @@ namespace gr
                     float currentValue = *input - m_mean;
 
                     float* const outputEnd = output + m_length;
-                    const float* pastValue = input - this->history();
+                    const float* pastValue = input - (this->history()-1);
 
                     while(output<outputEnd)
                         *output++ = currentValue * (*pastValue++ - m_mean);
@@ -83,7 +83,7 @@ namespace gr
 
                 const Complex* input = 
                     reinterpret_cast<const Complex*>(input_items[0])
-                    +this->history()+m_offset;
+                    +this->history()-1+m_offset;
                 const Complex* const inputEnd =
                     input + noutput_items*this->decimation();
 
@@ -100,7 +100,7 @@ namespace gr
                     Complex currentValue = *input - m_mean;
 
                     float* const outputEnd = output[0] + m_length;
-                    const Complex* pastValue_ptr = input - this->history();
+                    const Complex* pastValue_ptr = input - (this->history()-1);
 
                     while(output[0]<outputEnd)
                     {
@@ -149,7 +149,7 @@ gr::gs::Implementations::Autocovariance_impl<T>::Autocovariance_impl(
     m_offset(offset % decimation)
 {
     this->enable_update_rate(false);
-    this->set_history(length-1);
+    this->set_history(length);
 }
 
 template<typename T>

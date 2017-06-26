@@ -68,6 +68,11 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
         variance = (
                 autocovariance[position].back()[0][0]
                 +autocovariance[position].back()[1][1])/2;
+        if(variance == 0)
+        {
+            //std::cout << "Got zero variance for " << position << std::endl;
+            continue;
+        }
 
         // Since the autocovariance data we've got only looks in the past, we
         // need to do some fun stuff to get the future values
@@ -261,6 +266,17 @@ float gr::gs::Implementations::ProbabilityMapper<Symbol>::probability(
         std::complex<double> mean,
         double variance) const
 {
+    if(variance == 0)
+    {
+        if(rds+m_constellation[symbol] == mean)
+            return 1.0;
+        else
+        {
+            //std::cout << "Mean=" << mean << " vs RDS=" << rds+m_constellation[symbol] << std::endl;
+            return 0.0;
+        }
+    }
+
     double numerator=0;
     double denominator=0;
     std::map<double, double> realProbabilities;

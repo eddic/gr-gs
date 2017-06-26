@@ -36,7 +36,7 @@
 #include "GF16.hpp"
 
 std::vector<gr::gs::Complex> gr::gs::defaultConstellation(
-        unsigned int fieldSize)
+        const unsigned int fieldSize)
 {
     static const Complex::value_type root2inv=1.0/std::sqrt(2);
 

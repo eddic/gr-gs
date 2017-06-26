@@ -21,6 +21,9 @@
 %}
 
 %include "gr-gs/config.h"
+%template(defaultScrambler_b) gr::gs::defaultScrambler<unsigned char>;
+%template(defaultScrambler_s) gr::gs::defaultScrambler<unsigned short>;
+%template(defaultScrambler_i) gr::gs::defaultScrambler<unsigned int>;
 
 %include "gr-gs/Primitives.h"
 %template(verifyPrimitive_b) gr::gs::verifyPrimitive<unsigned char>;
