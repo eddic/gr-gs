@@ -156,18 +156,25 @@ class gs_stats(gr.top_block):
     def distribution(self, index):
         return self.distributions[index].distribution()
 
-    def psd(self):
-        fft = self.fftAverage.average()
-        data = np.empty([tb.windowSize/2+1,2], dtype=np.float64)
-
-        for i in range(tb.windowSize/2+1):
-            data[i,0] = float(i)/tb.windowSize
-            data[i,1] = fft[tb.windowSize/2-i]/(
-                    tb.windowConstant*self.powerAverage.average()[0])
-        return data
-
     def power(self):
         return self.powerAverage.average()[0]
+
+    def psd(self):
+        fft = self.fftAverage.average()
+        data = np.empty([self.windowSize/2+1,2], dtype=np.float64)
+
+        for i in range(self.windowSize/2+1):
+            data[i,0] = float(i)/self.windowSize
+
+        data[0,1] = fft[self.windowSize/2]/(
+                self.windowConstant*self.power())
+        data[self.windowSize/2,1] = (fft[0])/(
+                self.windowConstant*self.power())
+
+        for i in range(1,self.windowSize/2):
+            data[i,1] = (fft[self.windowSize/2-i]+fft[self.windowSize/2+i])/(
+                    2*self.windowConstant*self.power())
+        return data
 
 dataPath = sys.argv[1]
 symbolCount = 2e6
