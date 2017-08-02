@@ -177,7 +177,7 @@ class gs_stats(gr.top_block):
         return data
 
 dataPath = sys.argv[1]
-symbolCount = 2e6
+symbolCount = 2e9
 autocovarianceLength = int(sys.argv[2]) #64
 distributionWidth = int(sys.argv[3]) #128
 fftSize = int(sys.argv[4]) #16384
