@@ -1,6 +1,7 @@
 /*!
- * @file      Entropy_impl.cpp
- * @brief     Defines the "Entropy" GNU Radio block implementation
+ * @file      Detector_impl.cpp
+ * @brief     Defines the "Guided Scrambling Detector" GNU Radio block
+ *            implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
  * @date      August 7, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
@@ -25,12 +26,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <cmath>
+#include "Detector_impl.hpp"
 
-#include "Entropy_impl.hpp"
+#include <gnuradio/io_signature.h>
 
 template<typename Symbol>
-int gr::gs::Implementations::Entropy_impl<Symbol>::work(
+int gr::gs::Implementations::Detector_impl<Symbol>::work(
         int noutput_items,
         gr_vector_const_void_star &input_items,
         gr_vector_void_star &output_items)
@@ -59,15 +60,15 @@ int gr::gs::Implementations::Entropy_impl<Symbol>::work(
 }
 
 template<typename Symbol>
-gr::gs::Implementations::Entropy_impl<Symbol>::Entropy_impl(
-        const unsigned int fieldSize,
-        const unsigned int codewordLength,
-        const unsigned int augmentingLength,
+gr::gs::Implementations::Detector_impl<Symbol>::Detector_impl(
+        const unsigned fieldSize,
+        const unsigned codewordLength,
+        const unsigned augmentingLength,
         const double minCorrelation,
         const std::string& framingTag):
-    gr::sync_block("Entropy",
-        io_signature::make(1, 1 ,sizeof(Symbol)),
-        io_signature::make(1, 1, sizeof(float))),
+    gr::sync_block("Guided Scrambling Detector",
+        io_signature::make(1,1,fieldSize*sizeof(float)),
+        io_signature::make(1,1,sizeof(Symbol))),
     m_framingTag(framingTag),
     m_framingTagPMT(pmt::string_to_symbol(framingTag)),
     m_codewordLength(codewordLength),
@@ -85,15 +86,15 @@ gr::gs::Implementations::Entropy_impl<Symbol>::Entropy_impl(
 }
 
 template<typename Symbol>
-typename gr::gs::Entropy<Symbol>::sptr gr::gs::Entropy<Symbol>::make(
-        const unsigned int fieldSize,
-        const unsigned int codewordLength,
-        const unsigned int augmentingLength,
+typename gr::gs::Detector<Symbol>::sptr gr::gs::Detector<Symbol>::make(
+        const unsigned fieldSize,
+        const unsigned codewordLength,
+        const unsigned augmentingLength,
         const double minCorrelation,
         const std::string& framingTag)
 {
     return gnuradio::get_initial_sptr(
-            new ::gr::gs::Implementations::Entropy_impl<Symbol>(
+            new Implementations::Detector_impl<Symbol>(
                 fieldSize,
                 codewordLength,
                 augmentingLength,
@@ -101,9 +102,6 @@ typename gr::gs::Entropy<Symbol>::sptr gr::gs::Entropy<Symbol>::make(
                 framingTag));
 }
 
-template class gr::gs::Entropy<unsigned char>;
-template class gr::gs::Implementations::Entropy_impl<unsigned char>;
-template class gr::gs::Entropy<unsigned short>;
-template class gr::gs::Implementations::Entropy_impl<unsigned short>;
-template class gr::gs::Entropy<unsigned int>;
-template class gr::gs::Implementations::Entropy_impl<unsigned int>;
+template class gr::gs::Detector<unsigned char>;
+template class gr::gs::Detector<unsigned short>;
+template class gr::gs::Detector<unsigned int>;

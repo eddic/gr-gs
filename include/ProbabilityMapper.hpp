@@ -2,7 +2,7 @@
  * @file      ProbabilityMapper.hpp
  * @brief     Declares the ProbabilityMapper class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      June 19, 2017
+ * @date      August 7, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -52,7 +52,7 @@ namespace gr
              *
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date   June 19, 2017
+             * @date   August 7, 2017
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -131,6 +131,11 @@ namespace gr
                 unsigned history() const
                 {
                     return m_history;
+                }
+
+                const std::vector<std::complex<double>>& constellation() const
+                {
+                    return m_constellation;
                 }
 
                 //! Map a symbol sequence to a sequence of probabilities
