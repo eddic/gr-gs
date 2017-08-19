@@ -14,6 +14,7 @@
 #include "gr-gs/Terminator.h"
 #include "gr-gs/Distribution.h"
 #include "gr-gs/Integrate.h"
+#include "gr-gs/Detector.h"
 #include "gr-gs/Autocovariance.h"
 #include "gr-gs/ErrorCount.h"
 #include "gr-gs/Primitives.h"
@@ -98,6 +99,14 @@ GR_SWIG_BLOCK_MAGIC2(gs, Average_cc);
 %template(Integrate_cc) gr::gs::Integrate<std::complex<double>, std::complex<float>>;
 GR_SWIG_BLOCK_MAGIC2(gs, Integrate_ff);
 GR_SWIG_BLOCK_MAGIC2(gs, Integrate_cc);
+
+%include "gr-gs/Detector.h"
+%template(Detector_cb) gr::gs::Detector<unsigned char>;
+%template(Detector_cs) gr::gs::Detector<unsigned short>;
+%template(Detector_ci) gr::gs::Detector<unsigned int>;
+GR_SWIG_BLOCK_MAGIC2(gs, Detector_cb);
+GR_SWIG_BLOCK_MAGIC2(gs, Detector_cs);
+GR_SWIG_BLOCK_MAGIC2(gs, Detector_ci);
 
 %include "gr-gs/Distribution.h"
 GR_SWIG_BLOCK_MAGIC2(gs, Distribution_ff);

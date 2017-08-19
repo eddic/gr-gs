@@ -120,7 +120,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(560, 348)</value>
+      <value>(592, 604)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -306,7 +306,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(664, 724)</value>
+      <value>(680, 772)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -373,6 +373,33 @@
     <param>
       <key>value</key>
       <value>10000</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(856, 780)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>noisePower</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>0.35</value>
     </param>
   </block>
   <block>
@@ -496,7 +523,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(664, 948)</value>
+      <value>(656, 940)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -535,7 +562,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(576, 416)</value>
+      <value>(576, 464)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -594,7 +621,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(832, 348)</value>
+      <value>(784, 404)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -645,7 +672,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(832, 412)</value>
+      <value>(784, 468)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -696,7 +723,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(832, 476)</value>
+      <value>(784, 532)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -747,7 +774,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(832, 540)</value>
+      <value>(784, 596)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -778,7 +805,7 @@
     <key>analog_noise_source_x</key>
     <param>
       <key>amp</key>
-      <value>0.35</value>
+      <value>noisePower</value>
     </param>
     <param>
       <key>alias</key>
@@ -798,7 +825,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(864, 740)</value>
+      <value>(952, 772)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -853,7 +880,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(696, 196)</value>
+      <value>(800, 140)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -892,11 +919,11 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(928, 196)</value>
+      <value>(1080, 140)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -963,7 +990,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(488, 164)</value>
+      <value>(600, 172)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1018,7 +1045,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(624, 628)</value>
+      <value>(624, 676)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1069,7 +1096,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(896, 636)</value>
+      <value>(896, 684)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1136,7 +1163,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(271, 668)</value>
+      <value>(272, 676)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1187,7 +1214,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(436, 520)</value>
+      <value>(452, 576)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1238,7 +1265,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(336, 200)</value>
+      <value>(416, 176)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1247,6 +1274,100 @@
     <param>
       <key>id</key>
       <value>errorCount</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>symbolType</key>
+      <value>byte</value>
+    </param>
+  </block>
+  <block>
+    <key>gr_gs_ErrorCount</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>framingTag</key>
+      <value>frame</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(296, 408)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>errorCount_0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>symbolType</key>
+      <value>byte</value>
+    </param>
+  </block>
+  <block>
+    <key>gr_gs_ErrorCount</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>framingTag</key>
+      <value>frame</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(264, 304)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>errorCount_0_0</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -1281,7 +1402,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(232, 204)</value>
+      <value>(272, 172)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1290,6 +1411,108 @@
     <param>
       <key>id</key>
       <value>errorRateLog10</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>vlen</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>k</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>n</key>
+      <value>10</value>
+    </param>
+  </block>
+  <block>
+    <key>blocks_nlog10_ff</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(424, 412)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>errorRateLog10_0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>vlen</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>k</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>n</key>
+      <value>10</value>
+    </param>
+  </block>
+  <block>
+    <key>blocks_nlog10_ff</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(456, 300)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>errorRateLog10_0_0</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -1332,7 +1555,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1104, 924)</value>
+      <value>(1088, 940)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1395,6 +1618,73 @@
     </param>
   </block>
   <block>
+    <key>gr_gs_Detector</key>
+    <param>
+      <key>augmentingLength</key>
+      <value>augmentingLength</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>codewordLength</key>
+      <value>codewordLength</value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>fieldSize</key>
+      <value>fieldSize</value>
+    </param>
+    <param>
+      <key>framingTag</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(800, 236)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>180</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>gr_gs_Detector_0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minCorrelation</key>
+      <value>0.01</value>
+    </param>
+    <param>
+      <key>noisePower</key>
+      <value>noisePower</value>
+    </param>
+    <param>
+      <key>symbolType</key>
+      <value>byte</value>
+    </param>
+  </block>
+  <block>
     <key>qtgui_vector_sink_f</key>
     <param>
       <key>autoscale</key>
@@ -1422,11 +1712,11 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1072, 396)</value>
+      <value>(992, 444)</value>
     </param>
     <param>
       <key>gui_hint</key>
-      <value>0,2,1,1</value>
+      <value>0,3,1,1</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1693,7 +1983,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(864, 252)</value>
+      <value>(1024, 196)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -2040,11 +2330,11 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1064, 596)</value>
+      <value>(1048, 612)</value>
     </param>
     <param>
       <key>gui_hint</key>
-      <value>1,2,1,1</value>
+      <value>1,3,1,1</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2311,11 +2601,11 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(256, 388)</value>
+      <value>(272, 508)</value>
     </param>
     <param>
       <key>gui_hint</key>
-      <value>1,1,1,1</value>
+      <value>0,2,1,1</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2542,7 +2832,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(8, 188)</value>
+      <value>(8, 156)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -2734,7 +3024,469 @@
     </param>
     <param>
       <key>name</key>
-      <value>"Symbol Error Rate (dB)"</value>
+      <value>"Descrambled Error Rate (dB)"</value>
+    </param>
+    <param>
+      <key>nconnections</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>update_time</key>
+      <value>1</value>
+    </param>
+  </block>
+  <block>
+    <key>qtgui_number_sink</key>
+    <param>
+      <key>autoscale</key>
+      <value>False</value>
+    </param>
+    <param>
+      <key>avg</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(568, 348)</value>
+    </param>
+    <param>
+      <key>gui_hint</key>
+      <value>1,1,1,1</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>graph_type</key>
+      <value>qtgui.NUM_GRAPH_VERT</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>guiErrorRate_0</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>float</value>
+    </param>
+    <param>
+      <key>color1</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor1</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label1</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit1</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color10</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor10</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label10</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit10</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color2</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor2</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label2</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit2</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color3</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor3</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label3</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit3</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color4</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor4</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label4</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit4</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color5</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor5</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label5</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit5</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color6</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor6</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label6</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit6</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color7</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor7</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label7</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit7</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color8</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor8</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label8</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit8</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color9</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor9</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label9</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit9</key>
+      <value></value>
+    </param>
+    <param>
+      <key>max</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>min</key>
+      <value>-60</value>
+    </param>
+    <param>
+      <key>name</key>
+      <value>"MAP Error Rate (dB)"</value>
+    </param>
+    <param>
+      <key>nconnections</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>update_time</key>
+      <value>1</value>
+    </param>
+  </block>
+  <block>
+    <key>qtgui_number_sink</key>
+    <param>
+      <key>autoscale</key>
+      <value>False</value>
+    </param>
+    <param>
+      <key>avg</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1000, 316)</value>
+    </param>
+    <param>
+      <key>gui_hint</key>
+      <value>1,2,1,1</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>graph_type</key>
+      <value>qtgui.NUM_GRAPH_VERT</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>guiErrorRate_0_0</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>float</value>
+    </param>
+    <param>
+      <key>color1</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor1</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label1</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit1</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color10</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor10</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label10</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit10</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color2</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor2</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label2</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit2</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color3</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor3</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label3</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit3</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color4</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor4</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label4</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit4</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color5</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor5</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label5</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit5</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color6</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor6</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label6</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit6</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color7</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor7</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label7</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit7</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color8</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor8</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label8</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit8</key>
+      <value></value>
+    </param>
+    <param>
+      <key>color9</key>
+      <value>("black", "black")</value>
+    </param>
+    <param>
+      <key>factor9</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>label9</key>
+      <value></value>
+    </param>
+    <param>
+      <key>unit9</key>
+      <value></value>
+    </param>
+    <param>
+      <key>max</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>min</key>
+      <value>-60</value>
+    </param>
+    <param>
+      <key>name</key>
+      <value>"ML Error Rate (dB)"</value>
     </param>
     <param>
       <key>nconnections</key>
@@ -3115,7 +3867,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1168, 824)</value>
+      <value>(1144, 824)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3225,7 +3977,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(848, 892)</value>
+      <value>(848, 908)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3378,7 +4130,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(516, 648)</value>
+      <value>(500, 648)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3425,11 +4177,11 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1112, 180)</value>
+      <value>(1204, 496)</value>
     </param>
     <param>
       <key>_rotation</key>
-      <value>180</value>
+      <value>90</value>
     </param>
     <param>
       <key>id</key>
@@ -3488,7 +4240,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(32, 332)</value>
+      <value>(8, 252)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3598,7 +4350,7 @@
     </param>
     <param>
       <key>samples</key>
-      <value>long(1e7)</value>
+      <value>long(1e6)</value>
     </param>
     <param>
       <key>vlen</key>
@@ -3625,7 +4377,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(872, 828)</value>
+      <value>(872, 860)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3680,7 +4432,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(544, 820)</value>
+      <value>(520, 820)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3771,9 +4523,9 @@
   </connection>
   <connection>
     <source_block_id>constellationDecoder</source_block_id>
-    <sink_block_id>descrambler</sink_block_id>
+    <sink_block_id>errorCount_0_0</sink_block_id>
     <source_key>0</source_key>
-    <sink_key>0</sink_key>
+    <sink_key>1</sink_key>
   </connection>
   <connection>
     <source_block_id>constellationDecoderMultiplier</source_block_id>
@@ -3818,8 +4570,32 @@
     <sink_key>0</sink_key>
   </connection>
   <connection>
+    <source_block_id>errorCount_0</source_block_id>
+    <sink_block_id>errorRateLog10_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>errorCount_0_0</source_block_id>
+    <sink_block_id>errorRateLog10_0_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
     <source_block_id>errorRateLog10</source_block_id>
     <sink_block_id>guiErrorRate</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>errorRateLog10_0</source_block_id>
+    <sink_block_id>guiErrorRate_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>errorRateLog10_0_0</source_block_id>
+    <sink_block_id>guiErrorRate_0_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -3830,8 +4606,32 @@
     <sink_key>0</sink_key>
   </connection>
   <connection>
+    <source_block_id>gr_gs_Detector_0</source_block_id>
+    <sink_block_id>descrambler</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>gr_gs_Detector_0</source_block_id>
+    <sink_block_id>errorCount_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>1</sink_key>
+  </connection>
+  <connection>
     <source_block_id>guidedScrambler</source_block_id>
     <sink_block_id>entropy</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>guidedScrambler</source_block_id>
+    <sink_block_id>errorCount_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>guidedScrambler</source_block_id>
+    <sink_block_id>errorCount_0_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -3898,6 +4698,12 @@
   <connection>
     <source_block_id>receiveFilter</source_block_id>
     <sink_block_id>constellationDecoderMultiplier</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>receiveFilter</source_block_id>
+    <sink_block_id>gr_gs_Detector_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>

@@ -3,7 +3,7 @@
  * @brief     Declares the "Guided Scrambling Detector" GNU Radio block
  *            implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 7, 2017
+ * @date      August 19, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -29,6 +29,8 @@
 #ifndef GR_GS_DETECTOR_IMPL_HPP
 #define GR_GS_DETECTOR_IMPL_HPP
 
+#include <mutex>
+
 #include "gr-gs/Detector.h"
 #include "ProbabilityMapper.hpp"
 
@@ -47,7 +49,7 @@ namespace gr
              *
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date    August 7, 2017
+             * @date    August 19, 2017
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -78,6 +80,8 @@ namespace gr
                  *                            means. Any autocorrelation data
                  *                            decays below this value will be
                  *                            truncated from our computations.
+                 * @param [in] noise This noise power level (or variance) is
+                 *                   required to perform accurate MAP detection.
                  * @param [in] framingTag Desired string to use for the "key" of
                  *                        the tag inserted at frame beginnings.
                  *                        Use an empty string to disable
@@ -88,9 +92,19 @@ namespace gr
                         const unsigned codewordLength,
                         const unsigned augmentingLength,
                         const double minCorrelation,
+                        const double noise,
                         const std::string& framingTag);
 
+                double noisePower() const;
+                void set_noisePower(const double noise);
+
             private:
+                //! Let's be thread safe
+                mutable std::mutex m_mutex;
+
+                //! Our current noise power level (variance)
+                double m_noisePower;
+
                 //! Framing tag name/key
                 std::string m_framingTag;
 

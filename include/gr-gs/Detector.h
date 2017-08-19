@@ -2,7 +2,7 @@
  * @file      Detector.h
  * @brief     Declares the "Guided Scrambling Detector" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 7, 2017
+ * @date      August 19, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -28,6 +28,7 @@
 #ifndef GR_GS_DETECTOR_H
 #define GR_GS_DETECTOR_H
 
+#include "gr-gs/config.h"
 #include <gnuradio/sync_block.h>
 
 //! GNU Radio Namespace
@@ -47,7 +48,7 @@ namespace gr
          *
          * @tparam Symbol Base type to use for symbol type. Can be unsigned
          *                char, unsigned short, or unsigned int.
-         * @date   August 7, 2017
+         * @date   August 19, 2017
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         template<typename Symbol>
@@ -71,6 +72,8 @@ namespace gr
              *                            Any autocorrelation data decays below
              *                            this value will be truncated from our
              *                            computations.
+             * @param [in] noise This noise power level (or variance) is
+             *                   required to perform accurate MAP detection.
              * @param [in] framingTag Desired string to use for the "key" of the
              *                        tag inserted at frame beginnings. Use an
              *                        empty string to disable framing.
@@ -81,12 +84,28 @@ namespace gr
                     const unsigned codewordLength,
                     const unsigned augmentingLength,
                     const double minCorrelation,
+                    const double noise,
                     const std::string& framingTag);
+
+            //! Access noise power
+            /*!
+             * @return Noise power or variance
+             */
+            virtual double noisePower() const =0;
+
+            //! Set noise power
+            /*!
+             * This noise power level (or variance) is required to perform
+             * accurate MAP detection of the Guided Scrambled signal.
+             *
+             * @param  [in] power Current noise power level (variance)
+             */
+            virtual void set_noisePower(const double noise) =0;
         };
 
-        typedef Detector<unsigned char> Detector_fb;
-        typedef Detector<unsigned short> Detector_fs;
-        typedef Detector<unsigned int> Detector_fi;
+        typedef Detector<unsigned char> Detector_cb;
+        typedef Detector<unsigned short> Detector_cs;
+        typedef Detector<unsigned int> Detector_ci;
     }
 }
 
