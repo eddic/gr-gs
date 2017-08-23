@@ -2,7 +2,7 @@
  * @file      Entropy_impl.hpp
  * @brief     Declares the "Entropy" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      June 19, 2017
+ * @date      August 22, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -44,7 +44,7 @@ namespace gr
             /*!
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date   June 19, 2017
+             * @date   August 22, 2017
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -80,6 +80,8 @@ namespace gr
                 Entropy_impl& operator=(const Entropy_impl& x) = delete;
 
             private:
+                static const unsigned windowSize=4096;
+
                 //! GNU Radio work function
                 int work(int noutput_items,
                         gr_vector_const_void_star &input_items,

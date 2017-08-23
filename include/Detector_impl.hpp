@@ -3,7 +3,7 @@
  * @brief     Declares the "Guided Scrambling Detector" GNU Radio block
  *            implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 19, 2017
+ * @date      August 22, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -30,6 +30,7 @@
 #define GR_GS_DETECTOR_IMPL_HPP
 
 #include <mutex>
+#include <memory>
 
 #include "gr-gs/Detector.h"
 #include "ProbabilityMapper.hpp"
@@ -49,7 +50,7 @@ namespace gr
              *
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date    August 19, 2017
+             * @date    August 22, 2017
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -82,6 +83,7 @@ namespace gr
                  *                            truncated from our computations.
                  * @param [in] noise This noise power level (or variance) is
                  *                   required to perform accurate MAP detection.
+                 * @param [in] windowSize Sequence length to use for detection
                  * @param [in] framingTag Desired string to use for the "key" of
                  *                        the tag inserted at frame beginnings.
                  *                        Use an empty string to disable
@@ -93,6 +95,7 @@ namespace gr
                         const unsigned augmentingLength,
                         const double minCorrelation,
                         const double noise,
+                        const unsigned windowSize,
                         const std::string& framingTag);
 
                 double noisePower() const;
@@ -125,6 +128,18 @@ namespace gr
 
                 //! Have we started mapping yet?
                 bool m_started;
+
+                //! Our window size
+                const unsigned m_windowSize;
+
+                //! Buffer for detected symbols
+                std::unique_ptr<Symbol[]> m_symbols;
+
+                //! Buffer for our euclidean distances
+                std::unique_ptr<double[]> m_distances;
+
+                //! Buffer for RDS probabilities
+                std::unique_ptr<double[]> m_probabilities;
             };
         }
     }

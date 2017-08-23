@@ -2,7 +2,7 @@
  * @file      ProbabilityMapper.cpp
  * @brief     Defines the ProbabilityMapper class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      June 19, 2017
+ * @date      August 22, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -31,8 +31,9 @@
 #include <gsl/gsl_linalg.h>
 #include <cmath>
 #include <map>
+#include <memory>
 
-//#include <iostream>
+#include <iostream>
 //#include <iomanip>
 
 template<typename Symbol>
@@ -40,7 +41,9 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
         const unsigned fieldSize,
         const unsigned codewordLength,
         const unsigned augmentingLength,
-        const double minCorrelation):
+        const double minCorrelation,
+        const unsigned windowSize,
+        const bool doubleEnded):
     m_taps(codewordLength),
     m_variances(codewordLength),
     m_codewordLength(codewordLength),
@@ -181,82 +184,113 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
         if(newHistory > m_history)
             m_history=newHistory;
     }
+    //std::cout << "History = " << m_history << '\n';
+    m_inputSize = windowSize+m_history;
+    if(doubleEnded)
+        m_inputSize += m_history;
+    m_buffer.reset(new std::complex<double>[m_inputSize+1]);
 }
 
 template<typename Symbol>
-std::complex<double> gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
-        const Symbol* input,
+void gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
+        const Symbol* const input,
         bool computeHistory,
         float* output,
-        const std::complex<double>& startingRDS,
-        unsigned symbols,
         unsigned codewordPosition) const
 {
-    std::vector<std::complex<double>> rdsBuffer(m_history+1);
-
-    if(computeHistory)
     {
-        rdsBuffer.back() = startingRDS;
-        const Symbol* symbol = input+m_history-1;
-        for(auto rds = rdsBuffer.rbegin()+1; rds != rdsBuffer.rend(); ++rds)
-            *rds = *(rds-1) - m_constellation[*symbol--];
+        std::complex<double>* rds = m_buffer.get();
+        const Symbol* const inputEnd = input+m_inputSize;
+
+        if(!computeHistory)
+        {
+            std::complex<double>* const rdsHistoryEnd = rds+m_history+1;
+            std::fill(rds, rdsHistoryEnd, std::complex<double>(0,0));
+            rds = rdsHistoryEnd;
+            for(
+                    const Symbol* symbol = input+m_history;
+                    symbol < inputEnd;
+                    ++symbol, ++rds)
+                *rds = *(rds-1) + m_constellation[*symbol];
+        }
+        else
+        {
+            *rds++ = std::complex<double>(0,0);
+
+            std::complex<double> meanRDS = std::complex<double>(0,0);
+
+            for(
+                    const Symbol* symbol = input; symbol < inputEnd; ++symbol)
+            {
+                *rds = *(rds-1) + m_constellation[*symbol];
+                meanRDS += *rds;
+                ++rds;
+            }
+            meanRDS /= m_inputSize;
+            meanRDS.real(std::round(meanRDS.real()));
+            meanRDS.imag(std::round(meanRDS.imag()));
+
+            rds = m_buffer.get();
+            *rds++ = -meanRDS;
+
+            for(
+                    const Symbol* symbol = input;
+                    symbol < inputEnd;
+                    ++symbol, ++rds)
+                *rds = *(rds-1) + m_constellation[*symbol];
+        }
     }
-    input += m_history;
 
-    /*std::cout << "** RDS History **\n";
-
-    for(const auto& rds: rdsBuffer)
-        std::cout << rds << '\n';*/
-
-    const Symbol* const inputEnd = input + symbols;
-    auto rds = rdsBuffer.end()-1;
-
-    //std::cout << "** New Stuff **\n";
-
-    while(input != inputEnd)
+    /*std::cout << "** History **\n";
+    const Symbol* ourInput = input;
+    for(const std::complex<double>* rds=m_buffer.get(); rds<m_buffer.get()+m_history+1; ++rds, ++ourInput)
     {
-        //std::cout << "Symbol = " << (int)*input << ' ' << m_constellation[*input] << '\n';
-        //std::cout << "  Codeword Position = " << codewordPosition << '\n';
-        const std::complex<double> newRDS = *rds + m_constellation[*input];
-        //std::cout << "  New RDS = " << newRDS << '\n';
+        std::cout << *rds << ' ' << static_cast<unsigned>(*ourInput) << ' ';
+    }
+    std::cout << '\n';*/
 
-        std::vector<std::complex<double>>::const_iterator pastRDS = rds;
+    const std::complex<double>* rds = m_buffer.get()+m_history;
+    const std::complex<double>* const rdsEnd = m_buffer.get()+m_inputSize;
+
+    //std::cout << "** RDSs **\n";
+    const Symbol* inputIt = input+m_history;
+
+    while(rds != rdsEnd)
+    {
+        const std::complex<double>* pastRDS = rds;
         std::complex<double> mean=0;
 
-        //std::cout << "  Mean =";
+        /*std::cout << "Symbol = " << static_cast<unsigned>(*inputIt) << ' ' << m_constellation[*inputIt] << '\n';
+        std::cout << "  Starting RDS = " << *rds << '\n';
+        std::cout << "  Ending RDS = " << *(rds+1) << '\n';
+        std::cout << "  Mean =";*/
         for(
                 auto tap = m_taps[codewordPosition].crbegin();
                 tap != m_taps[codewordPosition].crend();
                 ++tap)
         {
-            //std::cout << " + (" << *tap << '*' << *pastRDS << ')';
             mean += *tap * *pastRDS;
-            if(pastRDS == rdsBuffer.cbegin())
-                pastRDS = rdsBuffer.cend()-1;
-            else
-                --pastRDS;
+            //std::cout << " + (" << *tap << '*' << *pastRDS << ')';
+            --pastRDS;
         }
-        //std::cout << " = " << mean << '\n';
-        //std::cout << "  Variance = " << m_variances[codewordPosition] << '\n';
+        /*std::cout << " = " << mean << '\n';
+        std::cout << "  Variance = " << m_variances[codewordPosition] << '\n';*/
         *output = probability(
                 *rds,
-                *input,
+                *inputIt++,
                 mean,
                 m_variances[codewordPosition]);
         //std::cout << "  Probability = " << *output << '\n';
 
-        if(++rds == rdsBuffer.end())
-            rds = rdsBuffer.begin();
-        *rds = newRDS;
+        ++rds;
 
         if(++codewordPosition >= m_codewordLength)
             codewordPosition = 0;
 
-        ++input;
         ++output;
     }
-    
-    return *rds;
+
+    //std::cout << "Last Symbols = " << static_cast<unsigned>(input[symbols+m_history-3]) << ", " << static_cast<unsigned>(input[symbols+m_history-2]) << ", " << static_cast<unsigned>(input[symbols+m_history-1]) << '\n';
 }
 
 template<typename Symbol>

@@ -2,7 +2,7 @@
  * @file      Entropy_impl.cpp
  * @brief     Defines the "Entropy" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 7, 2017
+ * @date      August 22, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -37,25 +37,29 @@ int gr::gs::Implementations::Entropy_impl<Symbol>::work(
 {
     const Symbol* input = reinterpret_cast<const Symbol*>(input_items[0]);
     float* output = reinterpret_cast<float*>(output_items[0]);
+    unsigned outputted=0;
 
-    m_rds = m_mapper.map(
-            input,
-            m_started,
-            output,
-            m_rds,
-            noutput_items,
-            m_codewordPosition);
+    while(noutput_items-outputted >= m_mapper.inputSize())
+    {
+        m_mapper.map(
+                input,
+                m_started,
+                output,
+                m_codewordPosition);
 
-    for(
-            float* const outputEnd=output+noutput_items;
-            output < outputEnd;
-            ++output)
-        *output = -std::log2(*output);
+        for(
+                float* const outputEnd=output+windowSize;
+                output < outputEnd;
+                ++output)
+            *output = -std::log2(*output);
 
-    m_codewordPosition = (m_codewordPosition+noutput_items)%m_codewordLength;
-    m_started = true;
+        m_codewordPosition = (m_codewordPosition+windowSize)%m_codewordLength;
+        input += windowSize;
+        outputted += windowSize;
+        m_started = true;
+    }
 
-    return noutput_items;
+    return outputted;
 }
 
 template<typename Symbol>
@@ -77,11 +81,14 @@ gr::gs::Implementations::Entropy_impl<Symbol>::Entropy_impl(
             fieldSize,
             codewordLength,
             augmentingLength,
-            minCorrelation),
+            minCorrelation,
+            windowSize,
+            false),
     m_started(false)
 {
     this->enable_update_rate(false);
     this->set_history(m_mapper.history()+1);
+    this->set_min_noutput_items(windowSize);
 }
 
 template<typename Symbol>

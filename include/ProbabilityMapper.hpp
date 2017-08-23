@@ -2,7 +2,7 @@
  * @file      ProbabilityMapper.hpp
  * @brief     Declares the ProbabilityMapper class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 7, 2017
+ * @date      August 22, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -32,6 +32,7 @@
 
 #include <vector>
 #include <set>
+#include <memory>
 
 //! GNU Radio Namespace
 namespace gr
@@ -46,19 +47,23 @@ namespace gr
             /*!
              * This class takes a sequence of symbols and maps it to a sequence
              * of probabilities associated with the symbols. The input sequence
-             * should contains a history() of symbols and a starting RDS value
-             * that indicates the RDS at the end of the history; not the
-             * beginning.
+             * should contains a history() of symbols.
              *
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date   August 7, 2017
+             * @date   August 22, 2017
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
             class ProbabilityMapper
             {
             private:
+                //! How big is our input (including history)?
+                unsigned m_inputSize;
+
+                //! Buffer for our RDS values
+                std::unique_ptr<std::complex<double>[]> m_buffer;
+
                 //! Our constellation pattern
                 std::vector<std::complex<double>> m_constellation;
 
@@ -108,12 +113,22 @@ namespace gr
                  *                            means. Any autocorrelation data
                  *                            decays below this value will be
                  *                            truncated from our computations.
+                 * @param [in] windowSize This is the desired window size of the
+                 *                        input data. History should exist in
+                 *                        addition to this.
+                 * @param [in] doubleEnded Typically history data is only
+                 *                         prepended to the input data. If,
+                 *                         however, you want to have non-causal
+                 *                         history including at the end of the
+                 *                         input data set this to true.
                  */
                 ProbabilityMapper(
                         const unsigned fieldSize,
                         const unsigned codewordLength,
                         const unsigned augmentingLength,
-                        const double minCorrelation);
+                        const double minCorrelation,
+                        const unsigned windowSize,
+                        const bool doubleEnded=false);
 
                 //! View the variance at a specific position
                 const double& variance(unsigned position) const
@@ -140,6 +155,13 @@ namespace gr
 
                 //! Map a symbol sequence to a sequence of probabilities
                 /*!
+                 * The length of the input data array must be one of the
+                 * following. In the case of double ended having been specified
+                 * at construction the length should be the specified window
+                 * size plus double the history. In the non double ended case,
+                 * the length is simply the specified window size plus the
+                 * history.
+                 *
                  * @param [in] input Pointer to first symbol including the
                  *                   history.
                  * @param [in] computeHistory Should we computer the RDS history
@@ -147,23 +169,20 @@ namespace gr
                  *                            should we assume it is zero?
                  * @param [out] output Pointer to the first output probability
                  *                     value.
-                 * @param [in] startingRDS The RDS state at the end of the last
-                 *                         symbol in the history. All
-                 *                         pre/proceding RDS values are
-                 *                         computing as this as a seed.
                  * @param [in] codewordPosition First symbol's (not including
                  *                              the history) position in the
                  *                              codeword.
-                 * @return Closing RDS state value at the end of the input
-                 *         symbol sequence.
                  */
-                std::complex<double> map(
-                        const Symbol* input,
+                void map(
+                        const Symbol* const input,
                         bool computeHistory,
                         float* output,
-                        const std::complex<double>& startingRDS,
-                        const unsigned symbols,
                         unsigned codewordPosition=0) const;
+
+                unsigned inputSize() const
+                {
+                    return m_inputSize;
+                }
             };
         }
     }

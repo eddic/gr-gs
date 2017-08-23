@@ -3,7 +3,7 @@
  * @brief     Defines the "Guided Scrambling Detector" GNU Radio block
  *            implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 19, 2017
+ * @date      August 22, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -30,7 +30,6 @@
 
 #include <gnuradio/io_signature.h>
 #include <algorithm>
-#include <memory>
 
 template<typename Symbol>
 double gr::gs::Implementations::Detector_impl<Symbol>::noisePower() const
@@ -102,6 +101,7 @@ gr::gs::Implementations::Detector_impl<Symbol>::Detector_impl(
         const unsigned augmentingLength,
         const double minCorrelation,
         const double noise,
+        const unsigned windowSize,
         const std::string& framingTag):
     gr::sync_block("Guided Scrambling Detector",
         io_signature::make(1,1,sizeof(gr::gs::Complex)),
@@ -116,11 +116,19 @@ gr::gs::Implementations::Detector_impl<Symbol>::Detector_impl(
             fieldSize,
             codewordLength,
             augmentingLength,
-            minCorrelation),
-    m_started(false)
+            minCorrelation,
+            windowSize,
+            true),
+    m_started(false),
+    m_windowSize(windowSize),
+    m_symbols(new Symbol[windowSize + 2*m_mapper.history()]),
+    m_distances(new double[(windowSize + 2*m_mapper.history())*fieldSize]),
+    m_probabilities(new double[windowSize + 2*m_mapper.history()])
+
 {
     this->enable_update_rate(false);
     this->set_history(m_mapper.history()+1);
+    this->set_min_noutput_items(m_windowSize);
 }
 
 template<typename Symbol>
@@ -130,6 +138,7 @@ typename gr::gs::Detector<Symbol>::sptr gr::gs::Detector<Symbol>::make(
         const unsigned augmentingLength,
         const double minCorrelation,
         const double noise,
+        const unsigned windowSize,
         const std::string& framingTag)
 {
     return gnuradio::get_initial_sptr(
@@ -139,6 +148,7 @@ typename gr::gs::Detector<Symbol>::sptr gr::gs::Detector<Symbol>::make(
                 augmentingLength,
                 minCorrelation,
                 noise,
+                windowSize,
                 framingTag));
 }
 

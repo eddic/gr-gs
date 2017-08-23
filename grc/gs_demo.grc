@@ -1641,7 +1641,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>1</value>
     </param>
     <param>
       <key>fieldSize</key>
@@ -1682,6 +1682,10 @@
     <param>
       <key>symbolType</key>
       <value>byte</value>
+    </param>
+    <param>
+      <key>windowSize</key>
+      <value>1024</value>
     </param>
   </block>
   <block>
@@ -4350,7 +4354,7 @@
     </param>
     <param>
       <key>samples</key>
-      <value>long(1e6)</value>
+      <value>long(2e4)</value>
     </param>
     <param>
       <key>vlen</key>
