@@ -3,7 +3,7 @@
  * @brief     Defines the "Guided Scrambling Detector" GNU Radio block
  *            implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 22, 2017
+ * @date      August 23, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -54,44 +54,54 @@ int gr::gs::Implementations::Detector_impl<Symbol>::work(
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    const Complex* const inputStart =
-        reinterpret_cast<const Complex*>(input_items[0]);
-    const unsigned inputSize = noutput_items + m_mapper.history();
-    //const Complex* const inputEnd = inputStart + inputSize;
-
-    Symbol* const outputStart = reinterpret_cast<Symbol*>(output_items[0]);
-    Symbol* const outputEnd = outputStart + noutput_items;
-
+    const auto& inputSize = m_mapper.inputSize();
+    const auto& history = m_mapper.history();
     const auto& constellation = m_mapper.constellation();
     const auto& fieldSize = constellation.size();
+    const Complex*& input = reinterpret_cast<const Complex*&>(input_items[0]);
+    Symbol*& output = reinterpret_cast<Symbol*&>(output_items[0]);
+    unsigned outputted=0;
 
-    std::unique_ptr<double[]> distances(new double[fieldSize*inputSize]);
-    for(unsigned symbol=0; symbol<inputSize; ++symbol)
-        for(unsigned point=0; point<fieldSize; ++point)
-            distances[symbol*fieldSize+point] = std::norm(
-                    static_cast<std::complex<double>>(inputStart[symbol])
-                    -constellation[point]);
-
-    const double* distance = distances.get() + m_mapper.history()*fieldSize;
-    for(Symbol* output=outputStart; output<outputEnd; ++output)
+    while(noutput_items-outputted >= inputSize-history)
     {
-        *output = static_cast<Symbol>(
-                std::min_element(distance, distance+fieldSize)-distance);
-        distance += fieldSize;
+        // Calculate our euclidean distances and winners
+        {
+            Symbol* symbol = m_symbols.get();
+            double* distance = m_distances.get();
+            while(symbol < m_symbols.get()+inputSize)
+            {
+                for(unsigned point=0; point<fieldSize; ++point)
+                    distance[point] = std::norm(
+                            static_cast<std::complex<double>>(*input)
+                            -constellation[point]);
+                ++input;
+                *symbol++ = static_cast<Symbol>(
+                        std::min_element(
+                            distance,
+                            distance+fieldSize)-distance);
+
+                distance += fieldSize;
+            }
+            input -= 2*history;
+        }
+
+        m_mapper.map(
+                m_symbols.get(),
+                m_started,
+                m_probabilities.get(),
+                m_codewordPosition);
+
+        m_codewordPosition=(m_codewordPosition+noutput_items)%m_codewordLength;
+        m_started = true;
+
+        output = std::copy(
+                m_symbols.get()+history,
+                m_symbols.get()+history+m_windowSize,
+                output);
+        outputted += m_windowSize;
     }
 
-    /*m_rds = m_mapper.map(
-            input,
-            m_started,
-            output,
-            m_rds,
-            noutput_items,
-            m_codewordPosition);
-
-    m_codewordPosition = (m_codewordPosition+noutput_items)%m_codewordLength;
-    m_started = true;*/
-
-    return noutput_items;
+    return outputted;
 }
 
 template<typename Symbol>
@@ -121,14 +131,15 @@ gr::gs::Implementations::Detector_impl<Symbol>::Detector_impl(
             true),
     m_started(false),
     m_windowSize(windowSize),
-    m_symbols(new Symbol[windowSize + 2*m_mapper.history()]),
-    m_distances(new double[(windowSize + 2*m_mapper.history())*fieldSize]),
-    m_probabilities(new double[windowSize + 2*m_mapper.history()])
+    m_distances(new double[m_mapper.inputSize()*fieldSize]),
+    m_symbols(new Symbol[m_mapper.inputSize()]),
+    m_probabilities(new float[windowSize + m_mapper.history()]),
+    m_metrics(new double[windowSize + m_mapper.history()])
 
 {
     this->enable_update_rate(false);
     this->set_history(m_mapper.history()+1);
-    this->set_min_noutput_items(m_windowSize);
+    this->set_min_noutput_items(m_windowSize+m_mapper.history());
 }
 
 template<typename Symbol>
