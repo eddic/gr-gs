@@ -135,14 +135,17 @@ namespace gr
                 //! Buffer for our euclidean distances
                 std::unique_ptr<double[]> m_distances;
 
+                //! Ranking for distances
+                std::vector<unsigned> m_rank;
+
                 //! Buffer for detected symbols
-                std::unique_ptr<Symbol[]> m_symbols;
+                std::unique_ptr<Symbol[]> m_symbols[2];
 
                 //! Buffer for RDS probabilities
-                std::unique_ptr<float[]> m_probabilities;
+                std::unique_ptr<float[]> m_probabilities[2];
 
                 //! Buffer for metrics
-                std::unique_ptr<double[]> m_metrics;
+                std::unique_ptr<double[]> m_metrics[2];
             };
         }
     }

@@ -30,6 +30,8 @@
 
 #include <gnuradio/io_signature.h>
 #include <algorithm>
+#include <limits>
+#include <list>
 
 template<typename Symbol>
 double gr::gs::Implementations::Detector_impl<Symbol>::noisePower() const
@@ -66,9 +68,9 @@ int gr::gs::Implementations::Detector_impl<Symbol>::work(
     {
         // Calculate our euclidean distances and winners
         {
-            Symbol* symbol = m_symbols.get();
+            Symbol* symbol = m_symbols[0].get();
             double* distance = m_distances.get();
-            while(symbol < m_symbols.get()+inputSize)
+            while(symbol < m_symbols[0].get()+inputSize)
             {
                 for(unsigned point=0; point<fieldSize; ++point)
                     distance[point] = std::norm(
@@ -79,24 +81,98 @@ int gr::gs::Implementations::Detector_impl<Symbol>::work(
                         std::min_element(
                             distance,
                             distance+fieldSize)-distance);
-
                 distance += fieldSize;
             }
             input -= 2*history;
         }
 
+        double metric[2];
+        metric[0] = 0;
+
         m_mapper.map(
-                m_symbols.get(),
+                m_symbols[0].get(),
                 m_started,
-                m_probabilities.get(),
+                m_probabilities[0].get(),
                 m_codewordPosition);
+
+        for(
+                unsigned symbol=0;
+                symbol < m_windowSize+history;
+                ++symbol)
+        {
+            const unsigned offsetSymbol = history+symbol;
+            m_metrics[0][symbol] =
+                m_distances[offsetSymbol*fieldSize+m_symbols[0][offsetSymbol]]
+                -m_noisePower*std::log(m_probabilities[0][symbol]);
+            metric[0] += m_metrics[0][symbol];
+        }
+
+        
+        for(
+                unsigned symbol=0;
+                symbol < inputSize;
+                ++symbol)
+        {
+            const double& currentDistance = m_distances[symbol*fieldSize+m_symbols[0][symbol]];
+            if(currentDistance < 0.36)
+                continue;
+
+            metric[1] = 0;
+
+            std::copy(
+                    m_symbols[0].get(),
+                    m_symbols[0].get()+inputSize,
+                    m_symbols[1].get());
+
+            // Flip a symbol
+            {
+                double* distance = m_distances.get()+symbol;
+                Symbol& current = m_symbols[1][symbol];
+                Symbol next = static_cast<Symbol>(
+                        std::max_element(
+                            distance,
+                            distance+fieldSize)-distance);
+                for(Symbol point=0; point<fieldSize; ++point)
+                    if(
+                            distance[next] > distance[point]
+                            && distance[point] > distance[current])
+                        next = point;
+                current = next;
+            }
+
+            m_mapper.map(
+                    m_symbols[1].get(),
+                    m_started,
+                    m_probabilities[1].get(),
+                    m_codewordPosition);
+
+            for(
+                    unsigned symbol=0;
+                    symbol < m_windowSize+history;
+                    ++symbol)
+            {
+                const unsigned offsetSymbol = history+symbol;
+                m_metrics[1][symbol] =
+                    m_distances[offsetSymbol*fieldSize+m_symbols[1][offsetSymbol]]
+                    -m_noisePower*std::log(m_probabilities[1][symbol]);
+                metric[1] += m_metrics[1][symbol];
+            }
+            
+            if(metric[1] < metric[0])
+            {
+                metric[0] = metric[1];
+                m_symbols[0].swap(m_symbols[1]);
+                m_probabilities[0].swap(m_probabilities[1]);
+                m_metrics[0].swap(m_metrics[1]);
+            }
+        }
 
         m_codewordPosition=(m_codewordPosition+noutput_items)%m_codewordLength;
         m_started = true;
 
         output = std::copy(
-                m_symbols.get()+history,
-                m_symbols.get()+history+m_windowSize,
+                m_symbols[0].get()+history,
+                m_symbols[0].get()+history+m_windowSize,
                 output);
         outputted += m_windowSize;
     }
@@ -131,12 +207,15 @@ gr::gs::Implementations::Detector_impl<Symbol>::Detector_impl(
             true),
     m_started(false),
     m_windowSize(windowSize),
-    m_distances(new double[m_mapper.inputSize()*fieldSize]),
-    m_symbols(new Symbol[m_mapper.inputSize()]),
-    m_probabilities(new float[windowSize + m_mapper.history()]),
-    m_metrics(new double[windowSize + m_mapper.history()])
-
+    m_distances(new double[m_mapper.inputSize()*fieldSize])
 {
+    m_symbols[0].reset(new Symbol[m_mapper.inputSize()]);
+    m_symbols[1].reset(new Symbol[m_mapper.inputSize()]);
+    m_probabilities[0].reset(new float[windowSize + m_mapper.history()]);
+    m_probabilities[1].reset(new float[windowSize + m_mapper.history()]);
+    m_metrics[0].reset(new double[windowSize + m_mapper.history()]);
+    m_metrics[1].reset(new double[windowSize + m_mapper.history()]);
+
     this->enable_update_rate(false);
     this->set_history(m_mapper.history()+1);
     this->set_min_noutput_items(m_windowSize+m_mapper.history());
