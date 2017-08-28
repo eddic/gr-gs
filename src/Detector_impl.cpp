@@ -31,7 +31,6 @@
 #include <gnuradio/io_signature.h>
 #include <algorithm>
 #include <limits>
-#include <list>
 
 template<typename Symbol>
 double gr::gs::Implementations::Detector_impl<Symbol>::noisePower() const
@@ -64,6 +63,7 @@ int gr::gs::Implementations::Detector_impl<Symbol>::work(
     Symbol*& output = reinterpret_cast<Symbol*&>(output_items[0]);
     unsigned outputted=0;
 
+    // Get our codeword lined up
     if(!m_started && !m_framingTag.empty())
     {
         std::vector<gr::tag_t> tags;
@@ -89,113 +89,115 @@ int gr::gs::Implementations::Detector_impl<Symbol>::work(
 
     while(noutput_items-outputted >= inputSize-history)
     {
-        // Calculate our euclidean distances and winners
+        Ranks ranks;
+
+        // Calculate our euclidean distances, winners and ranks
         {
-            Symbol* symbol = m_symbols[0].get();
-            double* distance = m_distances.get();
-            while(symbol < m_symbols[0].get()+inputSize)
+            for(unsigned symbol=0; symbol < inputSize; ++symbol)
             {
-                for(unsigned point=0; point<fieldSize; ++point)
-                    distance[point] = std::norm(
-                            static_cast<std::complex<double>>(*input)
-                            -constellation[point]);
+                typename Rank::Distances distances;
+                for(Symbol point=0; point<fieldSize; ++point)
+                    distances.push_back({std::norm(
+                                static_cast<std::complex<double>>(*input)
+                                -constellation[point]), point});
+                sort(distances);
+                m_symbols[symbol] = distances.front().symbol;
+                m_distances[symbol] = distances.front().distance;
+
+                ranks.push_back(Rank());
+                ranks.back().score = (++distances.cbegin())->distance
+                    -distances.front().distance;
+                ranks.back().index = symbol;
+                ranks.back().distances = std::move(distances);
+                ranks.back().winner = ranks.back().distances.cbegin();
+
                 ++input;
-                *symbol++ = static_cast<Symbol>(
-                        std::min_element(
-                            distance,
-                            distance+fieldSize)-distance);
-                distance += fieldSize;
             }
             input -= 2*history;
+            sort(ranks);
         }
 
+        // Get our starting RDS probabilities
         double metric[2];
         metric[0] = 0;
 
         m_mapper.map(
-                m_symbols[0].get(),
+                m_symbols.get(),
                 m_started,
-                m_probabilities[0].get(),
+                m_probabilities.get(),
                 m_codewordPosition);
 
+        // And now compute our metrics
         for(
                 unsigned symbol=0;
                 symbol < m_windowSize+history;
                 ++symbol)
         {
-            const unsigned offsetSymbol = history+symbol;
-            m_metrics[0][symbol] =
-                m_distances[offsetSymbol*fieldSize+m_symbols[0][offsetSymbol]]
-                -m_noisePower*std::log(m_probabilities[0][symbol]);
-            metric[0] += m_metrics[0][symbol];
+            m_metrics[symbol] =
+                m_distances[history+symbol]
+                -m_noisePower*std::log(m_probabilities[symbol]);
+            metric[0] += m_metrics[symbol];
         }
-
         
-        for(
-                unsigned symbol=0;
-                symbol < inputSize;
-                ++symbol)
+        // Now we optimize
+        while(true)
         {
-            const double& currentDistance = m_distances[symbol*fieldSize+m_symbols[0][symbol]];
-            if(currentDistance < 0.36)
-                continue;
-
-            metric[1] = 0;
-
-            std::copy(
-                    m_symbols[0].get(),
-                    m_symbols[0].get()+inputSize,
-                    m_symbols[1].get());
-
-            // Flip a symbol
+            bool improving = false;
+            for(Rank& rank: ranks)
             {
-                double* distance = m_distances.get()+symbol;
-                Symbol& current = m_symbols[1][symbol];
-                Symbol next = static_cast<Symbol>(
-                        std::max_element(
-                            distance,
-                            distance+fieldSize)-distance);
-                for(Symbol point=0; point<fieldSize; ++point)
-                    if(
-                            distance[next] > distance[point]
-                            && distance[point] > distance[current])
-                        next = point;
-                current = next;
-            }
+                metric[1] = 0;
 
-            m_mapper.map(
-                    m_symbols[1].get(),
-                    m_started,
-                    m_probabilities[1].get(),
-                    m_codewordPosition);
+                // Flip a symbol
+                increment(rank);
+                m_distances[rank.index] = rank.winner->distance;
+                m_symbols[rank.index] = rank.winner->symbol;
 
-            for(
-                    unsigned symbol=0;
-                    symbol < m_windowSize+history;
-                    ++symbol)
-            {
-                const unsigned offsetSymbol = history+symbol;
-                m_metrics[1][symbol] =
-                    m_distances[offsetSymbol*fieldSize+m_symbols[1][offsetSymbol]]
-                    -m_noisePower*std::log(m_probabilities[1][symbol]);
-                metric[1] += m_metrics[1][symbol];
+                // Map our RDS probabilities
+                m_mapper.map(
+                        m_symbols.get(),
+                        m_started,
+                        m_probabilities.get(),
+                        m_codewordPosition);
+
+                // Build our MAP metrics
+                for(
+                        unsigned symbol=0;
+                        symbol < m_windowSize+history;
+                        ++symbol)
+                {
+                    m_metrics[symbol] =
+                        m_distances[history+symbol]
+                        -m_noisePower*std::log(m_probabilities[symbol]);
+                    metric[1] += m_metrics[symbol];
+                }
+                
+                // Are things any better?
+                if(metric[1] < metric[0])
+                {
+                    metric[0] = metric[1];
+                    improving = true;
+                }
+                else
+                {
+                    decrement(rank);
+                    m_distances[rank.index] = rank.winner->distance;
+                    m_symbols[rank.index] = rank.winner->symbol;
+                    break;
+                }
             }
-            
-            if(metric[1] < metric[0])
-            {
-                metric[0] = metric[1];
-                m_symbols[0].swap(m_symbols[1]);
-                m_probabilities[0].swap(m_probabilities[1]);
-                m_metrics[0].swap(m_metrics[1]);
-            }
+            if(improving)
+                sort(ranks);
+            else
+                break;
         }
 
-        m_codewordPosition=(m_codewordPosition+noutput_items)%m_codewordLength;
+        m_codewordPosition
+            = (m_codewordPosition+noutput_items)%m_codewordLength;
         m_started = true;
 
         output = std::copy(
-                m_symbols[0].get()+history,
-                m_symbols[0].get()+history+m_windowSize,
+                m_symbols.get()+history,
+                m_symbols.get()+history+m_windowSize,
                 output);
         outputted += m_windowSize;
     }
@@ -230,15 +232,11 @@ gr::gs::Implementations::Detector_impl<Symbol>::Detector_impl(
             true),
     m_started(false),
     m_windowSize(windowSize),
-    m_distances(new double[m_mapper.inputSize()*fieldSize])
+    m_symbols(new Symbol[m_mapper.inputSize()]),
+    m_distances(new double[m_mapper.inputSize()]),
+    m_probabilities(new float[windowSize + m_mapper.history()]),
+    m_metrics(new double[windowSize + m_mapper.history()])
 {
-    m_symbols[0].reset(new Symbol[m_mapper.inputSize()]);
-    m_symbols[1].reset(new Symbol[m_mapper.inputSize()]);
-    m_probabilities[0].reset(new float[windowSize + m_mapper.history()]);
-    m_probabilities[1].reset(new float[windowSize + m_mapper.history()]);
-    m_metrics[0].reset(new double[windowSize + m_mapper.history()]);
-    m_metrics[1].reset(new double[windowSize + m_mapper.history()]);
-
     this->enable_update_rate(false);
     this->set_history(m_mapper.history()+1);
     this->set_min_noutput_items(m_windowSize+m_mapper.history());
@@ -263,6 +261,58 @@ typename gr::gs::Detector<Symbol>::sptr gr::gs::Detector<Symbol>::make(
                 noise,
                 windowSize,
                 framingTag));
+}
+
+template<typename Symbol>
+void gr::gs::Implementations::Detector_impl<Symbol>::sort(Ranks& ranks)
+{
+    ranks.sort(
+            [] (const Rank& x, const Rank& y)
+            {
+                return x.score < y.score;
+            });
+}
+
+template<typename Symbol>
+void gr::gs::Implementations::Detector_impl<Symbol>::sort(
+        typename Rank::Distances& distances)
+{
+    distances.sort(
+            [] (
+                const typename Rank::Distance& x,
+                const typename Rank::Distance& y)
+            {
+                return x.distance < y.distance;
+            });
+}
+
+template<typename Symbol>
+void gr::gs::Implementations::Detector_impl<Symbol>::increment(Rank& rank)
+{
+    ++rank.winner;
+    if(rank.winner == rank.distances.cend())
+    {
+        rank.score = 0;
+        return;
+    }
+
+    auto next = rank.winner;
+    ++next;
+    if(next == rank.distances.cend())
+    {
+        rank.score = 0;
+        return;
+    }
+
+    rank.score = rank.winner->distance - next->distance;
+}
+
+template<typename Symbol>
+void gr::gs::Implementations::Detector_impl<Symbol>::decrement(Rank& rank)
+{
+    const auto next = rank.winner;
+    --rank.winner;
+    rank.score = rank.winner->distance - next->distance;
 }
 
 template class gr::gs::Detector<unsigned char>;

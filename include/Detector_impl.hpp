@@ -3,7 +3,7 @@
  * @brief     Declares the "Guided Scrambling Detector" GNU Radio block
  *            implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 23, 2017
+ * @date      August 28, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -31,6 +31,7 @@
 
 #include <mutex>
 #include <memory>
+#include <list>
 
 #include "gr-gs/Detector.h"
 #include "ProbabilityMapper.hpp"
@@ -50,7 +51,7 @@ namespace gr
              *
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date    August 23, 2017
+             * @date    August 28, 2017
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -132,20 +133,38 @@ namespace gr
                 //! Our window size
                 const unsigned m_windowSize;
 
-                //! Buffer for our euclidean distances
+                //! Buffer for detected symbols
+                std::unique_ptr<Symbol[]> m_symbols;
+
+                //! Buffer for distances
                 std::unique_ptr<double[]> m_distances;
 
-                //! Ranking for distances
-                std::vector<unsigned> m_rank;
-
-                //! Buffer for detected symbols
-                std::unique_ptr<Symbol[]> m_symbols[2];
-
                 //! Buffer for RDS probabilities
-                std::unique_ptr<float[]> m_probabilities[2];
+                std::unique_ptr<float[]> m_probabilities;
 
                 //! Buffer for metrics
-                std::unique_ptr<double[]> m_metrics[2];
+                std::unique_ptr<double[]> m_metrics;
+
+                struct Rank
+                {
+                    double score;
+                    unsigned index;
+                    struct Distance
+                    {
+                        double distance;
+                        Symbol symbol;
+                    };
+                    typedef std::list<Distance> Distances;
+                    Distances distances;
+
+                    typename Distances::const_iterator winner;
+                };
+                typedef std::list<Rank> Ranks;
+
+                static void sort(Ranks& ranks);
+                static void sort(typename Rank::Distances& distances);
+                static void increment(Rank& rank);
+                static void decrement(Rank& rank);
             };
         }
     }
