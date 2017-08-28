@@ -3,7 +3,7 @@
  * @brief     Defines the "Guided Scrambling Detector" GNU Radio block
  *            implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 23, 2017
+ * @date      August 28, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -63,6 +63,29 @@ int gr::gs::Implementations::Detector_impl<Symbol>::work(
     const Complex*& input = reinterpret_cast<const Complex*&>(input_items[0]);
     Symbol*& output = reinterpret_cast<Symbol*&>(output_items[0]);
     unsigned outputted=0;
+
+    if(!m_started && !m_framingTag.empty())
+    {
+        std::vector<gr::tag_t> tags;
+        std::vector<gr::tag_t>::const_iterator tag;
+
+        this->get_tags_in_range(
+                tags,
+                0,
+                this->nitems_read(0),
+                this->nitems_read(0)+noutput_items,
+                m_framingTagPMT);
+        tag = tags.cbegin();
+
+        if(tag != tags.cend())
+        {
+            const size_t offset = tag->offset - this->nitems_read(0);
+
+            input += offset;
+            output += offset;
+            noutput_items -= offset;
+        }
+    }
 
     while(noutput_items-outputted >= inputSize-history)
     {
