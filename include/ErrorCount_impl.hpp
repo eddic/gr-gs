@@ -89,6 +89,7 @@ namespace gr
                 unsigned long long symbols() const;
                 unsigned long long errors() const;
                 double rate() const;
+                bool finished() const;
                 void reset();
 
             private:

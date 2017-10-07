@@ -202,6 +202,17 @@ double gr::gs::Implementations::ErrorCount_impl<Symbol>::rate() const
     return m_rate;
 }
 
+template<typename Symbol>
+bool gr::gs::Implementations::ErrorCount_impl<Symbol>::finished() const
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if(m_maxErrors>0 && m_errors >= m_maxErrors)
+        return true;
+    if(m_maxSymbols>0 && m_symbols >= m_maxSymbols)
+        return true;
+    return false;
+}
+
 template class gr::gs::ErrorCount<unsigned char>;
 template class gr::gs::Implementations::ErrorCount_impl<unsigned char>;
 template class gr::gs::ErrorCount<unsigned short>;

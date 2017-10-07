@@ -83,6 +83,9 @@ namespace gr
             //! See the current error rate [0,1]
             virtual double rate() const =0;
 
+            //! Have we reached the end?
+            virtual bool finished() const =0;
+
             //! Reset the block
             virtual void reset() =0;
         };
