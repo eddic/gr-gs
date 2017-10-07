@@ -4,7 +4,7 @@
     <key>gr_gs_ErrorCount</key>
     <category>[gr-gs]/Miscellaneous</category>
     <import>import gr_gs as gs</import>
-    <make>gs.ErrorCount_$(symbolType.fcn)($framingTag)</make>
+    <make>gs.ErrorCount_$(symbolType.fcn)(True, $framingTag, $maxErrors, $maxSymbols)</make>
 	<param>
 		<name>Symbol Type</name>
 		<key>symbolType</key>
@@ -31,6 +31,18 @@
         <value></value>
         <type>string</type>
         <hide>part</hide>
+    </param>
+    <param>
+        <name>Max Errors</name>
+        <key>maxErrors</key>
+        <value>0</value>
+        <type>int</type>
+    </param>
+    <param>
+        <name>Max Symbols</name>
+        <key>maxSymbols</key>
+        <value>0</value>
+        <type>int</type>
     </param>
     <sink>
         <name>fast</name>

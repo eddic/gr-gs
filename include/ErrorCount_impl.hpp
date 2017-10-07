@@ -2,7 +2,7 @@
  * @file      ErrorCount_impl.hpp
  * @brief     Declares the "Error Count" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 19, 2017
+ * @date      October 7, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -49,7 +49,7 @@ namespace gr
              *
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date   May 19, 2017
+             * @date   October 7, 2017
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -69,13 +69,22 @@ namespace gr
 
                 //! Initialize an error count block
                 /*!
+                 * @param [in] output Set to true for an output port.
                  * @param [in] framingTag Desired string to use for the "key" of
                  *                        the tag indicating frame starts. Use a
                  *                        zero length string to indicate a no
                  *                        framings is used.
+                 * @param [in] maxErrors Maximum number of errors to log before
+                 *                       EOF.
+                 * @param [in] maxSymbols Maximum number of symbols to log
+                 *                        before EOF.
                  * @return Shared pointer to newly allocated pulse generator
                  */
-                inline ErrorCount_impl(const std::string& framingTag);
+                inline ErrorCount_impl(
+                        const bool output,
+                        const std::string& framingTag,
+                        const unsigned long long maxErrors,
+                        const unsigned long long maxSymbols);
 
                 unsigned long long symbols() const;
                 unsigned long long errors() const;
@@ -83,6 +92,15 @@ namespace gr
                 void reset();
 
             private:
+                //! Should we output our error rate?
+                const bool m_output;
+
+                //! Max errors before EOF
+                const unsigned long long m_maxErrors;
+
+                //! Max symbols before EOF
+                const unsigned long long m_maxSymbols;
+
                 //! Let's be thread safe
                 mutable std::mutex m_mutex;
 

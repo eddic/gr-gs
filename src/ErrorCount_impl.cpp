@@ -2,7 +2,7 @@
  * @file      ErrorCount_impl.cpp
  * @brief     Defines the "Error Count" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 19, 2017
+ * @date      October 7, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -37,8 +37,22 @@ int gr::gs::Implementations::ErrorCount_impl<Symbol>::work(
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    float* const& outputStart = reinterpret_cast<float*>(output_items[0]);
-    float* const outputEnd = outputStart+noutput_items;
+    if(m_maxSymbols > 0)
+    {
+        if(m_symbols >= m_maxSymbols)
+            return -1;
+
+        if(m_symbols+noutput_items > m_maxSymbols)
+            noutput_items = m_maxSymbols-m_symbols;
+    }
+
+    if(m_maxErrors > 0 && m_errors >= m_maxErrors)
+        return -1;
+
+    float* const outputStart = m_output?
+        reinterpret_cast<float*>(output_items[0]) : nullptr;
+    float* const outputEnd = m_output?
+        outputStart+noutput_items : nullptr;
 
     if(!m_synchronized)
     {
@@ -71,11 +85,13 @@ int gr::gs::Implementations::ErrorCount_impl<Symbol>::work(
                         = slowTag.offset - this->nitems_read(1);
                     this->set_history(slowOffset-fastOffset+1);
 
-                    std::fill(outputStart, outputStart+slowOffset, 0);
+                    if(m_output)
+                        std::fill(outputStart, outputStart+slowOffset, 0);
                     return slowOffset;
                 }
         }
-        std::fill(outputStart, outputEnd, 0);
+        if(m_output)
+            std::fill(outputStart, outputEnd, 0);
         return noutput_items;
     }
 
@@ -92,12 +108,15 @@ int gr::gs::Implementations::ErrorCount_impl<Symbol>::work(
         const size_t offset = result.first-fastInput;
         m_symbols += offset;
 
-        std::fill(output, output+offset, m_rate);
-        output += offset;
+        if(m_output)
+        {
+            std::fill(output, output+offset, m_rate);
+            output += offset;
+        }
 
         if(result.first == fastEnd)
         {
-            m_rate = m_symbols==0?0:static_cast<double>(m_errors)/m_symbols;
+            m_rate = m_symbols==0 ? 0 : static_cast<double>(m_errors)/m_symbols;
             break;
         }
 
@@ -106,6 +125,12 @@ int gr::gs::Implementations::ErrorCount_impl<Symbol>::work(
         ++m_symbols;
         ++m_errors;
         m_rate = m_symbols==0?0:static_cast<double>(m_errors)/m_symbols;
+        if(m_errors >= m_maxErrors)
+        {
+            if(m_output)
+                *output++ = m_rate;
+            return noutput_items - (fastEnd-fastInput);
+        }
     }
 
     return noutput_items;
@@ -113,10 +138,16 @@ int gr::gs::Implementations::ErrorCount_impl<Symbol>::work(
 
 template<typename Symbol>
 gr::gs::Implementations::ErrorCount_impl<Symbol>::ErrorCount_impl(
-        const std::string& framingTag):
+        const bool output,
+        const std::string& framingTag,
+        const unsigned long long maxErrors,
+        const unsigned long long maxSymbols):
     gr::sync_block("Error Count",
         io_signature::make(2,2,sizeof(Symbol)),
-        io_signature::make(1,1,sizeof(float))),
+        io_signature::make(output?1:0, output?1:0, sizeof(float))),
+    m_output(output),
+    m_maxErrors(maxErrors),
+    m_maxSymbols(maxSymbols),
     m_symbols(0),
     m_errors(0),
     m_rate(0),
@@ -128,10 +159,18 @@ gr::gs::Implementations::ErrorCount_impl<Symbol>::ErrorCount_impl(
 }
 
 template<typename Symbol> typename gr::gs::ErrorCount<Symbol>::sptr
-gr::gs::ErrorCount<Symbol>::make(const std::string& framingTag)
+gr::gs::ErrorCount<Symbol>::make(
+        const bool output,
+        const std::string& framingTag,
+        const unsigned long long maxErrors,
+        const unsigned long long maxSymbols)
 {
     return gnuradio::get_initial_sptr(
-            new Implementations::ErrorCount_impl<Symbol>(framingTag));
+            new Implementations::ErrorCount_impl<Symbol>(
+                output,
+                framingTag,
+                maxErrors,
+                maxSymbols));
 }
 
 template<typename Symbol>
