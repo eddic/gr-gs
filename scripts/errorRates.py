@@ -84,10 +84,10 @@ scrambler = gs.defaultScrambler_b(
         fieldSize,
         codewordLength,
         augmentingLength)
-noisePower = 0.09
-windowSize = 128
+noisePower = 0.09 * (4.0/5)**1
+windowSize = 256
 maxSymbols = 1e9
-maxErrors = 10000
+maxErrors = 1000
 
 tb = gs_stats(
         fieldSize = fieldSize,
@@ -107,8 +107,10 @@ while not tb.finished():
     sys.stdout.write("\033[6D{: 5.1f}%".format(tb.completion()))
     sys.stdout.flush()
     time.sleep(1)
-tb.wait()
+tb.stop()
 print("\033[6D done   ")
 
-print("MAP Error rate = {:g}".format(tb.MAPerrorRate()))
-print("ML Error rate = {:g}".format(tb.MLerrorRate()))
+print("Window Size = {:d}".format(windowSize))
+print("Noise Power = {:g}".format(noisePower))
+print("MAP Error rate = {:e}".format(tb.MAPerrorRate()))
+print("ML Error rate = {:e}".format(tb.MLerrorRate()))
