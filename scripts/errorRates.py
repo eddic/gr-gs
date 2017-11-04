@@ -7,7 +7,7 @@ from gnuradio import gr
 from gnuradio import fft as gr_fft
 import gr_gs as gs
 import numpy as np
-import sys, time, os, zlib
+import sys, time, os, zlib, argparse
 
 class gs_stats(gr.top_block):
     def __init__(
@@ -74,43 +74,70 @@ class gs_stats(gr.top_block):
         symbolCompletion = float(self.mapErrorRate.symbols())/self.maxSymbols
         return max([errorCompletion, symbolCompletion])*100
 
+    def errors(self):
+        return self.mapErrorRate.errors()
+
     def finished(self):
         return self.mapErrorRate.finished()
 
-fieldSize = 4
-augmentingLength = 3
-codewordLength = 12
+def processArguments():
+	parser = argparse.ArgumentParser(description='Simulate GS detection error rates.')
+	parser.add_argument('output', nargs='+', help='output file')
+	parser.add_argument('-f', '--fieldSize', type=int)
+	parser.add_argument('-c', '--codewordLength', type=int)
+	parser.add_argument('-a', '--augmentingLength', type=int)
+        parser.add_argument('-w', '--windowSize', type=int, default=128, help='default: 128')
+        parser.add_argument('-e', '--maxErrors', type=float, default=1e4, help='default: 1e4')
+        parser.add_argument('-s', '--maxSymbols', type=float, default=2e9, help='default: 2e9')
+
+	return parser.parse_args()
+
+args = processArguments()
+fieldSize = args.fieldSize
+augmentingLength = args.augmentingLength
+codewordLength = args.codewordLength
 scrambler = gs.defaultScrambler_b(
         fieldSize,
         codewordLength,
         augmentingLength)
-noisePower = 0.09 * (4.0/5)**1
-windowSize = 256
-maxSymbols = 1e9
-maxErrors = 1000
+windowSize = args.windowSize
+maxSymbols = int(args.maxSymbols)
+maxErrors = int(args.maxErrors)
 
-tb = gs_stats(
-        fieldSize = fieldSize,
-        scrambler = scrambler,
-        codewordLength = codewordLength,
-        augmentingLength = augmentingLength,
-        noisePower = noisePower,
-        windowSize = windowSize,
-        maxSymbols = long(maxSymbols),
-        maxErrors = maxErrors)
-tb.start()
+noiseExponent = -14
 
-sys.stdout.write("    Computing error for augmenting length = {:d}... 00.0%".format(
-    augmentingLength))
-sys.stdout.flush()
-while not tb.finished():
-    sys.stdout.write("\033[6D{: 5.1f}%".format(tb.completion()))
+file = open('output.dat', 'w')
+
+while True:
+    noisePower = 0.09375 * (7.0/8)**noiseExponent
+    noiseExponent += 1
+
+    tb = gs_stats(
+            fieldSize = fieldSize,
+            scrambler = scrambler,
+            codewordLength = codewordLength,
+            augmentingLength = augmentingLength,
+            noisePower = noisePower,
+            windowSize = windowSize,
+            maxSymbols = long(maxSymbols),
+            maxErrors = maxErrors)
+    tb.start()
+
+    sys.stdout.write("Computing error rate for noise power = {:g}... 00.0%".format(
+        noisePower))
     sys.stdout.flush()
-    time.sleep(1)
-tb.stop()
-print("\033[6D done   ")
+    while not tb.finished():
+        sys.stdout.write("\033[6D{: 5.1f}%".format(tb.completion()))
+        sys.stdout.flush()
+        time.sleep(1)
+    tb.stop()
+    print("\033[6D done   ")
 
-print("Window Size = {:d}".format(windowSize))
-print("Noise Power = {:g}".format(noisePower))
-print("MAP Error rate = {:e}".format(tb.MAPerrorRate()))
-print("ML Error rate = {:e}".format(tb.MLerrorRate()))
+    file.write('{:.9e} {:.9e} {:.9e}\n'.format(
+        noisePower,
+        tb.MAPerrorRate(),
+        tb.MLerrorRate()))
+    file.flush()
+
+    if tb.errors() < maxErrors:
+        break
