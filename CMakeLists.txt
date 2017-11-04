@@ -282,3 +282,12 @@ install(FILES
 install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gs_demo.grc"
     DESTINATION "share/gr-gs")
+
+# Scripts
+
+install(FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/scripts/gsErrorRates.py"
+    DESTINATION "bin"
+    PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+                GROUP_EXECUTE GROUP_READ
+                WORLD_EXECUTE WORLD_READ)

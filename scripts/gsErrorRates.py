@@ -82,7 +82,7 @@ class gs_stats(gr.top_block):
 
 def processArguments():
 	parser = argparse.ArgumentParser(description='Simulate GS detection error rates.')
-	parser.add_argument('output', nargs='+', help='output file')
+	parser.add_argument('output', help='output file')
 	parser.add_argument('-f', '--fieldSize', type=int)
 	parser.add_argument('-c', '--codewordLength', type=int)
 	parser.add_argument('-a', '--augmentingLength', type=int)
@@ -106,7 +106,7 @@ maxErrors = int(args.maxErrors)
 
 noiseExponent = -14
 
-file = open('output.dat', 'w')
+file = open(args.output, 'w')
 
 while True:
     noisePower = 0.09375 * (7.0/8)**noiseExponent
