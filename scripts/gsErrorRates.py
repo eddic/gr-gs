@@ -104,7 +104,8 @@ windowSize = args.windowSize
 maxSymbols = int(args.maxSymbols)
 maxErrors = int(args.maxErrors)
 
-noiseExponent = -14
+noiseExponent = -30
+#noiseExponent = 5
 
 file = open(args.output, 'w')
 
