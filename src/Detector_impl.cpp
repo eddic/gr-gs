@@ -3,7 +3,7 @@
  * @brief     Defines the "Guided Scrambling Detector" GNU Radio block
  *            implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      November 3, 2017
+ * @date      December 3, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -139,7 +139,7 @@ int gr::gs::Implementations::Detector_impl<Symbol>::work(
             metric[0] += m_metrics[symbol];
         }
 
-        const unsigned m_depth = m_windowSize/32;
+        const unsigned m_depth = 8;
         
         // Now we optimize
         while(true)
