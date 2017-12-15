@@ -2,7 +2,7 @@
  * @file      Distribution.h
  * @brief     Declares the "Distribution" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      June 12, 2017
+ * @date      December 15, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -83,10 +83,9 @@ namespace gr
          * This block takes in a sequence of complex numbers and assigns then to
          * bins in a probability distribution. The 2-dimensional distribution
          * can be accessed with the distribution() function while the vector
-         * that gets outputted portwise is a two-dimentional slice of the
-         * distribution along the real number line.
+         * that gets outputted portwise is a just the PMF of the real values.
          *
-         * @date    June 12, 2017
+         * @date    December 15, 2017
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         class GS_API Distribution_cf: virtual public gr::sync_decimator

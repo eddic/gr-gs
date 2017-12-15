@@ -2,7 +2,7 @@
  * @file      Distribution_impl.hpp
  * @brief     Declares the "Distribution" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      June 12, 2017
+ * @date      December 15, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -107,7 +107,7 @@ namespace gr
             /*!
              * Implements gr::gs::Distribution_cf
              *
-             * @date    May 31, 2017
+             * @date    December 15, 2017
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             class Distribution_cf_impl: public Distribution_cf
@@ -163,9 +163,6 @@ namespace gr
 
                 //! Size of bins
                 const double m_binSize;
-
-                //! Imag(x) = 0 row number
-                const size_t m_zeroRow;
 
                 //! Count of samples
                 unsigned long long m_count;

@@ -2,7 +2,7 @@
  * @file      Distribution_ff_impl.cpp
  * @brief     Defines the "Distribution_ff" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 29, 2017
+ * @date      December 15, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -168,9 +168,17 @@ int gr::gs::Implementations::Distribution_cf_impl::work(
         }
 
         if(m_output)
+        {
+            unsigned long long value;
             for(unsigned real=0; real<m_binCount; ++real)
-                *output++ = static_cast<float>(m_bins[m_zeroRow][real])
-                    / static_cast<float>(m_count);
+            {
+                value=0;
+                for(unsigned imag=0; imag<m_binCount; ++imag)
+                    value += m_bins[imag][real];
+                *output++ = static_cast<float>(value)
+                    /static_cast<float>(m_count);
+            }
+        }
     }
 
     return noutput_items;
@@ -194,7 +202,6 @@ gr::gs::Implementations::Distribution_cf_impl::Distribution_cf_impl(
     m_bins(bins, std::vector<unsigned long long>(bins, 0)),
     m_leastEdge(leastBinCenter-std::complex<double>(binSize/2, binSize/2)),
     m_binSize(binSize),
-    m_zeroRow(static_cast<size_t>(-m_leastEdge.imag()/m_binSize)),
     m_count(0)
 {
     this->enable_update_rate(false);

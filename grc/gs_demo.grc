@@ -2570,7 +2570,7 @@
     </param>
     <param>
       <key>x_axis_label</key>
-      <value>"Re(RDS) when Im(RDS)=0"</value>
+      <value>"Re(RDS)"</value>
     </param>
     <param>
       <key>x_start</key>
