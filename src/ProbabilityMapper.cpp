@@ -66,16 +66,12 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
 
     for(unsigned position=0; position<codewordLength; ++position)
     {
-        //std::cout << "**** Codeword Position: " << position << " ****\n";
         double& variance = m_variances[position];
         variance = (
                 autocovariance[position].back()[0][0]
                 +autocovariance[position].back()[1][1])/2;
         if(variance == 0)
-        {
-            //std::cout << "Got zero variance for " << position << std::endl;
             continue;
-        }
 
         // Since the autocovariance data we've got only looks in the past, we
         // need to do some fun stuff to get the future values
@@ -111,8 +107,6 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
                     +autocovariance[rightPosition][index][1][1])/2;
             const double rightCorrelation
                 = rightCovariance/std::sqrt(variance*rightVariance);
-
-            //std::cout << "    " << leftCovariance << ' ' << rightCovariance << '\n';
 
             // Has the correlation decayed sufficiently?
             if(
@@ -167,15 +161,8 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
             variance -=
                 taps[index] * rightAutocovariance[tapLength-index];
 
-        /*std::cout << "  Taps:\n";
-        for(const auto& tap: taps)
-            std::cout << "    " << tap << '\n';*/
-
         if(variance < 0)
-        {
-            //std::cout << "Variance = " << variance << std::endl;
             throw;
-        }
     }
 
     for(unsigned index=0; index<m_codewordLength; ++index)
@@ -184,21 +171,21 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
         if(newHistory > m_history)
             m_history=newHistory;
     }
-    //std::cout << "History = " << m_history << '\n';
     m_inputSize = windowSize+m_history;
     if(doubleEnded)
         m_inputSize += m_history;
-    m_buffer.reset(new std::complex<double>[m_inputSize+1]);
+    m_buffer.reset(new double[m_inputSize+1]);
 }
 
 template<typename Symbol>
 float gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
         const Symbol symbol,
-        const std::complex<double>* rds,
-        unsigned codewordPosition) const
+        const double* rds,
+        unsigned codewordPosition,
+        const bool real) const
 {
-    std::complex<double> mean=0;
-    const std::complex<double>* pastRDS = rds;
+    double mean=0;
+    const double* pastRDS = rds;
 
     for(
             auto tap = m_taps[codewordPosition].crbegin();
@@ -213,7 +200,8 @@ float gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
             *rds,
             symbol,
             mean,
-            m_variances[codewordPosition]);
+            m_variances[codewordPosition],
+            real);
 }
 
 template<typename Symbol>
@@ -221,39 +209,39 @@ void gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
         const Symbol* const input,
         bool computeHistory,
         float* output,
-        unsigned codewordPosition) const
+        unsigned codewordPosition,
+        const bool real) const
 {
     {
-        std::complex<double>* rds = m_buffer.get();
+        double* rds = m_buffer.get();
         const Symbol* const inputEnd = input+m_inputSize;
 
         if(!computeHistory)
         {
-            std::complex<double>* const rdsHistoryEnd = rds+m_history+1;
-            std::fill(rds, rdsHistoryEnd, std::complex<double>(0,0));
+            double* const rdsHistoryEnd = rds+m_history+1;
+            std::fill(rds, rdsHistoryEnd, 0);
             rds = rdsHistoryEnd;
             for(
                     const Symbol* symbol = input+m_history;
                     symbol < inputEnd;
                     ++symbol, ++rds)
-                *rds = *(rds-1) + m_constellation[*symbol];
+                *rds = *(rds-1) + constellation(*symbol, real);
         }
         else
         {
-            *rds++ = std::complex<double>(0,0);
+            *rds++ = 0;
 
-            std::complex<double> meanRDS = std::complex<double>(0,0);
+            double meanRDS = 0;
 
             for(
                     const Symbol* symbol = input; symbol < inputEnd; ++symbol)
             {
-                *rds = *(rds-1) + m_constellation[*symbol];
+                *rds = *(rds-1) + constellation(*symbol, real);
                 meanRDS += *rds;
                 ++rds;
             }
             meanRDS /= m_inputSize;
-            meanRDS.real(std::round(meanRDS.real()));
-            meanRDS.imag(std::round(meanRDS.imag()));
+            meanRDS = std::round(meanRDS);
 
             rds = m_buffer.get();
             *rds++ = -meanRDS;
@@ -262,12 +250,12 @@ void gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
                     const Symbol* symbol = input;
                     symbol < inputEnd;
                     ++symbol, ++rds)
-                *rds = *(rds-1) + m_constellation[*symbol];
+                *rds = *(rds-1) + constellation(*symbol, real);
         }
     }
 
-    const std::complex<double>* rds = m_buffer.get()+m_history;
-    const std::complex<double>* const rdsEnd = m_buffer.get()+m_inputSize;
+    const double* rds = m_buffer.get()+m_history;
+    const double* const rdsEnd = m_buffer.get()+m_inputSize;
 
     const Symbol* inputIt = input+m_history;
 
@@ -276,7 +264,8 @@ void gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
         *output++ = map(
                 *inputIt++,
                 rds++,
-                codewordPosition++);
+                codewordPosition++,
+                real);
 
         if(codewordPosition >= m_codewordLength)
             codewordPosition = 0;
@@ -285,69 +274,42 @@ void gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
 
 template<typename Symbol>
 float gr::gs::Implementations::ProbabilityMapper<Symbol>::probability(
-        std::complex<double> rds,
+        double rds,
         Symbol symbol,
-        std::complex<double> mean,
-        double variance) const
+        double mean,
+        double variance,
+        const bool real) const
 {
     if(variance == 0)
     {
-        if(rds+m_constellation[symbol] == mean)
+        if(rds+constellation(symbol, real) == mean)
             return 1.0;
         else
-        {
-            //std::cout << "Mean=" << mean << " vs RDS=" << rds+m_constellation[symbol] << std::endl;
             return 0.0;
-        }
     }
 
     double numerator=0;
     double denominator=0;
-    std::map<double, double> realProbabilities;
-    std::map<double, double> imagProbabilities;
+    std::map<double, double> probabilities;
     for(unsigned i=0; i<m_constellation.size(); ++i)
     {
-        const double& realPoint = m_constellation[i].real();
-        auto realProbability = realProbabilities.find(realPoint);
-        if(realProbability == realProbabilities.end())
-            realProbability = realProbabilities.insert(
+        const double& point = constellation(i, real);
+        auto probability = probabilities.find(point);
+        if(probability == probabilities.end())
+            probability = probabilities.insert(
                     std::make_pair(
-                        realPoint,
+                        point,
                         gaussian(
-                            rds.real()+realPoint,
-                            mean.real(),
+                            rds+point,
+                            mean,
                             variance))).first;
 
-        const double& imagPoint = m_constellation[i].imag();
-        auto imagProbability = imagProbabilities.find(imagPoint);
-        if(imagProbability == imagProbabilities.end())
-            imagProbability = imagProbabilities.insert(
-                    std::make_pair(
-                        imagPoint,
-                        gaussian(
-                            rds.imag()+imagPoint,
-                            mean.imag(),
-                            variance))).first;
-
-        const double value = realProbability->second * imagProbability->second;
+        const double& value = probability->second;
 
         denominator += value;
         if(i == symbol)
             numerator = value;
     }
-
-    //auto probs = numerator/denominator;
-
-    /*if(probs < 0.00001)
-    {
-        std::cout << "PMF mean=" << mean << " variance=" << variance << " rds=" << rds << " symbol=" << m_constellation[symbol] << '\n';
-        for(const auto& constellationPoint: m_constellation)
-        {
-            const double value = realProbabilities[constellationPoint.real()]
-                * imagProbabilities[constellationPoint.imag()];
-            std::cout << "    " << constellationPoint << " = " << value/denominator << '\n';
-        }
-    }*/
 
     return static_cast<float>(numerator/denominator);
 }

@@ -121,9 +121,6 @@ namespace gr
                 //! Where are we in our codeword?
                 unsigned int m_codewordPosition;
 
-                //! What is our RDS?
-                std::complex<double> m_rds;
-
                 //! The probability mapping object
                 ProbabilityMapper<Symbol> m_mapper;
 
@@ -140,7 +137,10 @@ namespace gr
                 std::unique_ptr<double[]> m_distances;
 
                 //! Buffer for RDS probabilities
-                std::unique_ptr<float[]> m_probabilities;
+                std::unique_ptr<float[]> m_realProbabilities;
+
+                //! Buffer for RDS probabilities
+                std::unique_ptr<float[]> m_imagProbabilities;
 
                 //! Buffer for metrics
                 std::unique_ptr<double[]> m_metrics;

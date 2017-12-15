@@ -124,8 +124,15 @@ int gr::gs::Implementations::Detector_impl<Symbol>::work(
         m_mapper.map(
                 m_symbols.get(),
                 m_started,
-                m_probabilities.get(),
-                m_codewordPosition);
+                m_realProbabilities.get(),
+                m_codewordPosition,
+                true);
+        m_mapper.map(
+                m_symbols.get(),
+                m_started,
+                m_imagProbabilities.get(),
+                m_codewordPosition,
+                false);
 
         // And now compute our metrics
         for(
@@ -135,7 +142,7 @@ int gr::gs::Implementations::Detector_impl<Symbol>::work(
         {
             m_metrics[symbol] =
                 m_distances[history+symbol]
-                -m_noisePower*std::log(m_probabilities[symbol]);
+                -m_noisePower*std::log(m_realProbabilities[symbol]*m_imagProbabilities[symbol]);
             metric[0] += m_metrics[symbol];
         }
 
@@ -159,8 +166,15 @@ int gr::gs::Implementations::Detector_impl<Symbol>::work(
                 m_mapper.map(
                         m_symbols.get(),
                         m_started,
-                        m_probabilities.get(),
-                        m_codewordPosition);
+                        m_realProbabilities.get(),
+                        m_codewordPosition,
+                        true);
+                m_mapper.map(
+                        m_symbols.get(),
+                        m_started,
+                        m_imagProbabilities.get(),
+                        m_codewordPosition,
+                        false);
 
                 // Build our MAP metrics
                 for(
@@ -170,7 +184,7 @@ int gr::gs::Implementations::Detector_impl<Symbol>::work(
                 {
                     m_metrics[symbol] =
                         m_distances[history+symbol]
-                        -m_noisePower*std::log(m_probabilities[symbol]);
+                        -m_noisePower*std::log(m_realProbabilities[symbol]*m_imagProbabilities[symbol]);
                     metric[1] += m_metrics[symbol];
                 }
                 
@@ -234,7 +248,6 @@ gr::gs::Implementations::Detector_impl<Symbol>::Detector_impl(
     m_framingTagPMT(pmt::string_to_symbol(framingTag)),
     m_codewordLength(codewordLength),
     m_codewordPosition(0),
-    m_rds(GuidedScrambling::startingRDS),
     m_mapper(
             fieldSize,
             codewordLength,
@@ -246,7 +259,8 @@ gr::gs::Implementations::Detector_impl<Symbol>::Detector_impl(
     m_windowSize(windowSize),
     m_symbols(new Symbol[m_mapper.inputSize()]),
     m_distances(new double[m_mapper.inputSize()]),
-    m_probabilities(new float[windowSize + m_mapper.history()]),
+    m_realProbabilities(new float[windowSize + m_mapper.history()]),
+    m_imagProbabilities(new float[windowSize + m_mapper.history()]),
     m_metrics(new double[windowSize + m_mapper.history()])
 {
     this->enable_update_rate(false);

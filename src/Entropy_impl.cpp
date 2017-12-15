@@ -39,6 +39,9 @@ int gr::gs::Implementations::Entropy_impl<Symbol>::work(
     float* output = reinterpret_cast<float*>(output_items[0]);
     unsigned outputted=0;
 
+    std::unique_ptr<float[]> reals(new float[windowSize]);
+    std::unique_ptr<float[]> imags(new float[windowSize]);
+
     if(!m_started && !m_framingTag.empty())
     {
         std::vector<gr::tag_t> tags;
@@ -67,14 +70,23 @@ int gr::gs::Implementations::Entropy_impl<Symbol>::work(
         m_mapper.map(
                 input,
                 m_started,
-                output,
-                m_codewordPosition);
+                reals.get(),
+                m_codewordPosition,
+                true);
+        m_mapper.map(
+                input,
+                m_started,
+                imags.get(),
+                m_codewordPosition,
+                false);
 
+        const float* real = reals.get();
+        const float* imag = imags.get();
         for(
                 float* const outputEnd=output+windowSize;
                 output < outputEnd;
                 ++output)
-            *output = -std::log2(*output);
+            *output = -std::log2(*real * *imag);
 
         m_codewordPosition = (m_codewordPosition+windowSize)%m_codewordLength;
         input += windowSize;

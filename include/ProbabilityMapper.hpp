@@ -46,12 +46,13 @@ namespace gr
             //! For performing selection analysis of a codeword
             /*!
              * This class takes a sequence of symbols and maps it to a sequence
-             * of probabilities associated with the symbols. The input sequence
-             * should contains a history() of symbols.
+             * of probabilities associated with the symbols on either the real
+             * or imaginary axis. The input sequence should contains a
+             * history() of symbols.
              *
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date   August 22, 2017
+             * @date   December 14, 2017
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -62,7 +63,7 @@ namespace gr
                 unsigned m_inputSize;
 
                 //! Buffer for our RDS values
-                std::unique_ptr<std::complex<double>[]> m_buffer;
+                std::unique_ptr<double[]> m_buffer;
 
                 //! Our constellation pattern
                 std::vector<std::complex<double>> m_constellation;
@@ -85,19 +86,31 @@ namespace gr
                  * @param [in] symbol The symbol value we're interested in
                  * @param [in] mean The Gaussian mean of our PMF.
                  * @param [in] variance The Gaussian variance of our PMF
+                 * @param [in] real Set to true if we're working on the real
+                 *                  axis. False means we're working on the
+                 *                  imaginary axis.
                  * @return The probability of symbol arriving
                  */
                 inline float probability(
-                        std::complex<double> rds,
+                        double rds,
                         Symbol symbol,
-                        std::complex<double> mean,
-                        double variance) const;
+                        double mean,
+                        double variance,
+                        bool real) const;
 
                 //! Compute a Gaussian curve
                 inline double gaussian(
                         double value,
                         double mean,
                         double variance) const;
+
+                //! Get real or imaginary constellation value
+                double constellation(Symbol symbol, bool real) const
+                {
+                    return real?
+                        m_constellation[symbol].real():
+                        m_constellation[symbol].imag();
+                }
 
             public:
                 //! Build our probability mapper
@@ -162,11 +175,15 @@ namespace gr
                  * @param [in] codewordPosition Symbol's (not including the
                  *                              history) position in the
                  *                              codeword.
+                 * @param [in] real Set to true if we're working on the real
+                 *                  axis. False means we're working on the
+                 *                  imaginary axis.
                  */
                 float map(
                         const Symbol symbol,
-                        const std::complex<double>* rds,
-                        unsigned codewordPosition) const;
+                        const double* rds,
+                        unsigned codewordPosition,
+                        const bool real) const;
 
                 //! Map a symbol sequence to a sequence of probabilities
                 /*!
@@ -179,7 +196,7 @@ namespace gr
                  *
                  * @param [in] input Pointer to first symbol including the
                  *                   history.
-                 * @param [in] computeHistory Should we computer the RDS history
+                 * @param [in] computeHistory Should we compute the RDS history
                  *                            from our input symbol history or
                  *                            should we assume it is zero?
                  * @param [out] output Pointer to the first output probability
@@ -187,12 +204,16 @@ namespace gr
                  * @param [in] codewordPosition First symbol's (not including
                  *                              the history) position in the
                  *                              codeword.
+                 * @param [in] real Set to true if we're working on the real
+                 *                  axis. False means we're working on the
+                 *                  imaginary axis.
                  */
                 void map(
                         const Symbol* const input,
                         bool computeHistory,
                         float* output,
-                        unsigned codewordPosition=0) const;
+                        unsigned codewordPosition,
+                        const bool real) const;
 
                 unsigned inputSize() const
                 {
