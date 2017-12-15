@@ -2,7 +2,7 @@
  * @file      ProbabilityMapper.cpp
  * @brief     Defines the ProbabilityMapper class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 22, 2017
+ * @date      December 14, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -192,6 +192,31 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
 }
 
 template<typename Symbol>
+float gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
+        const Symbol symbol,
+        const std::complex<double>* rds,
+        unsigned codewordPosition) const
+{
+    std::complex<double> mean=0;
+    const std::complex<double>* pastRDS = rds;
+
+    for(
+            auto tap = m_taps[codewordPosition].crbegin();
+            tap != m_taps[codewordPosition].crend();
+            ++tap)
+    {
+        mean += *tap * *pastRDS;
+        --pastRDS;
+    }
+
+    return probability(
+            *rds,
+            symbol,
+            mean,
+            m_variances[codewordPosition]);
+}
+
+template<typename Symbol>
 void gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
         const Symbol* const input,
         bool computeHistory,
@@ -241,56 +266,21 @@ void gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
         }
     }
 
-    /*std::cout << "** History **\n";
-    const Symbol* ourInput = input;
-    for(const std::complex<double>* rds=m_buffer.get(); rds<m_buffer.get()+m_history+1; ++rds, ++ourInput)
-    {
-        std::cout << *rds << ' ' << static_cast<unsigned>(*ourInput) << ' ';
-    }
-    std::cout << '\n';*/
-
     const std::complex<double>* rds = m_buffer.get()+m_history;
     const std::complex<double>* const rdsEnd = m_buffer.get()+m_inputSize;
 
-    //std::cout << "** RDSs **\n";
     const Symbol* inputIt = input+m_history;
 
     while(rds != rdsEnd)
     {
-        const std::complex<double>* pastRDS = rds;
-        std::complex<double> mean=0;
-
-        /*std::cout << "Symbol = " << static_cast<unsigned>(*inputIt) << ' ' << m_constellation[*inputIt] << '\n';
-        std::cout << "  Starting RDS = " << *rds << '\n';
-        std::cout << "  Ending RDS = " << *(rds+1) << '\n';
-        std::cout << "  Mean =";*/
-        for(
-                auto tap = m_taps[codewordPosition].crbegin();
-                tap != m_taps[codewordPosition].crend();
-                ++tap)
-        {
-            mean += *tap * *pastRDS;
-            //std::cout << " + (" << *tap << '*' << *pastRDS << ')';
-            --pastRDS;
-        }
-        /*std::cout << " = " << mean << '\n';
-        std::cout << "  Variance = " << m_variances[codewordPosition] << '\n';*/
-        *output = probability(
-                *rds,
+        *output++ = map(
                 *inputIt++,
-                mean,
-                m_variances[codewordPosition]);
-        //std::cout << "  Probability = " << *output << '\n';
+                rds++,
+                codewordPosition++);
 
-        ++rds;
-
-        if(++codewordPosition >= m_codewordLength)
+        if(codewordPosition >= m_codewordLength)
             codewordPosition = 0;
-
-        ++output;
     }
-
-    //std::cout << "Last Symbols = " << static_cast<unsigned>(input[symbols+m_history-3]) << ", " << static_cast<unsigned>(input[symbols+m_history-2]) << ", " << static_cast<unsigned>(input[symbols+m_history-1]) << '\n';
 }
 
 template<typename Symbol>

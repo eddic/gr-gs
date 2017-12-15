@@ -2,7 +2,7 @@
  * @file      ProbabilityMapper.hpp
  * @brief     Declares the ProbabilityMapper class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 22, 2017
+ * @date      December 14, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -152,6 +152,21 @@ namespace gr
                 {
                     return m_constellation;
                 }
+
+                //! Map an individual symbol a probability
+                /*!
+                 * @param [in] symbol Input symbol
+                 * @param [in] rds Pointer to the *last* value in the RDS
+                 *                 history array. There should be history() rds
+                 *                 values available in this array.
+                 * @param [in] codewordPosition Symbol's (not including the
+                 *                              history) position in the
+                 *                              codeword.
+                 */
+                float map(
+                        const Symbol symbol,
+                        const std::complex<double>* rds,
+                        unsigned codewordPosition) const;
 
                 //! Map a symbol sequence to a sequence of probabilities
                 /*!
