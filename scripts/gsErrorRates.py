@@ -110,7 +110,7 @@ noiseExponent = -30
 file = open(args.output, 'w')
 
 while True:
-    noisePower = 0.09375 * (7.0/8)**noiseExponent
+    noisePower = 0.1875 * (7.0/8)**noiseExponent
     noiseExponent += 1
 
     tb = gs_stats(
