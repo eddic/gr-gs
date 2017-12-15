@@ -45,7 +45,7 @@ std::vector<gr::gs::Complex> gr::gs::defaultConstellation(
         case 2:
             return {{-1,0},{1,0}};
         case 4:
-            return {{1,0},{0,1},{0,-1},{-1,0}};
+            return {{1,1},{-1,1},{1,-1},{-1,-1}};
         case 8:
             return {
                 {1,0},
