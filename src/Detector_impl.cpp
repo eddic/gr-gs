@@ -57,8 +57,6 @@ int gr::gs::Implementations::Detector_impl<Symbol>::work(
 
     const auto& inputSize = m_mapper.inputSize();
     const auto& history = m_mapper.history();
-    const auto& constellation = m_mapper.constellation();
-    const auto& fieldSize = constellation.size();
     const Complex*& input = reinterpret_cast<const Complex*&>(input_items[0]);
     Symbol*& output = reinterpret_cast<Symbol*&>(output_items[0]);
     unsigned outputted=0;
@@ -89,146 +87,153 @@ int gr::gs::Implementations::Detector_impl<Symbol>::work(
 
     while(noutput_items-outputted >= inputSize-history)
     {
-        Ranks ranks;
-
-        // Calculate our euclidean distances, winners and ranks
-        {
-            for(unsigned symbol=0; symbol < inputSize; ++symbol)
-            {
-                typename Rank::Distances distances;
-                for(Symbol point=0; point<fieldSize; ++point)
-                    distances.push_back({std::norm(
-                                static_cast<std::complex<double>>(*input)
-                                -constellation[point]), point});
-                sort(distances);
-                m_symbols[symbol] = distances.front().symbol;
-                m_distances[symbol] = distances.front().distance;
-
-                ranks.push_back(Rank());
-                ranks.back().score = (++distances.cbegin())->distance
-                    -distances.front().distance;
-                ranks.back().index = symbol;
-                ranks.back().distances = std::move(distances);
-                ranks.back().winner = ranks.back().distances.cbegin();
-
-                ++input;
-            }
-            input -= 2*history;
-            sort(ranks);
-        }
-
-        // Get our starting RDS probabilities
-        double metric[2];
-        metric[0] = 0;
-
-        m_mapper.map(
-                m_symbols.get(),
-                m_started,
-                m_realProbabilities.get(),
-                m_codewordPosition,
-                true);
-        m_mapper.map(
-                m_symbols.get(),
-                m_started,
-                m_imagProbabilities.get(),
-                m_codewordPosition,
-                false);
-
-        // And now compute our metrics
-        for(
-                unsigned symbol=0;
-                symbol < m_windowSize+history;
-                ++symbol)
-        {
-            m_metrics[symbol] =
-                m_distances[history+symbol]
-                -m_noisePower*std::log(m_realProbabilities[symbol]*m_imagProbabilities[symbol]);
-            metric[0] += m_metrics[symbol];
-        }
-
-        const unsigned m_depth = 8;
-        
-        // Now we optimize
-        while(true)
-        {
-            unsigned depth = 0;
-            bool improving = false;
-            for(Rank& rank: ranks)
-            {
-                metric[1] = 0;
-
-                // Flip a symbol
-                increment(rank);
-                m_distances[rank.index] = rank.winner->distance;
-                m_symbols[rank.index] = rank.winner->symbol;
-
-                // Map our RDS probabilities
-                m_mapper.map(
-                        m_symbols.get(),
-                        m_started,
-                        m_realProbabilities.get(),
-                        m_codewordPosition,
-                        true);
-                m_mapper.map(
-                        m_symbols.get(),
-                        m_started,
-                        m_imagProbabilities.get(),
-                        m_codewordPosition,
-                        false);
-
-                // Build our MAP metrics
-                for(
-                        unsigned symbol=0;
-                        symbol < m_windowSize+history;
-                        ++symbol)
-                {
-                    m_metrics[symbol] =
-                        m_distances[history+symbol]
-                        -m_noisePower*std::log(m_realProbabilities[symbol]*m_imagProbabilities[symbol]);
-                    metric[1] += m_metrics[symbol];
-                }
-                
-                // Are things any better?
-                if(metric[1] < metric[0])
-                {
-                    metric[0] = metric[1];
-                    depth = 0;
-                    improving = true;
-                    rank.distances.splice(
-                            rank.distances.begin(),
-                            rank.distances,
-                            rank.winner);
-                    rank.winner = rank.distances.begin();
-                }
-                else
-                {
-                    decrement(rank);
-                    m_distances[rank.index] = rank.winner->distance;
-                    m_symbols[rank.index] = rank.winner->symbol;
-
-                    ++depth;
-                    if(depth >= m_depth)
-                        break;
-                }
-            }
-            if(improving)
-                sort(ranks);
-            else
-                break;
-        }
+        detect(input, m_realSymbols, true);
+        detect(input, m_imagSymbols, false);
 
         m_codewordPosition
             = (m_codewordPosition+noutput_items)%m_codewordLength;
         m_started = true;
 
-        output = std::copy(
-                m_symbols.get()+history,
-                m_symbols.get()+history+m_windowSize,
-                output);
+        m_mapper.decollapseConstellation(
+                m_realSymbols.get()+history,
+                m_imagSymbols.get()+history,
+                output,
+                m_windowSize);
+
         outputted += m_windowSize;
+        input += m_windowSize;
+        output += m_windowSize;
     }
 
     return outputted;
+}
+
+template<typename Symbol>
+void gr::gs::Implementations::Detector_impl<Symbol>::detect(
+        const Complex* input,
+        std::unique_ptr<Symbol[]>& symbols,
+        const bool real)
+{
+    Ranks ranks;
+    const auto& inputSize = m_mapper.inputSize();
+    const auto& history = m_mapper.history();
+
+    const auto& constellation = m_mapper.constellation(real);
+
+    // Calculate our euclidean distances, winners and ranks
+    {
+        for(unsigned symbol=0; symbol < inputSize; ++symbol)
+        {
+            const double value = real?input->real():input->imag();
+            typename Rank::Distances distances;
+            for(Symbol point=0; point<constellation.size(); ++point)
+            {
+                const double difference = value - constellation[point];
+                distances.push_back({difference*difference, point});
+            }
+            sort(distances);
+            symbols[symbol] = distances.front().symbol;
+            m_distances[symbol] = distances.front().distance;
+
+            ranks.push_back(Rank());
+            ranks.back().score = (++distances.cbegin())->distance
+                -distances.front().distance;
+            ranks.back().index = symbol;
+            ranks.back().distances = std::move(distances);
+            ranks.back().winner = ranks.back().distances.cbegin();
+
+            ++input;
+        }
+        sort(ranks);
+    }
+
+    // Get our starting RDS probabilities
+    double metric[2];
+    metric[0] = 0;
+
+    m_mapper.map(
+            symbols.get(),
+            m_started,
+            m_probabilities.get(),
+            m_codewordPosition,
+            real);
+
+    // And now compute our metrics
+    for(
+            unsigned symbol=0;
+            symbol < m_windowSize+history;
+            ++symbol)
+    {
+        m_metrics[symbol] =
+            m_distances[history+symbol]
+            -m_noisePower*std::log(m_probabilities[symbol]);
+        metric[0] += m_metrics[symbol];
+    }
+
+    const unsigned m_depth = 4;
+
+    // Now we optimize
+    while(true)
+    {
+        unsigned depth = 0;
+        bool improving = false;
+        for(Rank& rank: ranks)
+        {
+            metric[1] = 0;
+
+            // Flip a symbol
+            increment(rank);
+            m_distances[rank.index] = rank.winner->distance;
+            symbols[rank.index] = rank.winner->symbol;
+
+            // Map our RDS probabilities
+            m_mapper.map(
+                    symbols.get(),
+                    m_started,
+                    m_probabilities.get(),
+                    m_codewordPosition,
+                    real);
+
+            // Build our MAP metrics
+            for(
+                    unsigned symbol=0;
+                    symbol < m_windowSize+history;
+                    ++symbol)
+            {
+                m_metrics[symbol] =
+                    m_distances[history+symbol]
+                    -m_noisePower*std::log(m_probabilities[symbol]);
+                metric[1] += m_metrics[symbol];
+            }
+
+            // Are things any better?
+            if(metric[1] < metric[0])
+            {
+                metric[0] = metric[1];
+                depth = 0;
+                improving = true;
+                rank.distances.splice(
+                        rank.distances.begin(),
+                        rank.distances,
+                        rank.winner);
+                rank.winner = rank.distances.begin();
+            }
+            else
+            {
+                decrement(rank);
+                m_distances[rank.index] = rank.winner->distance;
+                symbols[rank.index] = rank.winner->symbol;
+
+                ++depth;
+                if(depth >= m_depth)
+                    break;
+            }
+        }
+        if(improving)
+            sort(ranks);
+        else
+            break;
+    }
 }
 
 template<typename Symbol>
@@ -257,10 +262,10 @@ gr::gs::Implementations::Detector_impl<Symbol>::Detector_impl(
             true),
     m_started(false),
     m_windowSize(windowSize),
-    m_symbols(new Symbol[m_mapper.inputSize()]),
+    m_realSymbols(new Symbol[m_mapper.inputSize()]),
+    m_imagSymbols(new Symbol[m_mapper.inputSize()]),
     m_distances(new double[m_mapper.inputSize()]),
-    m_realProbabilities(new float[windowSize + m_mapper.history()]),
-    m_imagProbabilities(new float[windowSize + m_mapper.history()]),
+    m_probabilities(new float[windowSize + m_mapper.history()]),
     m_metrics(new double[windowSize + m_mapper.history()])
 {
     this->enable_update_rate(false);

@@ -130,20 +130,26 @@ namespace gr
                 //! Our window size
                 const unsigned m_windowSize;
 
-                //! Buffer for detected symbols
-                std::unique_ptr<Symbol[]> m_symbols;
+                //! Buffer for detected real symbols
+                std::unique_ptr<Symbol[]> m_realSymbols;
+
+                //! Buffer for detected imaginary symbols
+                std::unique_ptr<Symbol[]> m_imagSymbols;
 
                 //! Buffer for distances
                 std::unique_ptr<double[]> m_distances;
 
                 //! Buffer for RDS probabilities
-                std::unique_ptr<float[]> m_realProbabilities;
-
-                //! Buffer for RDS probabilities
-                std::unique_ptr<float[]> m_imagProbabilities;
+                std::unique_ptr<float[]> m_probabilities;
 
                 //! Buffer for metrics
                 std::unique_ptr<double[]> m_metrics;
+
+                //! Perform single axis detection on a sequence
+                void detect(
+                        const Complex* input,
+                        std::unique_ptr<Symbol[]>& symbols,
+                        const bool real);
 
                 struct Rank
                 {

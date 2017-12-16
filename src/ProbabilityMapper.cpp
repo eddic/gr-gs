@@ -32,6 +32,7 @@
 #include <cmath>
 #include <map>
 #include <memory>
+#include <algorithm>
 
 #include <iostream>
 //#include <iomanip>
@@ -49,10 +50,48 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
     m_codewordLength(codewordLength),
     m_history(0)
 {
+    // Setup constellation stuff
     {
         const auto constellation = gr::gs::defaultConstellation(fieldSize);
         m_constellation.reserve(constellation.size());
         m_constellation.assign(constellation.begin(), constellation.end());
+
+        std::set<double> reals;
+        std::set<double> imags;
+        for(const auto& point: m_constellation)
+        {
+            reals.insert(point.real());
+            imags.insert(point.imag());
+        }
+        m_realConstellation.reserve(reals.size());
+        m_realConstellation.assign(reals.begin(), reals.end());
+        m_imagConstellation.reserve(imags.size());
+        m_imagConstellation.assign(imags.begin(), imags.end());
+
+        m_constellationToReal.resize(m_constellation.size());
+        m_constellationToImag.resize(m_constellation.size());
+        m_collapsedToConstellation.resize(m_constellation.size());
+
+        for(unsigned real=0; real<m_realConstellation.size(); ++real)
+            for(unsigned imag=0; imag<m_imagConstellation.size(); ++imag)
+            {
+                const Symbol symbol = std::find(
+                        m_constellation.cbegin(),
+                        m_constellation.cend(),
+                        std::complex<double>(
+                            m_realConstellation[real],
+                            m_imagConstellation[imag]))
+                    -m_constellation.cbegin();
+
+                if(symbol >= m_constellation.size())
+                    throw;
+
+                m_constellationToReal[symbol] = real;
+                m_constellationToImag[symbol] = imag;
+                m_collapsedToConstellation[
+                    real + imag*m_realConstellation.size()] = symbol;
+            }
+
     }
 
     const Data::Autocovariance autocovariance = Data::autocovariance(
@@ -141,7 +180,7 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
                 }
 
             auto CaaP = gsl_permutation_alloc(tapLength);
-            
+
             int s;
             gsl_linalg_LU_decomp(Caa, CaaP, &s);
             gsl_linalg_LU_invert(Caa, CaaP, &CaaInvView.matrix);
@@ -156,7 +195,7 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
             for(unsigned row=0; row<tapLength; ++row)
                 taps[column] += CaaInv[row*tapLength+column]
                     * leftAutocovariance[tapLength-row];
-        
+
         for(unsigned index=0; index<tapLength; ++index)
             variance -=
                 taps[index] * rightAutocovariance[tapLength-index];
@@ -212,6 +251,7 @@ void gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
         unsigned codewordPosition,
         const bool real) const
 {
+    const auto& constellation = this->constellation(real);
     {
         double* rds = m_buffer.get();
         const Symbol* const inputEnd = input+m_inputSize;
@@ -225,7 +265,7 @@ void gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
                     const Symbol* symbol = input+m_history;
                     symbol < inputEnd;
                     ++symbol, ++rds)
-                *rds = *(rds-1) + constellation(*symbol, real);
+                *rds = *(rds-1) + constellation[*symbol];
         }
         else
         {
@@ -236,7 +276,7 @@ void gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
             for(
                     const Symbol* symbol = input; symbol < inputEnd; ++symbol)
             {
-                *rds = *(rds-1) + constellation(*symbol, real);
+                *rds = *(rds-1) + constellation[*symbol];
                 meanRDS += *rds;
                 ++rds;
             }
@@ -250,7 +290,7 @@ void gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
                     const Symbol* symbol = input;
                     symbol < inputEnd;
                     ++symbol, ++rds)
-                *rds = *(rds-1) + constellation(*symbol, real);
+                *rds = *(rds-1) + constellation[*symbol];
         }
     }
 
@@ -280,9 +320,11 @@ float gr::gs::Implementations::ProbabilityMapper<Symbol>::probability(
         double variance,
         const bool real) const
 {
+    const auto& constellation = this->constellation(real);
+
     if(variance == 0)
     {
-        if(rds+constellation(symbol, real) == mean)
+        if(rds+constellation[symbol] == mean)
             return 1.0;
         else
             return 0.0;
@@ -290,22 +332,9 @@ float gr::gs::Implementations::ProbabilityMapper<Symbol>::probability(
 
     double numerator=0;
     double denominator=0;
-    std::map<double, double> probabilities;
-    for(unsigned i=0; i<m_constellation.size(); ++i)
+    for(unsigned i=0; i<constellation.size(); ++i)
     {
-        const double& point = constellation(i, real);
-        auto probability = probabilities.find(point);
-        if(probability == probabilities.end())
-            probability = probabilities.insert(
-                    std::make_pair(
-                        point,
-                        gaussian(
-                            rds+point,
-                            mean,
-                            variance))).first;
-
-        const double& value = probability->second;
-
+        const double value = gaussian(rds+constellation[i], mean, variance);
         denominator += value;
         if(i == symbol)
             numerator = value;
@@ -326,3 +355,30 @@ double gr::gs::Implementations::ProbabilityMapper<Symbol>::gaussian(
 template class gr::gs::Implementations::ProbabilityMapper<unsigned char>;
 template class gr::gs::Implementations::ProbabilityMapper<unsigned short>;
 template class gr::gs::Implementations::ProbabilityMapper<unsigned int>;
+
+template<typename Symbol>
+void gr::gs::Implementations::ProbabilityMapper<Symbol>::collapseConstellation(
+        Symbol* reals,
+        Symbol* imags,
+        const Symbol* points,
+        const size_t length)
+{
+    for(unsigned i=0; i<length; ++i)
+    {
+        reals[i] = m_constellationToReal[points[i]];
+        imags[i] = m_constellationToImag[points[i]];
+    }
+}
+
+template<typename Symbol>
+void gr::gs::Implementations::ProbabilityMapper<Symbol>::decollapseConstellation(
+        const Symbol* reals,
+        const Symbol* imags,
+        Symbol* points,
+        const size_t length)
+{
+    for(unsigned i=0; i<length; ++i)
+        points[i] = m_collapsedToConstellation[
+                reals[i]
+                +imags[i]*m_realConstellation.size()];
+}

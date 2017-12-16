@@ -107,6 +107,18 @@ namespace gr
 
                 //! Have we started mapping yet?
                 bool m_started;
+
+                //! Real symbols
+                std::unique_ptr<Symbol[]> m_realSymbols;
+
+                //! Imaginary symbols
+                std::unique_ptr<Symbol[]> m_imagSymbols;
+
+                //! Real probabilities
+                std::unique_ptr<float[]> m_realProbabilities;
+
+                //! Imaginary probabilities
+                std::unique_ptr<float[]> m_imagProbabilities;
             };
         }
     }

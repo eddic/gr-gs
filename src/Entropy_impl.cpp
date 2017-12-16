@@ -39,9 +39,6 @@ int gr::gs::Implementations::Entropy_impl<Symbol>::work(
     float* output = reinterpret_cast<float*>(output_items[0]);
     unsigned outputted=0;
 
-    std::unique_ptr<float[]> reals(new float[windowSize]);
-    std::unique_ptr<float[]> imags(new float[windowSize]);
-
     if(!m_started && !m_framingTag.empty())
     {
         std::vector<gr::tag_t> tags;
@@ -67,26 +64,28 @@ int gr::gs::Implementations::Entropy_impl<Symbol>::work(
 
     while(noutput_items-outputted >= m_mapper.inputSize())
     {
-        m_mapper.map(
+        m_mapper.collapseConstellation(
+                m_realSymbols.get(),
+                m_imagSymbols.get(),
                 input,
+                windowSize + m_mapper.history());
+
+        m_mapper.map(
+                m_realSymbols.get(),
                 m_started,
-                reals.get(),
+                m_realProbabilities.get(),
                 m_codewordPosition,
                 true);
         m_mapper.map(
-                input,
+                m_imagSymbols.get(),
                 m_started,
-                imags.get(),
+                m_imagProbabilities.get(),
                 m_codewordPosition,
                 false);
 
-        const float* real = reals.get();
-        const float* imag = imags.get();
-        for(
-                float* const outputEnd=output+windowSize;
-                output < outputEnd;
-                ++output)
-            *output = -std::log2(*real * *imag);
+        for(unsigned i=0; i<windowSize; ++i)
+            output[i] =
+                -std::log2(m_realProbabilities[i] * m_imagProbabilities[i]);
 
         m_codewordPosition = (m_codewordPosition+windowSize)%m_codewordLength;
         input += windowSize;
@@ -119,7 +118,11 @@ gr::gs::Implementations::Entropy_impl<Symbol>::Entropy_impl(
             minCorrelation,
             windowSize,
             false),
-    m_started(false)
+    m_started(false),
+    m_realSymbols(new Symbol[windowSize]),
+    m_imagSymbols(new Symbol[windowSize]),
+    m_realProbabilities(new float[windowSize]),
+    m_imagProbabilities(new float[windowSize])
 {
     this->enable_update_rate(false);
     this->set_history(m_mapper.history()+1);

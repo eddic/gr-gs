@@ -68,6 +68,21 @@ namespace gr
                 //! Our constellation pattern
                 std::vector<std::complex<double>> m_constellation;
 
+                //! Our collapsed real constellation
+                std::vector<double> m_realConstellation;
+
+                //! Our collapsed imaginary constellation
+                std::vector<double> m_imagConstellation;
+
+                //! Maps constellation points to collapsed real points
+                std::vector<Symbol> m_constellationToReal;
+
+                //! Maps constellation points to collapsed imaginary points
+                std::vector<Symbol> m_constellationToImag;
+
+                //! Maps collapsed real/imag points constellation points
+                std::vector<Symbol> m_collapsedToConstellation;
+
                 //! Taps for mean RDS calculation
                 std::vector<std::vector<double>> m_taps;
 
@@ -103,14 +118,6 @@ namespace gr
                         double value,
                         double mean,
                         double variance) const;
-
-                //! Get real or imaginary constellation value
-                double constellation(Symbol symbol, bool real) const
-                {
-                    return real?
-                        m_constellation[symbol].real():
-                        m_constellation[symbol].imag();
-                }
 
             public:
                 //! Build our probability mapper
@@ -165,6 +172,27 @@ namespace gr
                 {
                     return m_constellation;
                 }
+
+                const std::vector<double>& constellation(
+                        const bool real) const
+                {
+                    if(real)
+                        return m_realConstellation;
+                    else
+                        return m_imagConstellation;
+                }
+
+                void collapseConstellation(
+                        Symbol* reals,
+                        Symbol* imags,
+                        const Symbol* points,
+                        const size_t length);
+
+                void decollapseConstellation(
+                        const Symbol* reals,
+                        const Symbol* imags,
+                        Symbol* points,
+                        const size_t length);
 
                 //! Map an individual symbol a probability
                 /*!
