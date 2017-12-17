@@ -2,7 +2,7 @@
  * @file      ProbabilityMapper.cpp
  * @brief     Defines the ProbabilityMapper class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      December 14, 2017
+ * @date      December 17, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -33,6 +33,7 @@
 #include <map>
 #include <memory>
 #include <algorithm>
+#include <numeric>
 
 #include <iostream>
 //#include <iomanip>
@@ -217,33 +218,6 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
 }
 
 template<typename Symbol>
-float gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
-        const Symbol symbol,
-        const int* rds,
-        unsigned codewordPosition,
-        const bool real) const
-{
-    double mean=0;
-    const int* pastRDS = rds;
-
-    for(
-            auto tap = m_taps[codewordPosition].crbegin();
-            tap != m_taps[codewordPosition].crend();
-            ++tap)
-    {
-        mean += *tap * static_cast<double>(*pastRDS);
-        --pastRDS;
-    }
-
-    return probability(
-            *rds,
-            symbol,
-            mean,
-            m_variances[codewordPosition],
-            real);
-}
-
-template<typename Symbol>
 void gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
         const Symbol* const input,
         bool computeHistory,
@@ -300,46 +274,58 @@ void gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
 
     while(rds != rdsEnd)
     {
-        *output++ = map(
-                *inputIt++,
+
+        const auto weightings = this->weightings(
                 rds++,
                 codewordPosition++,
                 real);
+
+        *output++ = weightings[*inputIt++] / std::accumulate(
+                    weightings.cbegin(),
+                    weightings.cend(),
+                    static_cast<double>(0));
 
         if(codewordPosition >= m_codewordLength)
             codewordPosition = 0;
     }
 }
 
-template<typename Symbol>
-float gr::gs::Implementations::ProbabilityMapper<Symbol>::probability(
-        int rds,
-        Symbol symbol,
-        double mean,
-        double variance,
+template<typename Symbol> std::vector<double>
+gr::gs::Implementations::ProbabilityMapper<Symbol>::weightings(
+        const int* const rds,
+        const unsigned codewordPosition,
         const bool real) const
 {
     const auto& constellation = this->constellation(real);
+    std::vector<double> weightings(constellation.size(), 0);
+
+    const double& variance = m_variances[codewordPosition];
+    double mean=0;
+    const int* pastRDS = rds;
+
+    for(
+            auto tap = m_taps[codewordPosition].crbegin();
+            tap != m_taps[codewordPosition].crend();
+            ++tap)
+    {
+        mean += *tap * static_cast<double>(*pastRDS);
+        --pastRDS;
+    }
 
     if(variance == 0)
     {
-        if(rds+constellation[symbol] == mean)
-            return 1.0;
-        else
-            return 0.0;
+        for(Symbol symbol=0; symbol<constellation.size(); ++symbol)
+            if(*rds+constellation[symbol] == mean)
+                weightings[symbol] = 1.0;
     }
+    else
+        for(Symbol symbol=0; symbol<constellation.size(); ++symbol)
+            weightings[symbol] = gaussian(
+                    *rds+constellation[symbol],
+                    mean,
+                    variance);
 
-    double numerator=0;
-    double denominator=0;
-    for(unsigned i=0; i<constellation.size(); ++i)
-    {
-        const double value = gaussian(rds+constellation[i], mean, variance);
-        denominator += value;
-        if(i == symbol)
-            numerator = value;
-    }
-
-    return static_cast<float>(numerator/denominator);
+    return weightings;
 }
 
 template<typename Symbol>

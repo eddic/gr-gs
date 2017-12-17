@@ -2,7 +2,7 @@
  * @file      ProbabilityMapper.hpp
  * @brief     Declares the ProbabilityMapper class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      December 14, 2017
+ * @date      December 17, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -52,7 +52,7 @@ namespace gr
              *
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date   December 14, 2017
+             * @date   December 17, 2017
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -94,24 +94,6 @@ namespace gr
 
                 //! How many symbols are required in history before our first?
                 unsigned m_history;
-
-                //! Calculate the probability of a symbol arriving
-                /*!
-                 * @param [in] rds The RDS value at the end of the last symbol
-                 * @param [in] symbol The symbol value we're interested in
-                 * @param [in] mean The Gaussian mean of our PMF.
-                 * @param [in] variance The Gaussian variance of our PMF
-                 * @param [in] real Set to true if we're working on the real
-                 *                  axis. False means we're working on the
-                 *                  imaginary axis.
-                 * @return The probability of symbol arriving
-                 */
-                inline float probability(
-                        int rds,
-                        Symbol symbol,
-                        double mean,
-                        double variance,
-                        bool real) const;
 
                 //! Compute a Gaussian curve
                 inline double gaussian(
@@ -203,9 +185,8 @@ namespace gr
                         +imag*m_realConstellation.size()];
                 }
 
-                //! Map an individual symbol a probability
+                //! Calculate the probability weightings
                 /*!
-                 * @param [in] symbol Input symbol
                  * @param [in] rds Pointer to the *last* value in the RDS
                  *                 history array. There should be history() rds
                  *                 values available in this array.
@@ -215,11 +196,11 @@ namespace gr
                  * @param [in] real Set to true if we're working on the real
                  *                  axis. False means we're working on the
                  *                  imaginary axis.
+                 * @return Probability weightings by symbol
                  */
-                float map(
-                        const Symbol symbol,
-                        const int* rds,
-                        unsigned codewordPosition,
+                std::vector<double> weightings(
+                        const int* const rds,
+                        const unsigned codewordPosition,
                         const bool real) const;
 
                 //! Map a symbol sequence to a sequence of probabilities
