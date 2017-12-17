@@ -171,6 +171,14 @@ namespace gr
                 //! Symbol count
                 unsigned long long m_symbols;
 
+                //! How many states should we have?
+                const unsigned m_states;
+
+                static inline unsigned getStates(
+                        const unsigned fieldSize,
+                        const unsigned codewordLength,
+                        const unsigned augmentingLength);
+
                 //! Perform single axis detection on a sequence
                 void detect(
                         const Complex* input,

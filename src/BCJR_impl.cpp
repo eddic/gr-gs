@@ -27,6 +27,7 @@
  */
 
 #include "BCJR_impl.hpp"
+#include "gr-gs/Data.h"
 
 #include <gnuradio/io_signature.h>
 #include <algorithm>
@@ -136,6 +137,33 @@ void gr::gs::Implementations::BCJR_impl<Symbol>::detect(
 }
 
 template<typename Symbol>
+unsigned gr::gs::Implementations::BCJR_impl<Symbol>::getStates(
+        const unsigned fieldSize,
+        const unsigned codewordLength,
+        const unsigned augmentingLength)
+{
+    const auto distribution = Data::distribution(
+            fieldSize,
+            codewordLength,
+            augmentingLength);
+
+    std::array<double, distributionDataWidth> collapsed;
+    for(unsigned real=0; real<distributionDataWidth; ++real)
+        for(unsigned position=0; position<codewordLength; ++position)
+            for(unsigned imag=0; imag<distributionDataWidth; ++imag)
+                collapsed[real] += distribution[position][real][imag];
+
+    unsigned width=0;
+    for(const auto& value: collapsed)
+        if(value>1e-20)
+            ++width;
+
+    width+=2;
+
+    return width;
+}
+
+template<typename Symbol>
 gr::gs::Implementations::BCJR_impl<Symbol>::BCJR_impl(
         const unsigned fieldSize,
         const unsigned codewordLength,
@@ -169,7 +197,8 @@ gr::gs::Implementations::BCJR_impl<Symbol>::BCJR_impl(
     m_maxErrors(maxErrors),
     m_maxSymbols(maxSymbols),
     m_errors(0),
-    m_symbols(0)
+    m_symbols(0),
+    m_states(getStates(fieldSize, codewordLength, augmentingLength))
 {
     this->enable_update_rate(false);
     this->set_history(m_mapper.history()+1);
