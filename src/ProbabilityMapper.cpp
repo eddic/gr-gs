@@ -56,12 +56,12 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
         m_constellation.reserve(constellation.size());
         m_constellation.assign(constellation.begin(), constellation.end());
 
-        std::set<double> reals;
-        std::set<double> imags;
+        std::set<int> reals;
+        std::set<int> imags;
         for(const auto& point: m_constellation)
         {
-            reals.insert(point.real());
-            imags.insert(point.imag());
+            reals.insert(static_cast<int>(point.real()));
+            imags.insert(static_cast<int>(point.imag()));
         }
         m_realConstellation.reserve(reals.size());
         m_realConstellation.assign(reals.begin(), reals.end());
@@ -79,8 +79,8 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
                         m_constellation.cbegin(),
                         m_constellation.cend(),
                         std::complex<double>(
-                            m_realConstellation[real],
-                            m_imagConstellation[imag]))
+                            static_cast<double>(m_realConstellation[real]),
+                            static_cast<double>(m_imagConstellation[imag])))
                     -m_constellation.cbegin();
 
                 if(symbol >= m_constellation.size())
@@ -213,25 +213,25 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
     m_inputSize = windowSize+m_history;
     if(doubleEnded)
         m_inputSize += m_history;
-    m_buffer.reset(new double[m_inputSize+1]);
+    m_buffer.reset(new int[m_inputSize+1]);
 }
 
 template<typename Symbol>
 float gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
         const Symbol symbol,
-        const double* rds,
+        const int* rds,
         unsigned codewordPosition,
         const bool real) const
 {
     double mean=0;
-    const double* pastRDS = rds;
+    const int* pastRDS = rds;
 
     for(
             auto tap = m_taps[codewordPosition].crbegin();
             tap != m_taps[codewordPosition].crend();
             ++tap)
     {
-        mean += *tap * *pastRDS;
+        mean += *tap * static_cast<double>(*pastRDS);
         --pastRDS;
     }
 
@@ -253,12 +253,12 @@ void gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
 {
     const auto& constellation = this->constellation(real);
     {
-        double* rds = m_buffer.get();
+        int* rds = m_buffer.get();
         const Symbol* const inputEnd = input+m_inputSize;
 
         if(!computeHistory)
         {
-            double* const rdsHistoryEnd = rds+m_history+1;
+            int* const rdsHistoryEnd = rds+m_history+1;
             std::fill(rds, rdsHistoryEnd, 0);
             rds = rdsHistoryEnd;
             for(
@@ -271,7 +271,7 @@ void gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
         {
             *rds++ = 0;
 
-            double meanRDS = 0;
+            int meanRDS = 0;
 
             for(
                     const Symbol* symbol = input; symbol < inputEnd; ++symbol)
@@ -280,8 +280,7 @@ void gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
                 meanRDS += *rds;
                 ++rds;
             }
-            meanRDS /= m_inputSize;
-            meanRDS = std::round(meanRDS);
+            meanRDS = std::round(static_cast<double>(meanRDS)/m_inputSize);
 
             rds = m_buffer.get();
             *rds++ = -meanRDS;
@@ -294,8 +293,8 @@ void gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
         }
     }
 
-    const double* rds = m_buffer.get()+m_history;
-    const double* const rdsEnd = m_buffer.get()+m_inputSize;
+    const int* rds = m_buffer.get()+m_history;
+    const int* const rdsEnd = m_buffer.get()+m_inputSize;
 
     const Symbol* inputIt = input+m_history;
 
@@ -314,7 +313,7 @@ void gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
 
 template<typename Symbol>
 float gr::gs::Implementations::ProbabilityMapper<Symbol>::probability(
-        double rds,
+        int rds,
         Symbol symbol,
         double mean,
         double variance,
@@ -345,11 +344,11 @@ float gr::gs::Implementations::ProbabilityMapper<Symbol>::probability(
 
 template<typename Symbol>
 double gr::gs::Implementations::ProbabilityMapper<Symbol>::gaussian(
-        double value,
+        int value,
         double mean,
         double variance) const
 {
-    return std::exp(-std::pow(value-mean, 2)/(2*variance));
+    return std::exp(-std::pow(static_cast<double>(value)-mean, 2)/(2*variance));
 }
 
 template class gr::gs::Implementations::ProbabilityMapper<unsigned char>;

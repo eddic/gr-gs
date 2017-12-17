@@ -63,16 +63,16 @@ namespace gr
                 unsigned m_inputSize;
 
                 //! Buffer for our RDS values
-                std::unique_ptr<double[]> m_buffer;
+                std::unique_ptr<int[]> m_buffer;
 
                 //! Our constellation pattern
                 std::vector<std::complex<double>> m_constellation;
 
                 //! Our collapsed real constellation
-                std::vector<double> m_realConstellation;
+                std::vector<int> m_realConstellation;
 
                 //! Our collapsed imaginary constellation
-                std::vector<double> m_imagConstellation;
+                std::vector<int> m_imagConstellation;
 
                 //! Maps constellation points to collapsed real points
                 std::vector<Symbol> m_constellationToReal;
@@ -107,7 +107,7 @@ namespace gr
                  * @return The probability of symbol arriving
                  */
                 inline float probability(
-                        double rds,
+                        int rds,
                         Symbol symbol,
                         double mean,
                         double variance,
@@ -115,7 +115,7 @@ namespace gr
 
                 //! Compute a Gaussian curve
                 inline double gaussian(
-                        double value,
+                        int value,
                         double mean,
                         double variance) const;
 
@@ -173,7 +173,7 @@ namespace gr
                     return m_constellation;
                 }
 
-                const std::vector<double>& constellation(
+                const std::vector<int>& constellation(
                         const bool real) const
                 {
                     if(real)
@@ -218,7 +218,7 @@ namespace gr
                  */
                 float map(
                         const Symbol symbol,
-                        const double* rds,
+                        const int* rds,
                         unsigned codewordPosition,
                         const bool real) const;
 
