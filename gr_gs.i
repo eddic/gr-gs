@@ -15,6 +15,7 @@
 #include "gr-gs/Distribution.h"
 #include "gr-gs/Integrate.h"
 #include "gr-gs/Detector.h"
+#include "gr-gs/BCJR.h"
 #include "gr-gs/Autocovariance.h"
 #include "gr-gs/ErrorCount.h"
 #include "gr-gs/Primitives.h"
@@ -107,6 +108,14 @@ GR_SWIG_BLOCK_MAGIC2(gs, Integrate_cc);
 GR_SWIG_BLOCK_MAGIC2(gs, Detector_cb);
 GR_SWIG_BLOCK_MAGIC2(gs, Detector_cs);
 GR_SWIG_BLOCK_MAGIC2(gs, Detector_ci);
+
+%include "gr-gs/BCJR.h"
+%template(BCJR_cb) gr::gs::BCJR<unsigned char>;
+%template(BCJR_cs) gr::gs::BCJR<unsigned short>;
+%template(BCJR_ci) gr::gs::BCJR<unsigned int>;
+GR_SWIG_BLOCK_MAGIC2(gs, BCJR_cb);
+GR_SWIG_BLOCK_MAGIC2(gs, BCJR_cs);
+GR_SWIG_BLOCK_MAGIC2(gs, BCJR_ci);
 
 %include "gr-gs/Distribution.h"
 GR_SWIG_BLOCK_MAGIC2(gs, Distribution_ff);

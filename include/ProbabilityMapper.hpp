@@ -186,13 +186,22 @@ namespace gr
                         Symbol* reals,
                         Symbol* imags,
                         const Symbol* points,
-                        const size_t length);
+                        const size_t length) const;
 
                 void decollapseConstellation(
                         const Symbol* reals,
                         const Symbol* imags,
                         Symbol* points,
-                        const size_t length);
+                        const size_t length) const;
+
+                inline Symbol decollapseConstellation(
+                        Symbol real,
+                        Symbol imag) const
+                {
+                    return m_collapsedToConstellation[
+                        real
+                        +imag*m_realConstellation.size()];
+                }
 
                 //! Map an individual symbol a probability
                 /*!

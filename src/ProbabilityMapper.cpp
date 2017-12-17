@@ -361,7 +361,7 @@ void gr::gs::Implementations::ProbabilityMapper<Symbol>::collapseConstellation(
         Symbol* reals,
         Symbol* imags,
         const Symbol* points,
-        const size_t length)
+        const size_t length) const
 {
     for(unsigned i=0; i<length; ++i)
     {
@@ -375,10 +375,8 @@ void gr::gs::Implementations::ProbabilityMapper<Symbol>::decollapseConstellation
         const Symbol* reals,
         const Symbol* imags,
         Symbol* points,
-        const size_t length)
+        const size_t length) const
 {
     for(unsigned i=0; i<length; ++i)
-        points[i] = m_collapsedToConstellation[
-                reals[i]
-                +imags[i]*m_realConstellation.size()];
+        points[i] = decollapseConstellation(reals[i], imags[i]);
 }

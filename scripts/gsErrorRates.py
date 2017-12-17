@@ -21,7 +21,8 @@ class gs_stats(gr.top_block):
             maxErrors = 10000,
             maxSymbols = long(1e7),
             windowSize = 16384,
-            selectionMethod = 'MSW'):
+            selectionMethod = 'MSW',
+            bcjr = False):
         gr.top_block.__init__(self, "Guided Scrambling Error Rate Simulation")
 
         ##################################################
@@ -41,12 +42,17 @@ class gs_stats(gr.top_block):
         self.symbolGenerator = gs.SymbolGenerator_b(([1] * fieldSize), '', 0)
         self.noiseAdder = blocks.add_vcc(1)
         self.mlErrorRate = gs.ErrorCount_bf(False, '', 0, 0)
-        self.mapErrorRate = gs.ErrorCount_bf(False, '', maxErrors, maxSymbols)
         self.guidedScrambler = gs.GuidedScrambler_bb(fieldSize, codewordLength, augmentingLength, continuous, (scramblingPolynomial), 0, (constellation), 'MSW', '')
-        self.detector = gs.Detector_cb(fieldSize, codewordLength, augmentingLength, 0.01, noisePower, windowSize, '')
         self.constellationDecoderMultiplier = blocks.multiply_const_vcc((constellationObj.points()[0].real/constellation[0].real, ))
         self.constellationDecoder = digital.constellation_decoder_cb(constellationObj)
         self.channelNoise = analog.noise_source_c(analog.GR_GAUSSIAN, np.sqrt(noisePower), 0)
+
+        if bcjr:
+            self.detector = gs.BCJR_cb(fieldSize, codewordLength, augmentingLength, 0.01, noisePower, windowSize, maxErrors, maxSymbols)
+            self.mapErrorRate = self.detector
+        else:
+            self.mapErrorRate = gs.ErrorCount_bf(False, '', maxErrors, maxSymbols)
+            self.detector = gs.Detector_cb(fieldSize, codewordLength, augmentingLength, 0.01, noisePower, windowSize, '')
 
         ##################################################
         # Connections
@@ -54,14 +60,18 @@ class gs_stats(gr.top_block):
         self.connect((self.channelNoise, 0), (self.noiseAdder, 0))
         self.connect((self.constellationDecoder, 0), (self.mlErrorRate, 1))
         self.connect((self.constellationDecoderMultiplier, 0), (self.constellationDecoder, 0))
-        self.connect((self.detector, 0), (self.mapErrorRate, 1))
-        self.connect((self.guidedScrambler, 0), (self.mapErrorRate, 0))
         self.connect((self.guidedScrambler, 0), (self.mlErrorRate, 0))
         self.connect((self.guidedScrambler, 0), (self.symbolMapper, 0))
         self.connect((self.noiseAdder, 0), (self.constellationDecoderMultiplier, 0))
         self.connect((self.noiseAdder, 0), (self.detector, 0))
         self.connect((self.symbolGenerator, 0), (self.guidedScrambler, 0))
         self.connect((self.symbolMapper, 0), (self.noiseAdder, 1))
+
+        if bcjr:
+            self.connect((self.guidedScrambler, 0), (self.detector, 1))
+        else:
+            self.connect((self.detector, 0), (self.mapErrorRate, 1))
+            self.connect((self.guidedScrambler, 0), (self.mapErrorRate, 0))
 
     def MAPerrorRate(self):
         return self.mapErrorRate.rate()
@@ -81,16 +91,17 @@ class gs_stats(gr.top_block):
         return self.mapErrorRate.finished()
 
 def processArguments():
-	parser = argparse.ArgumentParser(description='Simulate GS detection error rates.')
-	parser.add_argument('output', help='output file')
-	parser.add_argument('-f', '--fieldSize', type=int)
-	parser.add_argument('-c', '--codewordLength', type=int)
-	parser.add_argument('-a', '--augmentingLength', type=int)
-        parser.add_argument('-w', '--windowSize', type=int, default=128, help='default: 128')
-        parser.add_argument('-e', '--maxErrors', type=float, default=1e4, help='default: 1e4')
-        parser.add_argument('-s', '--maxSymbols', type=float, default=2e9, help='default: 2e9')
+    parser = argparse.ArgumentParser(description='Simulate GS detection error rates.')
+    parser.add_argument('output', help='output file')
+    parser.add_argument('-f', '--fieldSize', type=int)
+    parser.add_argument('-c', '--codewordLength', type=int)
+    parser.add_argument('-a', '--augmentingLength', type=int)
+    parser.add_argument('-w', '--windowSize', type=int, default=128, help='default: 128')
+    parser.add_argument('-e', '--maxErrors', type=float, default=1e4, help='default: 1e4')
+    parser.add_argument('-s', '--maxSymbols', type=float, default=2e9, help='default: 2e9')
+    parser.add_argument('-b', '--bcjr', action='store_true', default=False, help='Use BCJR Algorithm')
 
-	return parser.parse_args()
+    return parser.parse_args()
 
 args = processArguments()
 fieldSize = args.fieldSize
@@ -121,7 +132,8 @@ while True:
             noisePower = noisePower,
             windowSize = windowSize,
             maxSymbols = long(maxSymbols),
-            maxErrors = maxErrors)
+            maxErrors = maxErrors,
+            bcjr = args.bcjr)
     tb.start()
 
     sys.stdout.write("Computing error rate for noise power = {:g}... 00.0%".format(
