@@ -32,6 +32,7 @@
 #include <mutex>
 #include <memory>
 #include <list>
+#include <queue>
 
 #include "gr-gs/BCJR.h"
 #include "ProbabilityMapper.hpp"
@@ -176,36 +177,58 @@ namespace gr
                     {
                         Trellis& m_trellis;
                         const int m_rds;
-                        const Symbol m_symbol;
-                        const double m_metric;
+                        Symbol m_symbol;
+                        double m_metric;
                         std::shared_ptr<Node> m_source;
-                        std::shared_ptr<std::set<Node*>> m_competition;
+                        const std::shared_ptr<std::set<Node*>> m_set;
 
                         Node(
                                 Trellis& trellis,
                                 int rds,
-                                Symbol symbol,
-                                double metric,
-                                std::shared_ptr<Node> source,
-                                std::shared_ptr<std::set<Node*>> competition):
+                                std::shared_ptr<std::set<Node*>> set):
                             m_trellis(trellis),
                             m_rds(rds),
-                            m_symbol(symbol),
-                            m_metric(metric),
-                            m_source(source),
-                            m_competition(competition)
+                            m_set(set)
                         {
-                            m_competition->insert(this);
+                            m_set->insert(this);
                         }
 
                         ~Node()
                         {
-                            m_competition->erase(this);
-                            if(m_competition->size()==1)
-                                m_trellis.close(*m_competition->begin());
+                            m_set->erase(this);
+                            if(m_set->size()==1)
+                                m_set->begin()->close(0);
+                        }
+
+                        close(const unsigned depth)
+                        {
+                            if(m_set->empty())
+                            {
+                                if(!m_trellis.m_outputBuffer.empty())
+                                {
+                                    m_trellis.m_output.splice(
+                                            m_trellis.m_output.end(),
+                                            m_trellis.m_outputBuffer);
+                                }
+                            }
+                            else
+                            {
+                                m_trellis.m_outputBuffer.push_front(
+                                        node->symbol);
+                                m_set.clear();
+                            }
+
+                            if(m_source)
+                                m_source->close(depth+1);
+
+                            if(depth >= m_history)
+                                m_source.reset();
                         }
                     };
-                    void close(Node* node);
+
+                    const unsigned m_history;
+                    std::list<Symbol> m_outputBuffer;
+                    std::list<Symbol> m_output;
                 };
             };
         }
