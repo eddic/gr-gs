@@ -32,6 +32,7 @@
 #include <gnuradio/io_signature.h>
 #include <algorithm>
 #include <limits>
+#include <numeric>
 
 template<typename Symbol>
 double gr::gs::Implementations::BCJR_impl<Symbol>::noisePower() const
@@ -68,22 +69,29 @@ int gr::gs::Implementations::BCJR_impl<Symbol>::work(
     if(m_maxErrors > 0 && m_errors >= m_maxErrors)
         return -1;
 
-    const auto& inputSize = m_mapper.inputSize();
-    const auto& history = m_mapper.history();
     const Complex*& input = reinterpret_cast<const Complex*&>(input_items[0]);
     const Symbol*& properSymbols = reinterpret_cast<const Symbol*&>(input_items[1]);
     unsigned outputted=0;
 
-    while(noutput_items-outputted >= inputSize-history && m_errors<m_maxErrors)
+    while(noutput_items-outputted >= m_windowSize && m_errors<m_maxErrors)
     {
-        detect(input, m_realSymbols, true);
-        detect(input, m_imagSymbols, false);
+        int realCloser = m_realRDS.back();
+        int imagCloser = m_imagRDS.back();
 
-        m_codewordPosition
-            = (m_codewordPosition+noutput_items)%m_codewordLength;
-        m_started = true;
+        for(unsigned i=0; i<m_windowSize; ++i)
+        {
+            realCloser += static_cast<int>(
+                    m_mapper.constellation()[properSymbols[i]].real());
+            imagCloser += static_cast<int>(
+                    m_mapper.constellation()[properSymbols[i]].imag());
+        }
 
-        for(unsigned i=history; i<inputSize; ++i)
+        const auto oldCodewordPosition=m_codewordPosition;
+        detect(input, m_realSymbols, realCloser, true);
+        m_codewordPosition=oldCodewordPosition;
+        detect(input, m_imagSymbols, imagCloser, false);
+
+        for(unsigned i=0; i<m_windowSize; ++i)
             if(m_mapper.decollapseConstellation(
                         m_realSymbols[i],
                         m_imagSymbols[i]) != properSymbols[i])
@@ -102,35 +110,30 @@ template<typename Symbol>
 void gr::gs::Implementations::BCJR_impl<Symbol>::detect(
         const Complex* input,
         std::unique_ptr<Symbol[]>& symbols,
+        const int closer,
         const bool real)
 {
-    const auto& inputSize = m_mapper.inputSize();
     const auto& constellation = m_mapper.constellation(real);
-
-    // Calculate our euclidean distances, winners and ranks
+    
+    auto output = symbols.get();
+    for(unsigned index=0; index < m_windowSize; ++index)
     {
-        const unsigned constellationSize = constellation.size();
-        const unsigned distanceSize =  inputSize*constellationSize;
-        auto output = symbols.get();
-        for(
-                unsigned symbol=0;
-                symbol < distanceSize;
-                symbol += constellationSize)
+        // Calculate euclidean distances
+        const double value = real?input->real():input->imag();
+        ++input;
+        for(Symbol symbol=0; symbol < constellation.size(); ++symbol)
         {
-            const double value = real?input->real():input->imag();
-            ++input;
-            for(Symbol point=0; point < constellationSize; ++point)
-            {
-                const double difference = value - constellation[point];
-                m_distances[symbol + point] = difference*difference;
-            }
-
-            *output++ = std::min_element(
-                    m_distances.get()+symbol,
-                    m_distances.get()+symbol+constellationSize)
-                -(m_distances.get()+symbol);
-
+            const double difference = value - constellation[symbol];
+            m_distances[symbol] = difference*difference;
         }
+
+        *output++ = std::min_element(
+                m_distances.begin(),
+                m_distances.end())
+            -m_distances.begin();
+
+        m_codewordPosition
+            = (m_codewordPosition+1)%m_codewordLength;
     }
 
     return;
@@ -186,22 +189,19 @@ gr::gs::Implementations::BCJR_impl<Symbol>::BCJR_impl(
             minCorrelation,
             windowSize,
             false),
-    m_started(false),
     m_windowSize(windowSize),
-    m_realSymbols(new Symbol[m_mapper.inputSize()]),
-    m_imagSymbols(new Symbol[m_mapper.inputSize()]),
-    m_distances(new double[
-            m_mapper.inputSize()*m_mapper.constellation(true).size()]),
-    m_probabilities(new float[windowSize + m_mapper.history()]),
-    m_metrics(new double[windowSize + m_mapper.history()]),
+    m_realSymbols(new Symbol[m_windowSize]),
+    m_imagSymbols(new Symbol[m_windowSize]),
+    m_distances(m_mapper.constellation(true).size()),
     m_maxErrors(maxErrors),
     m_maxSymbols(maxSymbols),
     m_errors(0),
     m_symbols(0),
-    m_states(getStates(fieldSize, codewordLength, augmentingLength))
+    m_states(getStates(fieldSize, codewordLength, augmentingLength)),
+    m_realRDS(m_mapper.history(), 0),
+    m_imagRDS(m_mapper.history(), 0)
 {
     this->enable_update_rate(false);
-    this->set_history(m_mapper.history()+1);
     this->set_min_noutput_items(m_windowSize);
 }
 

@@ -272,12 +272,15 @@ void gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
 
     const Symbol* inputIt = input+m_history;
 
+    std::vector<double> weightings(constellation.size());
+
     while(rds != rdsEnd)
     {
 
-        const auto weightings = this->weightings(
+        this->weightings(
                 rds++,
                 codewordPosition++,
+                weightings,
                 real);
 
         *output++ = weightings[*inputIt++] / std::accumulate(
@@ -290,42 +293,33 @@ void gr::gs::Implementations::ProbabilityMapper<Symbol>::map(
     }
 }
 
-template<typename Symbol> std::vector<double>
-gr::gs::Implementations::ProbabilityMapper<Symbol>::weightings(
-        const int* const rds,
+template<typename Symbol>
+void gr::gs::Implementations::ProbabilityMapper<Symbol>::weightings_impl(
+        const int rds,
         const unsigned codewordPosition,
+        const double mean,
+        std::vector<double>& weightings,
         const bool real) const
 {
     const auto& constellation = this->constellation(real);
-    std::vector<double> weightings(constellation.size(), 0);
-
     const double& variance = m_variances[codewordPosition];
-    double mean=0;
-    const int* pastRDS = rds;
-
-    for(
-            auto tap = m_taps[codewordPosition].crbegin();
-            tap != m_taps[codewordPosition].crend();
-            ++tap)
-    {
-        mean += *tap * static_cast<double>(*pastRDS);
-        --pastRDS;
-    }
 
     if(variance == 0)
     {
         for(Symbol symbol=0; symbol<constellation.size(); ++symbol)
-            if(*rds+constellation[symbol] == mean)
+        {
+            if(rds+constellation[symbol] == mean)
                 weightings[symbol] = 1.0;
+            else
+                weightings[symbol] = 0.0;
+        }
     }
     else
         for(Symbol symbol=0; symbol<constellation.size(); ++symbol)
             weightings[symbol] = gaussian(
-                    *rds+constellation[symbol],
+                    rds+constellation[symbol],
                     mean,
                     variance);
-
-    return weightings;
 }
 
 template<typename Symbol>

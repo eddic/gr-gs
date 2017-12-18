@@ -100,19 +100,6 @@ namespace gr
                         const unsigned long long maxErrors,
                         const unsigned long long maxSymbols);
 
-                /*~BCJR_impl()
-                {
-                    unsigned winner=0;
-                    unsigned max=0;
-                    for(const auto& pair: hist)
-                        if(pair.second>max)
-                        {
-                            winner=pair.first;
-                            max=pair.second;
-                        }
-                    std::cout << "Winner=" << winner << '\n';
-                }*/
-
                 double noisePower() const;
                 void set_noisePower(const double noise);
 
@@ -138,9 +125,6 @@ namespace gr
                 //! The probability mapping object
                 ProbabilityMapper<Symbol> m_mapper;
 
-                //! Have we started mapping yet?
-                bool m_started;
-
                 //! Our window size
                 const unsigned m_windowSize;
 
@@ -151,13 +135,7 @@ namespace gr
                 std::unique_ptr<Symbol[]> m_imagSymbols;
 
                 //! Buffer for distances
-                std::unique_ptr<double[]> m_distances;
-
-                //! Buffer for RDS probabilities
-                std::unique_ptr<float[]> m_probabilities;
-
-                //! Buffer for metrics
-                std::unique_ptr<double[]> m_metrics;
+                std::vector<double> m_distances;
 
                 //! Max errors before EOF
                 const unsigned long long m_maxErrors;
@@ -183,7 +161,52 @@ namespace gr
                 void detect(
                         const Complex* input,
                         std::unique_ptr<Symbol[]>& symbols,
+                        const int closer,
                         const bool real);
+
+                //! Stores current real RDS state
+                std::vector<int> m_realRDS;
+
+                //! Stores current imaginary RDS state
+                std::vector<int> m_imagRDS;
+
+                class Trellis
+                {
+                    struct Node
+                    {
+                        Trellis& m_trellis;
+                        const int m_rds;
+                        const Symbol m_symbol;
+                        const double m_metric;
+                        std::shared_ptr<Node> m_source;
+                        std::shared_ptr<std::set<Node*>> m_competition;
+
+                        Node(
+                                Trellis& trellis,
+                                int rds,
+                                Symbol symbol,
+                                double metric,
+                                std::shared_ptr<Node> source,
+                                std::shared_ptr<std::set<Node*>> competition):
+                            m_trellis(trellis),
+                            m_rds(rds),
+                            m_symbol(symbol),
+                            m_metric(metric),
+                            m_source(source),
+                            m_competition(competition)
+                        {
+                            m_competition->insert(this);
+                        }
+
+                        ~Node()
+                        {
+                            m_competition->erase(this);
+                            if(m_competition->size()==1)
+                                m_trellis.close(*m_competition->begin());
+                        }
+                    };
+                    void close(Node* node);
+                };
             };
         }
     }

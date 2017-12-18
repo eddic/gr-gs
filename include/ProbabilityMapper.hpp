@@ -101,6 +101,13 @@ namespace gr
                         double mean,
                         double variance) const;
 
+                void weightings_impl(
+                        const int rds,
+                        const unsigned codewordPosition,
+                        const double mean,
+                        std::vector<double>& weightings,
+                        const bool real) const;
+
             public:
                 //! Build our probability mapper
                 /*!
@@ -187,21 +194,43 @@ namespace gr
 
                 //! Calculate the probability weightings
                 /*!
-                 * @param [in] rds Pointer to the *last* value in the RDS
-                 *                 history array. There should be history() rds
-                 *                 values available in this array.
+                 * @param [in] rds Reversible iterator to the *last* value in
+                 *                 the RDS history array. There should be
+                 *                 history() rds values available in this array.
                  * @param [in] codewordPosition Symbol's (not including the
                  *                              history) position in the
                  *                              codeword.
+                 * @param [out] Probability weightings by symbol
                  * @param [in] real Set to true if we're working on the real
                  *                  axis. False means we're working on the
                  *                  imaginary axis.
-                 * @return Probability weightings by symbol
                  */
-                std::vector<double> weightings(
-                        const int* const rds,
+                template<typename InputIt>
+                inline void weightings(
+                        InputIt rds,
                         const unsigned codewordPosition,
-                        const bool real) const;
+                        std::vector<double>& weightings,
+                        const bool real) const
+                {
+                    double mean=0;
+                    const int currentRDS = *rds;
+
+                    for(
+                            auto tap = m_taps[codewordPosition].crbegin();
+                            tap != m_taps[codewordPosition].crend();
+                            ++tap)
+                    {
+                        mean += *tap * static_cast<double>(*rds);
+                        --rds;
+                    }
+
+                    weightings_impl(
+                            currentRDS,
+                            codewordPosition,
+                            mean,
+                            weightings,
+                            real);
+                }
 
                 //! Map a symbol sequence to a sequence of probabilities
                 /*!
