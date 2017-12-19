@@ -138,6 +138,3 @@ while True:
 
     if tb.errors() < maxErrors:
         break
-
-    if noiseExponent == 1:
-        break
