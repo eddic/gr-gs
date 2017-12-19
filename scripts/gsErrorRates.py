@@ -101,13 +101,12 @@ scrambler = gs.defaultScrambler_b(
 maxSymbols = int(args.maxSymbols)
 maxErrors = int(args.maxErrors)
 
-noiseExponent = -30
-#noiseExponent = 0
+noiseExponent = 0
 
 file = open(args.output, 'w')
 
 while True:
-    noisePower = 0.1875 * (7.0/8)**noiseExponent
+    noisePower = 10.0**((10.0-noiseExponent)/20)
     noiseExponent += 1
 
     tb = gs_stats(
