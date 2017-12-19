@@ -46,12 +46,11 @@ class gs_stats(gr.top_block):
         self.constellationDecoderMultiplier = blocks.multiply_const_vcc((constellationObj.points()[0].real/constellation[0].real, ))
         self.constellationDecoder = digital.constellation_decoder_cb(constellationObj)
         self.channelNoise = analog.noise_source_c(analog.GR_GAUSSIAN, np.sqrt(noisePower), 0)
+        self.mapErrorRate = gs.ErrorCount_bf(False, '', maxErrors, maxSymbols)
 
         if bcjr:
-            self.detector = gs.BCJR_cb(fieldSize, codewordLength, augmentingLength, 0.01, noisePower, windowSize, maxErrors, maxSymbols)
-            self.mapErrorRate = self.detector
+            self.detector = gs.BCJR_cb(fieldSize, codewordLength, augmentingLength, 0.01, noisePower)
         else:
-            self.mapErrorRate = gs.ErrorCount_bf(False, '', maxErrors, maxSymbols)
             self.detector = gs.Detector_cb(fieldSize, codewordLength, augmentingLength, 0.01, noisePower, windowSize, '')
 
         ##################################################
@@ -66,12 +65,8 @@ class gs_stats(gr.top_block):
         self.connect((self.noiseAdder, 0), (self.detector, 0))
         self.connect((self.symbolGenerator, 0), (self.guidedScrambler, 0))
         self.connect((self.symbolMapper, 0), (self.noiseAdder, 1))
-
-        if bcjr:
-            self.connect((self.guidedScrambler, 0), (self.detector, 1))
-        else:
-            self.connect((self.detector, 0), (self.mapErrorRate, 1))
-            self.connect((self.guidedScrambler, 0), (self.mapErrorRate, 0))
+        self.connect((self.detector, 0), (self.mapErrorRate, 1))
+        self.connect((self.guidedScrambler, 0), (self.mapErrorRate, 0))
 
     def MAPerrorRate(self):
         return self.mapErrorRate.rate()
@@ -116,7 +111,7 @@ maxSymbols = int(args.maxSymbols)
 maxErrors = int(args.maxErrors)
 
 noiseExponent = -30
-#noiseExponent = 5
+#noiseExponent = 0
 
 file = open(args.output, 'w')
 

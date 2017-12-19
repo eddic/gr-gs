@@ -3,7 +3,7 @@
  * @brief     Declares the "Guided Scrambling BCJR" GNU Radio block
  *            implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      December 16, 2017
+ * @date      December 18, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -32,7 +32,7 @@
 #include <mutex>
 #include <memory>
 #include <list>
-#include <queue>
+#include <numeric>
 
 #include "gr-gs/BCJR.h"
 #include "ProbabilityMapper.hpp"
@@ -52,7 +52,7 @@ namespace gr
              *
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date    December 16, 2017
+             * @date    December 18, 2017
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -67,6 +67,13 @@ namespace gr
 
                 //! GNU Radio work function
                 int work(int noutput_items,
+                        gr_vector_const_void_star &input_items,
+                        gr_vector_void_star &output_items);
+
+                //! GNU Radio work function
+                int general_work(
+                        int noutput_items,
+                        gr_vector_int &ninput_items,
                         gr_vector_const_void_star &input_items,
                         gr_vector_void_star &output_items);
 
@@ -85,30 +92,16 @@ namespace gr
                  *                            truncated from our computations.
                  * @param [in] noise This noise power level (or variance) is
                  *                   required to perform accurate MAP detection.
-                 * @param [in] windowSize Sequence length to use for detection
-                 * @param [in] maxErrors Maximum number of errors to log before
-                 *                       EOF.
-                 * @param [in] maxSymbols Maximum number of symbols to log
-                 *                        before EOF.
                  */
                 inline BCJR_impl(
                         const unsigned fieldSize,
                         const unsigned codewordLength,
                         const unsigned augmentingLength,
                         const double minCorrelation,
-                        const double noise,
-                        const unsigned windowSize,
-                        const unsigned long long maxErrors,
-                        const unsigned long long maxSymbols);
+                        const double noise);
 
                 double noisePower() const;
                 void set_noisePower(const double noise);
-
-                unsigned long long symbols() const;
-                unsigned long long errors() const;
-                double rate() const;
-                bool finished() const;
-                void reset();
 
             private:
                 //! Let's be thread safe
@@ -117,119 +110,160 @@ namespace gr
                 //! Our current noise power level (variance)
                 double m_noisePower;
 
-                //! The codeword length
-                const unsigned int m_codewordLength;
-
-                //! Where are we in our codeword?
-                unsigned int m_codewordPosition;
+                //! Codeword length
+                const unsigned m_codewordLength;
 
                 //! The probability mapping object
                 ProbabilityMapper<Symbol> m_mapper;
 
-                //! Our window size
-                const unsigned m_windowSize;
+                //! RDS state bound
+                const unsigned m_bound;
 
-                //! Buffer for detected real symbols
-                std::unique_ptr<Symbol[]> m_realSymbols;
-
-                //! Buffer for detected imaginary symbols
-                std::unique_ptr<Symbol[]> m_imagSymbols;
-
-                //! Buffer for distances
-                std::vector<double> m_distances;
-
-                //! Max errors before EOF
-                const unsigned long long m_maxErrors;
-
-                //! Max symbols before EOF
-                const unsigned long long m_maxSymbols;
-
-                //! Error count
-                unsigned long long m_errors;
-
-                //! Symbol count
-                unsigned long long m_symbols;
-
-                //! How many states should we have?
-                const unsigned m_states;
-
-                static inline unsigned getStates(
+                //! Get the RDS bound of the code
+                static inline unsigned getBound(
                         const unsigned fieldSize,
                         const unsigned codewordLength,
                         const unsigned augmentingLength);
 
-                //! Perform single axis detection on a sequence
-                void detect(
-                        const Complex* input,
-                        std::unique_ptr<Symbol[]>& symbols,
-                        const int closer,
-                        const bool real);
-
-                //! Stores current real RDS state
-                std::vector<int> m_realRDS;
-
-                //! Stores current imaginary RDS state
-                std::vector<int> m_imagRDS;
-
+                //! Trellis for guided scrambling detection
                 class Trellis
                 {
-                    struct Node
+                public:
+                    /*!
+                     * @param [in] real True for real or in-phase componenent.
+                     *                  False for imaginary or quadrature
+                     *                  component.
+                     * @param [in] mapper Our source symbol probability mapper.
+                     * @param [in] codewordLength Length of our codewords.
+                     * @param [in] noise This noise power level (or variance) is
+                     *                   required to perform accurate MAP
+                     *                   detection.
+                     * @param [in] bound The upper bound of our RDS state.
+                     */
+                    Trellis(
+                            const bool real,
+                            const ProbabilityMapper<Symbol>& mapper,
+                            const unsigned codewordLength,
+                            const double noisePower,
+                            const unsigned bound);
+
+                    void insert(const Complex* input, size_t size);
+
+                    //! Get what available output data there is
+                    std::list<Symbol> output();
+
+                    //! Put back the output data we didn't use.
+                    void putBack(std::list<Symbol>&& output);
+
+                    //! Set our noise power
+                    void set_noisePower(const double noise);
+
+                    //! Change the codeword position
+                    void set_codewordPosition(const unsigned codewordPosition);
+
+                private:
+                    class RDSiterator;
+
+                    //! A node in the detection trellis
+                    class Node
                     {
+                    private:
+                        //! The parent trellis
                         Trellis& m_trellis;
-                        const int m_rds;
-                        Symbol m_symbol;
-                        double m_metric;
-                        std::shared_ptr<Node> m_source;
+
+                        //! A set of all node in the current discrete time value
                         const std::shared_ptr<std::set<Node*>> m_set;
 
-                        Node(
+                    public:
+                        //! RDS state value for this node
+                        const int m_rds;
+
+                        //! Symbol that transitioned to this RDS state
+                        Symbol m_symbol;
+
+                        //! Accumulated metric at this node
+                        double m_metric;
+
+                        //! Source node
+                        std::shared_ptr<Node> m_source;
+
+                        inline Node(
                                 Trellis& trellis,
                                 int rds,
-                                std::shared_ptr<std::set<Node*>> set):
-                            m_trellis(trellis),
-                            m_rds(rds),
-                            m_set(set)
-                        {
-                            m_set->insert(this);
-                        }
+                                std::shared_ptr<std::set<Node*>> set);
 
-                        ~Node()
-                        {
-                            m_set->erase(this);
-                            if(m_set->size()==1)
-                                m_set->begin()->close(0);
-                        }
+                        inline ~Node();
 
-                        close(const unsigned depth)
-                        {
-                            if(m_set->empty())
-                            {
-                                if(!m_trellis.m_outputBuffer.empty())
-                                {
-                                    m_trellis.m_output.splice(
-                                            m_trellis.m_output.end(),
-                                            m_trellis.m_outputBuffer);
-                                }
-                            }
-                            else
-                            {
-                                m_trellis.m_outputBuffer.push_front(
-                                        node->symbol);
-                                m_set.clear();
-                            }
+                        //! Close the trellis at this node
+                        void close(const unsigned depth);
 
-                            if(m_source)
-                                m_source->close(depth+1);
-
-                            if(depth >= m_history)
-                                m_source.reset();
-                        }
+                        //! Get a reversable RDS iterator starting at this node
+                        RDSiterator rds() const;
                     };
 
-                    const unsigned m_history;
-                    std::list<Symbol> m_outputBuffer;
+                    //! Reverable iterator for pulling RDS values
+                    class RDSiterator
+                    {
+                    private:
+                        //! Associated node
+                        const Node* m_node;
+
+                    public:
+                        //! Intialize from a node
+                        inline RDSiterator(const Node* node);
+
+                        //! Dereference to the RDS value
+                        inline int operator*() const;
+
+                        //! Move backwards through the trellis
+                        inline RDSiterator& operator--();
+                    };
+
+                    //! Append a new set of nodes to the trellis
+                    void append(const double* distances);
+
+                    //! Always practice safe threading
+                    std::mutex m_mutex;
+
+                    //! Available output symbols
                     std::list<Symbol> m_output;
+
+                    //! Buffer for putting new output symbols
+                    std::list<Symbol> m_outputBuffer;
+
+                    //! True for real/in-phase component.
+                    const bool m_real;
+
+                    //! Associated constellation
+                    const std::vector<int>& m_constellation;
+
+                    //! Our probability mapper
+                    const ProbabilityMapper<Symbol>& m_mapper;
+
+                    //! History required by the probability mapper
+                    const unsigned m_history;
+
+                    //! The head end of the trellis
+                    std::map<int, std::shared_ptr<Node>> m_head;
+
+                    //! The codeword length
+                    const unsigned m_codewordLength;
+
+                    //! Our position in the codeword
+                    unsigned m_codewordPosition;
+
+                    //! Upper bound to the RDS states
+                    const unsigned m_bound;
+
+                    //! Current noise power level
+                    double m_noisePower;
                 };
+
+                //! The real/in-phase trellis
+                Trellis m_realTrellis;
+
+                //! The imaginary-quadrature trellis
+                Trellis m_imagTrellis;
             };
         }
     }

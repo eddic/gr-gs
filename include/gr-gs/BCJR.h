@@ -29,7 +29,7 @@
 #define GR_GS_BCJR_H
 
 #include "gr-gs/config.h"
-#include <gnuradio/sync_block.h>
+#include <gnuradio/block.h>
 
 //! GNU Radio Namespace
 namespace gr
@@ -51,7 +51,7 @@ namespace gr
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         template<typename Symbol>
-        class GS_API BCJR: virtual public gr::sync_block
+        class GS_API BCJR: virtual public gr::block
         {
         public:
             //! Shared pointer to this
@@ -84,10 +84,7 @@ namespace gr
                     const unsigned codewordLength,
                     const unsigned augmentingLength,
                     const double minCorrelation,
-                    const double noise,
-                    const unsigned windowSize,
-                    const unsigned long long maxErrors = 0,
-                    const unsigned long long maxSymbols = 0);
+                    const double noise);
 
             //! Access noise power
             /*!
@@ -103,21 +100,6 @@ namespace gr
              * @param  [in] power Current noise power level (variance)
              */
             virtual void set_noisePower(const double noise) =0;
-
-            //! See the total symbols counted
-            virtual unsigned long long symbols() const =0;
-
-            //! See the total errors
-            virtual unsigned long long errors() const =0;
-
-            //! See the current error rate [0,1]
-            virtual double rate() const =0;
-
-            //! Have we reached the end?
-            virtual bool finished() const =0;
-
-            //! Reset the block
-            virtual void reset() =0;
         };
 
         typedef BCJR<unsigned char> BCJR_cb;

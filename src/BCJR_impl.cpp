@@ -3,7 +3,7 @@
  * @brief     Defines the "Guided Scrambling BCJR" GNU Radio block
  *            implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      December 3, 2017
+ * @date      December 18, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -47,100 +47,58 @@ void gr::gs::Implementations::BCJR_impl<Symbol>::set_noisePower(
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_noisePower = noise;
+    m_realTrellis.set_noisePower(noise);
+    m_imagTrellis.set_noisePower(noise);
 }
 
 template<typename Symbol>
-int gr::gs::Implementations::BCJR_impl<Symbol>::work(
+int gr::gs::Implementations::BCJR_impl<Symbol>::general_work(
         int noutput_items,
+        gr_vector_int &ninput_items,
         gr_vector_const_void_star &input_items,
         gr_vector_void_star &output_items)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    if(m_maxSymbols > 0)
-    {
-        if(m_symbols >= m_maxSymbols)
-            return -1;
-
-        if(m_symbols+noutput_items > m_maxSymbols)
-            noutput_items = m_maxSymbols-m_symbols;
-    }
-
-    if(m_maxErrors > 0 && m_errors >= m_maxErrors)
-        return -1;
-
     const Complex*& input = reinterpret_cast<const Complex*&>(input_items[0]);
-    const Symbol*& properSymbols = reinterpret_cast<const Symbol*&>(input_items[1]);
+    Symbol*& output = reinterpret_cast<Symbol*&>(output_items[0]);
+
     unsigned outputted=0;
 
-    while(noutput_items-outputted >= m_windowSize && m_errors<m_maxErrors)
+    m_realTrellis.insert(input, ninput_items[0]);
+    m_imagTrellis.insert(input, ninput_items[0]);
+    this->consume_each(ninput_items[0]);
+
+    auto reals = m_realTrellis.output();
+    auto real = reals.begin();
+    auto imags = m_imagTrellis.output();
+    auto imag = imags.begin();
+    while(
+            real != reals.end() &&
+            imag != imags.end() &&
+            outputted < static_cast<unsigned>(noutput_items))
     {
-        int realCloser = m_realRDS.back();
-        int imagCloser = m_imagRDS.back();
-
-        for(unsigned i=0; i<m_windowSize; ++i)
-        {
-            realCloser += static_cast<int>(
-                    m_mapper.constellation()[properSymbols[i]].real());
-            imagCloser += static_cast<int>(
-                    m_mapper.constellation()[properSymbols[i]].imag());
-        }
-
-        const auto oldCodewordPosition=m_codewordPosition;
-        detect(input, m_realSymbols, realCloser, true);
-        m_codewordPosition=oldCodewordPosition;
-        detect(input, m_imagSymbols, imagCloser, false);
-
-        for(unsigned i=0; i<m_windowSize; ++i)
-            if(m_mapper.decollapseConstellation(
-                        m_realSymbols[i],
-                        m_imagSymbols[i]) != properSymbols[i])
-                ++m_errors;
-
-        m_symbols += m_windowSize;
-        outputted += m_windowSize;
-        input += m_windowSize;
-        properSymbols += m_windowSize;
+        *output++ = m_mapper.decollapseConstellation(*real++, *imag++);
+        ++outputted;
     }
+
+    reals.erase(
+            reals.begin(),
+            real);
+    if(!reals.empty())
+        m_realTrellis.putBack(std::move(reals));
+
+    imags.erase(
+            imags.begin(),
+            imag);
+    if(!imags.empty())
+        m_imagTrellis.putBack(std::move(imags));
 
     return outputted;
 }
 
 template<typename Symbol>
-void gr::gs::Implementations::BCJR_impl<Symbol>::detect(
-        const Complex* input,
-        std::unique_ptr<Symbol[]>& symbols,
-        const int closer,
-        const bool real)
-{
-    const auto& constellation = m_mapper.constellation(real);
-    
-    auto output = symbols.get();
-    for(unsigned index=0; index < m_windowSize; ++index)
-    {
-        // Calculate euclidean distances
-        const double value = real?input->real():input->imag();
-        ++input;
-        for(Symbol symbol=0; symbol < constellation.size(); ++symbol)
-        {
-            const double difference = value - constellation[symbol];
-            m_distances[symbol] = difference*difference;
-        }
-
-        *output++ = std::min_element(
-                m_distances.begin(),
-                m_distances.end())
-            -m_distances.begin();
-
-        m_codewordPosition
-            = (m_codewordPosition+1)%m_codewordLength;
-    }
-
-    return;
-}
-
-template<typename Symbol>
-unsigned gr::gs::Implementations::BCJR_impl<Symbol>::getStates(
+unsigned gr::gs::Implementations::BCJR_impl<Symbol>::getBound(
         const unsigned fieldSize,
         const unsigned codewordLength,
         const unsigned augmentingLength)
@@ -156,14 +114,22 @@ unsigned gr::gs::Implementations::BCJR_impl<Symbol>::getStates(
             for(unsigned imag=0; imag<distributionDataWidth; ++imag)
                 collapsed[real] += distribution[position][real][imag];
 
-    unsigned width=0;
-    for(const auto& value: collapsed)
-        if(value>1e-20)
-            ++width;
+    int minimum=0, maximum=0;
+    for(unsigned i=0; i<distributionDataWidth; ++i)
+    {
+        if(minimum==0)
+        {
+            if(collapsed[i] > 1e-20)
+                minimum=i;
+        }
+        else if(maximum==0 && collapsed[i] < 1e-20)
+            maximum=i;
+    }
 
-    width+=2;
+    minimum -= distributionDataWidth/2;
+    maximum -= distributionDataWidth/2;
 
-    return width;
+    return std::max(maximum, std::abs(minimum));
 }
 
 template<typename Symbol>
@@ -172,37 +138,25 @@ gr::gs::Implementations::BCJR_impl<Symbol>::BCJR_impl(
         const unsigned codewordLength,
         const unsigned augmentingLength,
         const double minCorrelation,
-        const double noise,
-        const unsigned windowSize,
-        const unsigned long long maxErrors,
-        const unsigned long long maxSymbols):
-    gr::sync_block("Guided Scrambling BCJR",
-        io_signature::make2(2,2,sizeof(gr::gs::Complex), sizeof(Symbol)),
-        io_signature::make(0,0,0)),
+        const double noise):
+    gr::block("Guided Scrambling BCJR",
+        io_signature::make(1,1,sizeof(gr::gs::Complex)),
+        io_signature::make(1,1,sizeof(Symbol))),
     m_noisePower(noise),
     m_codewordLength(codewordLength),
-    m_codewordPosition(0),
     m_mapper(
             fieldSize,
             codewordLength,
             augmentingLength,
             minCorrelation,
-            windowSize,
+            1024,
             false),
-    m_windowSize(windowSize),
-    m_realSymbols(new Symbol[m_windowSize]),
-    m_imagSymbols(new Symbol[m_windowSize]),
-    m_distances(m_mapper.constellation(true).size()),
-    m_maxErrors(maxErrors),
-    m_maxSymbols(maxSymbols),
-    m_errors(0),
-    m_symbols(0),
-    m_states(getStates(fieldSize, codewordLength, augmentingLength)),
-    m_realRDS(m_mapper.history(), 0),
-    m_imagRDS(m_mapper.history(), 0)
+    m_bound(getBound(fieldSize, codewordLength, augmentingLength)),
+    m_realTrellis(true, m_mapper, codewordLength, noise, m_bound),
+    m_imagTrellis(false, m_mapper, codewordLength, noise, m_bound)
 {
+    this->set_relative_rate(1);
     this->enable_update_rate(false);
-    this->set_min_noutput_items(m_windowSize);
 }
 
 template<typename Symbol>
@@ -211,10 +165,7 @@ typename gr::gs::BCJR<Symbol>::sptr gr::gs::BCJR<Symbol>::make(
         const unsigned codewordLength,
         const unsigned augmentingLength,
         const double minCorrelation,
-        const double noise,
-        const unsigned windowSize,
-        const unsigned long long maxErrors,
-        const unsigned long long maxSymbols)
+        const double noise)
 {
     return gnuradio::get_initial_sptr(
             new Implementations::BCJR_impl<Symbol>(
@@ -222,49 +173,238 @@ typename gr::gs::BCJR<Symbol>::sptr gr::gs::BCJR<Symbol>::make(
                 codewordLength,
                 augmentingLength,
                 minCorrelation,
-                noise,
-                windowSize,
-                maxErrors,
-                maxSymbols));
+                noise));
 }
 
 template<typename Symbol>
-void gr::gs::Implementations::BCJR_impl<Symbol>::reset()
+void gr::gs::Implementations::BCJR_impl<Symbol>::Trellis::append(
+        const double* distances)
 {
-    m_symbols = 0;
-    m_errors = 0;
-}
+    std::map<int, std::shared_ptr<Node>> head;
 
-template<typename Symbol> unsigned long long
-gr::gs::Implementations::BCJR_impl<Symbol>::symbols() const
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    return m_symbols;
-}
+    std::shared_ptr<std::set<Node*>> set(new std::set<Node*>);
 
-template<typename Symbol> unsigned long long
-gr::gs::Implementations::BCJR_impl<Symbol>::errors() const
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    return m_errors;
+    std::vector<double> weightings(m_constellation.size());
+
+    for(auto& source: m_head)
+    {
+        m_mapper.weightings(
+                source.second->rds(),
+                m_codewordPosition,
+                weightings,
+                m_real);
+        const double sum = std::accumulate(
+                    weightings.cbegin(),
+                    weightings.cend(),
+                    static_cast<double>(0));
+        for(auto& weighting: weightings)
+            weighting /= sum;
+
+        for(
+                Symbol symbol=0;
+                symbol<m_constellation.size();
+                ++symbol)
+        {
+            const int rds = source.second->m_rds + m_constellation[symbol];
+
+            if(static_cast<unsigned>(std::abs(rds)) > m_bound)
+                continue;
+
+            auto& destination = head[rds];
+            if(!destination)
+                destination.reset(new Node(*this, rds, set));
+
+            const double metric = source.second->m_metric
+                + *(distances+symbol)
+                - m_noisePower*std::log(weightings[symbol]);
+
+            if(metric < destination->m_metric)
+            {
+                destination->m_metric = metric;
+                destination->m_source = source.second;
+                destination->m_symbol = symbol;
+            }
+        }
+    }
+
+    m_head.swap(head);
+
+    double minMetric=std::numeric_limits<double>::max();
+    for(const auto& node: m_head)
+        if(node.second->m_metric < minMetric)
+            minMetric = node.second->m_metric;
+
+    for(auto node=m_head.begin(); node!=m_head.end();)
+    {
+        if(node->second->m_metric > minMetric+10)
+            node = m_head.erase(node);
+        else
+        {
+            node->second->m_metric -= minMetric;
+            ++node;
+        }
+    }
+
+    m_codewordPosition
+        = (m_codewordPosition+1)%m_codewordLength;
 }
 
 template<typename Symbol>
-double gr::gs::Implementations::BCJR_impl<Symbol>::rate() const
+void gr::gs::Implementations::BCJR_impl<Symbol>::Trellis::Node::close(
+        const unsigned depth)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
-    return static_cast<double>(m_errors)/static_cast<double>(m_symbols);
+    if(m_set->empty())
+    {
+        if(!m_trellis.m_outputBuffer.empty())
+        {
+            std::lock_guard<std::mutex> lock(m_trellis.m_mutex);
+            m_trellis.m_output.splice(
+                    m_trellis.m_output.end(),
+                    m_trellis.m_outputBuffer);
+        }
+    }
+    else
+    {
+        m_trellis.m_outputBuffer.push_front(m_symbol);
+        m_set->clear();
+    }
+
+    if(m_source)
+        m_source->close(depth+1);
+
+    if(depth >= m_trellis.m_history)
+        m_source.reset();
 }
 
 template<typename Symbol>
-bool gr::gs::Implementations::BCJR_impl<Symbol>::finished() const
+gr::gs::Implementations::BCJR_impl<Symbol>::Trellis::Trellis(
+        const bool real,
+        const ProbabilityMapper<Symbol>& mapper,
+        const unsigned codewordLength,
+        const double noisePower,
+        const unsigned bound):
+    m_real(real),
+    m_constellation(mapper.constellation(real)),
+    m_mapper(mapper),
+    m_history(mapper.history()),
+    m_codewordLength(codewordLength),
+    m_codewordPosition(0),
+    m_bound(bound),
+    m_noisePower(noisePower)
+{
+    std::shared_ptr<std::set<Node*>> set(new std::set<Node*>);
+    std::shared_ptr<Node> node(new Node(*this, 0, set));
+    node->m_metric = 0;
+    m_head[0] = node;
+    for(unsigned i=0; i<m_mapper.history()-1; ++i)
+    {
+        std::shared_ptr<Node> newNode(new Node(*this, 0, set));
+        newNode->m_metric=0;
+        node->m_source = newNode;
+        node = newNode;
+    }
+    set->clear();
+}
+
+template<typename Symbol>
+void gr::gs::Implementations::BCJR_impl<Symbol>::Trellis::insert(
+        const Complex* input,
+        size_t size)
+{
+    std::vector<double> distances(m_constellation.size());
+    for(unsigned i=0; i<size; ++i)
+    {
+        const double value = m_real?input->real():input->imag();
+        ++input;
+        for(Symbol symbol=0; symbol < m_constellation.size(); ++symbol)
+        {
+            const double difference = value - m_constellation[symbol];
+            distances[symbol] = difference*difference;
+        }
+
+        append(distances.data());
+    }
+}
+
+template<typename Symbol>
+gr::gs::Implementations::BCJR_impl<Symbol>::Trellis::Node::Node(
+        Trellis& trellis,
+        int rds,
+        std::shared_ptr<std::set<Node*>> set):
+    m_trellis(trellis),
+    m_set(set),
+    m_rds(rds),
+    m_metric(std::numeric_limits<double>::max())
+{
+    m_set->insert(this);
+}
+
+template<typename Symbol>
+gr::gs::Implementations::BCJR_impl<Symbol>::Trellis::Node::~Node()
+{
+    m_set->erase(this);
+    if(m_set->size()==1)
+        (*m_set->begin())->close(0);
+}
+
+template<typename Symbol>
+typename gr::gs::Implementations::BCJR_impl<Symbol>::Trellis::RDSiterator
+gr::gs::Implementations::BCJR_impl<Symbol>::Trellis::Node::rds() const
+{
+    return RDSiterator(this);
+}
+
+template<typename Symbol>
+int gr::gs::Implementations::BCJR_impl<Symbol>::Trellis::RDSiterator::operator*(
+        ) const
+{
+    return m_node->m_rds;
+}
+
+template<typename Symbol>
+typename gr::gs::Implementations::BCJR_impl<Symbol>::Trellis::RDSiterator&
+gr::gs::Implementations::BCJR_impl<Symbol>::Trellis::RDSiterator::operator--()
+{
+    m_node = m_node->m_source.get();
+    return *this;
+}
+
+template<typename Symbol>
+gr::gs::Implementations::BCJR_impl<Symbol>::Trellis::RDSiterator::RDSiterator(
+        const Node* node):
+    m_node(node)
+{
+}
+
+template<typename Symbol>
+void gr::gs::Implementations::BCJR_impl<Symbol>::Trellis::set_noisePower(
+        const double noisePower)
+{
+    m_noisePower = noisePower;
+}
+
+template<typename Symbol>
+void gr::gs::Implementations::BCJR_impl<Symbol>::Trellis::set_codewordPosition(
+        const unsigned codewordPosition)
+{
+    m_codewordPosition = codewordPosition;
+}
+
+template<typename Symbol>
+std::list<Symbol> gr::gs::Implementations::BCJR_impl<Symbol>::Trellis::output()
+{
+    std::list<Symbol> output;
+    std::lock_guard<std::mutex> lock(m_mutex);
+    output.swap(m_output);
+    return output;
+}
+
+template<typename Symbol>
+void gr::gs::Implementations::BCJR_impl<Symbol>::Trellis::putBack(
+        std::list<Symbol>&& output)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    if(m_maxErrors>0 && m_errors >= m_maxErrors)
-        return true;
-    if(m_maxSymbols>0 && m_symbols >= m_maxSymbols)
-        return true;
-    return false;
+    m_output.splice(m_output.begin(), output);
 }
 
 template class gr::gs::BCJR<unsigned char>;
