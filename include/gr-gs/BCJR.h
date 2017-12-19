@@ -1,8 +1,8 @@
 /*!
  * @file      BCJR.h
- * @brief     Declares the "Guided Scrambling BCJR" GNU Radio block
+ * @brief     Declares the "Guided Scrambling Detector" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      December 16, 2017
+ * @date      December 19, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -37,17 +37,18 @@ namespace gr
     //! Contains all blocks for the Guided Scrambling GNU Radio Module
     namespace gs
     {
-        //! "Guided Scrambling BCJR" GNU Radio block
+        //! "Guided Scrambling Detector" GNU Radio block
         /*!
-         * This block is practically useless save to gauge the performance of
-         * the actual Detector block.
+         * This block takes soft decision data from a detector and makes hard
+         * decisions from the statistical properties of the guided scrambling
+         * mechanism being used.
          *
          * See the members functions for further information on the parameters
          * and their meaning.
          *
          * @tparam Symbol Base type to use for symbol type. Can be unsigned
          *                char, unsigned short, or unsigned int.
-         * @date   December 16, 2017
+         * @date   December 19, 2017
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         template<typename Symbol>
@@ -57,34 +58,41 @@ namespace gr
             //! Shared pointer to this
             typedef boost::shared_ptr<BCJR> sptr;
 
-            //! Manufacture a BCJR detector with some default options
+            //! Manufacture a detector
             /*!
-             *
              * @param [in] fieldSize Field size of our symbols. Our default
              *                       constellation pattern is retrieved from
              *                       this.
              * @param [in] codewordLength Length of our codewords.
              * @param [in] augmentingLength How many augmenting symbols in the
              *                              codeword?
+             * @param [in] noise This noise power level (or variance) is
+             *                   required to perform accurate MAP detection.
+             * @param [in] framingTag Desired string to use for the "key" of the
+             *                        tag inserted at frame beginnings. Use an
+             *                        empty string to disable framing.
              * @param [in] minCorrelation This decides how many taps we're
              *                            going to need to calculate our means.
              *                            Any autocorrelation data decays below
              *                            this value will be truncated from our
              *                            computations.
-             * @param [in] noise This noise power level (or variance) is
-             *                   required to perform accurate MAP detection.
-             * @param [in] windowSize Sequence length to use for detection
-             * @param [in] maxErrors Maximum number of errors to log before EOF.
-             * @param [in] maxSymbols Maximum number of symbols to log before
-             *                        EOF.
+             * @param [in] nodeDiscardMetric This defines how aggressively we
+             *                               will discard trellis nodes. This
+             *                               must be above zero. Larger numbers
+             *                               mean more accurate detection but
+             *                               make detection more computationally
+             *                               intensive.
              * @return Shared pointer to newly allocated detector block
              */
             static sptr make(
                     const unsigned fieldSize,
                     const unsigned codewordLength,
                     const unsigned augmentingLength,
-                    const double minCorrelation,
-                    const double noise);
+                    const double noise,
+                    const std::string& framingTag = "",
+                    const double minCorrelation = 0.01,
+                    const double nodeDiscardMetric = 10);
+
 
             //! Access noise power
             /*!

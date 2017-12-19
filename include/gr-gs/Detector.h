@@ -2,7 +2,7 @@
  * @file      Detector.h
  * @brief     Declares the "Guided Scrambling Detector" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 22, 2017
+ * @date      December 19, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -29,7 +29,7 @@
 #define GR_GS_DETECTOR_H
 
 #include "gr-gs/config.h"
-#include <gnuradio/sync_block.h>
+#include <gnuradio/block.h>
 
 //! GNU Radio Namespace
 namespace gr
@@ -48,46 +48,51 @@ namespace gr
          *
          * @tparam Symbol Base type to use for symbol type. Can be unsigned
          *                char, unsigned short, or unsigned int.
-         * @date   August 22, 2017
+         * @date   December 19, 2017
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         template<typename Symbol>
-        class GS_API Detector: virtual public gr::sync_block
+        class GS_API Detector: virtual public gr::block
         {
         public:
             //! Shared pointer to this
             typedef boost::shared_ptr<Detector> sptr;
 
-            //! Manufacture a pulse generator with some default options
+            //! Manufacture a detector
             /*!
-             *
              * @param [in] fieldSize Field size of our symbols. Our default
              *                       constellation pattern is retrieved from
              *                       this.
              * @param [in] codewordLength Length of our codewords.
              * @param [in] augmentingLength How many augmenting symbols in the
              *                              codeword?
+             * @param [in] noise This noise power level (or variance) is
+             *                   required to perform accurate MAP detection.
+             * @param [in] framingTag Desired string to use for the "key" of the
+             *                        tag inserted at frame beginnings. Use an
+             *                        empty string to disable framing.
              * @param [in] minCorrelation This decides how many taps we're
              *                            going to need to calculate our means.
              *                            Any autocorrelation data decays below
              *                            this value will be truncated from our
              *                            computations.
-             * @param [in] noise This noise power level (or variance) is
-             *                   required to perform accurate MAP detection.
-             * @param [in] windowSize Sequence length to use for detection
-             * @param [in] framingTag Desired string to use for the "key" of the
-             *                        tag inserted at frame beginnings. Use an
-             *                        empty string to disable framing.
+             * @param [in] nodeDiscardMetric This defines how aggressively we
+             *                               will discard trellis nodes. This
+             *                               must be above zero. Larger numbers
+             *                               mean more accurate detection but
+             *                               make detection more computationally
+             *                               intensive.
              * @return Shared pointer to newly allocated detector block
              */
             static sptr make(
                     const unsigned fieldSize,
                     const unsigned codewordLength,
                     const unsigned augmentingLength,
-                    const double minCorrelation,
                     const double noise,
-                    const unsigned windowSize,
-                    const std::string& framingTag);
+                    const std::string& framingTag = "",
+                    const double minCorrelation = 0.01,
+                    const double nodeDiscardMetric = 10);
+
 
             //! Access noise power
             /*!

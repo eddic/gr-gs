@@ -1,9 +1,9 @@
 /*!
  * @file      BCJR_impl.hpp
- * @brief     Declares the "Guided Scrambling BCJR" GNU Radio block
+ * @brief     Declares the "Guided Scrambling Detector" GNU Radio block
  *            implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      December 18, 2017
+ * @date      December 19, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -46,13 +46,13 @@ namespace gr
         //! All block implementation too trivial for their own namespace
         namespace Implementations
         {
-            //! "Symbol Mapper" GNU Radio block implementation
+            //! "Guided Scrambling Detector" GNU Radio block implementation
             /*!
              * Implements gr::gs::BCJR
              *
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date    December 18, 2017
+             * @date    December 19, 2017
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -77,7 +77,7 @@ namespace gr
                         gr_vector_const_void_star &input_items,
                         gr_vector_void_star &output_items);
 
-                //! Initialize the pulse generator with some default options
+                //! Initialize the detector
                 /*!
                  * @param [in] fieldSize Field size of our symbols. Our default
                  *                       constellation pattern is retrieved from
@@ -85,20 +85,33 @@ namespace gr
                  * @param [in] codewordLength Length of our codewords.
                  * @param [in] augmentingLength How many augmenting symbols in
                  *                              the codeword?
+                 * @param [in] noise This noise power level (or variance) is
+                 *                   required to perform accurate MAP detection.
+                 * @param [in] framingTag Desired string to use for the "key" of
+                 *                        the tag inserted at frame beginnings.
+                 *                        Use an empty string to disable
+                 *                        framing.
                  * @param [in] minCorrelation This decides how many taps we're
                  *                            going to need to calculate our
                  *                            means. Any autocorrelation data
                  *                            decays below this value will be
                  *                            truncated from our computations.
-                 * @param [in] noise This noise power level (or variance) is
-                 *                   required to perform accurate MAP detection.
+                 * @param [in] nodeDiscardMetric This defines how aggressively
+                 *                               we will discard trellis nodes.
+                 *                               This must be above zero.
+                 *                               Larger numbers mean more
+                 *                               accurate detection but make
+                 *                               detection more computationally
+                 *                               intensive.
                  */
                 inline BCJR_impl(
                         const unsigned fieldSize,
                         const unsigned codewordLength,
                         const unsigned augmentingLength,
+                        const double noise,
+                        const std::string& framingTag,
                         const double minCorrelation,
-                        const double noise);
+                        const double nodeDiscardMetric);
 
                 double noisePower() const;
                 void set_noisePower(const double noise);
@@ -109,6 +122,15 @@ namespace gr
 
                 //! Our current noise power level (variance)
                 double m_noisePower;
+
+                //! Framing tag name/key
+                std::string m_framingTag;
+
+                //! PMT version of framing tag
+                pmt::pmt_t m_framingTagPMT;
+
+                //! Are we aligned yet?
+                bool m_aligned;
 
                 //! Codeword length
                 const unsigned m_codewordLength;
@@ -139,13 +161,22 @@ namespace gr
                      *                   required to perform accurate MAP
                      *                   detection.
                      * @param [in] bound The upper bound of our RDS state.
+                     * @param [in] nodeDiscardMetric This defines how
+                     *                               aggressively we will
+                     *                               discard trellis nodes.
+                     *                               This must be above zero.
+                     *                               Larger numbers mean more
+                     *                               accurate detection but
+                     *                               make detection more
+                     *                               computationally intensive.
                      */
                     Trellis(
                             const bool real,
                             const ProbabilityMapper<Symbol>& mapper,
                             const unsigned codewordLength,
                             const double noisePower,
-                            const unsigned bound);
+                            const unsigned bound,
+                            const double nodeDiscardMetric);
 
                     void insert(const Complex* input, size_t size);
 
@@ -257,12 +288,15 @@ namespace gr
 
                     //! Current noise power level
                     double m_noisePower;
+
+                    //! Node discard metric
+                    const double m_nodeDiscardMetric;
                 };
 
                 //! The real/in-phase trellis
                 Trellis m_realTrellis;
 
-                //! The imaginary-quadrature trellis
+                //! The imaginary/quadrature trellis
                 Trellis m_imagTrellis;
             };
         }

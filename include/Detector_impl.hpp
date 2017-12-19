@@ -3,7 +3,7 @@
  * @brief     Declares the "Guided Scrambling Detector" GNU Radio block
  *            implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 28, 2017
+ * @date      December 19, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -32,6 +32,7 @@
 #include <mutex>
 #include <memory>
 #include <list>
+#include <numeric>
 
 #include "gr-gs/Detector.h"
 #include "ProbabilityMapper.hpp"
@@ -45,13 +46,13 @@ namespace gr
         //! All block implementation too trivial for their own namespace
         namespace Implementations
         {
-            //! "Symbol Mapper" GNU Radio block implementation
+            //! "Guided Scrambling Detector" GNU Radio block implementation
             /*!
              * Implements gr::gs::Detector
              *
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date    August 28, 2017
+             * @date    December 19, 2017
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -69,7 +70,19 @@ namespace gr
                         gr_vector_const_void_star &input_items,
                         gr_vector_void_star &output_items);
 
-                //! Initialize the pulse generator with some default options
+                //! GNU Radio work function
+                int general_work(
+                        int noutput_items,
+                        gr_vector_int &ninput_items,
+                        gr_vector_const_void_star &input_items,
+                        gr_vector_void_star &output_items);
+
+                //! GNU Radio forecast function
+                void forecast(
+                        int noutput_items,
+                        gr_vector_int& ninput_items_required);
+
+                //! Initialize the detector
                 /*!
                  * @param [in] fieldSize Field size of our symbols. Our default
                  *                       constellation pattern is retrieved from
@@ -77,27 +90,33 @@ namespace gr
                  * @param [in] codewordLength Length of our codewords.
                  * @param [in] augmentingLength How many augmenting symbols in
                  *                              the codeword?
+                 * @param [in] noise This noise power level (or variance) is
+                 *                   required to perform accurate MAP detection.
+                 * @param [in] framingTag Desired string to use for the "key" of
+                 *                        the tag inserted at frame beginnings.
+                 *                        Use an empty string to disable
+                 *                        framing.
                  * @param [in] minCorrelation This decides how many taps we're
                  *                            going to need to calculate our
                  *                            means. Any autocorrelation data
                  *                            decays below this value will be
                  *                            truncated from our computations.
-                 * @param [in] noise This noise power level (or variance) is
-                 *                   required to perform accurate MAP detection.
-                 * @param [in] windowSize Sequence length to use for detection
-                 * @param [in] framingTag Desired string to use for the "key" of
-                 *                        the tag inserted at frame beginnings.
-                 *                        Use an empty string to disable
-                 *                        framing.
+                 * @param [in] nodeDiscardMetric This defines how aggressively
+                 *                               we will discard trellis nodes.
+                 *                               This must be above zero.
+                 *                               Larger numbers mean more
+                 *                               accurate detection but make
+                 *                               detection more computationally
+                 *                               intensive.
                  */
                 inline Detector_impl(
                         const unsigned fieldSize,
                         const unsigned codewordLength,
                         const unsigned augmentingLength,
-                        const double minCorrelation,
                         const double noise,
-                        const unsigned windowSize,
-                        const std::string& framingTag);
+                        const std::string& framingTag,
+                        const double minCorrelation,
+                        const double nodeDiscardMetric);
 
                 double noisePower() const;
                 void set_noisePower(const double noise);
@@ -115,62 +134,178 @@ namespace gr
                 //! PMT version of framing tag
                 pmt::pmt_t m_framingTagPMT;
 
-                //! The codeword length
-                const unsigned int m_codewordLength;
+                //! Are we aligned yet?
+                bool m_aligned;
 
-                //! Where are we in our codeword?
-                unsigned int m_codewordPosition;
+                //! Codeword length
+                const unsigned m_codewordLength;
 
                 //! The probability mapping object
                 ProbabilityMapper<Symbol> m_mapper;
 
-                //! Have we started mapping yet?
-                bool m_started;
+                //! RDS state bound
+                const unsigned m_bound;
 
-                //! Our window size
-                const unsigned m_windowSize;
+                //! Get the RDS bound of the code
+                static inline unsigned getBound(
+                        const unsigned fieldSize,
+                        const unsigned codewordLength,
+                        const unsigned augmentingLength);
 
-                //! Buffer for detected real symbols
-                std::unique_ptr<Symbol[]> m_realSymbols;
-
-                //! Buffer for detected imaginary symbols
-                std::unique_ptr<Symbol[]> m_imagSymbols;
-
-                //! Buffer for distances
-                std::unique_ptr<double[]> m_distances;
-
-                //! Buffer for RDS probabilities
-                std::unique_ptr<float[]> m_probabilities;
-
-                //! Buffer for metrics
-                std::unique_ptr<double[]> m_metrics;
-
-                //! Perform single axis detection on a sequence
-                void detect(
-                        const Complex* input,
-                        std::unique_ptr<Symbol[]>& symbols,
-                        const bool real);
-
-                struct Rank
+                //! Trellis for guided scrambling detection
+                class Trellis
                 {
-                    double score;
-                    unsigned index;
-                    struct Distance
+                public:
+                    /*!
+                     * @param [in] real True for real or in-phase componenent.
+                     *                  False for imaginary or quadrature
+                     *                  component.
+                     * @param [in] mapper Our source symbol probability mapper.
+                     * @param [in] codewordLength Length of our codewords.
+                     * @param [in] noise This noise power level (or variance) is
+                     *                   required to perform accurate MAP
+                     *                   detection.
+                     * @param [in] bound The upper bound of our RDS state.
+                     * @param [in] nodeDiscardMetric This defines how
+                     *                               aggressively we will
+                     *                               discard trellis nodes.
+                     *                               This must be above zero.
+                     *                               Larger numbers mean more
+                     *                               accurate detection but
+                     *                               make detection more
+                     *                               computationally intensive.
+                     */
+                    Trellis(
+                            const bool real,
+                            const ProbabilityMapper<Symbol>& mapper,
+                            const unsigned codewordLength,
+                            const double noisePower,
+                            const unsigned bound,
+                            const double nodeDiscardMetric);
+
+                    void insert(const Complex* input, size_t size);
+
+                    //! Get what available output data there is
+                    std::list<Symbol> output();
+
+                    //! Put back the output data we didn't use.
+                    void putBack(std::list<Symbol>&& output);
+
+                    //! Set our noise power
+                    void set_noisePower(const double noise);
+
+                    //! Get the output size for forecasting
+                    unsigned outputSize() const
                     {
-                        double distance;
-                        Symbol symbol;
+                        return m_output.size();
+                    }
+
+                private:
+                    class RDSiterator;
+
+                    //! A node in the detection trellis
+                    class Node
+                    {
+                    private:
+                        //! The parent trellis
+                        Trellis& m_trellis;
+
+                        //! A set of all node in the current discrete time value
+                        const std::shared_ptr<std::set<Node*>> m_set;
+
+                    public:
+                        //! RDS state value for this node
+                        const int m_rds;
+
+                        //! Symbol that transitioned to this RDS state
+                        Symbol m_symbol;
+
+                        //! Accumulated metric at this node
+                        double m_metric;
+
+                        //! Source node
+                        std::shared_ptr<Node> m_source;
+
+                        inline Node(
+                                Trellis& trellis,
+                                int rds,
+                                std::shared_ptr<std::set<Node*>> set);
+
+                        inline ~Node();
+
+                        //! Close the trellis at this node
+                        void close(const unsigned depth);
+
+                        //! Get a reversable RDS iterator starting at this node
+                        RDSiterator rds() const;
                     };
-                    typedef std::list<Distance> Distances;
-                    Distances distances;
 
-                    typename Distances::const_iterator winner;
+                    //! Reverable iterator for pulling RDS values
+                    class RDSiterator
+                    {
+                    private:
+                        //! Associated node
+                        const Node* m_node;
+
+                    public:
+                        //! Intialize from a node
+                        inline RDSiterator(const Node* node);
+
+                        //! Dereference to the RDS value
+                        inline int operator*() const;
+
+                        //! Move backwards through the trellis
+                        inline RDSiterator& operator--();
+                    };
+
+                    //! Append a new set of nodes to the trellis
+                    void append(const double* distances);
+
+                    //! Always practice safe threading
+                    std::mutex m_mutex;
+
+                    //! Available output symbols
+                    std::list<Symbol> m_output;
+
+                    //! Buffer for putting new output symbols
+                    std::list<Symbol> m_outputBuffer;
+
+                    //! True for real/in-phase component.
+                    const bool m_real;
+
+                    //! Associated constellation
+                    const std::vector<int>& m_constellation;
+
+                    //! Our probability mapper
+                    const ProbabilityMapper<Symbol>& m_mapper;
+
+                    //! History required by the probability mapper
+                    const unsigned m_history;
+
+                    //! The head end of the trellis
+                    std::map<int, std::shared_ptr<Node>> m_head;
+
+                    //! The codeword length
+                    const unsigned m_codewordLength;
+
+                    //! Our position in the codeword
+                    unsigned m_codewordPosition;
+
+                    //! Upper bound to the RDS states
+                    const unsigned m_bound;
+
+                    //! Current noise power level
+                    double m_noisePower;
+
+                    //! Node discard metric
+                    const double m_nodeDiscardMetric;
                 };
-                typedef std::list<Rank> Ranks;
 
-                static void sort(Ranks& ranks);
-                static void sort(typename Rank::Distances& distances);
-                static void increment(Rank& rank);
-                static void decrement(Rank& rank);
+                //! The real/in-phase trellis
+                Trellis m_realTrellis;
+
+                //! The imaginary/quadrature trellis
+                Trellis m_imagTrellis;
             };
         }
     }

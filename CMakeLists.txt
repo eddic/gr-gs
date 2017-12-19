@@ -88,7 +88,6 @@ add_library(gnuradio-gs SHARED
     src/Autocovariance_impl.cpp
     src/Integrate_impl.cpp
     src/Detector_impl.cpp
-    src/BCJR_impl.cpp
     src/Data.cpp
     src/ProbabilityMapper.cpp
     src/ErrorCount_impl.cpp)
@@ -110,7 +109,6 @@ install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Autocovariance.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Integrate.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Detector.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/BCJR.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Entropy.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/ErrorCount.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Primitives.h"
@@ -276,7 +274,6 @@ install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Autocovariance.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Integrate.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_Detector.xml"
-    "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_BCJR.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_primitive.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_defaultConstellation.xml"
     "${CMAKE_CURRENT_SOURCE_DIR}/grc/gr-gs_defaultScrambler.xml"

@@ -3,7 +3,7 @@
  * @brief     Defines the "Guided Scrambling BCJR" GNU Radio block
  *            implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      December 18, 2017
+ * @date      December 19, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -62,38 +62,70 @@ int gr::gs::Implementations::BCJR_impl<Symbol>::general_work(
 
     const Complex*& input = reinterpret_cast<const Complex*&>(input_items[0]);
     Symbol*& output = reinterpret_cast<Symbol*&>(output_items[0]);
+    size_t inputSize = ninput_items[0];
 
     unsigned outputted=0;
 
-    m_realTrellis.insert(input, ninput_items[0]);
-    m_imagTrellis.insert(input, ninput_items[0]);
-    this->consume_each(ninput_items[0]);
-
-    auto reals = m_realTrellis.output();
-    auto real = reals.begin();
-    auto imags = m_imagTrellis.output();
-    auto imag = imags.begin();
-    while(
-            real != reals.end() &&
-            imag != imags.end() &&
-            outputted < static_cast<unsigned>(noutput_items))
+    // Get our codeword lined up
+    if(!m_aligned)
     {
-        *output++ = m_mapper.decollapseConstellation(*real++, *imag++);
-        ++outputted;
+        std::vector<gr::tag_t> tags;
+        std::vector<gr::tag_t>::const_iterator tag;
+
+        this->get_tags_in_range(
+                tags,
+                0,
+                this->nitems_read(0),
+                this->nitems_read(0)+noutput_items,
+                m_framingTagPMT);
+        tag = tags.cbegin();
+
+        if(tag != tags.cend())
+        {
+            const size_t offset = tag->offset - this->nitems_read(0);
+
+            input += offset;
+            output += offset;
+            inputSize -= offset;
+            outputted += offset;
+            m_aligned = true;
+        }
+        else
+            outputted = noutput_items;
     }
 
-    reals.erase(
-            reals.begin(),
-            real);
-    if(!reals.empty())
-        m_realTrellis.putBack(std::move(reals));
+    if(m_aligned)
+    {
+        m_realTrellis.insert(input, inputSize);
+        m_imagTrellis.insert(input, inputSize);
 
-    imags.erase(
-            imags.begin(),
-            imag);
-    if(!imags.empty())
-        m_imagTrellis.putBack(std::move(imags));
+        auto reals = m_realTrellis.output();
+        auto real = reals.begin();
+        auto imags = m_imagTrellis.output();
+        auto imag = imags.begin();
+        while(
+                real != reals.end() &&
+                imag != imags.end() &&
+                outputted < static_cast<unsigned>(noutput_items))
+        {
+            *output++ = m_mapper.decollapseConstellation(*real++, *imag++);
+            ++outputted;
+        }
 
+        reals.erase(
+                reals.begin(),
+                real);
+        if(!reals.empty())
+            m_realTrellis.putBack(std::move(reals));
+
+        imags.erase(
+                imags.begin(),
+                imag);
+        if(!imags.empty())
+            m_imagTrellis.putBack(std::move(imags));
+    }
+
+    this->consume_each(ninput_items[0]);
     return outputted;
 }
 
@@ -129,7 +161,7 @@ unsigned gr::gs::Implementations::BCJR_impl<Symbol>::getBound(
     minimum -= distributionDataWidth/2;
     maximum -= distributionDataWidth/2;
 
-    return std::max(maximum, std::abs(minimum));
+    return std::max(maximum, std::abs(minimum))+1;
 }
 
 template<typename Symbol>
@@ -137,12 +169,17 @@ gr::gs::Implementations::BCJR_impl<Symbol>::BCJR_impl(
         const unsigned fieldSize,
         const unsigned codewordLength,
         const unsigned augmentingLength,
+        const double noise,
+        const std::string& framingTag,
         const double minCorrelation,
-        const double noise):
+        const double nodeDiscardMetric):
     gr::block("Guided Scrambling BCJR",
         io_signature::make(1,1,sizeof(gr::gs::Complex)),
         io_signature::make(1,1,sizeof(Symbol))),
     m_noisePower(noise),
+    m_framingTag(framingTag),
+    m_framingTagPMT(pmt::string_to_symbol(framingTag)),
+    m_aligned(framingTag.empty()),
     m_codewordLength(codewordLength),
     m_mapper(
             fieldSize,
@@ -152,8 +189,20 @@ gr::gs::Implementations::BCJR_impl<Symbol>::BCJR_impl(
             1024,
             false),
     m_bound(getBound(fieldSize, codewordLength, augmentingLength)),
-    m_realTrellis(true, m_mapper, codewordLength, noise, m_bound),
-    m_imagTrellis(false, m_mapper, codewordLength, noise, m_bound)
+    m_realTrellis(
+            true,
+            m_mapper,
+            codewordLength,
+            noise,
+            m_bound,
+            nodeDiscardMetric),
+    m_imagTrellis(
+            false,
+            m_mapper,
+            codewordLength,
+            noise,
+            m_bound,
+            nodeDiscardMetric)
 {
     this->set_relative_rate(1);
     this->enable_update_rate(false);
@@ -164,16 +213,20 @@ typename gr::gs::BCJR<Symbol>::sptr gr::gs::BCJR<Symbol>::make(
         const unsigned fieldSize,
         const unsigned codewordLength,
         const unsigned augmentingLength,
+        const double noise,
+        const std::string& framingTag,
         const double minCorrelation,
-        const double noise)
+        const double nodeDiscardMetric)
 {
     return gnuradio::get_initial_sptr(
             new Implementations::BCJR_impl<Symbol>(
                 fieldSize,
                 codewordLength,
                 augmentingLength,
+                noise,
+                framingTag,
                 minCorrelation,
-                noise));
+                nodeDiscardMetric));
 }
 
 template<typename Symbol>
@@ -181,9 +234,7 @@ void gr::gs::Implementations::BCJR_impl<Symbol>::Trellis::append(
         const double* distances)
 {
     std::map<int, std::shared_ptr<Node>> head;
-
     std::shared_ptr<std::set<Node*>> set(new std::set<Node*>);
-
     std::vector<double> weightings(m_constellation.size());
 
     for(auto& source: m_head)
@@ -236,7 +287,7 @@ void gr::gs::Implementations::BCJR_impl<Symbol>::Trellis::append(
 
     for(auto node=m_head.begin(); node!=m_head.end();)
     {
-        if(node->second->m_metric > minMetric+10)
+        if(node->second->m_metric > minMetric+m_nodeDiscardMetric)
             node = m_head.erase(node);
         else
         {
@@ -282,7 +333,8 @@ gr::gs::Implementations::BCJR_impl<Symbol>::Trellis::Trellis(
         const ProbabilityMapper<Symbol>& mapper,
         const unsigned codewordLength,
         const double noisePower,
-        const unsigned bound):
+        const unsigned bound,
+        const double nodeDiscardMetric):
     m_real(real),
     m_constellation(mapper.constellation(real)),
     m_mapper(mapper),
@@ -290,7 +342,8 @@ gr::gs::Implementations::BCJR_impl<Symbol>::Trellis::Trellis(
     m_codewordLength(codewordLength),
     m_codewordPosition(0),
     m_bound(bound),
-    m_noisePower(noisePower)
+    m_noisePower(noisePower),
+    m_nodeDiscardMetric(nodeDiscardMetric)
 {
     std::shared_ptr<std::set<Node*>> set(new std::set<Node*>);
     std::shared_ptr<Node> node(new Node(*this, 0, set));

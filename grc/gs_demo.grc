@@ -1673,7 +1673,7 @@
     </param>
     <param>
       <key>framingTag</key>
-      <value></value>
+      <value>frame</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -1700,16 +1700,16 @@
       <value>0.01</value>
     </param>
     <param>
+      <key>nodeDiscardMetric</key>
+      <value>10</value>
+    </param>
+    <param>
       <key>noisePower</key>
       <value>noisePower</value>
     </param>
     <param>
       <key>symbolType</key>
       <value>byte</value>
-    </param>
-    <param>
-      <key>windowSize</key>
-      <value>128</value>
     </param>
   </block>
   <block>

@@ -20,9 +20,7 @@ class gs_stats(gr.top_block):
             noisePower = 0.09,
             maxErrors = 10000,
             maxSymbols = long(1e7),
-            windowSize = 16384,
-            selectionMethod = 'MSW',
-            bcjr = False):
+            selectionMethod = 'MSW'):
         gr.top_block.__init__(self, "Guided Scrambling Error Rate Simulation")
 
         ##################################################
@@ -47,11 +45,7 @@ class gs_stats(gr.top_block):
         self.constellationDecoder = digital.constellation_decoder_cb(constellationObj)
         self.channelNoise = analog.noise_source_c(analog.GR_GAUSSIAN, np.sqrt(noisePower), 0)
         self.mapErrorRate = gs.ErrorCount_bf(False, '', maxErrors, maxSymbols)
-
-        if bcjr:
-            self.detector = gs.BCJR_cb(fieldSize, codewordLength, augmentingLength, 0.01, noisePower)
-        else:
-            self.detector = gs.Detector_cb(fieldSize, codewordLength, augmentingLength, 0.01, noisePower, windowSize, '')
+        self.detector = gs.Detector_cb(fieldSize, codewordLength, augmentingLength, noisePower)
 
         ##################################################
         # Connections
@@ -91,10 +85,8 @@ def processArguments():
     parser.add_argument('-f', '--fieldSize', type=int)
     parser.add_argument('-c', '--codewordLength', type=int)
     parser.add_argument('-a', '--augmentingLength', type=int)
-    parser.add_argument('-w', '--windowSize', type=int, default=128, help='default: 128')
     parser.add_argument('-e', '--maxErrors', type=float, default=1e4, help='default: 1e4')
     parser.add_argument('-s', '--maxSymbols', type=float, default=2e9, help='default: 2e9')
-    parser.add_argument('-b', '--bcjr', action='store_true', default=False, help='Use BCJR Algorithm')
 
     return parser.parse_args()
 
@@ -106,7 +98,6 @@ scrambler = gs.defaultScrambler_b(
         fieldSize,
         codewordLength,
         augmentingLength)
-windowSize = args.windowSize
 maxSymbols = int(args.maxSymbols)
 maxErrors = int(args.maxErrors)
 
@@ -125,10 +116,8 @@ while True:
             codewordLength = codewordLength,
             augmentingLength = augmentingLength,
             noisePower = noisePower,
-            windowSize = windowSize,
             maxSymbols = long(maxSymbols),
-            maxErrors = maxErrors,
-            bcjr = args.bcjr)
+            maxErrors = maxErrors)
     tb.start()
 
     sys.stdout.write("Computing error rate for noise power = {:g}... 00.0%".format(
@@ -148,4 +137,7 @@ while True:
     file.flush()
 
     if tb.errors() < maxErrors:
+        break
+
+    if noiseExponent == 1:
         break
