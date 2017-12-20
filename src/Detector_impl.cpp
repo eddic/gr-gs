@@ -98,9 +98,9 @@ int gr::gs::Implementations::Detector_impl<Symbol>::general_work(
         m_realTrellis.insert(input, inputSize);
         m_imagTrellis.insert(input, inputSize);
 
-        auto& reals = m_realTrellis.output();
-        auto& imags = m_imagTrellis.output();
+        auto reals = m_realTrellis.output();
         auto real = reals.begin();
+        auto imags = m_imagTrellis.output();
         auto imag = imags.begin();
         while(
                 real != reals.end() &&
@@ -114,9 +114,14 @@ int gr::gs::Implementations::Detector_impl<Symbol>::general_work(
         reals.erase(
                 reals.begin(),
                 real);
+        if(!reals.empty())
+            m_realTrellis.putBack(std::move(reals));
+
         imags.erase(
                 imags.begin(),
                 imag);
+        if(!imags.empty())
+            m_imagTrellis.putBack(std::move(imags));
     }
 
     this->consume_each(ninput_items[0]);
@@ -317,6 +322,7 @@ void gr::gs::Implementations::Detector_impl<Symbol>::Trellis::Node::close(
     {
         if(!m_trellis.m_outputBuffer.empty())
         {
+            std::lock_guard<std::mutex> lock(m_trellis.m_mutex);
             m_trellis.m_output.splice(
                     m_trellis.m_output.end(),
                     m_trellis.m_outputBuffer);
@@ -351,11 +357,7 @@ gr::gs::Implementations::Detector_impl<Symbol>::Trellis::Trellis(
     m_codewordPosition(0),
     m_bound(bound),
     m_noisePower(noisePower),
-    m_nodeDiscardMetric(nodeDiscardMetric),
-    m_stop(false),
-    m_thread(
-            &::gr::gs::Implementations::Detector_impl<Symbol>::Trellis::handler,
-            this)
+    m_nodeDiscardMetric(nodeDiscardMetric)
 {
     std::shared_ptr<std::set<Node*>> set(new std::set<Node*>);
     std::shared_ptr<Node> node(new Node(*this, 0, set));
@@ -372,26 +374,23 @@ gr::gs::Implementations::Detector_impl<Symbol>::Trellis::Trellis(
 }
 
 template<typename Symbol>
-gr::gs::Implementations::Detector_impl<Symbol>::Trellis::~Trellis()
-{
-    {
-        std::lock_guard<std::mutex> lock(m_mutex);
-        m_stop = true;
-        m_cv.notify_one();
-    }
-    m_thread.join();
-}
-
-template<typename Symbol>
 void gr::gs::Implementations::Detector_impl<Symbol>::Trellis::insert(
         const Complex* input,
         size_t size)
 {
-    std::unique_lock<std::mutex> lock(m_mutex);
-    m_input = input;
-    m_inputSize = size;
-    m_cv.notify_one();
-    m_cv.wait(lock);
+    std::vector<double> distances(m_constellation.size());
+    for(unsigned i=0; i<size; ++i)
+    {
+        const double value = m_real?input->real():input->imag();
+        ++input;
+        for(Symbol symbol=0; symbol < m_constellation.size(); ++symbol)
+        {
+            const double difference = value - m_constellation[symbol];
+            distances[symbol] = difference*difference;
+        }
+
+        append(distances.data());
+    }
 }
 
 template<typename Symbol>
@@ -451,38 +450,21 @@ void gr::gs::Implementations::Detector_impl<Symbol>::Trellis::set_noisePower(
     m_noisePower = noisePower;
 }
 
-template<typename Symbol> std::list<Symbol>&
+template<typename Symbol> std::list<Symbol>
 gr::gs::Implementations::Detector_impl<Symbol>::Trellis::output()
 {
-    std::unique_lock<std::mutex> lock(m_mutex);
-    return m_output;
+    std::list<Symbol> output;
+    std::lock_guard<std::mutex> lock(m_mutex);
+    output.swap(m_output);
+    return output;
 }
 
 template<typename Symbol>
-void gr::gs::Implementations::Detector_impl<Symbol>::Trellis::handler()
+void gr::gs::Implementations::Detector_impl<Symbol>::Trellis::putBack(
+        std::list<Symbol>&& output)
 {
-    std::unique_lock<std::mutex> lock(m_mutex);
-    while(!m_stop)
-    {
-        m_cv.wait(lock);
-        m_cv.notify_one();
-        if(m_stop)
-            break;
-
-        std::vector<double> distances(m_constellation.size());
-        for(unsigned i=0; !m_stop && i<m_inputSize; ++i)
-        {
-            const double value = m_real?m_input->real():m_input->imag();
-            ++m_input;
-            for(Symbol symbol=0; symbol < m_constellation.size(); ++symbol)
-            {
-                const double difference = value - m_constellation[symbol];
-                distances[symbol] = difference*difference;
-            }
-
-            append(distances.data());
-        }
-    }
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_output.splice(m_output.begin(), output);
 }
 
 template class gr::gs::Detector<unsigned char>;

@@ -109,10 +109,6 @@ while True:
     noisePower = 10.0**((10.0-noiseExponent)/20)
     noiseExponent += 1
 
-    sys.stdout.write("Computing error rate for noise power = {:g}... 00.0%".format(
-        noisePower))
-    sys.stdout.flush()
-
     tb = gs_stats(
             fieldSize = fieldSize,
             scrambler = scrambler,
@@ -123,6 +119,9 @@ while True:
             maxErrors = maxErrors)
     tb.start()
 
+    sys.stdout.write("Computing error rate for noise power = {:g}... 00.0%".format(
+        noisePower))
+    sys.stdout.flush()
     while not tb.finished():
         sys.stdout.write("\033[6D{: 5.1f}%".format(tb.completion()))
         sys.stdout.flush()
@@ -138,5 +137,3 @@ while True:
 
     if tb.errors() < maxErrors:
         break
-
-    del tb

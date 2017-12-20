@@ -33,8 +33,6 @@
 #include <memory>
 #include <list>
 #include <numeric>
-#include <thread>
-#include <condition_variable>
 
 #include "gr-gs/Detector.h"
 #include "ProbabilityMapper.hpp"
@@ -185,21 +183,22 @@ namespace gr
                             const unsigned bound,
                             const double nodeDiscardMetric);
 
-                    ~Trellis();
-
-                    //! Insert a sequence of points into the trellis
                     void insert(const Complex* input, size_t size);
 
                     //! Get what available output data there is
-                    std::list<Symbol>& output();
+                    std::list<Symbol> output();
 
-                    size_t outputSize()
-                    {
-                        return m_output.size();
-                    }
+                    //! Put back the output data we didn't use.
+                    void putBack(std::list<Symbol>&& output);
 
                     //! Set our noise power
                     void set_noisePower(const double noise);
+
+                    //! Get the output size for forecasting
+                    unsigned outputSize() const
+                    {
+                        return m_output.size();
+                    }
 
                 private:
                     class RDSiterator;
@@ -262,6 +261,9 @@ namespace gr
                     //! Append a new set of nodes to the trellis
                     void append(const double* distances);
 
+                    //! Always practice safe threading
+                    std::mutex m_mutex;
+
                     //! Available output symbols
                     std::list<Symbol> m_output;
 
@@ -297,22 +299,6 @@ namespace gr
 
                     //! Node discard metric
                     const double m_nodeDiscardMetric;
-
-                    //! True to stop
-                    bool m_stop;
-
-                    //! Always practice safe threading
-                    std::mutex m_mutex;
-                    std::condition_variable m_cv;
-                    std::thread m_thread;
-                    void handler();
-
-                    //! Input constellation points
-                    const Complex* m_input;
-
-                    //! Size of input data
-                    size_t m_inputSize;
-
                 };
 
                 //! The real/in-phase trellis
