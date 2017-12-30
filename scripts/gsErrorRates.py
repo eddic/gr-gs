@@ -1,4 +1,5 @@
-#!/usr/bin/env python2
+#!/usr/bin/python2
+# -*- coding: utf-8 -*-
 
 from gnuradio import analog
 from gnuradio import digital
@@ -36,37 +37,71 @@ class gs_stats(gr.top_block):
         ##################################################
         # Blocks
         ##################################################
-        self.symbolMapper = gs.SymbolMapper_bc((constellation))
-        self.symbolGenerator = gs.SymbolGenerator_b(([1] * fieldSize), '', 0)
-        self.noiseAdder = blocks.add_vcc(1)
-        self.mlErrorRate = gs.ErrorCount_bf(False, '', 0, 0)
+        self.symbolGenerator = gs.SymbolGenerator_b(([1] * fieldSize), '')
+
+        self.bareSymbolMapper = gs.SymbolMapper_bc((constellation))
+        self.bareChannelNoise = analog.noise_source_c(analog.GR_GAUSSIAN, np.sqrt(noisePower*(codewordLength-augmentingLength)/codewordLength), 0)
+        self.bareNoiseAdder = blocks.add_vcc(1)
+        self.bareDetectorMultiplier = blocks.multiply_const_vcc((constellationObj.points()[0].real/constellation[0].real, ))
+        self.bareDetector = digital.constellation_decoder_cb(constellationObj)
+        self.bareErrorRate = gs.ErrorCount_bf(False, '', 0, 0)
+
         self.guidedScrambler = gs.GuidedScrambler_bb(fieldSize, codewordLength, augmentingLength, continuous, (scramblingPolynomial), 0, (constellation), 'MSW', '')
-        self.constellationDecoderMultiplier = blocks.multiply_const_vcc((constellationObj.points()[0].real/constellation[0].real, ))
-        self.constellationDecoder = digital.constellation_decoder_cb(constellationObj)
-        self.channelNoise = analog.noise_source_c(analog.GR_GAUSSIAN, np.sqrt(noisePower), 0)
+        self.gsSymbolMapper = gs.SymbolMapper_bc((constellation))
+        self.gsChannelNoise = analog.noise_source_c(analog.GR_GAUSSIAN, np.sqrt(noisePower), 0)
+        self.gsNoiseAdder = blocks.add_vcc(1)
+
+        self.mlDetectorMultiplier = blocks.multiply_const_vcc((constellationObj.points()[0].real/constellation[0].real, ))
+        self.mlDetector = digital.constellation_decoder_cb(constellationObj)
+        self.mlErrorRate = gs.ErrorCount_bf(False, '', 0, 0)
+
+        self.mapDetector = gs.Detector_cb(fieldSize, codewordLength, augmentingLength, noisePower)
         self.mapErrorRate = gs.ErrorCount_bf(False, '', maxErrors, maxSymbols)
-        self.detector = gs.Detector_cb(fieldSize, codewordLength, augmentingLength, noisePower)
+
+        self.descrambler = gs.Descrambler_bb(fieldSize, codewordLength, augmentingLength, continuous, (scramblingPolynomial), '')
+        self.descrambledErrorRate = gs.ErrorCount_bf(False, '', 0, 0)
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.channelNoise, 0), (self.noiseAdder, 0))
-        self.connect((self.constellationDecoder, 0), (self.mlErrorRate, 1))
-        self.connect((self.constellationDecoderMultiplier, 0), (self.constellationDecoder, 0))
-        self.connect((self.guidedScrambler, 0), (self.mlErrorRate, 0))
-        self.connect((self.guidedScrambler, 0), (self.symbolMapper, 0))
-        self.connect((self.noiseAdder, 0), (self.constellationDecoderMultiplier, 0))
-        self.connect((self.noiseAdder, 0), (self.detector, 0))
         self.connect((self.symbolGenerator, 0), (self.guidedScrambler, 0))
-        self.connect((self.symbolMapper, 0), (self.noiseAdder, 1))
-        self.connect((self.detector, 0), (self.mapErrorRate, 1))
+
+        self.connect((self.symbolGenerator, 0), (self.bareErrorRate, 0))
+        self.connect((self.symbolGenerator, 0), (self.bareSymbolMapper, 0))
+        self.connect((self.bareSymbolMapper, 0), (self.bareNoiseAdder, 0))
+        self.connect((self.bareChannelNoise, 0), (self.bareNoiseAdder, 1))
+        self.connect((self.bareNoiseAdder, 0), (self.bareDetectorMultiplier, 0))
+        self.connect((self.bareDetectorMultiplier, 0), (self.bareDetector, 0))
+        self.connect((self.bareDetector, 0), (self.bareErrorRate, 1))
+
+        self.connect((self.guidedScrambler, 0), (self.gsSymbolMapper, 0))
+        self.connect((self.gsSymbolMapper, 0), (self.gsNoiseAdder, 0))
+        self.connect((self.gsChannelNoise, 0), (self.gsNoiseAdder, 1))
+
+        self.connect((self.guidedScrambler, 0), (self.mlErrorRate, 0))
+        self.connect((self.gsNoiseAdder, 0), (self.mlDetectorMultiplier, 0))
+        self.connect((self.mlDetectorMultiplier, 0), (self.mlDetector, 0))
+        self.connect((self.mlDetector, 0), (self.mlErrorRate, 1))
+
         self.connect((self.guidedScrambler, 0), (self.mapErrorRate, 0))
+        self.connect((self.gsNoiseAdder, 0), (self.mapDetector, 0))
+        self.connect((self.mapDetector, 0), (self.mapErrorRate, 1))
+
+        self.connect((self.symbolGenerator, 0), (self.descrambledErrorRate, 0))
+        self.connect((self.mapDetector, 0), (self.descrambler, 0))
+        self.connect((self.descrambler, 0), (self.descrambledErrorRate, 1))
 
     def MAPerrorRate(self):
         return self.mapErrorRate.rate()
 
     def MLerrorRate(self):
         return self.mlErrorRate.rate()
+
+    def BAREerrorRate(self):
+        return self.bareErrorRate.rate()
+
+    def DESCRAMBLEDerrorRate(self):
+        return self.descrambledErrorRate.rate()
 
     def completion(self):
         errorCompletion = float(self.mapErrorRate.errors())/self.maxErrors
@@ -81,10 +116,10 @@ class gs_stats(gr.top_block):
 
 def processArguments():
     parser = argparse.ArgumentParser(description='Simulate GS detection error rates.')
-    parser.add_argument('output', help='output file')
-    parser.add_argument('-f', '--fieldSize', type=int)
-    parser.add_argument('-c', '--codewordLength', type=int)
-    parser.add_argument('-a', '--augmentingLength', type=int)
+    parser.add_argument('-o', '--output', required=False, help='output file')
+    parser.add_argument('-f', '--fieldSize', required=True, type=int)
+    parser.add_argument('-c', '--codewordLength', required=True, type=int)
+    parser.add_argument('-a', '--augmentingLength', required=True, type=int)
     parser.add_argument('-e', '--maxErrors', type=float, default=1e4, help='default: 1e4')
     parser.add_argument('-s', '--maxSymbols', type=float, default=2e9, help='default: 2e9')
 
@@ -103,7 +138,13 @@ maxErrors = int(args.maxErrors)
 
 noiseExponent = 0
 
-file = open(args.output, 'w')
+if args.output is not None:
+    file = open(args.output, 'w')
+    file.write("  Noise Power  | MAP Detection |  ML Detection |  Descrambled  |  Unscrambled\n")
+
+print("┌───────────────┬───────────────┬───────────────┬───────────────┬───────────────┐")
+print("│  Noise Power  │ MAP Detection │  ML Detection │  Descrambled  │  Unscrambled  │")
+print("├───────────────┼───────────────┼───────────────┼───────────────┼───────────────┤")
 
 while True:
     noisePower = 10.0**((10.0-noiseExponent)/20)
@@ -119,21 +160,30 @@ while True:
             maxErrors = maxErrors)
     tb.start()
 
-    sys.stdout.write("Computing error rate for noise power = {:g}... 00.0%".format(
+    sys.stdout.write("│{:.9e}│   0.0%".format(
         noisePower))
     sys.stdout.flush()
     while not tb.finished():
-        sys.stdout.write("\033[6D{: 5.1f}%".format(tb.completion()))
+        sys.stdout.write("\033[6D{: >5.1f}%".format(tb.completion()))
         sys.stdout.flush()
         time.sleep(1)
     tb.stop()
-    print("\033[6D done   ")
-
-    file.write('{:.9e} {:.9e} {:.9e}\n'.format(
-        noisePower,
+    print("\033[7D{:.9e}│{:.9e}│{:.9e}│{:.9e}│".format(
         tb.MAPerrorRate(),
-        tb.MLerrorRate()))
-    file.flush()
+        tb.MLerrorRate(),
+        tb.DESCRAMBLEDerrorRate(),
+        tb.BAREerrorRate()))
+
+    if args.output is not None:
+        file.write('{:.9e} {:.9e} {:.9e} {:.9e} {:.9e}\n'.format(
+            noisePower,
+            tb.MAPerrorRate(),
+            tb.MLerrorRate(),
+            tb.DESCRAMBLEDerrorRate(),
+            tb.BAREerrorRate()))
+        file.flush()
 
     if tb.errors() < maxErrors:
         break
+
+print("└───────────────┴───────────────┴───────────────┴───────────────┴───────────────┘")
