@@ -2,7 +2,7 @@
  * @file      Entropy.h
  * @brief     Declares the "Entropy" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 7, 2017
+ * @date      December 29, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -44,7 +44,7 @@ namespace gr
          *
          * @tparam Symbol Base type to use for symbol type. Can be unsigned
          *                char, unsigned short, or unsigned int.
-         * @date   August 7, 2017
+         * @date   December 29, 2017
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         template<typename Symbol>
@@ -64,9 +64,10 @@ namespace gr
              *                            autocorrelation data decays below this
              *                            value will be truncated from our
              *                            computations.
-             * @param [in] framingTag Desired string to use for the "key" of the
-             *                        tag inserted at frame beginnings. Use an
-             *                        empty string to disable framing.
+             * @param [in] alignmentTag Desired string to use for the "key" of
+             *                          the tag present at the alignment point.
+             *                          Use an empty string to disable
+             *                          alignment.
              * @return Shared pointer to newly allocated entropy block
              */
             static sptr make(
@@ -74,7 +75,7 @@ namespace gr
                     const unsigned int codewordLength,
                     const unsigned int augmentingLength,
                     const double minCorrelation = 0.01,
-                    const std::string& framingTag = "");
+                    const std::string& alignmentTag = "");
         };
 
         typedef Entropy<unsigned char> Entropy_bf;

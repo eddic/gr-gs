@@ -953,6 +953,10 @@
   <block>
     <key>gr_gs_Descrambler</key>
     <param>
+      <key>alignmentTag</key>
+      <value>frame</value>
+    </param>
+    <param>
       <key>augmentingLength</key>
       <value>augmentingLength</value>
     </param>
@@ -983,10 +987,6 @@
     <param>
       <key>fieldSize</key>
       <value>fieldSize</value>
-    </param>
-    <param>
-      <key>framingTag</key>
-      <value>frame</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -1130,6 +1130,10 @@
   <block>
     <key>gr_gs_Entropy</key>
     <param>
+      <key>alignmentTag</key>
+      <value></value>
+    </param>
+    <param>
       <key>augmentingLength</key>
       <value>augmentingLength</value>
     </param>
@@ -1156,10 +1160,6 @@
     <param>
       <key>fieldSize</key>
       <value>fieldSize</value>
-    </param>
-    <param>
-      <key>framingTag</key>
-      <value>frame</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -1244,6 +1244,10 @@
   <block>
     <key>gr_gs_ErrorCount</key>
     <param>
+      <key>alignmentTag</key>
+      <value>frame</value>
+    </param>
+    <param>
       <key>alias</key>
       <value></value>
     </param>
@@ -1258,10 +1262,6 @@
     <param>
       <key>_enabled</key>
       <value>True</value>
-    </param>
-    <param>
-      <key>framingTag</key>
-      <value>frame</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -1299,6 +1299,10 @@
   <block>
     <key>gr_gs_ErrorCount</key>
     <param>
+      <key>alignmentTag</key>
+      <value>frame</value>
+    </param>
+    <param>
       <key>alias</key>
       <value></value>
     </param>
@@ -1313,10 +1317,6 @@
     <param>
       <key>_enabled</key>
       <value>1</value>
-    </param>
-    <param>
-      <key>framingTag</key>
-      <value>frame</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -1354,6 +1354,10 @@
   <block>
     <key>gr_gs_ErrorCount</key>
     <param>
+      <key>alignmentTag</key>
+      <value>frame</value>
+    </param>
+    <param>
       <key>alias</key>
       <value></value>
     </param>
@@ -1368,10 +1372,6 @@
     <param>
       <key>_enabled</key>
       <value>1</value>
-    </param>
-    <param>
-      <key>framingTag</key>
-      <value>frame</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -1644,6 +1644,10 @@
   <block>
     <key>gr_gs_Detector</key>
     <param>
+      <key>alignmentTag</key>
+      <value>frame</value>
+    </param>
+    <param>
       <key>augmentingLength</key>
       <value>augmentingLength</value>
     </param>
@@ -1670,10 +1674,6 @@
     <param>
       <key>fieldSize</key>
       <value>fieldSize</value>
-    </param>
-    <param>
-      <key>framingTag</key>
-      <value>frame</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -3799,6 +3799,10 @@
   <block>
     <key>gr_gs_GuidedScrambler</key>
     <param>
+      <key>alignmentTag</key>
+      <value>frame</value>
+    </param>
+    <param>
       <key>augmentingLength</key>
       <value>augmentingLength</value>
     </param>
@@ -3837,10 +3841,6 @@
     <param>
       <key>fieldSize</key>
       <value>fieldSize</value>
-    </param>
-    <param>
-      <key>framingTag</key>
-      <value>frame</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -4243,6 +4243,10 @@
   <block>
     <key>gr_gs_SymbolGenerator</key>
     <param>
+      <key>alignmentTag</key>
+      <value>frame</value>
+    </param>
+    <param>
       <key>alias</key>
       <value></value>
     </param>
@@ -4257,14 +4261,6 @@
     <param>
       <key>_enabled</key>
       <value>True</value>
-    </param>
-    <param>
-      <key>frameLength</key>
-      <value>frameLength*(codewordLength-augmentingLength)</value>
-    </param>
-    <param>
-      <key>framingTag</key>
-      <value>frame</value>
     </param>
     <param>
       <key>_coordinate</key>

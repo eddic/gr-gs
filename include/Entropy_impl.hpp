@@ -2,7 +2,7 @@
  * @file      Entropy_impl.hpp
  * @brief     Declares the "Entropy" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 22, 2017
+ * @date      December 29, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -44,7 +44,7 @@ namespace gr
             /*!
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date   August 22, 2017
+             * @date   December 29, 2017
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -62,17 +62,17 @@ namespace gr
                  *                            means. Any autocorrelation data
                  *                            decays below this value will be
                  *                            truncated from our computations.
-                 * @param [in] framingTag Desired string to use for the "key" of
-                 *                        the tag inserted at frame beginnings.
-                 *                        Use an empty string to disable
-                 *                        framing.
+                 * @param [in] alignmentTag Desired string to use for the "key"
+                 *                          of the tag present at the alignment
+                 *                          point. Use an empty string to
+                 *                          disable alignment.
                  */
                 Entropy_impl(
                         const unsigned int fieldSize,
                         const unsigned int codewordLength,
                         const unsigned int augmentingLength,
                         const double minCorrelation,
-                        const std::string& framingTag);
+                        const std::string& alignmentTag);
 
                 //! No copying allowed
                 Entropy_impl(const Entropy_impl& x) = delete;
@@ -88,10 +88,10 @@ namespace gr
                         gr_vector_void_star &output_items);
 
                 //! Framing tag name/key
-                std::string m_framingTag;
+                pmt::pmt_t m_alignmentTag;
 
-                //! PMT version of framing tag
-                pmt::pmt_t m_framingTagPMT;
+                //! Are we aligned?
+                bool m_aligned;
 
                 //! The codeword length
                 const unsigned int m_codewordLength;

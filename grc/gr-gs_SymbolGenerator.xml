@@ -4,10 +4,8 @@
     <key>gr_gs_SymbolGenerator</key>
     <category>[gr-gs]/Miscellaneous</category>
     <import>import gr_gs as gs</import>
-    <make>gs.SymbolGenerator_$(symbolType.fcn)($weightings, $framingTag, $frameLength)</make>
+    <make>gs.SymbolGenerator_$(symbolType.fcn)($weightings, $alignmentTag)</make>
     <callback>set_weightings($weightings)</callback>
-    <callback>set_framingTag($framingTag)</callback>
-    <callback>set_frameLength($frameLength)</callback>
 	<param>
 		<name>Symbol Type</name>
 		<key>symbolType</key>
@@ -35,22 +33,15 @@
         <type>real_vector</type>
     </param>
     <param>
-        <name>Framing Tag</name>
-        <key>framingTag</key>
+        <name>Alignment Tag</name>
+        <key>alignmentTag</key>
         <value>frame</value>
         <type>string</type>
-        <hide>part</hide>
-    </param>
-    <param>
-        <name>Frame Length</name>
-        <key>frameLength</key>
-        <value>0</value>
-        <type>int</type>
         <hide>part</hide>
     </param>
     <source>
         <name>out</name>
         <type>$symbolType</type>
     </source>
-    <doc>This block simply allows us to generate a random stream of uncorrelated symbols with discretely defined probability weightings. All we do is pass a vector of doubles where the double describes the weighting of the symbol as represented by the index of said vector. Thus a weighting vector of [1,1,1,2] would produce symbol values {0,1,2,3} with respective probabilities of {0.2, 0.2, 0.2, 0.4}. This block also has the ability to add framing tags at set intervals to aid in alignment.</doc>
+    <doc>This block simply allows us to generate a random stream of uncorrelated symbols with discretely defined probability weightings. All we do is pass a vector of doubles where the double describes the weighting of the symbol as represented by the index of said vector. Thus a weighting vector of [1,1,1,2] would produce symbol values {0,1,2,3} with respective probabilities of {0.2, 0.2, 0.2, 0.4}. This block also has the ability to add alignment tags at set intervals to aid in alignment.</doc>
 </block>

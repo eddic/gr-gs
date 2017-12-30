@@ -68,9 +68,9 @@ namespace gr
              *                              codeword?
              * @param [in] noise This noise power level (or variance) is
              *                   required to perform accurate MAP detection.
-             * @param [in] framingTag Desired string to use for the "key" of the
-             *                        tag inserted at frame beginnings. Use an
-             *                        empty string to disable framing.
+             * @param [in] alignmentTag Desired string to use for the "key" of
+             *                          the tag inserted at alignment. Use an
+             *                          empty string to disable alignment.
              * @param [in] minCorrelation This decides how many taps we're
              *                            going to need to calculate our means.
              *                            Any autocorrelation data decays below
@@ -89,7 +89,7 @@ namespace gr
                     const unsigned codewordLength,
                     const unsigned augmentingLength,
                     const double noise,
-                    const std::string& framingTag = "",
+                    const std::string& alignmentTag = "",
                     const double minCorrelation = 0.01,
                     const double nodeDiscardMetric = 10);
 

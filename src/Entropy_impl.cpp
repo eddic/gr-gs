@@ -2,7 +2,7 @@
  * @file      Entropy_impl.cpp
  * @brief     Defines the "Entropy" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      August 28, 2017
+ * @date      December 29, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -39,27 +39,27 @@ int gr::gs::Implementations::Entropy_impl<Symbol>::work(
     float* output = reinterpret_cast<float*>(output_items[0]);
     unsigned outputted=0;
 
-    if(!m_started && !m_framingTag.empty())
+    // Get our codeword lined up
+    if(!m_aligned)
     {
         std::vector<gr::tag_t> tags;
-        std::vector<gr::tag_t>::const_iterator tag;
 
         this->get_tags_in_range(
                 tags,
                 0,
                 this->nitems_read(0),
                 this->nitems_read(0)+noutput_items,
-                m_framingTagPMT);
-        tag = tags.cbegin();
+                m_alignmentTag);
+        const std::vector<gr::tag_t>::const_iterator tag = tags.cbegin();
 
         if(tag != tags.cend())
         {
             const size_t offset = tag->offset - this->nitems_read(0);
-
             input += offset;
             output += offset;
             noutput_items -= offset;
         }
+        m_aligned = true;
     }
 
     while(noutput_items-outputted >= m_mapper.inputSize())
@@ -102,12 +102,12 @@ gr::gs::Implementations::Entropy_impl<Symbol>::Entropy_impl(
         const unsigned int codewordLength,
         const unsigned int augmentingLength,
         const double minCorrelation,
-        const std::string& framingTag):
+        const std::string& alignmentTag):
     gr::sync_block("Entropy",
         io_signature::make(1, 1 ,sizeof(Symbol)),
         io_signature::make(1, 1, sizeof(float))),
-    m_framingTag(framingTag),
-    m_framingTagPMT(pmt::string_to_symbol(framingTag)),
+    m_alignmentTag(pmt::string_to_symbol(alignmentTag)),
+    m_aligned(alignmentTag.empty()),
     m_codewordLength(codewordLength),
     m_codewordPosition(0),
     m_rds(GuidedScrambling::startingRDS),
@@ -135,7 +135,7 @@ typename gr::gs::Entropy<Symbol>::sptr gr::gs::Entropy<Symbol>::make(
         const unsigned int codewordLength,
         const unsigned int augmentingLength,
         const double minCorrelation,
-        const std::string& framingTag)
+        const std::string& alignmentTag)
 {
     return gnuradio::get_initial_sptr(
             new ::gr::gs::Implementations::Entropy_impl<Symbol>(
@@ -143,7 +143,7 @@ typename gr::gs::Entropy<Symbol>::sptr gr::gs::Entropy<Symbol>::make(
                 codewordLength,
                 augmentingLength,
                 minCorrelation,
-                framingTag));
+                alignmentTag));
 }
 
 template class gr::gs::Entropy<unsigned char>;

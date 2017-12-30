@@ -4,7 +4,7 @@
     <key>gr_gs_Entropy</key>
     <category>[gr-gs]/Guided Scrambling</category>
     <import>import gr_gs as gs</import>
-    <make>gs.Entropy_$(symbolType.fcn)($fieldSize, $codewordLength, $augmentingLength, $minCorrelation, $framingTag)</make>
+    <make>gs.Entropy_$(symbolType.fcn)($fieldSize, $codewordLength, $augmentingLength, $minCorrelation, $alignmentTag)</make>
 	<param>
 		<name>Symbol Type</name>
 		<key>symbolType</key>
@@ -66,8 +66,8 @@
         <type>float</type>
     </param>
     <param>
-        <name>Framing Tag</name>
-        <key>framingTag</key>
+        <name>Alignment Tag</name>
+        <key>alignmentTag</key>
         <value></value>
         <type>string</type>
         <hide>part</hide>

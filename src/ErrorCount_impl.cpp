@@ -54,7 +54,7 @@ int gr::gs::Implementations::ErrorCount_impl<Symbol>::work(
     float* const outputEnd = m_output?
         outputStart+noutput_items : nullptr;
 
-    if(!m_synchronized)
+    if(!m_aligned)
     {
         std::vector<gr::tag_t> fastTags;
         this->get_tags_in_range(
@@ -62,7 +62,7 @@ int gr::gs::Implementations::ErrorCount_impl<Symbol>::work(
                 0,
                 this->nitems_read(0),
                 this->nitems_read(0)+noutput_items,
-                m_framingTag);
+                m_alignmentTag);
 
         std::vector<gr::tag_t> slowTags;
         this->get_tags_in_range(
@@ -70,7 +70,7 @@ int gr::gs::Implementations::ErrorCount_impl<Symbol>::work(
                 1,
                 this->nitems_read(1),
                 this->nitems_read(1)+noutput_items,
-                m_framingTag);
+                m_alignmentTag);
 
         if(!fastTags.empty() && !slowTags.empty())
         {
@@ -80,7 +80,7 @@ int gr::gs::Implementations::ErrorCount_impl<Symbol>::work(
             for(const auto& slowTag: slowTags)
                 if(fastId == pmt::to_uint64(slowTag.value))
                 {
-                    m_synchronized = true;
+                    m_aligned = true;
                     const size_t slowOffset
                         = slowTag.offset - this->nitems_read(1);
                     this->set_history(slowOffset-fastOffset+1);
@@ -139,7 +139,7 @@ int gr::gs::Implementations::ErrorCount_impl<Symbol>::work(
 template<typename Symbol>
 gr::gs::Implementations::ErrorCount_impl<Symbol>::ErrorCount_impl(
         const bool output,
-        const std::string& framingTag,
+        const std::string& alignmentTag,
         const unsigned long long maxErrors,
         const unsigned long long maxSymbols):
     gr::sync_block("Error Count",
@@ -151,24 +151,24 @@ gr::gs::Implementations::ErrorCount_impl<Symbol>::ErrorCount_impl(
     m_symbols(0),
     m_errors(0),
     m_rate(0),
-    m_framingTag(framingTag.empty()?
+    m_alignmentTag(alignmentTag.empty()?
             pmt::pmt_t():
-            pmt::string_to_symbol(framingTag)),
-    m_synchronized(framingTag.empty())
+            pmt::string_to_symbol(alignmentTag)),
+    m_aligned(alignmentTag.empty())
 {
 }
 
 template<typename Symbol> typename gr::gs::ErrorCount<Symbol>::sptr
 gr::gs::ErrorCount<Symbol>::make(
         const bool output,
-        const std::string& framingTag,
+        const std::string& alignmentTag,
         const unsigned long long maxErrors,
         const unsigned long long maxSymbols)
 {
     return gnuradio::get_initial_sptr(
             new Implementations::ErrorCount_impl<Symbol>(
                 output,
-                framingTag,
+                alignmentTag,
                 maxErrors,
                 maxSymbols));
 }

@@ -4,13 +4,12 @@
     <key>gr_gs_Descrambler</key>
     <category>[gr-gs]/Guided Scrambling</category>
     <import>import gr_gs as gs</import>
-    <make>gs.Descrambler_$(symbolType.fcn)($fieldSize, $codewordLength, $augmentingLength, $continuous, $multiplier, $framingTag)</make>
+    <make>gs.Descrambler_$(symbolType.fcn)($fieldSize, $codewordLength, $augmentingLength, $continuous, $multiplier, $alignmentTag)</make>
     <callback>set_fieldSize($fieldSize)</callback>
     <callback>set_codewordLength($codewordLength)</callback>
     <callback>set_augmentingLength($augmentingLength)</callback>
     <callback>set_continuous($continuous)</callback>
     <callback>set_multiplier($multiplier)</callback>
-    <callback>set_framingTag($framingTag)</callback>
 	<param>
 		<name>Symbol Type</name>
 		<key>symbolType</key>
@@ -78,8 +77,8 @@
         <type>int_vector</type>
     </param>
     <param>
-        <name>Framing Tag</name>
-        <key>framingTag</key>
+        <name>Alignment Tag</name>
+        <key>alignmentTag</key>
         <value></value>
         <type>string</type>
         <hide>part</hide>

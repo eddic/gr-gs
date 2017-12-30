@@ -2,7 +2,7 @@
  * @file      Descrambler.h
  * @brief     Declares the "Descrambler" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 19, 2017
+ * @date      December 29, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -54,7 +54,7 @@ namespace gr
          *
          * @tparam Symbol Base type to use for symbol type. Can be unsigned
          *                char, unsigned short, or unsigned int.
-         * @date   May 19, 2017
+         * @date   December 29, 2017
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         template<typename Symbol>
@@ -128,21 +128,6 @@ namespace gr
             virtual void set_multiplier(
                     const std::vector<Symbol>& multiplier) =0;
 
-            //! Access the framing tag name
-            virtual const std::string& framingTag() const =0;
-
-            //! Set the framing tag name
-            /*!
-             * This allows the codeword/sourceword starts to be aligned with a
-             * frame stream tag. Use this to ensure alignment with the
-             * GuidedScrambler.
-             *
-             * @param [in] tag Desired string to use for the "key" of the tag
-             *                 inserted at frame beginnings. Use an empty string
-             *                 to disable framing.
-             */
-            virtual void set_framingTag(const std::string& tag) =0;
-
             //! Shared pointer to this
             typedef boost::shared_ptr<Descrambler> sptr;
 
@@ -153,7 +138,10 @@ namespace gr
              * @param [in] augmentingLength See set_augmentingLength()
              * @param [in] continuous See set_continuous()
              * @param [in] multiplier See set_multiplier()
-             * @param [in] framingTag See set_framingTag()
+             * @param [in] alignmentTag Desired string to use for the "key" of the
+             *                     tag present at the alignment point.
+             *                     Use an empty string to disable
+             *                     alignment.
              * @return Shared pointer to newly allocated descrambler
              */
             static sptr make(
@@ -162,7 +150,7 @@ namespace gr
                     const unsigned int augmentingLength = 3,
                     const bool continuous = true,
                     const std::vector<Symbol>& multiplier = {1,0,0,1},
-                    const std::string& framingTag = "");
+                    const std::string& alignmentTag = "");
         };
 
         typedef Descrambler<unsigned char> Descrambler_bb;

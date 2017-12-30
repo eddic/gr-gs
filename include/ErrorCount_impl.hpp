@@ -70,10 +70,10 @@ namespace gr
                 //! Initialize an error count block
                 /*!
                  * @param [in] output Set to true for an output port.
-                 * @param [in] framingTag Desired string to use for the "key" of
+                 * @param [in] alignmentTag Desired string to use for the "key" of
                  *                        the tag indicating frame starts. Use a
                  *                        zero length string to indicate a no
-                 *                        framings is used.
+                 *                        alignments is used.
                  * @param [in] maxErrors Maximum number of errors to log before
                  *                       EOF.
                  * @param [in] maxSymbols Maximum number of symbols to log
@@ -82,7 +82,7 @@ namespace gr
                  */
                 inline ErrorCount_impl(
                         const bool output,
-                        const std::string& framingTag,
+                        const std::string& alignmentTag,
                         const unsigned long long maxErrors,
                         const unsigned long long maxSymbols);
 
@@ -115,10 +115,10 @@ namespace gr
                 double m_rate;
 
                 //! Framing tag
-                pmt::pmt_t m_framingTag;
+                pmt::pmt_t m_alignmentTag;
 
                 //! True if we've established the delay
-                bool m_synchronized;
+                bool m_aligned;
             };
         }
     }

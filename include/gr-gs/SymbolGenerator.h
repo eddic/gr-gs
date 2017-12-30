@@ -2,7 +2,7 @@
  * @file      SymbolGenerator.h
  * @brief     Declares the "Random Symbol Generator" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 19, 2017
+ * @date      December 29, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -52,7 +52,7 @@ namespace gr
          *
          * @tparam Symbol Base type to use for symbol type. Can be unsigned
          *                char, unsigned short, or unsigned int.
-         * @date   May 19, 2017
+         * @date   December 29, 2017
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         template<typename Symbol>
@@ -78,29 +78,6 @@ namespace gr
             virtual void set_weightings(
                     const std::vector<double>& weightings) =0;
 
-            //! Access the framing tag name
-            virtual const std::string& framingTag() const =0;
-
-            //! Set the framing tag name
-            /*!
-             * @param [in] tag Desired string to use for the "key" of the tag
-             *                 inserted at frame starts.
-             */
-            virtual void set_framingTag(const std::string& tag) =0;
-
-            //! Access the frame length in symbols
-            virtual const unsigned int frameLength() const =0;
-
-            //! Set the frame length in symbols
-            /*!
-             * This means a frame tag is generated every *length* symbols. Zero
-             * means no tags are generated. If your feeding this into a guided
-             * scrambler ensure the length is a multiple of the codeword length.
-             *
-             * @param [in] length Desired length of frame in symbols.
-             */
-            virtual void set_frameLength(const unsigned int length) =0;
-
             //! Shared pointer to this
             typedef boost::shared_ptr<SymbolGenerator> sptr;
 
@@ -110,14 +87,15 @@ namespace gr
              * "0" symbol is outputted with 100\% probability.
              *
              * @param [in] weightings See set_weightings()
-             * @param [in] framingTag See set_framingTag()
-             * @param [in] frameLength See set_framingLength()
+             * @param [in] alignmentTag Desired string to use for the "key" of
+             *                          the tag present at the alignment point.
+             *                          Use an empty string to disable
+             *                          alignment.
              * @return Shared pointer to newly allocated random symbol generator
              */
             static sptr make(
                     const std::vector<double>& weightings = {1, 1, 1, 1},
-                    const std::string& framingTag = "frame",
-                    const unsigned int frameLength = 0);
+                    const std::string& alignmentTag = "frame");
         };
 
         typedef SymbolGenerator<unsigned char> SymbolGenerator_b;

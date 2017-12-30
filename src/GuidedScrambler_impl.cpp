@@ -2,7 +2,7 @@
  * @file      GuidedScrambler_impl.cpp
  * @brief     Defines the "Guided Scrambler" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 19, 2017
+ * @date      December 29, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -24,7 +24,6 @@
  * The Guided Scrambling GNU Radio Module.  If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
 
 #include <condition_variable>
 #include <cmath>
@@ -136,7 +135,7 @@ gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::GuidedScrambler_impl(
         const unsigned int threads,
         const std::vector<Complex>& constellation,
         const std::string& selectionMethod,
-        const std::string& framingTag):
+        const std::string& alignmentTag):
     gr::block("Guided Scrambler",
         gr::io_signature::make(1,1,sizeof(Symbol)),
         gr::io_signature::make(1,1,sizeof(Symbol))),
@@ -152,8 +151,8 @@ gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::GuidedScrambler_impl(
     m_codeword(nullptr),
     m_sourceword(m_codewordLength-m_augmentingLength),
     m_sourcewordIt(m_sourceword.begin()),
-    m_framingTag(framingTag),
-    m_framingTagPMT(pmt::string_to_symbol(framingTag))
+    m_alignmentTag(pmt::string_to_symbol(alignmentTag)),
+    m_aligned(alignmentTag.empty())
 {
     this->set_relative_rate(
             double(codewordLength)/(codewordLength-augmentingLength));
@@ -323,22 +322,6 @@ void gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::set_threads(
     killThreads();
 }
 
-template<typename Symbol> const std::string&
-gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::framingTag() const
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    return m_framingTag;
-}
-
-template<typename Symbol>
-void gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::set_framingTag(
-        const std::string& tag)
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    m_framingTag = tag;
-    m_framingTagPMT = pmt::string_to_symbol(tag);
-}
-
 template<typename Symbol>
 gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::~GuidedScrambler_impl()
 {
@@ -363,40 +346,45 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::general_work(
     Symbol* output = outputStart;
     unsigned int outputSize = noutput_items;
 
-    std::vector<gr::tag_t> tags;
-    std::vector<gr::tag_t>::const_iterator tag;
-
-    if(!m_framingTag.empty())
+    if(!m_aligned)
     {
+        std::vector<gr::tag_t> tags;
         this->get_tags_in_range(
                 tags,
                 0,
                 this->nitems_read(0),
                 this->nitems_read(0)+ninput_items[0],
-                m_framingTagPMT);
-        tag = tags.cbegin();
+                m_alignmentTag);
+        const std::vector<gr::tag_t>::const_iterator tag = tags.cbegin();
 
         if(tag != tags.cend())
         {
             const size_t offset = tag->offset-this->nitems_read(0);
-            if(offset < m_codewordLength-m_augmentingLength)
+            const unsigned outputOffset = std::min(
+                    offset*m_codewordLength
+                        /(m_codewordLength-m_augmentingLength),
+                    static_cast<unsigned long>(outputSize));
+            if(offset != 0)
             {
-                if(offset != 0)
-                {
-                    inputSize -= offset;
-                    input += offset;
-                }
-
-                auto location = this->nitems_written(0);
-                if(m_codeword != nullptr)
-                    location += unsigned(m_codeword->end()-m_codewordIt);
-                this->add_item_tag(
-                        0,
-                        location,
-                        tag->key,
-                        tag->value);
-                ++tag;
+                inputSize -= offset;
+                input += offset;
+                outputSize -= outputOffset;
+                output += outputOffset;
             }
+            this->add_item_tag(
+                    0,
+                    this->nitems_written(0) + outputOffset,
+                    tag->key,
+                    tag->value);
+            m_aligned = true;
+        }
+        else
+        {
+            this->consume_each(ninput_items[0]);
+            return std::min(
+                    ninput_items[0]*m_codewordLength
+                        /(m_codewordLength-m_augmentingLength),
+                    outputSize);
         }
     }
 
@@ -436,30 +424,6 @@ int gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::general_work(
                 m_codeword = &scramble(m_sourceword);
                 m_codewordIt = m_codeword->begin();
                 m_sourcewordIt = m_sourceword.begin();
-
-                if(!m_framingTag.empty() && tag != tags.cend())
-                {
-                    const size_t offset =
-                        tag->offset
-                        -this->nitems_read(0)
-                        -(input-inputStart);
-
-                    if(offset < m_codewordLength-m_augmentingLength)
-                    {
-                        if(offset != 0)
-                        {
-                            inputSize -= offset;
-                            input += offset;
-                        }
-                        this->add_item_tag(
-                                0,
-                                this->nitems_written(0)
-                                +uint64_t(output-outputStart+m_codewordLength),
-                                tag->key,
-                                tag->value);
-                        ++tag;
-                    }
-                }
             }
             else
                 break;
@@ -500,7 +464,7 @@ gr::gs::GuidedScrambler<Symbol>::make(
         const unsigned int threads,
         const std::vector<Complex>& constellation,
         const std::string& selectionMethod,
-        const std::string& framingTag)
+        const std::string& alignmentTag)
 {
     return gnuradio::get_initial_sptr(
             new ::gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>(
@@ -512,7 +476,7 @@ gr::gs::GuidedScrambler<Symbol>::make(
                     threads,
                     constellation,
                     selectionMethod,
-                    framingTag));
+                    alignmentTag));
 }
 
 template<typename Symbol> const std::vector<std::string>&

@@ -3,7 +3,7 @@
  * @brief     Defines the "Guided Scrambling Detector" GNU Radio block
  *            implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      December 19, 2017
+ * @date      December 29, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -77,7 +77,7 @@ int gr::gs::Implementations::Detector_impl<Symbol>::general_work(
                 0,
                 this->nitems_read(0),
                 this->nitems_read(0)+noutput_items,
-                m_framingTagPMT);
+                m_alignmentTag);
         tag = tags.cbegin();
 
         if(tag != tags.cend())
@@ -184,16 +184,15 @@ gr::gs::Implementations::Detector_impl<Symbol>::Detector_impl(
         const unsigned codewordLength,
         const unsigned augmentingLength,
         const double noise,
-        const std::string& framingTag,
+        const std::string& alignmentTag,
         const double minCorrelation,
         const double nodeDiscardMetric):
     gr::block("Guided Scrambling Detector",
         io_signature::make(1,1,sizeof(gr::gs::Complex)),
         io_signature::make(1,1,sizeof(Symbol))),
     m_noisePower(noise),
-    m_framingTag(framingTag),
-    m_framingTagPMT(pmt::string_to_symbol(framingTag)),
-    m_aligned(framingTag.empty()),
+    m_alignmentTag(pmt::string_to_symbol(alignmentTag)),
+    m_aligned(alignmentTag.empty()),
     m_codewordLength(codewordLength),
     m_mapper(
             fieldSize,
@@ -228,7 +227,7 @@ typename gr::gs::Detector<Symbol>::sptr gr::gs::Detector<Symbol>::make(
         const unsigned codewordLength,
         const unsigned augmentingLength,
         const double noise,
-        const std::string& framingTag,
+        const std::string& alignmentTag,
         const double minCorrelation,
         const double nodeDiscardMetric)
 {
@@ -238,7 +237,7 @@ typename gr::gs::Detector<Symbol>::sptr gr::gs::Detector<Symbol>::make(
                 codewordLength,
                 augmentingLength,
                 noise,
-                framingTag,
+                alignmentTag,
                 minCorrelation,
                 nodeDiscardMetric));
 }

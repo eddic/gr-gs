@@ -2,7 +2,7 @@
  * @file      SymbolGenerator_impl.hpp
  * @brief     Declares the "Random Symbol Generator" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 19, 2017
+ * @date      December 29, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -48,7 +48,7 @@ namespace gr
              *
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date   August 19, 2016
+             * @date   December 29, 2017
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -58,12 +58,6 @@ namespace gr
                 const std::vector<double>& weightings() const;
                 void set_weightings(const std::vector<double>& weightings);
 
-                const std::string& framingTag() const;
-                void set_framingTag(const std::string& tag);
-
-                const unsigned int frameLength() const;
-                void set_frameLength(const unsigned int length);
-
                 //! GNU Radio work function
                 int work(int noutput_items,
                         gr_vector_const_void_star &input_items,
@@ -72,13 +66,14 @@ namespace gr
                 //! Initialize with default symbol weightings
                 /*!
                  * @param  [in] weightings See set_weightings()
-                 * @param [in] framingTag See set_framingTag()
-                 * @param [in] frameLength See set_framingLength()
+                 * @param [in] alignmentTag Desired string to use for the "key"
+                 *                          of the tag present at the alignment
+                 *                          point. Use an empty string to
+                 *                          disable alignment.
                  */
                 inline SymbolGenerator_impl(
                         const std::vector<double>& weightings,
-                        const std::string& framingTag,
-                        const unsigned int frameLength);
+                        const std::string& alignmentTag);
 
             private:
                 //! Always practice safe threading
@@ -93,20 +88,11 @@ namespace gr
                 //! Our distribution
                 std::discrete_distribution<Symbol> m_distribution;
 
-                //! Framing tag
-                std::string m_framingTag;
+                //! Alignment tag
+                pmt::pmt_t m_alignmentTag;
 
-                //! Framing tag PMT
-                pmt::pmt_t m_framingTagPMT;
-
-                //! Frame length (for frame tag generation)
-                unsigned int m_frameLength;
-
-                //! Current symbol number (for framing)
-                unsigned int m_symbolNumber;
-
-                //! Current frame number
-                uint64_t m_frameNumber;
+                //! Are we aligned?
+                bool m_aligned;
             };
         }
     }

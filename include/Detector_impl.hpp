@@ -3,7 +3,7 @@
  * @brief     Declares the "Guided Scrambling Detector" GNU Radio block
  *            implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      December 19, 2017
+ * @date      December 29, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -52,7 +52,7 @@ namespace gr
              *
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date    December 19, 2017
+             * @date    December 29, 2017
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -92,10 +92,10 @@ namespace gr
                  *                              the codeword?
                  * @param [in] noise This noise power level (or variance) is
                  *                   required to perform accurate MAP detection.
-                 * @param [in] framingTag Desired string to use for the "key" of
-                 *                        the tag inserted at frame beginnings.
-                 *                        Use an empty string to disable
-                 *                        framing.
+                 * @param [in] alignmentTag Desired string to use for the "key" of
+                 *                          of the tag inserted at alignment.
+                 *                          Use an empty string to disable
+                 *                          alignment.
                  * @param [in] minCorrelation This decides how many taps we're
                  *                            going to need to calculate our
                  *                            means. Any autocorrelation data
@@ -114,7 +114,7 @@ namespace gr
                         const unsigned codewordLength,
                         const unsigned augmentingLength,
                         const double noise,
-                        const std::string& framingTag,
+                        const std::string& alignmentTag,
                         const double minCorrelation,
                         const double nodeDiscardMetric);
 
@@ -129,10 +129,7 @@ namespace gr
                 double m_noisePower;
 
                 //! Framing tag name/key
-                std::string m_framingTag;
-
-                //! PMT version of framing tag
-                pmt::pmt_t m_framingTagPMT;
+                pmt::pmt_t m_alignmentTag;
 
                 //! Are we aligned yet?
                 bool m_aligned;

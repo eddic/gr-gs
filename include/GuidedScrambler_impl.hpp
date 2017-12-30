@@ -2,7 +2,7 @@
  * @file      GuidedScrambler_impl.hpp
  * @brief     Declares the "Guided Scrambler" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 19, 2017
+ * @date      December 29, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -50,7 +50,7 @@ namespace gr
              *
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date   May 19, 2017
+             * @date   December 29, 2017
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -88,9 +88,6 @@ namespace gr
                 unsigned int threads() const;
                 void set_threads(unsigned int number=0);
 
-                const std::string& framingTag() const;
-                void set_framingTag(const std::string& tag);
-
                 //! Perform guided scrambling on an input source word
                 /*!
                  * Note that in order to improve efficiency of operation this
@@ -116,7 +113,10 @@ namespace gr
                  * @param [in] threads See set_threads()
                  * @param [in] constellation See set_constellation()
                  * @param [in] selectionMethod See set_selectionMethod()
-                 * @param [in] framingTag See set_framingTag()
+                 * @param [in] alignmentTag Desired string to use for the "key"
+                 *                          of the tag present at the alignment
+                 *                          point. Use an empty string to
+                 *                          disable alignment.
                  */
                 GuidedScrambler_impl(
                         const unsigned int fieldSize,
@@ -127,7 +127,7 @@ namespace gr
                         const unsigned int threads,
                         const std::vector<Complex>& constellation,
                         const std::string& selectionMethod,
-                        const std::string& framingTag);
+                        const std::string& alignmentTag);
 
                 //! Simply kills the active threads.
                 ~GuidedScrambler_impl();
@@ -194,10 +194,10 @@ namespace gr
                 typename std::vector<Symbol>::iterator m_sourcewordIt;
 
                 //! Framing tag name/key
-                std::string m_framingTag;
+                pmt::pmt_t m_alignmentTag;
 
-                //! PMT version of framing tag
-                pmt::pmt_t m_framingTagPMT;
+                //! Are we aligned?
+                bool m_aligned;
             };
         }
     }
