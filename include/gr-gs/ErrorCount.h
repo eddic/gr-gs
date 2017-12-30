@@ -2,7 +2,7 @@
  * @file      ErrorCount.h
  * @brief     Declares the "Error Count" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      October 7, 2017
+ * @date      December 29, 2017
  * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -42,11 +42,11 @@ namespace gr
         //! "Error Count" GNU Radio block
         /*!
          * This block is used for calculating total error counts and rates for
-         * framed symbol sequences over all time.
+         * symbol sequences over all time.
          *
          * @tparam Symbol Base type to use for symbol type. Can be unsigned
          *                char, unsigned short, or unsigned int.
-         * @date   October 7, 2017
+         * @date   December 29, 2017
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         template<typename Symbol>
@@ -59,10 +59,9 @@ namespace gr
             //! Manufacture an error count block
             /*!
              * @param [in] output Set to true for an output port.
-             * @param [in] framingTag Desired string to use for the "key" of the
-             *                        tag indicating frame starts. Use a zero
-             *                        length string to indicate no framing is
-             *                        used.
+             * @param [in] alignmentTag Desired string to use for the "key" of
+             *                          the tag inserted at alignment. Use an
+             *                          empty string to disable alignment.
              * @param [in] maxErrors Maximum number of errors to log before EOF.
              * @param [in] maxSymbols Maximum number of symbols to log before
              *                        EOF.
@@ -70,7 +69,7 @@ namespace gr
              */
             static sptr make(
                     const bool output,
-                    const std::string& framingTag = "",
+                    const std::string& alignmentTag = "",
                     const unsigned long long maxErrors = 0,
                     const unsigned long long maxSymbols = 0);
 

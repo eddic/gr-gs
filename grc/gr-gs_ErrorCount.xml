@@ -56,5 +56,5 @@
         <name>out</name>
         <type>float</type>
     </source>
-    <doc>This block is used for calculating total error counts and rates for framed symbol sequences over all time.</doc>
+    <doc>This block is used for calculating total error counts and rates symbol sequences over all time.</doc>
 </block>

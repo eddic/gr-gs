@@ -71,9 +71,9 @@ namespace gr
                 /*!
                  * @param [in] output Set to true for an output port.
                  * @param [in] alignmentTag Desired string to use for the "key" of
-                 *                        the tag indicating frame starts. Use a
-                 *                        zero length string to indicate a no
-                 *                        alignments is used.
+                 *                          of the tag inserted at alignment.
+                 *                          Use an empty string to disable
+                 *                          alignment.
                  * @param [in] maxErrors Maximum number of errors to log before
                  *                       EOF.
                  * @param [in] maxSymbols Maximum number of symbols to log

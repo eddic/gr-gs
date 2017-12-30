@@ -35,7 +35,7 @@
     <param>
         <name>Alignment Tag</name>
         <key>alignmentTag</key>
-        <value>frame</value>
+        <value>start</value>
         <type>string</type>
         <hide>part</hide>
     </param>

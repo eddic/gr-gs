@@ -95,7 +95,7 @@ namespace gr
              */
             static sptr make(
                     const std::vector<double>& weightings = {1, 1, 1, 1},
-                    const std::string& alignmentTag = "frame");
+                    const std::string& alignmentTag = "start");
         };
 
         typedef SymbolGenerator<unsigned char> SymbolGenerator_b;

@@ -279,7 +279,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(512, 4)</value>
+      <value>(408, 6)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -346,33 +346,6 @@
     <param>
       <key>value</key>
       <value>4</value>
-    </param>
-  </block>
-  <block>
-    <key>variable</key>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(408, 4)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>frameLength</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>10000</value>
     </param>
   </block>
   <block>
@@ -954,7 +927,7 @@
     <key>gr_gs_Descrambler</key>
     <param>
       <key>alignmentTag</key>
-      <value>frame</value>
+      <value>start</value>
     </param>
     <param>
       <key>augmentingLength</key>
@@ -1245,7 +1218,7 @@
     <key>gr_gs_ErrorCount</key>
     <param>
       <key>alignmentTag</key>
-      <value>frame</value>
+      <value>start</value>
     </param>
     <param>
       <key>alias</key>
@@ -1300,7 +1273,7 @@
     <key>gr_gs_ErrorCount</key>
     <param>
       <key>alignmentTag</key>
-      <value>frame</value>
+      <value>start</value>
     </param>
     <param>
       <key>alias</key>
@@ -1355,7 +1328,7 @@
     <key>gr_gs_ErrorCount</key>
     <param>
       <key>alignmentTag</key>
-      <value>frame</value>
+      <value>start</value>
     </param>
     <param>
       <key>alias</key>
@@ -1645,7 +1618,7 @@
     <key>gr_gs_Detector</key>
     <param>
       <key>alignmentTag</key>
-      <value>frame</value>
+      <value>start</value>
     </param>
     <param>
       <key>augmentingLength</key>
@@ -3800,7 +3773,7 @@
     <key>gr_gs_GuidedScrambler</key>
     <param>
       <key>alignmentTag</key>
-      <value>frame</value>
+      <value>start</value>
     </param>
     <param>
       <key>augmentingLength</key>
@@ -4244,7 +4217,7 @@
     <key>gr_gs_SymbolGenerator</key>
     <param>
       <key>alignmentTag</key>
-      <value>frame</value>
+      <value>start</value>
     </param>
     <param>
       <key>alias</key>
