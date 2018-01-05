@@ -2,11 +2,11 @@
  * @file      Autocovariance_impl.hpp
  * @brief     Declares the "Autocovariance" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      June 2, 2017
- * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
+ * @date      January 4, 2018
+ * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -46,7 +46,7 @@ namespace gr
              * Implements gr::gs::Autocovariance
              *
              * @tparam T Base signal type. Can be float or std::complex<float>.
-             * @date    May 22, 2017
+             * @date    January 4, 2018
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename T>
@@ -65,7 +65,7 @@ namespace gr
                         gr_vector_const_void_star &input_items,
                         gr_vector_void_star &output_items);
 
-                //! Initialize an distribution block
+                //! Initialize an autocovariance block
                 /*!
                  * @param [in] length This decides how far back we look to
                  *                    calculate the autocovariance. This, of

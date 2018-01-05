@@ -2,11 +2,11 @@
  * @file      Data.cpp
  * @brief     Defines the Data namespace
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      June 23, 2017
- * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
+ * @date      January 4, 2018
+ * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -39,8 +39,10 @@ namespace gr
     //! Contains all blocks for the Guided Scrambling GNU Radio Module
     namespace gs
     {
+        //! Retrieve simulation result data
         namespace Data
         {
+            //! Retrieve raw metadata field
             void raw(
                     const unsigned fieldSize,
                     const unsigned codewordLength,

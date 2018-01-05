@@ -2,11 +2,11 @@
  * @file      Detector.h
  * @brief     Declares the "Guided Scrambling Detector" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      December 19, 2017
- * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
+ * @date      January 4, 2018
+ * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -39,16 +39,16 @@ namespace gr
     {
         //! "Guided Scrambling Detector" GNU Radio block
         /*!
-         * This block takes soft decision data from a detector and makes hard
-         * decisions from the statistical properties of the guided scrambling
-         * mechanism being used.
+         * This block complex samples and makes hard decisions from both
+         * euclidean distances to constellation points and the statistical
+         * properties of the guided scrambling mechanism being used.
          *
          * See the members functions for further information on the parameters
          * and their meaning.
          *
          * @tparam Symbol Base type to use for symbol type. Can be unsigned
          *                char, unsigned short, or unsigned int.
-         * @date   December 19, 2017
+         * @date   January 4, 2018
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         template<typename Symbol>

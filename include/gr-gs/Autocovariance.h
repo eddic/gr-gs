@@ -2,11 +2,11 @@
  * @file      Autocovariance.h
  * @brief     Declares the "Autocovariance" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      June 2, 2017
- * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
+ * @date      January 4, 2018
+ * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -54,7 +54,7 @@ namespace gr
          * * output[3] = imag(x(n))*imag(x(n-k))
          *
          * @tparam T Base signal type. Can be float or std::complex<float>.
-         * @date    June 2, 2017
+         * @date    January 4, 2018
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         template<typename T>
@@ -78,7 +78,7 @@ namespace gr
              */
             virtual void set_mean(T mean) =0;
 
-            //! Manufacture an integrate block
+            //! Manufacture an autocovariance block
             /*!
              * @param [in] length This decides how far back we look to calculate
              *                    the autocovariance. This, of course, will
@@ -91,7 +91,7 @@ namespace gr
              *                    autocorrelation just for the first sample in
              *                    the chunk. You can use this to calculate
              *                    autocorrelations in cyclostationary signals.
-             * @return Shared pointer to newly allocated integrate block
+             * @return Shared pointer to newly allocated autocovariance block
              */
             static sptr make(
                     unsigned length,

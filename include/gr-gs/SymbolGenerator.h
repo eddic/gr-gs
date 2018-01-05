@@ -2,11 +2,11 @@
  * @file      SymbolGenerator.h
  * @brief     Declares the "Random Symbol Generator" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      December 29, 2017
- * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
+ * @date      January 4, 2018
+ * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -47,12 +47,11 @@ namespace gr
          * weighting of the symbol as represented by the index of said vector.
          * Thus a weighting vector of {1,1,1,2} would produce symbol values
          * {0,1,2,3} with respective probabilities of {0.2, 0.2, 0.2, 0.4}. This
-         * block also has the ability to add framing tags at set intervals to
-         * aid in alignment.
+         * block also has the ability to add an alignment tag at the beginning.
          *
          * @tparam Symbol Base type to use for symbol type. Can be unsigned
          *                char, unsigned short, or unsigned int.
-         * @date   December 29, 2017
+         * @date   January 4, 2018
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         template<typename Symbol>
@@ -81,7 +80,7 @@ namespace gr
             //! Shared pointer to this
             typedef boost::shared_ptr<SymbolGenerator> sptr;
 
-            //! Manufacture a random symbol generator with a default weightings
+            //! Manufacture a random symbol generator
             /*!
              * The default symbol generator is initialized to a state where the
              * "0" symbol is outputted with 100\% probability.

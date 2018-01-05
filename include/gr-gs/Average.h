@@ -2,11 +2,11 @@
  * @file      Average.h
  * @brief     Declares the "Average" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      June 12, 2017
- * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
+ * @date      January 4, 2018
+ * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -47,7 +47,7 @@ namespace gr
          *
          * @tparam Internal Internal storage type (may be of higher accuracy).
          * @tparam External External stype for talking with GNU Radio.
-         * @date    May 29, 2017
+         * @date    January 4, 2018
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         template<typename Internal, typename External>
@@ -62,7 +62,7 @@ namespace gr
              * @param [in] vectorSize Number of elements in the vector
              * @param [in] output Should we output the average or just store it?
              * @param [in] decimation Should we decimate the output?
-             * @return Shared pointer to newly allocated pulse generator
+             * @return Shared pointer to newly allocated average block
              */
             static sptr make(
                     const unsigned vectorSize,

@@ -2,11 +2,11 @@
  * @file      ErrorCount_impl.hpp
  * @brief     Declares the "Error Count" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      October 7, 2017
- * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
+ * @date      January 4, 2018
+ * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -49,7 +49,7 @@ namespace gr
              *
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date   October 7, 2017
+             * @date   January 4, 2018
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -78,7 +78,7 @@ namespace gr
                  *                       EOF.
                  * @param [in] maxSymbols Maximum number of symbols to log
                  *                        before EOF.
-                 * @return Shared pointer to newly allocated pulse generator
+                 * @return Shared pointer to newly allocated error count block
                  */
                 inline ErrorCount_impl(
                         const bool output,

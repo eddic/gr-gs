@@ -2,11 +2,11 @@
  * @file      Distribution.h
  * @brief     Declares the "Distribution" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      December 15, 2017
- * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
+ * @date      January 4, 2018
+ * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -41,11 +41,11 @@ namespace gr
     {
         //! "Distribution" GNU Radio block for real values
         /*!
-         * This block takes in a sequence of real numbers and assigns then to
+         * This block takes in a sequence of real numbers and assigns them to
          * bins in a probability distribution. It basically creates the
          * necessary output vector to be used as a histogram.
          *
-         * @date    June 12, 2017
+         * @date    January 4, 2018
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         class GS_API Distribution_ff: virtual public gr::sync_decimator
@@ -60,9 +60,10 @@ namespace gr
              * @param [in] binSize Width of each bin
              * @param [in] leftBinCenter The center point of the left most (most
              *                           negative) bin.
-             * @param [in] output Should we output the average or just store it?
+             * @param [in] output Should we output the average or just store it
+             *                    internally?
              * @param [in] decimation Should we decimate the output?
-             * @return Shared pointer to newly allocated distribution
+             * @return Shared pointer to newly allocated distribution block
              */
             static sptr make(
                     const unsigned bins,
@@ -85,7 +86,7 @@ namespace gr
          * can be accessed with the distribution() function while the vector
          * that gets outputted portwise is a just the PMF of the real values.
          *
-         * @date    December 15, 2017
+         * @date    January 4, 2018
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         class GS_API Distribution_cf: virtual public gr::sync_decimator
@@ -102,7 +103,7 @@ namespace gr
              *                            negative) bin.
              * @param [in] output Should we output the average or just store it?
              * @param [in] decimation Should we decimate the output?
-             * @return Shared pointer to newly allocated distribution
+             * @return Shared pointer to newly allocated distribution block
              */
             static sptr make(
                     const unsigned bins,

@@ -2,11 +2,11 @@
  * @file      SymbolMapper.h
  * @brief     Declares the "Symbol Mapper" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 19, 2017
- * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
+ * @date      January 4, 2018
+ * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -50,7 +50,7 @@ namespace gr
          *
          * @tparam Symbol Base type to use for symbol type. Can be unsigned
          *                char, unsigned short, or unsigned int.
-         * @date    May 19, 2017
+         * @date    January 4, 2018
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         template<typename Symbol>
@@ -75,11 +75,10 @@ namespace gr
             //! Shared pointer to this
             typedef boost::shared_ptr<SymbolMapper> sptr;
 
-            //! Manufacture a pulse generator with some default options
+            //! Manufacture a symbol mapper block
             /*!
-             *
              * @param [in] constellation See set_constellation()
-             * @return Shared pointer to newly allocated pulse generator
+             * @return Shared pointer to newly allocated symbol mapper block
              */
             static sptr make(
                     const std::vector<Complex>& constellation
