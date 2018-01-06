@@ -46,7 +46,6 @@ int main()
                 false,
                 {1,0,0,1},
                 0,
-                defaultConstellation(2),
                 "MSW",
                 "");
 
@@ -86,7 +85,6 @@ int main()
                 true,
                 {1,0,0,1},
                 0,
-                defaultConstellation(2),
                 "MSW",
                 "");
 
@@ -126,7 +124,6 @@ int main()
                 false,
                 {1,0,0,1},
                 0,
-                defaultConstellation(4),
                 "MSW",
                 "");
 
@@ -166,7 +163,6 @@ int main()
                 true,
                 {1,0,0,1},
                 0,
-                defaultConstellation(4),
                 "MSW",
                 "");
 
@@ -206,7 +202,6 @@ int main()
                 true,
                 {1,0,0,1},
                 0,
-                defaultConstellation(4),
                 "MSW",
                 "");
 

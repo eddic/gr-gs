@@ -41,7 +41,7 @@ int main()
         const std::vector<Symbol> codeword{1,1,0,1,0,1,1,1,0,1,0,0,1,1,1,1,1,1,0};
 
         std::unique_ptr<Analyzer<Symbol>> analyzer(manufactureAnalyzer<Symbol>(0));
-        analyzer->analyze(codeword, analyzer->feedback(), defaultConstellation(2));
+        analyzer->analyze(codeword, analyzer->feedback(), defaultConstellation_i(2));
 
         if(analyzer->analysis() != 326)
         {
@@ -58,9 +58,9 @@ int main()
 
         const std::vector<Symbol> codeword{3,1,1,1,0,0,1,1,3,2,2,3,3,3,1,1,2,3,3,1,0,2,3};
         std::unique_ptr<Analyzer<Symbol>> analyzer(manufactureAnalyzer<Symbol>(0));
-        analyzer->analyze(codeword, analyzer->feedback(), defaultConstellation(4));
+        analyzer->analyze(codeword, analyzer->feedback(), defaultConstellation_i(4));
 
-        if(analyzer->analysis() != 492)
+        if(analyzer->analysis() != 984)
         {
             std::cout << "failed!" << std::endl;
             return 1;

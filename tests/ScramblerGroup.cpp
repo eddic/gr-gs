@@ -64,7 +64,7 @@ int main()
         for(unsigned int i=0; i<64; ++i)
         {
             Words::randomize<GF2<Symbol>>(input);
-            scramblers.scramble(divider, input, remainder, scramblers.winner()->feedback(), defaultConstellation(2));
+            scramblers.scramble(divider, input, remainder, scramblers.winner()->feedback(), defaultConstellation_i(2));
             descrambler.descramble(scramblers.winner()->output());
             if(descrambler.output() != input)
             {
@@ -102,7 +102,7 @@ int main()
         for(unsigned int i=0; i<64; ++i)
         {
             Words::randomize<GF2<Symbol>>(input);
-            scramblers.scramble(divider, input, remainder, scramblers.winner()->feedback(), defaultConstellation(2));
+            scramblers.scramble(divider, input, remainder, scramblers.winner()->feedback(), defaultConstellation_i(2));
             remainder = scramblers.winner()->remainder();
             descrambler.descramble(scramblers.winner()->output());
 
@@ -146,7 +146,7 @@ int main()
         for(unsigned int i=0; i<64; ++i)
         {
             Words::randomize<GF4<Symbol>>(input);
-            scramblers.scramble(divider, input, remainder, scramblers.winner()->feedback(), defaultConstellation(2));
+            scramblers.scramble(divider, input, remainder, scramblers.winner()->feedback(), defaultConstellation_i(2));
             descrambler.descramble(scramblers.winner()->output());
             if(descrambler.output() != input)
             {
@@ -185,7 +185,7 @@ int main()
         {
             Words::randomize<GF4<Symbol>>(input);
 
-            scramblers.scramble(divider, input, remainder, scramblers.winner()->feedback(), defaultConstellation(2));
+            scramblers.scramble(divider, input, remainder, scramblers.winner()->feedback(), defaultConstellation_i(2));
             remainder = scramblers.winner()->remainder();
             descrambler.descramble(scramblers.winner()->output());
 

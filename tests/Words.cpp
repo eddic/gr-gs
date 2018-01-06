@@ -21,7 +21,6 @@
 
 #include "GF2.hpp"
 #include "GF4.hpp"
-#include "GF8.hpp"
 #include "GF16.hpp"
 #include "Words.hpp"
 
@@ -113,50 +112,6 @@ int main()
         std::vector<Symbol> remainder(divisor.size()-1);
 
         Words::divide<GF4<Symbol>>(dividend, divisor, quotient, remainder);
-
-        if(quotient != properQuotient && remainder != properRemainder)
-        {
-            std::cout << "failed!" << std::endl;
-            return 1;
-        }
-
-        std::cout << "success." << std::endl;
-    }
-
-    std::cout << "Testing Words::multiply<GF8>()... ";
-    {
-        std::cout.flush();
-
-        const std::vector<Symbol> properProduct({6,5,5,5,5,3,5,1,1,2,6,1,1,1,3,4,6});
-        const std::vector<Symbol> multiplicand({6,0,5,2,1,4,1,1,7,7,6,4,0,3,7,7,7});
-        const std::vector<Symbol> multiplier({1,4,0,4,2,3});
-        std::vector<Symbol> product(multiplicand.size());
-        std::vector<Symbol> remainder(multiplier.size()-1);
-
-        Words::multiply<GF8<Symbol>>(multiplicand, multiplier, product, remainder, false);
-
-        if(product != properProduct)
-        {
-            std::cout << "failed!" << std::endl;
-            return 1;
-        }
-
-        std::cout << "success." << std::endl;
-    }
-
-    std::cout << "Testing Words::divide<GF8>()... ";
-    {
-        std::cout.flush();
-
-        const std::vector<Symbol> dividend({6,0,5,2,1,4,1,1,7,7,6,4,0,3,7,7,7});
-        const std::vector<Symbol> divisor({1,4,0,4,2,3});
-        const std::vector<Symbol> properQuotient({6,5,7,6,1,1,1,4,6,7,0,1,5,5,3,0,7});
-        const std::vector<Symbol> properRemainder({3,2,4,5,2});
-
-        std::vector<Symbol> quotient(dividend.size());
-        std::vector<Symbol> remainder(divisor.size()-1);
-
-        Words::divide<GF8<Symbol>>(dividend, divisor, quotient, remainder);
 
         if(quotient != properQuotient && remainder != properRemainder)
         {
@@ -315,63 +270,6 @@ int main()
             Words::randomize<GF4<Symbol>>(input);
             Words::divide<GF4<Symbol>>(input, scrambler, quotient, divideRemainder);
             Words::multiply<GF4<Symbol>>(quotient, scrambler, output, multiplyRemainder);
-            if(output != input)
-            {
-                std::cout << "failed!" << i << std::endl;
-                return 1;
-            }
-        }
-
-        std::cout << "success." << std::endl;
-    }
-
-    std::cout << "Testing random block Words::divide->Words::multiply cycle in GF8... ";
-    {
-        std::cout.flush();
-
-        const std::vector<Symbol> scrambler({1,4,0,4,2,3});
-        std::vector<Symbol> input;
-        input.resize(32);
-
-        std::vector<Symbol> quotient(input.size());
-        std::vector<Symbol> output(input.size());
-        std::vector<Symbol> divideRemainder(scrambler.size()-1);
-        std::vector<Symbol> multiplyRemainder(scrambler.size()-1);
-
-        for(unsigned int i=0; i<64; ++i)
-        {
-            Words::randomize<GF8<Symbol>>(input);
-            Words::divide<GF8<Symbol>>(input, scrambler, quotient, divideRemainder);
-            std::fill(divideRemainder.begin(), divideRemainder.end(), 0);
-            Words::multiply<GF8<Symbol>>(quotient, scrambler, output, multiplyRemainder, false);
-            if(output != input)
-            {
-                std::cout << "failed!" << std::endl;
-                return 1;
-            }
-        }
-
-        std::cout << "success." << std::endl;
-    }
-
-    std::cout << "Testing random continuous Words::divide->Words::multiply cycle in GF8... ";
-    {
-        std::cout.flush();
-
-        const std::vector<Symbol> scrambler({1,4,0,4,2,3});
-        std::vector<Symbol> input;
-        input.resize(32);
-
-        std::vector<Symbol> quotient(input.size());
-        std::vector<Symbol> output(input.size());
-        std::vector<Symbol> divideRemainder(scrambler.size()-1, 0);
-        std::vector<Symbol> multiplyRemainder(scrambler.size()-1, 0);
-
-        for(unsigned int i=0; i<64; ++i)
-        {
-            Words::randomize<GF8<Symbol>>(input);
-            Words::divide<GF8<Symbol>>(input, scrambler, quotient, divideRemainder);
-            Words::multiply<GF8<Symbol>>(quotient, scrambler, output, multiplyRemainder);
             if(output != input)
             {
                 std::cout << "failed!" << i << std::endl;

@@ -1,2 +1,6 @@
+Find scramblers for MSW2
+Ditch probability distributions
+Clean up autocovariance data
+Add RDSS data to autocovariance data
 separate soft decision
 negative thread count on guided scrambler

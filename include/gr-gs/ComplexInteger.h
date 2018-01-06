@@ -43,10 +43,7 @@ namespace gr
             int64_t real;
             int64_t imag;
 
-            ComplexInteger()
-            {}
-
-            ComplexInteger(int64_t x, int64_t y):
+            ComplexInteger(int64_t x=0, int64_t y=0):
                 real(x),
                 imag(y)
             {}

@@ -77,8 +77,6 @@ namespace gr
                      */
                     typename Analyzer<Symbol>::Feedback* clone() const;
 
-                    Feedback();
-
                     //! RDS (running digital sum) value at end of codeword
                     ComplexInteger RDS;
                 };

@@ -36,11 +36,6 @@ gr::gs::GuidedScrambling::WRDS<Symbol>::Feedback::clone() const
 }
 
 template<typename Symbol>
-gr::gs::GuidedScrambling::WRDS<Symbol>::Feedback::Feedback():
-    RDS(startingRDS)
-{}
-
-template<typename Symbol>
 void gr::gs::GuidedScrambling::WRDS<Symbol>::analyze(
         const std::vector<Symbol>& codeword,
         const typename Analyzer<Symbol>::Feedback& feedback,

@@ -28,17 +28,14 @@
 #include "gr-gs/config.h"
 #include "MSW2.hpp"
 
+#include <iostream>
+
 template<typename Symbol>
 typename gr::gs::GuidedScrambling::Analyzer<Symbol>::Feedback*
 gr::gs::GuidedScrambling::MSW2<Symbol>::Feedback::clone() const
 {
     return new Feedback(*this);
 }
-
-template<typename Symbol>
-gr::gs::GuidedScrambling::MSW2<Symbol>::Feedback::Feedback():
-    RDS(startingRDS)
-{}
 
 template<typename Symbol>
 void gr::gs::GuidedScrambling::MSW2<Symbol>::analyze(

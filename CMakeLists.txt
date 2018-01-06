@@ -128,6 +128,7 @@ add_executable(Analyzer_test EXCLUDE_FROM_ALL
     src/Analyzer.cpp
     src/Words.cpp
     src/MSW2.cpp
+    src/ComplexInteger.cpp
     src/MSW.cpp
     src/WRDS.cpp)
 add_test("gr::gs::GuidedScrambling::Analyzer" Analyzer_test)
@@ -135,6 +136,7 @@ add_test("gr::gs::GuidedScrambling::Analyzer" Analyzer_test)
 add_executable(Descrambler_test EXCLUDE_FROM_ALL
     tests/Descrambler.cpp
     src/Words.cpp
+    src/ComplexInteger.cpp
     src/Descrambler_impl.cpp)
 target_link_libraries(Descrambler_test PRIVATE
     "${Boost_LIBRARIES}"
@@ -145,6 +147,7 @@ add_executable(Words_test EXCLUDE_FROM_ALL
     tests/Words.cpp
     src/Words.cpp
     src/Analyzer.cpp
+    src/ComplexInteger.cpp
     src/MSW2.cpp
     src/MSW.cpp
     src/WRDS.cpp)
@@ -156,6 +159,7 @@ add_test("gr::gs::GuidedScrambling::Words" Words_test)
 add_executable(Scrambler_test EXCLUDE_FROM_ALL
     tests/Scrambler.cpp
     src/Scrambler.cpp
+    src/ComplexInteger.cpp
     src/Analyzer.cpp
     src/Words.cpp
     src/MSW2.cpp
@@ -174,6 +178,7 @@ add_executable(ScramblerGroup_test EXCLUDE_FROM_ALL
     src/Analyzer.cpp
     src/MSW2.cpp
     src/Words.cpp
+    src/ComplexInteger.cpp
     src/MSW.cpp
     src/WRDS.cpp
     src/Descrambler_impl.cpp)
@@ -186,6 +191,7 @@ add_executable(GuidedScrambler_test EXCLUDE_FROM_ALL
     tests/GuidedScrambler.cpp
     src/Scrambler.cpp
     src/ScramblerGroup.cpp
+    src/ComplexInteger.cpp
     src/Analyzer.cpp
     src/MSW2.cpp
     src/Words.cpp
