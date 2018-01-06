@@ -228,12 +228,6 @@ if(DOXYGEN_FOUND)
         OPTIONAL)
 endif(DOXYGEN_FOUND)
 
-# Our scramblers
-
-add_custom_target(scramblers "${CMAKE_CURRENT_SOURCE_DIR}/scripts/findScramblers.py"
-    "${CMAKE_CURRENT_SOURCE_DIR}/data"
-    COMMENT "Finding optimal scramblers" VERBATIM)
-
 # Our data
 
 add_custom_target(data "${CMAKE_CURRENT_SOURCE_DIR}/scripts/generateData.py"
