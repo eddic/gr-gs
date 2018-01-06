@@ -69,7 +69,7 @@ namespace gr
                 return ComplexInteger(real+z.real, imag+z.imag);
             }
 
-            ComplexInteger operator+=(const ComplexInteger& z)
+            ComplexInteger& operator+=(const ComplexInteger& z)
             {
                 real += z.real;
                 imag += z.imag;
@@ -81,7 +81,7 @@ namespace gr
                 return ComplexInteger(real-z.real, imag-z.imag);
             }
 
-            ComplexInteger operator-=(const ComplexInteger& z)
+            ComplexInteger& operator-=(const ComplexInteger& z)
             {
                 real -= z.real;
                 imag -= z.imag;
@@ -95,7 +95,7 @@ namespace gr
                         real*z.imag + imag*z.real);
             }
 
-            ComplexInteger operator*=(const ComplexInteger& z)
+            ComplexInteger& operator*=(const ComplexInteger& z)
             {
                 real = real*z.real - imag*z.imag;
                 imag = real*z.imag + imag*z.real;
@@ -107,24 +107,15 @@ namespace gr
                 return static_cast<uint32_t>(real*real + imag*imag);
             }
 
-            operator std::complex<float>() const
+            template<typename T> operator std::complex<T>() const
             {
-                return std::complex<float>(
-                        static_cast<float>(real),
-                        static_cast<float>(imag));
+                return std::complex<T>(
+                        static_cast<T>(real),
+                        static_cast<T>(imag));
             }
 
-            operator std::complex<double>() const
-            {
-                return std::complex<double>(
-                        static_cast<double>(real),
-                        static_cast<double>(imag));
-            }
-
-            static std::vector<std::complex<float>> toFloat(
-                    const std::vector<ComplexInteger>& source);
-
-            static std::vector<std::complex<double>> toDouble(
+            template<typename T>
+            static std::vector<std::complex<T>> toStdComplex(
                     const std::vector<ComplexInteger>& source);
         };
     }

@@ -27,22 +27,23 @@
 
 #include "gr-gs/ComplexInteger.h"
 
-std::vector<std::complex<float>> gr::gs::ComplexInteger::toFloat(
+template<typename T>
+std::vector<std::complex<T>> gr::gs::ComplexInteger::toStdComplex(
         const std::vector<ComplexInteger>& source)
 {
-    std::vector<std::complex<float>> destination;
+    std::vector<std::complex<T>> destination;
     destination.reserve(source.size());
     for(const ComplexInteger& z: source)
         destination.push_back(z);
     return destination;
 }
 
-std::vector<std::complex<double>> gr::gs::ComplexInteger::toDouble(
-        const std::vector<ComplexInteger>& source)
-{
-    std::vector<std::complex<double>> destination;
-    destination.reserve(source.size());
-    for(const ComplexInteger& z: source)
-        destination.push_back(z);
-    return destination;
-}
+template
+std::vector<std::complex<float>> gr::gs::ComplexInteger::toStdComplex<float>(
+        const std::vector<ComplexInteger>& source);
+template
+std::vector<std::complex<double>> gr::gs::ComplexInteger::toStdComplex<double>(
+        const std::vector<ComplexInteger>& source);
+template std::vector<std::complex<long double>>
+gr::gs::ComplexInteger::toStdComplex<long double>(
+        const std::vector<ComplexInteger>& source);
