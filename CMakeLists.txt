@@ -89,6 +89,7 @@ add_library(gnuradio-gs SHARED
     src/Integrate_impl.cpp
     src/Detector_impl.cpp
     src/Data.cpp
+    src/ComplexInteger.cpp
     src/ProbabilityMapper.cpp
     src/ErrorCount_impl.cpp)
 set_target_properties(gnuradio-gs PROPERTIES DEFINE_SYMBOL "gnuradio_gs_EXPORTS")
@@ -113,6 +114,7 @@ install(FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/ErrorCount.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Primitives.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/Data.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/ComplexInteger.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/gr-gs/exceptions.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/gr-gs/config.h"
     DESTINATION "include/gr-gs")
