@@ -30,6 +30,7 @@
 
 #include <complex>
 #include <vector>
+#include <limits>
 
 //! GNU Radio Namespace
 namespace gr
@@ -39,13 +40,13 @@ namespace gr
     {
         struct GS_API ComplexInteger
         {
-            int32_t real;
-            int32_t imag;
+            int64_t real;
+            int64_t imag;
 
             ComplexInteger()
             {}
 
-            ComplexInteger(int32_t x, int32_t y):
+            ComplexInteger(int64_t x, int64_t y):
                 real(x),
                 imag(y)
             {}
@@ -105,9 +106,18 @@ namespace gr
                 return real == z.real && imag == z.imag;
             }
 
-            uint32_t norm() const
+            uint64_t norm() const
             {
-                return static_cast<uint32_t>(real*real + imag*imag);
+                return static_cast<uint64_t>(real*real + imag*imag);
+            }
+
+            bool overflow() const
+            {
+                return
+                    real > std::numeric_limits<int32_t>::max() ||
+                    real < std::numeric_limits<int32_t>::min() ||
+                    imag > std::numeric_limits<int32_t>::max() ||
+                    imag < std::numeric_limits<int32_t>::min();
             }
 
             template<typename T> operator std::complex<T>() const

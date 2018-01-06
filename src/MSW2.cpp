@@ -48,14 +48,41 @@ void gr::gs::GuidedScrambling::MSW2<Symbol>::analyze(
 {
     m_feedback.RDS = static_cast<const Feedback&>(feedback).RDS;
     m_feedback.RDSS = static_cast<const Feedback&>(feedback).RDSS;
-    m_analysis = 0;
+    uint64_t rdsAnalysis = 0;
+    uint64_t rdssAnalysis = 0;
 
     for(const Symbol& symbol: codeword)
     {
+        // Do the RDS analysis
+        if(m_feedback.RDS.overflow())
+        {
+            m_analysis = std::numeric_limits<uint64_t>::max();
+            return;
+        }
         m_feedback.RDS += constellation[symbol];
+        rdsAnalysis += m_feedback.RDS.norm();
+        if(rdsAnalysis > std::numeric_limits<uint32_t>::max())
+        {
+            m_analysis = std::numeric_limits<uint64_t>::max();
+            return;
+        }
+
+        // Do the RDSS analysis
+        if(m_feedback.RDSS.overflow())
+        {
+            rdssAnalysis = std::numeric_limits<uint32_t>::max();
+            continue;
+        }
         m_feedback.RDSS += m_feedback.RDS;
-        m_analysis += m_feedback.RDSS.norm();
+        rdssAnalysis += m_feedback.RDSS.norm();
+        if(rdssAnalysis > std::numeric_limits<uint32_t>::max())
+        {
+            rdssAnalysis = std::numeric_limits<uint32_t>::max();
+            continue;
+        }
     }
+
+    m_analysis = (rdsAnalysis << 32) | rdssAnalysis;
 }
 
 template<typename Symbol>

@@ -51,8 +51,19 @@ void gr::gs::GuidedScrambling::MSW<Symbol>::analyze(
 
     for(const Symbol& symbol: codeword)
     {
+        if(m_feedback.RDS.overflow())
+        {
+            m_analysis = std::numeric_limits<uint64_t>::max();
+            return;
+        }
         m_feedback.RDS += constellation[symbol];
         m_analysis += m_feedback.RDS.norm();
+        if(m_analysis > std::numeric_limits<uint32_t>::max())
+        {
+            m_analysis = std::numeric_limits<uint64_t>::max();
+            return;
+        }
+
     }
 }
 
