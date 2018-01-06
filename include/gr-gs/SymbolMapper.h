@@ -2,7 +2,7 @@
  * @file      SymbolMapper.h
  * @brief     Declares the "Symbol Mapper" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      January 4, 2018
+ * @date      January 6, 2018
  * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -50,39 +50,23 @@ namespace gr
          *
          * @tparam Symbol Base type to use for symbol type. Can be unsigned
          *                char, unsigned short, or unsigned int.
-         * @date    January 4, 2018
+         * @date    January 6, 2018
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         template<typename Symbol>
         class GS_API SymbolMapper: virtual public gr::sync_block
         {
         public:
-            //! Access symbol to constellation mapping vector
-            /*!
-             * @return Constant reference to symbol to constellation mapping
-             *         vector
-             */
-            virtual const std::vector<Complex>& constellation() const =0;
-
-            //! Set symbol to constellation mapping vector
-            /*!
-             * @param  [in] constellation Desired symbol to constellation
-             *              mapping vector
-             */
-            virtual void set_constellation(
-                    const std::vector<Complex>& constellation) =0;
-
             //! Shared pointer to this
             typedef boost::shared_ptr<SymbolMapper> sptr;
 
             //! Manufacture a symbol mapper block
             /*!
-             * @param [in] constellation See set_constellation()
+             * @param [in] constellation Desired symbol to constellation mapping
+             *                           vector
              * @return Shared pointer to newly allocated symbol mapper block
              */
-            static sptr make(
-                    const std::vector<Complex>& constellation
-                        = gr::gs::defaultConstellation(4));
+            static sptr make(const std::vector<Complex>& constellation);
         };
 
         typedef SymbolMapper<unsigned char> SymbolMapper_bc;

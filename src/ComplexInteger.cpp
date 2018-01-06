@@ -25,7 +25,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "gr-gs/ComplexInteger.h"
+#include "gr-gs/config.h"
 
 template<typename T>
 std::vector<std::complex<T>> gr::gs::ComplexInteger::toStdComplex(

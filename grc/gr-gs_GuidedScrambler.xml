@@ -4,14 +4,13 @@
     <key>gr_gs_GuidedScrambler</key>
     <category>[gr-gs]/Guided Scrambling</category>
     <import>import gr_gs as gs</import>
-    <make>gs.GuidedScrambler_$(symbolType.fcn)($fieldSize, $codewordLength, $augmentingLength, $continuous, $divider, $threads, $constellation, $selectionMethod, $alignmentTag)</make>
+    <make>gs.GuidedScrambler_$(symbolType.fcn)($fieldSize, $codewordLength, $augmentingLength, $continuous, $divider, $threads, $selectionMethod, $alignmentTag)</make>
     <callback>set_fieldSize($fieldSize)</callback>
     <callback>set_codewordLength($codewordLength)</callback>
     <callback>set_augmentingLength($augmentingLength)</callback>
     <callback>set_continuous($continuous)</callback>
     <callback>set_divider($divider)</callback>
     <callback>set_threads($threads)</callback>
-    <callback>set_constellation($constellation)</callback>
     <callback>set_selectionMethod($selectionMethod)</callback>
     <callback>set_alignmentTag($alignmentTag)</callback>
 	<param>
@@ -48,10 +47,6 @@
             <key>4</key>
         </option>
         <option>
-            <name>8</name>
-            <key>8</key>
-        </option>
-        <option>
             <name>16</name>
             <key>16</key>
         </option>
@@ -86,12 +81,6 @@
         <value>0</value>
         <type>int</type>
         <hide>part</hide>
-    </param>
-    <param>
-        <name>Constellation</name>
-        <key>constellation</key>
-        <value>[1,1j,-1j,-1]</value>
-        <type>complex_vector</type>
     </param>
     <param>
         <name>Selection Method</name>

@@ -1599,7 +1599,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(8, 76)</value>
+      <value>(8, 68)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1612,6 +1612,37 @@
     <param>
       <key>import</key>
       <value>import math, numpy</value>
+    </param>
+  </block>
+  <block>
+    <key>import</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(16, 116)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>firdesImport_0_0</value>
+    </param>
+    <param>
+      <key>import</key>
+      <value>import gr_gs as gs</value>
     </param>
   </block>
   <block>
@@ -3790,10 +3821,6 @@
     <param>
       <key>comment</key>
       <value></value>
-    </param>
-    <param>
-      <key>constellation</key>
-      <value>constellation</value>
     </param>
     <param>
       <key>continuous</key>

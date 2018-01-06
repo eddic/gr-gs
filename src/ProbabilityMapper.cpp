@@ -2,11 +2,11 @@
  * @file      ProbabilityMapper.cpp
  * @brief     Defines the ProbabilityMapper class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      December 17, 2017
- * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
+ * @date      January 6, 2018
+ * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -53,7 +53,7 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
 {
     // Setup constellation stuff
     {
-        const auto constellation = gr::gs::defaultConstellation(fieldSize);
+        const auto constellation = gr::gs::defaultConstellation_i(fieldSize);
         m_constellation.reserve(constellation.size());
         m_constellation.assign(constellation.begin(), constellation.end());
 
@@ -61,8 +61,8 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
         std::set<int> imags;
         for(const auto& point: m_constellation)
         {
-            reals.insert(static_cast<int>(point.real()));
-            imags.insert(static_cast<int>(point.imag()));
+            reals.insert(point.real);
+            imags.insert(point.imag);
         }
         m_realConstellation.reserve(reals.size());
         m_realConstellation.assign(reals.begin(), reals.end());
@@ -79,9 +79,9 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
                 const Symbol symbol = std::find(
                         m_constellation.cbegin(),
                         m_constellation.cend(),
-                        std::complex<double>(
-                            static_cast<double>(m_realConstellation[real]),
-                            static_cast<double>(m_imagConstellation[imag])))
+                        ComplexInteger(
+                            m_realConstellation[real],
+                            m_imagConstellation[imag]))
                     -m_constellation.cbegin();
 
                 if(symbol >= m_constellation.size())

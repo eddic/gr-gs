@@ -2,11 +2,11 @@
  * @file      config.h
  * @brief     Defines some basic parameters for the module
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      June 23, 2017
- * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
+ * @date      January 6, 2018
+ * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -42,6 +42,8 @@
 #endif
 #endif
 
+#include "gr-gs/ComplexInteger.h"
+
 //! GNU Radio Namespace
 namespace gr
 {
@@ -54,8 +56,12 @@ namespace gr
         //! Type to use for basic complex numbers
         typedef std::complex<@COMPLEX_BASE@> Complex;
 
-        //! Get a default constellation pattern for a field size
-        GS_API std::vector<Complex> defaultConstellation(
+        //! Get a default integer constellation pattern for a field size
+        GS_API std::vector<gr::gs::ComplexInteger> defaultConstellation_i(
+                const unsigned int fieldSize);
+
+        //! Get a default floating point constellation pattern for a field size
+        GS_API std::vector<Complex> defaultConstellation_f(
                 const unsigned int fieldSize);
 
         //! Get the default scrambling polynomial for a field size
@@ -69,7 +75,7 @@ namespace gr
         namespace GuidedScrambling
         {
             //! Starting RDS for codeword analysis
-            const std::complex<double> startingRDS={0,0};
+            const ComplexInteger startingRDS={0,0};
 
             //! Maximum field size defined
             const unsigned int maxFieldSize=16;

@@ -2,11 +2,11 @@
  * @file      WRDS.hpp
  * @brief     Declares the gr::gs::GuidedScrambling::WRDS class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 18, 2017
- * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
+ * @date      January 6, 2018
+ * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -45,7 +45,7 @@ namespace gr
             /*!
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date    May 18, 2017
+             * @date    January 6, 2018
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -57,7 +57,7 @@ namespace gr
                  * Here is where we store and pass on the RDS (running digital
                  * sum) value remaining at the end of the analysis.
                  *
-                 * @date May 18, 2017
+                 * @date January 6, 2018
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 class Feedback: public Analyzer<Symbol>::Feedback
@@ -67,15 +67,13 @@ namespace gr
                     /*!
                      * @return Pointer to dynamically allocated %WRDS Feedback
                      *         copy.
-                     * @date May 18, 2017
-                     * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                      */
                     typename Analyzer<Symbol>::Feedback* clone() const;
 
                     Feedback();
 
                     //! RDS (running digital sum) value at end of codeword
-                    std::complex<double> RDS;
+                    ComplexInteger RDS;
                 };
 
                 //! Perform %WRDS analysis on a codeword
@@ -95,7 +93,7 @@ namespace gr
                 void analyze(
                         const std::vector<Symbol>& codeword,
                         const typename Analyzer<Symbol>::Feedback& feedback,
-                        const std::vector<Complex>& constellation);
+                        const std::vector<ComplexInteger>& constellation);
 
                 //! Extract feedback from %WRDS analysis
                 /*!
@@ -115,7 +113,7 @@ namespace gr
                  * @return Floating point representation of the codeword's %WRDS
                  *         analysis. Lower is better.
                  */
-                double analysis() const;
+                uint64_t analysis() const;
 
             private:
                 //! %Feedback from %WRDS analysis

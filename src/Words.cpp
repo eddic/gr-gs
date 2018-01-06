@@ -2,11 +2,11 @@
  * @file      Words.cpp
  * @brief     Defines the gr::gs::GuidedScrambling::Words namespace.
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 18, 2017
- * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
+ * @date      January 6, 2018
+ * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -32,31 +32,17 @@
 #include "Words.hpp"
 #include "GF2.hpp"
 #include "GF4.hpp"
-#include "GF8.hpp"
 #include "GF16.hpp"
 
-std::vector<gr::gs::Complex> gr::gs::defaultConstellation(
+std::vector<gr::gs::ComplexInteger> gr::gs::defaultConstellation_i(
         const unsigned int fieldSize)
 {
-    static const Complex::value_type root2inv=1.0/std::sqrt(2);
-
     switch(fieldSize)
     {
         case 2:
             return {{-1,0},{1,0}};
         case 4:
             return {{1,1},{-1,1},{1,-1},{-1,-1}};
-        case 8:
-            return {
-                {1,0},
-                {root2inv,root2inv},
-                {-root2inv,root2inv},
-                {0,1},
-                {root2inv,-root2inv},
-                {0,-1},
-                {-1,0},
-                {-root2inv,-root2inv}
-            };
         case 16:
             return {
                 {-3,3},
@@ -77,8 +63,15 @@ std::vector<gr::gs::Complex> gr::gs::defaultConstellation(
                 {1,-1}
             };
         default:
-            return std::vector<Complex>();
+            throw GuidedScrambling::Exceptions::BadFieldSize();
     }
+}
+
+std::vector<gr::gs::Complex> gr::gs::defaultConstellation_f(
+        const unsigned int fieldSize)
+{
+    return ComplexInteger::toStdComplex<float>(
+            defaultConstellation_i(fieldSize));
 }
 
 template<typename Field>
@@ -168,8 +161,6 @@ gr::gs::GuidedScrambling::Words::getDivide(
                 return Words::delayedDivide<GF2<Symbol>>;
             case 4:
                 return Words::delayedDivide<GF4<Symbol>>;
-            case 8:
-                return Words::delayedDivide<GF8<Symbol>>;
             case 16:
                 return Words::delayedDivide<GF16<Symbol>>;
             default:
@@ -182,8 +173,6 @@ gr::gs::GuidedScrambling::Words::getDivide(
                 return Words::divide<GF2<Symbol>>;
             case 4:
                 return Words::divide<GF4<Symbol>>;
-            case 8:
-                return Words::divide<GF8<Symbol>>;
             case 16:
                 return Words::divide<GF16<Symbol>>;
             default:
@@ -265,8 +254,6 @@ gr::gs::GuidedScrambling::Words::getMultiply(unsigned fieldSize)
             return Words::multiply<GF2<Symbol>>;
         case 4:
             return Words::multiply<GF4<Symbol>>;
-        case 8:
-            return Words::multiply<GF8<Symbol>>;
         case 16:
             return Words::multiply<GF16<Symbol>>;
         default:

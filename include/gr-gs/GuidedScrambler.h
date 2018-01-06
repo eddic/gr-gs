@@ -2,11 +2,11 @@
  * @file      GuidedScrambler.h
  * @brief     Declares the "Guided Scrambler" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      December 29, 2017
- * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
+ * @date      January 6, 2018
+ * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -55,7 +55,7 @@ namespace gr
          *
          * @tparam Symbol Base type to use for symbol type. Can be unsigned
          *                char, unsigned short, or unsigned int.
-         * @date   December 29, 2017
+         * @date   January 6, 2018
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         template<typename Symbol>
@@ -115,21 +115,6 @@ namespace gr
              *                         false for block encoding
              */
             virtual void set_continuous(bool continuous) =0;
-
-            //! Access constellation
-            /*!
-             * @return Constant reference to constellation vector
-             */
-            virtual const std::vector<Complex>& constellation() const =0;
-
-            //! Set constellation
-            /*!
-             * @param  [in] constellation This is a direct mapping of symbols
-             *                            (as vector indices) to constellation
-             *                            points.
-             */
-            virtual void set_constellation(
-                    const std::vector<Complex>& constellation) =0;
 
             //! Access selection method
             /*!
@@ -192,7 +177,6 @@ namespace gr
              * @param [in] continuous See set_continuous()
              * @param [in] divider See set_divider()
              * @param [in] threads See set_threads()
-             * @param [in] constellation See set_constellation()
              * @param [in] selectionMethod See set_selectionMethod()
              * @param [in] alignmentTag Desired string to use for the "key" of
              *                          the tag present at the alignment point.
@@ -201,14 +185,12 @@ namespace gr
              * @return Shared pointer to newly allocated guided scrambler
              */
             static sptr make(
-                    const unsigned int fieldSize = 4,
-                    const unsigned int codewordLength = 12,
-                    const unsigned int augmentingLength = 3,
-                    const bool continuous = true,
-                    const std::vector<Symbol>& divider = {1,0,0,1},
+                    const unsigned int fieldSize,
+                    const unsigned int codewordLength,
+                    const unsigned int augmentingLength,
+                    const bool continuous,
+                    const std::vector<Symbol>& divider,
                     const unsigned int threads = 0,
-                    const std::vector<Complex>& constellation =
-                        gr::gs::defaultConstellation(4),
                     const std::string& selectionMethod = "MSW",
                     const std::string& alignmentTag = "");
         };

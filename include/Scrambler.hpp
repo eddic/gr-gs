@@ -2,11 +2,11 @@
  * @file      Scrambler.hpp
  * @brief     Declares the gr::gs::GuidedScrambling::Scrambler class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 19, 2017
- * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
+ * @date      January 6, 2018
+ * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -53,7 +53,7 @@ namespace gr
              *
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date    May 19, 2017
+             * @date    January 6, 2018
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -196,7 +196,7 @@ namespace gr
                  */
                 void analyze(
                         const typename Analyzer<Symbol>::Feedback& feedback,
-                        const std::vector<Complex>& constellation)
+                        const std::vector<ComplexInteger>& constellation)
                 {
                     m_analyzer->analyze(m_output, feedback, constellation);
                 }
@@ -221,10 +221,8 @@ namespace gr
                  *
                  * @return Floating point representation of the codeword's
                  *         selection analysis. Lower is better.
-                 * @date   May 16, 2017
-                 * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
-                double analysis() const
+                uint64_t analysis() const
                 {
                     return m_analyzer->analysis();
                 }

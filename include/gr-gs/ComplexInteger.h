@@ -28,8 +28,6 @@
 #ifndef GR_GS_COMPLEXINTEGER_H
 #define GR_GS_COMPLEXINTEGER_H
 
-#include "gr-gs/config.h"
-
 #include <complex>
 #include <vector>
 
@@ -102,6 +100,11 @@ namespace gr
                 return *this;
             }
 
+            bool operator==(const ComplexInteger& z) const
+            {
+                return real == z.real && imag == z.imag;
+            }
+
             uint32_t norm() const
             {
                 return static_cast<uint32_t>(real*real + imag*imag);
@@ -116,7 +119,7 @@ namespace gr
 
             template<typename T>
             static std::vector<std::complex<T>> toStdComplex(
-                    const std::vector<ComplexInteger>& source);
+                    const std::vector<gr::gs::ComplexInteger>& source);
         };
     }
 }

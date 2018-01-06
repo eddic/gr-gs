@@ -2,11 +2,11 @@
  * @file      MSW2.hpp
  * @brief     Declares the gr::gs::GuidedScrambling::MSW2 class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 18, 2017
+ * @date      January 6, 2018
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -45,7 +45,7 @@ namespace gr
             /*!
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date   May 18, 2017
+             * @date   January 6, 2018
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -58,7 +58,7 @@ namespace gr
                  * sum) and RDSS (running digital sum-sum) value remaining at
                  * the end of the analysis.
                  *
-                 * @date   May 18, 2017
+                 * @date   January 6, 2018
                  * @author Eddie Carle &lt;eddie@isatec.ca&gt;
                  */
                 class Feedback: public Analyzer<Symbol>::Feedback
@@ -74,10 +74,10 @@ namespace gr
                     Feedback();
 
                     //! RDS (running digital sum) value at end of codeword
-                    std::complex<double> RDS;
+                    ComplexInteger RDS;
 
                     //! RDSS (running digital sum-sum) value at end of codeword
-                    std::complex<double> RDSS;
+                    ComplexInteger RDSS;
                 };
 
                 //! Perform %MSW2 analysis on a codeword
@@ -97,7 +97,7 @@ namespace gr
                 void analyze(
                         const std::vector<Symbol>& codeword,
                         const typename Analyzer<Symbol>::Feedback& feedback,
-                        const std::vector<Complex>& constellation);
+                        const std::vector<ComplexInteger>& constellation);
 
                 //! Extract feedback from %MSW2 analysis
                 /*!
@@ -117,14 +117,14 @@ namespace gr
                  * @return Floating point representation of the codeword's
                  *         %MSW2 analysis. Lower is better.
                  */
-                double analysis() const;
+                uint64_t analysis() const;
 
             private:
                 //! %Feedback from %MSW2 analysis
                 Feedback m_feedback;
 
                 //! Actual result from %MSW2 analysis
-                double m_analysis;
+                uint64_t m_analysis;
             };
         }
     }

@@ -100,7 +100,7 @@ namespace gr
                 unsigned int m_codewordPosition;
 
                 //! What is our RDS?
-                std::complex<double> m_rds;
+                ComplexInteger m_rds;
 
                 //! The probability mapping object
                 ProbabilityMapper<Symbol> m_mapper;

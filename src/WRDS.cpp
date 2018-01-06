@@ -2,11 +2,11 @@
  * @file      WRDS.cpp
  * @brief     Defines the gr::gs::GuidedScrambling::WRDS class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 18, 2017
- * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
+ * @date      January 6, 2018
+ * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -44,7 +44,7 @@ template<typename Symbol>
 void gr::gs::GuidedScrambling::WRDS<Symbol>::analyze(
         const std::vector<Symbol>& codeword,
         const typename Analyzer<Symbol>::Feedback& feedback,
-        const std::vector<Complex>& constellation)
+        const std::vector<ComplexInteger>& constellation)
 {
     m_feedback.RDS = static_cast<const Feedback&>(feedback).RDS;
 
@@ -60,9 +60,9 @@ gr::gs::GuidedScrambling::WRDS<Symbol>::feedback() const
 }
 
 template<typename Symbol>
-double gr::gs::GuidedScrambling::WRDS<Symbol>::analysis() const
+uint64_t gr::gs::GuidedScrambling::WRDS<Symbol>::analysis() const
 {
-    return std::abs(m_feedback.RDS);
+    return m_feedback.RDS.norm();
 }
 
 template class gr::gs::GuidedScrambling::WRDS<unsigned char>;

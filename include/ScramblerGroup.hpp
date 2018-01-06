@@ -2,11 +2,11 @@
  * @file      ScramblerGroup.hpp
  * @brief     Declares the gr::gs::GuidedScrambling::ScramblerGroup class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 18, 2017
- * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
+ * @date      January 6, 2018
+ * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -52,7 +52,7 @@ namespace gr
              *
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date   May 18, 2017
+             * @date   January 6, 2018
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -137,7 +137,7 @@ namespace gr
                         const std::vector<Symbol>& input,
                         const std::vector<Symbol>& remainder,
                         const typename Analyzer<Symbol>::Feedback& feedback,
-                        const std::vector<Complex>& constellation)
+                        const std::vector<ComplexInteger>& constellation)
                 {
                     m_winner = &m_scramblers.front();
                     for(auto& scrambler: m_scramblers)
@@ -189,7 +189,7 @@ namespace gr
                         feedback;
 
                     //! This is a direct mapping of symbols (as vector indices) to constellation points
-                    std::vector<Complex> constellation;
+                    std::vector<ComplexInteger> constellation;
                 };
 
                 //! Handler function for scrambler group thread

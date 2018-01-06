@@ -2,11 +2,11 @@
  * @file      SymbolMapper_impl.cpp
  * @brief     Defines the "Symbol Mapper" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 19, 2017
+ * @date      January 6, 2018
  * @copyright Copyright &copy; 2016 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -29,29 +29,12 @@
 
 #include <gnuradio/io_signature.h>
 
-template<typename Symbol> const std::vector<gr::gs::Complex>&
-gr::gs::Implementations::SymbolMapper_impl<Symbol>::constellation() const
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    return m_constellation;
-}
-
-template<typename Symbol>
-void gr::gs::Implementations::SymbolMapper_impl<Symbol>::set_constellation(
-        const std::vector<Complex>& constellation)
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    m_constellation = constellation;
-}
-
 template<typename Symbol>
 int gr::gs::Implementations::SymbolMapper_impl<Symbol>::work(
         int noutput_items,
         gr_vector_const_void_star &input_items,
         gr_vector_void_star &output_items)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
-
     const Symbol* const& start = reinterpret_cast<const Symbol*>(input_items[0]);
     const Symbol* const& end = start + noutput_items;
 

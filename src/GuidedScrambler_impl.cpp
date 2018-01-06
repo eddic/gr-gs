@@ -2,11 +2,11 @@
  * @file      GuidedScrambler_impl.cpp
  * @brief     Defines the "Guided Scrambler" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      December 29, 2017
- * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
+ * @date      January 6, 2018
+ * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -133,7 +133,6 @@ gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::GuidedScrambler_impl(
         const bool continuous,
         const std::vector<Symbol>& divider,
         const unsigned int threads,
-        const std::vector<Complex>& constellation,
         const std::string& selectionMethod,
         const std::string& alignmentTag):
     gr::block("Guided Scrambler",
@@ -158,7 +157,7 @@ gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::GuidedScrambler_impl(
             double(codewordLength)/(codewordLength-augmentingLength));
     this->set_tag_propagation_policy(gr::block::TPP_DONT);
     set_divider(divider);
-    set_constellation(constellation);
+    m_cargs.constellation = defaultConstellation_i(m_fieldSize);
 }
 
 template<typename Symbol> const std::string&
@@ -183,29 +182,13 @@ gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::set_selectionMethod(
 }
 
 template<typename Symbol>
-void gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::set_constellation(
-        const std::vector<Complex>& constellation)
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    m_codeword = nullptr;
-    if(constellation.size())
-    {
-        m_cargs.constellation = constellation;
-        m_cargs.constellation.resize(m_fieldSize);
-    }
-    else
-        m_cargs.constellation = defaultConstellation(m_fieldSize);
-    killThreads();
-}
-
-template<typename Symbol>
 void gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::set_fieldSize(
         const unsigned int size)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_codeword = nullptr;
     m_fieldSize = size;
-    m_cargs.constellation.resize(size);
+    m_cargs.constellation = defaultConstellation_i(m_fieldSize);
     for(auto& symbol: m_cargs.divider)
         if(symbol >= size)
             symbol = size-1;
@@ -276,13 +259,6 @@ void gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::set_continuous(
     m_codeword = nullptr;
     m_continuous = continuous;
     killThreads();
-}
-
-template<typename Symbol> const std::vector<gr::gs::Complex>&
-gr::gs::GuidedScrambling::GuidedScrambler_impl<Symbol>::constellation() const
-{
-    std::lock_guard<std::mutex> lock(m_mutex);
-    return m_cargs.constellation;
 }
 
 template<typename Symbol> const std::vector<Symbol>&
@@ -462,7 +438,6 @@ gr::gs::GuidedScrambler<Symbol>::make(
         const bool continuous,
         const std::vector<Symbol>& divider,
         const unsigned int threads,
-        const std::vector<Complex>& constellation,
         const std::string& selectionMethod,
         const std::string& alignmentTag)
 {
@@ -474,7 +449,6 @@ gr::gs::GuidedScrambler<Symbol>::make(
                     continuous,
                     divider,
                     threads,
-                    constellation,
                     selectionMethod,
                     alignmentTag));
 }

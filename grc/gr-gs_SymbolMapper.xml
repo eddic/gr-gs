@@ -5,7 +5,6 @@
     <category>[gr-gs]/Miscellaneous</category>
     <import>import gr_gs as gs</import>
     <make>gs.SymbolMapper_$(symbolType.fcn)($constellation)</make>
-    <callback>set_constellation($constellation)</callback>
 	<param>
 		<name>Symbol Type</name>
 		<key>symbolType</key>

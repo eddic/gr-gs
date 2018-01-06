@@ -2,7 +2,7 @@
  * @file      SymbolMapper_impl.hpp
  * @brief     Declares the "Symbol Mapper" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      January 4, 2018
+ * @date      January 6, 2018
  * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -48,7 +48,7 @@ namespace gr
              *
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date    January 4, 2018
+             * @date    January 6, 2018
              * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -60,10 +60,6 @@ namespace gr
                 //! No copying allowed
                 SymbolMapper_impl& operator=(const SymbolMapper_impl& x)
                     = delete;
-
-                const std::vector<Complex>& constellation() const;
-                void set_constellation(
-                        const std::vector<Complex>& constellation);
 
                 //! GNU Radio work function
                 int work(int noutput_items,
@@ -78,9 +74,6 @@ namespace gr
                     const std::vector<Complex>& constellation);
 
             private:
-                //! Always practice safe threading
-                mutable std::mutex m_mutex;
-
                 //! Constellation patter to map symbols
                 std::vector<Complex> m_constellation;
             };

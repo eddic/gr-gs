@@ -2,11 +2,11 @@
  * @file      ProbabilityMapper.hpp
  * @brief     Declares the ProbabilityMapper class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      December 17, 2017
- * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
+ * @date      January 6, 2018
+ * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -52,7 +52,7 @@ namespace gr
              *
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date   December 17, 2017
+             * @date   January 6, 2018
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -66,7 +66,7 @@ namespace gr
                 std::unique_ptr<int[]> m_buffer;
 
                 //! Our constellation pattern
-                std::vector<std::complex<double>> m_constellation;
+                std::vector<ComplexInteger> m_constellation;
 
                 //! Our collapsed real constellation
                 std::vector<int> m_realConstellation;
@@ -157,7 +157,7 @@ namespace gr
                     return m_history;
                 }
 
-                const std::vector<std::complex<double>>& constellation() const
+                const std::vector<ComplexInteger>& constellation() const
                 {
                     return m_constellation;
                 }
