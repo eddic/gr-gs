@@ -232,7 +232,7 @@ endif(DOXYGEN_FOUND)
 
 add_custom_target(data "${CMAKE_CURRENT_SOURCE_DIR}/scripts/generateData.py"
     "${CMAKE_CURRENT_SOURCE_DIR}/data" "${DATA_AUTOCOVARIANCE_LENGTH}"
-    "${DATA_DISTRIBUTION_WIDTH}" "${DATA_FFT_WINDOW_SIZE}"
+    "${DATA_FFT_WINDOW_SIZE}"
     COMMENT "Building Simulation Data" VERBATIM)
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data" DESTINATION
     share/gr-gs)
