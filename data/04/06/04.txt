@@ -1,0 +1,6 @@
+Symbols: 2e+09
+Date: January 08, 2018 at 02:41 MST
+Selection Method: MSW
+Constellation Power: 2.0000000000000000e+00
+Autocovariance CRC: 0xd9403fb5
+PSD CRC: 0x4d7fe1bf

@@ -153,13 +153,13 @@ class gs_stats(gr.top_block):
         return data
 
 dataPath = sys.argv[1]
-symbolCount = 2e8#2e9
+symbolCount = 2e9
 autocovarianceLength = int(sys.argv[2])
 fftSize = int(sys.argv[3])
 
-fieldSizes = [4]#[2,4,16]
-codewordLengths = [12]#range(2,25)
-augmentingLengths = [3]#range(1,11)
+fieldSizes = [2,4,16]
+codewordLengths = range(2,25)
+augmentingLengths = range(1,11)
 maxScramblers = 4096
 
 for fieldSize in fieldSizes:
@@ -215,11 +215,11 @@ for fieldSize in fieldSizes:
             # Second order statistics
             autocovariances = np.empty(
                     [codewordLength, 2, autocovarianceLength],
-                    dtype=np.complex128)
+                    dtype=np.float64)
             for position in range(codewordLength):
                 for tau in range(autocovarianceLength):
-                    autocovariances[position, 0, tau] = tb.rdsAutocovariance(position)[tau]
-                    autocovariances[position, 1, tau] = tb.rdssAutocovariance(position)[tau]
+                    autocovariances[position, 0, tau] = tb.rdsAutocovariance(position)[tau].real
+                    autocovariances[position, 1, tau] = tb.rdssAutocovariance(position)[tau].real
             autocovariances.tofile(
                     os.path.join(
                         codewordPath,

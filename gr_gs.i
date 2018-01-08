@@ -116,15 +116,13 @@ GR_SWIG_BLOCK_MAGIC2(gs, Distribution_cf);
 GR_SWIG_BLOCK_MAGIC2(gs, Terminator);
 
 %pythoncode %{
-import numpy
 def getData(
         fieldSize,
         codewordLength,
         augmentingLength,
         key,
-        type,
         dimensions):
-    import os, zlib, exceptions
+    import os, zlib, exceptions, numpy
     path = os.path.join(
             dataPath,
             "{:02d}".format(fieldSize),
@@ -137,7 +135,7 @@ def getData(
             "{:02d}.txt".format(augmentingLength))
     data = numpy.fromfile(
             path,
-            dtype=numpy.dtype((type, dimensions)))
+            dtype=numpy.dtype((numpy.float64, dimensions)))
     metaFile = open(metaPath, 'r')
     hash = None
     for line in metaFile.readlines():
@@ -155,7 +153,6 @@ def autocovarianceData(fieldSize, codewordLength, augmentingLength):
             codewordLength,
             augmentingLength,
             "autocovariance",
-            numpy.complex128,
             (2, autocovarianceDataLength))
 
 def psdData(fieldSize, codewordLength, augmentingLength):
@@ -164,6 +161,5 @@ def psdData(fieldSize, codewordLength, augmentingLength):
             codewordLength,
             augmentingLength,
             "psd",
-            numpy.float64,
             2)
 %}
