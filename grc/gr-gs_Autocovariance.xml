@@ -13,11 +13,13 @@
 			<name>Float</name>
 			<key>float</key>
 			<opt>fcn:ff</opt>
+            <opt>ports:1</opt>
 		</option>
 		<option>
 			<name>Complex</name>
 			<key>complex</key>
-			<opt>fcn:cc</opt>
+			<opt>fcn:cf</opt>
+            <opt>ports:4</opt>
 		</option>
 	</param>
     <param>
@@ -50,8 +52,9 @@
     </sink>
     <source>
         <name>out</name>
-        <type>$sampleType</type>
+        <type>float</type>
         <vlen>$length</vlen>
+        <nports>$(sampleType.ports)</nports>
     </source>
     <doc>This block computes the autocovariance of a signal. It outputs a vector for every sample it receives. In the case of a complex valued signal this assumes zero correlation between the imaginary and real components.</doc>
 </block>

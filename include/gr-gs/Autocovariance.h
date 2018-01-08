@@ -2,7 +2,7 @@
  * @file      Autocovariance.h
  * @brief     Declares the "Autocovariance" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      January 6, 2018
+ * @date      January 4, 2018
  * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -43,12 +43,18 @@ namespace gr
         /*!
          * This block computes the autocovariance of a signal. It outputs a
          * vector of the length requested for every sample it receives. For the
-         * floating point case, the output gives you the product of the current
-         * sample with past samples. For complex valued signals, there is an
-         * assumption of circular symmetry.
+         * floating point case, there is a single output port that gives you the
+         * product of the current sample with past samples.
+         *
+         * The complex case is similar but with four output port corresponding
+         * to the covariance matrix.
+         * * output[0] = real(x(n))*real(x(n-k))
+         * * output[1] = real(x(n))*imag(x(n-k))
+         * * output[2] = imag(x(n))*real(x(n-k))
+         * * output[3] = imag(x(n))*imag(x(n-k))
          *
          * @tparam T Base signal type. Can be float or std::complex<float>.
-         * @date    January 6, 2018
+         * @date    January 4, 2018
          * @author  Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         template<typename T>
@@ -57,6 +63,20 @@ namespace gr
         public:
             //! Shared pointer to this
             typedef boost::shared_ptr<Autocovariance> sptr;
+
+            //! Get the set mean value of the signal
+            /*!
+             * This does not calculate the signal mean. It simply returns the
+             * mean you already supplied.
+             */
+            virtual T mean() const =0;
+
+            //! Set the mean value of the signal
+            /*!
+             * This mean value is needed to accurately compute the
+             * autocovariance.
+             */
+            virtual void set_mean(T mean) =0;
 
             //! Manufacture an autocovariance block
             /*!
@@ -81,7 +101,7 @@ namespace gr
         };
 
         typedef Autocovariance<float> Autocovariance_ff;
-        typedef Autocovariance<std::complex<float>> Autocovariance_cc;
+        typedef Autocovariance<std::complex<float>> Autocovariance_cf;
     }
 }
 

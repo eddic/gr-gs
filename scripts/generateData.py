@@ -21,60 +21,72 @@ import sys, time, os, zlib
 class gs_stats(gr.top_block):
     def __init__(
             self,
-            fieldSize,
-            codewordLength,
-            augmentingLength,
-            autocovarianceLength,
-            symbols,
-            windowSize):
+            scrambler,
+            fieldSize = 4,
+            codewordLength = 12,
+            augmentingLength = 3,
+            continuous = True,
+            autocovarianceLength = 32,
+            distributionWidth = 32,
+            symbols = long(1e7),
+            windowSize = 16384,
+            selectionMethod = 'MSW'):
         gr.top_block.__init__(self, "Guided Scrambling Statistical Simulation")
 
         ##################################################
         # Variables
         ##################################################
-        scramblingPolynomial = gs.defaultScrambler_b(
-                    fieldSize,
-                    codewordLength,
-                    augmentingLength)
-        self.constellation = constellation = gs.defaultConstellation_f(fieldSize)
+        scramblingPolynomial = scrambler
+        self.constellation = constellation = gs.defaultConstellation(fieldSize)
         self.windowSize = windowSize
 
         ##################################################
         # Blocks
         ##################################################
-        self.symbolGenerator = gs.SymbolGenerator_b(([1] * fieldSize), '')
+        self.symbolGenerator = gs.SymbolGenerator_b(([1] * fieldSize), '', 0)
         self.guidedScrambler = gs.GuidedScrambler_bb(
                 fieldSize,
                 codewordLength,
                 augmentingLength,
-                True,
+                continuous,
                 (scramblingPolynomial),
                 0,
-                'MSW2')
+                (constellation),
+                'MSW')
         self.terminator = gs.Terminator(1*gr.sizeof_char, symbols)
         self.symbolMapper = gs.SymbolMapper_bc((constellation))
+        self.integrate = gs.Integrate_cc(1)
+        self.streamToVector = blocks.stream_to_vector(
+                gr.sizeof_gr_complex*1,
+                codewordLength)
+        self.vectorToStreams = blocks.vector_to_streams(
+                gr.sizeof_gr_complex*1,
+                codewordLength)
 
-        self.rdsStream = gs.Integrate_cc(1)
-        self.rdsAutocovariances = []
-        self.rdsAverages = []
+        self.autocovariances = []
+        self.XXaverages = []
+        self.XYaverages = []
+        self.YXaverages = []
+        self.YYaverages = []
 
-        self.rdssStream = gs.Integrate_cc(1)
-        self.rdssAutocovariances = []
-        self.rdssAverages = []
+        self.distributions = []
 
         for i in range(codewordLength):
-            self.rdsAutocovariances.append(gs.Autocovariance_cc(
+            self.autocovariances.append(gs.Autocovariance_cf(
                 autocovarianceLength,
                 0,
                 codewordLength,
                 i))
-            self.rdsAverages.append(gs.Average_cc(autocovarianceLength))
-            self.rdssAutocovariances.append(gs.Autocovariance_cc(
-                autocovarianceLength,
-                0,
-                codewordLength,
-                i))
-            self.rdssAverages.append(gs.Average_cc(autocovarianceLength))
+            self.XXaverages.append(gs.Average_ff(autocovarianceLength))
+            self.XYaverages.append(gs.Average_ff(autocovarianceLength))
+            self.YXaverages.append(gs.Average_ff(autocovarianceLength))
+            self.YYaverages.append(gs.Average_ff(autocovarianceLength))
+
+            self.distributions.append(gs.Distribution_cf(
+                    distributionWidth,
+                    1,
+                    -distributionWidth*(1+1j)/2,
+                    False))
 
         self.fftStreamToVector = blocks.stream_to_vector(
                 gr.sizeof_gr_complex,
@@ -102,15 +114,18 @@ class gs_stats(gr.top_block):
         self.connect((self.symbolGenerator, 0), (self.guidedScrambler, 0))
         self.connect((self.guidedScrambler, 0), (self.symbolMapper, 0))
         self.connect((self.guidedScrambler, 0), (self.terminator, 0))
-
-        self.connect((self.symbolMapper, 0), (self.rdsStream, 0))
-        self.connect((self.rdsStream, 0), (self.rdssStream, 0))
+        self.connect((self.symbolMapper, 0), (self.integrate, 0))
+        self.connect((self.integrate, 0), (self.streamToVector, 0))
+        self.connect((self.streamToVector, 0), (self.vectorToStreams, 0))
 
         for i in range(codewordLength):
-            self.connect((self.rdsStream, 0), (self.rdsAutocovariances[i], 0))    
-            self.connect((self.rdsAutocovariances[i], 0), (self.rdsAverages[i], 0))    
-            self.connect((self.rdssStream, 0), (self.rdssAutocovariances[i], 0))    
-            self.connect((self.rdssAutocovariances[i], 0), (self.rdssAverages[i], 0))    
+            self.connect((self.integrate, 0), (self.autocovariances[i], 0))    
+            self.connect((self.autocovariances[i], 0), (self.XXaverages[i], 0))    
+            self.connect((self.autocovariances[i], 1), (self.XYaverages[i], 0))    
+            self.connect((self.autocovariances[i], 2), (self.YXaverages[i], 0))    
+            self.connect((self.autocovariances[i], 3), (self.YYaverages[i], 0))    
+
+            self.connect((self.vectorToStreams, i), (self.distributions[i], 0))    
 
         self.connect((self.symbolMapper, 0), (self.fftStreamToVector, 0))    
         self.connect((self.fftStreamToVector, 0), (self.fft, 0))    
@@ -123,14 +138,23 @@ class gs_stats(gr.top_block):
     def symbols(self):
         return self.terminator.samples()
 
-    def rdsAutocovariance(self, index):
-        return self.rdsAverages[index].average()
+    def XX(self, index):
+        return self.XXaverages[index].average()
 
-    def rdssAutocovariance(self, index):
-        return self.rdssAverages[index].average()
+    def XY(self, index):
+        return self.XYaverages[index].average()
+
+    def YX(self, index):
+        return self.YXaverages[index].average()
+
+    def YY(self, index):
+        return self.YYaverages[index].average()
 
     def finished(self):
         return self.terminator.finished()
+
+    def distribution(self, index):
+        return self.distributions[index].distribution()
 
     def power(self):
         return self.powerAverage.average()[0]
@@ -154,23 +178,21 @@ class gs_stats(gr.top_block):
 
 dataPath = sys.argv[1]
 symbolCount = 2e9
-autocovarianceLength = int(sys.argv[2])
-fftSize = int(sys.argv[3])
+autocovarianceLength = int(sys.argv[2]) #64
+distributionWidth = int(sys.argv[3]) #128
+fftSize = int(sys.argv[4]) #16384
 
 fieldSizes = [2,4,16]
 codewordLengths = range(2,25)
 augmentingLengths = range(1,11)
+maxRate = 0.5
 maxScramblers = 4096
+scramblerLength = 20
 
 for fieldSize in fieldSizes:
     print("Computing set with field size = {:d}".format(fieldSize))
 
     fieldPath = os.path.join(dataPath, "{:02d}".format(fieldSize))
-    if os.path.exists(fieldPath):
-        if not os.path.isdir(fieldPath):
-            print("{:s} exists but isn't a directory".format(fieldPath))
-    else:
-        os.mkdir(fieldPath)
 
     for codewordLength in codewordLengths:
         print("  Computing subset with codeword length = {:d}".format(codewordLength))
@@ -183,9 +205,15 @@ for fieldSize in fieldSizes:
             os.mkdir(codewordPath)
 
         for augmentingLength in augmentingLengths:
+            rate = float(augmentingLength)/float(codewordLength)
             scramblers = fieldSize**augmentingLength
-            if augmentingLength >= codewordLength or scramblers > maxScramblers:
+            if rate > maxRate or scramblers > maxScramblers:
                 continue
+
+            scrambler = gs.defaultScrambler_b(
+                    fieldSize,
+                    codewordLength,
+                    augmentingLength)
 
             metaPath = os.path.join(codewordPath, "{:02d}.txt".format(augmentingLength))
             if os.path.exists(metaPath):
@@ -195,9 +223,11 @@ for fieldSize in fieldSizes:
             
             tb = gs_stats(
                     fieldSize = fieldSize,
+                    scrambler = scrambler,
                     codewordLength = codewordLength,
                     augmentingLength = augmentingLength,
                     autocovarianceLength = autocovarianceLength,
+                    distributionWidth = distributionWidth,
                     windowSize = fftSize,
                     symbols = long(symbolCount))
             tb.start()
@@ -212,14 +242,30 @@ for fieldSize in fieldSizes:
             tb.wait()
             print("\033[6D done   ")
 
+            # First order statistics
+            distributions = np.empty(
+                    [codewordLength, distributionWidth, distributionWidth],
+                    dtype=np.float64)
+            for position in range(codewordLength):
+                distribution = tb.distribution(position)
+                for real in range(distributionWidth):
+                    for imag in range(distributionWidth):
+                        distributions[position, imag, real] = distribution[imag][real]
+            distributions.tofile(
+                    os.path.join(
+                        codewordPath,
+                        "{:02d}-distribution.dat".format(augmentingLength)))
+
             # Second order statistics
             autocovariances = np.empty(
-                    [codewordLength, 2, autocovarianceLength],
+                    [codewordLength, autocovarianceLength, 2, 2],
                     dtype=np.float64)
             for position in range(codewordLength):
                 for tau in range(autocovarianceLength):
-                    autocovariances[position, 0, tau] = tb.rdsAutocovariance(position)[tau].real
-                    autocovariances[position, 1, tau] = tb.rdssAutocovariance(position)[tau].real
+                    autocovariances[position, tau, 0, 0] = tb.XX(position)[tau]
+                    autocovariances[position, tau, 0, 1] = tb.XY(position)[tau]
+                    autocovariances[position, tau, 1, 0] = tb.YX(position)[tau]
+                    autocovariances[position, tau, 1, 1] = tb.YY(position)[tau]
             autocovariances.tofile(
                     os.path.join(
                         codewordPath,
@@ -237,6 +283,8 @@ for fieldSize in fieldSizes:
             metaFile.write("Date: {:s}\n".format(time.strftime("%B %d, %Y at %H:%M %Z")))
             metaFile.write("Selection Method: MSW\n")
             metaFile.write("Constellation Power: {:.16e}\n".format(tb.power()))
+            metaFile.write("Distribution CRC: 0x{:08x}\n".format(
+                zlib.crc32(distributions.tobytes())&0xffffffff))
             metaFile.write("Autocovariance CRC: 0x{:08x}\n".format(
                 zlib.crc32(autocovariances.tobytes())&0xffffffff))
             metaFile.write("PSD CRC: 0x{:08x}\n".format(

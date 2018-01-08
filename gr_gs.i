@@ -84,9 +84,9 @@ GR_SWIG_BLOCK_MAGIC2(gs, ErrorCount_if);
 
 %include "gr-gs/Autocovariance.h"
 %template(Autocovariance_ff) gr::gs::Autocovariance<float>;
-%template(Autocovariance_cc) gr::gs::Autocovariance<std::complex<float>>;
+%template(Autocovariance_cf) gr::gs::Autocovariance<std::complex<float>>;
 GR_SWIG_BLOCK_MAGIC2(gs, Autocovariance_ff);
-GR_SWIG_BLOCK_MAGIC2(gs, Autocovariance_cc);
+GR_SWIG_BLOCK_MAGIC2(gs, Autocovariance_cf);
 
 %include "gr-gs/Average.h"
 %template(Average_ff) gr::gs::Average<double, float>;
@@ -122,7 +122,7 @@ def getData(
         augmentingLength,
         key,
         dimensions):
-    import os, zlib, exceptions, numpy
+    import numpy, os, zlib, exceptions
     path = os.path.join(
             dataPath,
             "{:02d}".format(fieldSize),
@@ -147,13 +147,22 @@ def getData(
     raise exceptions.Exception(
         "CRC32 failed on {:s} data for {:s}".format(key, path))
 
+
+def distributionData(fieldSize, codewordLength, augmentingLength):
+    return getData(
+            fieldSize,
+            codewordLength,
+            augmentingLength,
+            "distribution",
+            (distributionDataWidth, distributionDataWidth))
+
 def autocovarianceData(fieldSize, codewordLength, augmentingLength):
     return getData(
             fieldSize,
             codewordLength,
             augmentingLength,
             "autocovariance",
-            (2, autocovarianceDataLength))
+            (autocovarianceDataLength, 2, 2))
 
 def psdData(fieldSize, codewordLength, augmentingLength):
     return getData(
