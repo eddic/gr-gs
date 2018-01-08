@@ -29,12 +29,12 @@ class gs_stats(gr.top_block):
         self.fieldSize = fieldSize
         self.codewordLength = codewordLength
         self.augmentingLength = augmentingLength
-        self.constellation = constellation = gs.defaultConstellation(fieldSize)
+        self.constellation = constellation = gs.defaultConstellation_f(fieldSize)
 
         ##################################################
         # Blocks
         ##################################################
-        self.symbolGenerator = gs.SymbolGenerator_b(([1] * fieldSize), '', 0)
+        self.symbolGenerator = gs.SymbolGenerator_b(([1] * fieldSize), '')
         self.guidedScrambler = gs.GuidedScrambler_bb(
                 fieldSize,
                 codewordLength,
@@ -42,7 +42,6 @@ class gs_stats(gr.top_block):
                 True,
                 (scrambler),
                 0,
-                (constellation),
                 'MSW',
                 '')
         self.terminator = gs.Terminator(1*gr.sizeof_char, long(symbols))
