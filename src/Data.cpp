@@ -26,7 +26,6 @@
  */
 
 #include "gr-gs/Data.h"
-#include "gr-gs/exceptions.h"
 
 #include <sstream>
 #include <fstream>
@@ -203,15 +202,34 @@ std::vector<Symbol> gr::gs::defaultScrambler(
         const unsigned codewordLength,
         const unsigned augmentingLength)
 {
-    switch(fieldSize)
+    std::ostringstream path;
+    path << dataPath << std::setfill('0') << std::right
+         << '/' << std::setw(2) << fieldSize
+         << '/' << std::setw(2) << codewordLength
+         << '/' << std::setw(2) << augmentingLength
+         << "-scrambler.txt";
+
+    std::ifstream file;
+    file.exceptions(std::ifstream::badbit | std::ifstream::failbit);
+    file.open(path.str());
+    file.exceptions(std::ifstream::badbit);
+
+    std::vector<Symbol> scrambler;
+
+    while(true)
     {
-        case 2:
-            return {1,0,0,0,0,1,0,0,0,1};
-        case 4:
-            return {1,0,1,2,3};
-        case 16:
-            return {1,1,9};
-        default:
-            throw GuidedScrambling::Exceptions::BadFieldSize();
+        unsigned int value;
+        file >> value;
+        if(file.eof())
+            break;
+        if(file.fail())
+        {
+            file.clear();
+            file.exceptions(std::ifstream::badbit | std::ifstream::failbit);
+            file >> value;
+        }
+        scrambler.push_back(static_cast<Symbol>(value));
     }
+
+    return scrambler;
 }
