@@ -37,22 +37,19 @@ class gs_stats(gr.top_block):
         # Variables
         ##################################################
         scramblingPolynomial = scrambler
-        self.constellation = constellation = gs.defaultConstellation(fieldSize)
+        self.constellation = constellation = gs.defaultConstellation_f(fieldSize)
         self.windowSize = windowSize
 
         ##################################################
         # Blocks
         ##################################################
-        self.symbolGenerator = gs.SymbolGenerator_b(([1] * fieldSize), '', 0)
+        self.symbolGenerator = gs.SymbolGenerator_b(([1] * fieldSize), '')
         self.guidedScrambler = gs.GuidedScrambler_bb(
                 fieldSize,
                 codewordLength,
                 augmentingLength,
                 continuous,
-                (scramblingPolynomial),
-                0,
-                (constellation),
-                'MSW')
+                (scrambler))
         self.terminator = gs.Terminator(1*gr.sizeof_char, symbols)
         self.symbolMapper = gs.SymbolMapper_bc((constellation))
         self.integrate = gs.Integrate_cc(1)
