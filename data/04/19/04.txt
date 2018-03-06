@@ -1,7 +1,7 @@
 Symbols: 2e+09
-Date: July 14, 2017 at 09:25 MDT
+Date: March 02, 2018 at 01:12 MST
 Selection Method: MSW
-Constellation Power: 1.0000000000000000e+00
-Distribution CRC: 0xd1dbddb4
-Autocovariance CRC: 0xbd28a53b
-PSD CRC: 0x6580c9c6
+Constellation Power: 2.0000000000000000e+00
+Distribution CRC: 0x39ae42de
+Autocovariance CRC: 0x386f525a
+PSD CRC: 0x6cf9b687
