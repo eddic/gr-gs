@@ -2,7 +2,7 @@
  * @file      Detector.h
  * @brief     Declares the "Guided Scrambling Detector" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      January 4, 2018
+ * @date      May 31, 2018
  * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -48,7 +48,7 @@ namespace gr
          *
          * @tparam Symbol Base type to use for symbol type. Can be unsigned
          *                char, unsigned short, or unsigned int.
-         * @date   January 4, 2018
+         * @date   May 31, 2018
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         template<typename Symbol>
@@ -71,11 +71,6 @@ namespace gr
              * @param [in] alignmentTag Desired string to use for the "key" of
              *                          the tag inserted at alignment. Use an
              *                          empty string to disable alignment.
-             * @param [in] minCorrelation This decides how many taps we're
-             *                            going to need to calculate our means.
-             *                            Any autocorrelation data decays below
-             *                            this value will be truncated from our
-             *                            computations.
              * @param [in] nodeDiscardMetric This defines how aggressively we
              *                               will discard trellis nodes. This
              *                               must be above zero. Larger numbers
@@ -90,7 +85,6 @@ namespace gr
                     const unsigned augmentingLength,
                     const double noise,
                     const std::string& alignmentTag = "",
-                    const double minCorrelation = 0.01,
                     const double nodeDiscardMetric = 10);
 
 

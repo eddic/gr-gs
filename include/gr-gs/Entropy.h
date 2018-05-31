@@ -2,7 +2,7 @@
  * @file      Entropy.h
  * @brief     Declares the "Entropy" GNU Radio block
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      January 4, 2018
+ * @date      May 31, 2018
  * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -44,7 +44,7 @@ namespace gr
          *
          * @tparam Symbol Base type to use for symbol type. Can be unsigned
          *                char, unsigned short, or unsigned int.
-         * @date   January 4, 2018
+         * @date   May 31, 2018
          * @author Eddie Carle &lt;eddie@isatec.ca&gt;
          */
         template<typename Symbol>
@@ -59,11 +59,6 @@ namespace gr
              * @param [in] fieldSize Desired field size as the *n* in GF(*n*)
              * @param [in] codewordLength Desired codeword length
              * @param [in] augmentingLength Desired augmenting Length
-             * @param [in] minCorrelation This decides how many taps we're going
-             *                            to need to calculate our means. Any
-             *                            autocorrelation data decays below this
-             *                            value will be truncated from our
-             *                            computations.
              * @param [in] alignmentTag Desired string to use for the "key" of
              *                          the tag present at the alignment point.
              *                          Use an empty string to disable
@@ -74,7 +69,6 @@ namespace gr
                     const unsigned int fieldSize,
                     const unsigned int codewordLength,
                     const unsigned int augmentingLength,
-                    const double minCorrelation = 0.01,
                     const std::string& alignmentTag = "");
         };
 

@@ -1155,10 +1155,6 @@
       <value>0</value>
     </param>
     <param>
-      <key>minCorrelation</key>
-      <value>0.001</value>
-    </param>
-    <param>
       <key>symbolType</key>
       <value>byte</value>
     </param>
@@ -1698,10 +1694,6 @@
     <param>
       <key>minoutbuf</key>
       <value>0</value>
-    </param>
-    <param>
-      <key>minCorrelation</key>
-      <value>0.01</value>
     </param>
     <param>
       <key>nodeDiscardMetric</key>
@@ -3864,7 +3856,7 @@
     </param>
     <param>
       <key>selectionMethod</key>
-      <value>MSW2</value>
+      <value>MSW</value>
     </param>
     <param>
       <key>symbolType</key>

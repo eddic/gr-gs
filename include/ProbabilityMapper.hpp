@@ -2,7 +2,7 @@
  * @file      ProbabilityMapper.hpp
  * @brief     Declares the ProbabilityMapper class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      January 6, 2018
+ * @date      May 31, 2018
  * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -45,26 +45,18 @@ namespace gr
         {
             //! For performing selection analysis of a codeword
             /*!
-             * This class takes a sequence of symbols and maps it to a sequence
-             * of probabilities associated with the symbols on either the real
-             * or imaginary axis. The input sequence should contains a
-             * history() of symbols.
+             * This class takes symbols and maps them to probabilities
+             * associated with the symbols on either the real or imaginary axis.
              *
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date   January 6, 2018
+             * @date   May 31, 2018
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
             class ProbabilityMapper
             {
             private:
-                //! How big is our input (including history)?
-                unsigned m_inputSize;
-
-                //! Buffer for our RDS values
-                std::unique_ptr<int[]> m_buffer;
-
                 //! Our constellation pattern
                 std::vector<ComplexInteger> m_constellation;
 
@@ -84,7 +76,7 @@ namespace gr
                 std::vector<Symbol> m_collapsedToConstellation;
 
                 //! Taps for mean RDS calculation
-                std::vector<std::vector<double>> m_taps;
+                std::vector<double> m_taps;
 
                 //! Variances at each codeword position
                 std::vector<double> m_variances;
@@ -92,21 +84,11 @@ namespace gr
                 //! Our codeword length
                 const unsigned m_codewordLength;
 
-                //! How many symbols are required in history before our first?
-                unsigned m_history;
-
                 //! Compute a Gaussian curve
                 inline double gaussian(
                         int value,
                         double mean,
                         double variance) const;
-
-                void weightings_impl(
-                        const int rds,
-                        const unsigned codewordPosition,
-                        const double mean,
-                        std::vector<double>& weightings,
-                        const bool real) const;
 
             public:
                 //! Build our probability mapper
@@ -117,27 +99,11 @@ namespace gr
                  * @param [in] codewordLength Length of our codewords.
                  * @param [in] augmentingLength How many augmenting symbols in
                  *                              the codeword?
-                 * @param [in] minCorrelation This decides how many taps we're
-                 *                            going to need to calculate our
-                 *                            means. Any autocorrelation data
-                 *                            decays below this value will be
-                 *                            truncated from our computations.
-                 * @param [in] windowSize This is the desired window size of the
-                 *                        input data. History should exist in
-                 *                        addition to this.
-                 * @param [in] doubleEnded Typically history data is only
-                 *                         prepended to the input data. If,
-                 *                         however, you want to have non-causal
-                 *                         history including at the end of the
-                 *                         input data set this to true.
                  */
                 ProbabilityMapper(
                         const unsigned fieldSize,
                         const unsigned codewordLength,
-                        const unsigned augmentingLength,
-                        const double minCorrelation,
-                        const unsigned windowSize,
-                        const bool doubleEnded=false);
+                        const unsigned augmentingLength);
 
                 //! View the variance at a specific position
                 const double& variance(unsigned position) const
@@ -145,16 +111,10 @@ namespace gr
                     return m_variances.at(position);
                 }
 
-                //! View the mean calculating taps at a specific position
-                const std::vector<double>& taps(unsigned position) const
+                //! View the mean calculating tap at a specific position
+                const double& tap(unsigned position) const
                 {
                     return m_taps.at(position);
-                }
-
-                //! How many symbols of history need to be provided?
-                unsigned history() const
-                {
-                    return m_history;
                 }
 
                 const std::vector<ComplexInteger>& constellation() const
@@ -171,21 +131,18 @@ namespace gr
                         return m_imagConstellation;
                 }
 
-                void collapseConstellation(
-                        Symbol* reals,
-                        Symbol* imags,
-                        const Symbol* points,
-                        const size_t length) const;
-
-                void decollapseConstellation(
-                        const Symbol* reals,
-                        const Symbol* imags,
-                        Symbol* points,
-                        const size_t length) const;
+                inline void collapseConstellation(
+                        Symbol& real,
+                        Symbol& imag,
+                        const Symbol point) const
+                {
+                    real = m_constellationToReal[point];
+                    imag = m_constellationToImag[point];
+                }
 
                 inline Symbol decollapseConstellation(
-                        Symbol real,
-                        Symbol imag) const
+                        const Symbol real,
+                        const Symbol imag) const
                 {
                     return m_collapsedToConstellation[
                         real
@@ -194,78 +151,19 @@ namespace gr
 
                 //! Calculate the probability weightings
                 /*!
-                 * @param [in] rds Reversible iterator to the *last* value in
-                 *                 the RDS history array. There should be
-                 *                 history() rds values available in this array.
-                 * @param [in] codewordPosition Symbol's (not including the
-                 *                              history) position in the
+                 * @param [in] rds The previous RDS value
+                 * @param [in] codewordPosition Symbol's position in the
                  *                              codeword.
                  * @param [out] Probability weightings by symbol
                  * @param [in] real Set to true if we're working on the real
                  *                  axis. False means we're working on the
                  *                  imaginary axis.
                  */
-                template<typename InputIt>
-                inline void weightings(
-                        InputIt rds,
+                void weightings(
+                        const int rds,
                         const unsigned codewordPosition,
                         std::vector<double>& weightings,
-                        const bool real) const
-                {
-                    double mean=0;
-                    const int currentRDS = *rds;
-
-                    for(
-                            auto tap = m_taps[codewordPosition].crbegin();
-                            tap != m_taps[codewordPosition].crend();
-                            ++tap)
-                    {
-                        mean += *tap * static_cast<double>(*rds);
-                        --rds;
-                    }
-
-                    weightings_impl(
-                            currentRDS,
-                            codewordPosition,
-                            mean,
-                            weightings,
-                            real);
-                }
-
-                //! Map a symbol sequence to a sequence of probabilities
-                /*!
-                 * The length of the input data array must be one of the
-                 * following. In the case of double ended having been specified
-                 * at construction the length should be the specified window
-                 * size plus double the history. In the non double ended case,
-                 * the length is simply the specified window size plus the
-                 * history.
-                 *
-                 * @param [in] input Pointer to first symbol including the
-                 *                   history.
-                 * @param [in] computeHistory Should we compute the RDS history
-                 *                            from our input symbol history or
-                 *                            should we assume it is zero?
-                 * @param [out] output Pointer to the first output probability
-                 *                     value.
-                 * @param [in] codewordPosition First symbol's (not including
-                 *                              the history) position in the
-                 *                              codeword.
-                 * @param [in] real Set to true if we're working on the real
-                 *                  axis. False means we're working on the
-                 *                  imaginary axis.
-                 */
-                void map(
-                        const Symbol* const input,
-                        bool computeHistory,
-                        float* output,
-                        unsigned codewordPosition,
                         const bool real) const;
-
-                unsigned inputSize() const
-                {
-                    return m_inputSize;
-                }
             };
         }
     }

@@ -3,11 +3,11 @@
  * @brief     Defines the "Guided Scrambling Detector" GNU Radio block
  *            implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      December 29, 2017
- * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
+ * @date      May 31, 2018
+ * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -185,7 +185,6 @@ gr::gs::Implementations::Detector_impl<Symbol>::Detector_impl(
         const unsigned augmentingLength,
         const double noise,
         const std::string& alignmentTag,
-        const double minCorrelation,
         const double nodeDiscardMetric):
     gr::block("Guided Scrambling Detector",
         io_signature::make(1,1,sizeof(gr::gs::Complex)),
@@ -197,10 +196,7 @@ gr::gs::Implementations::Detector_impl<Symbol>::Detector_impl(
     m_mapper(
             fieldSize,
             codewordLength,
-            augmentingLength,
-            minCorrelation,
-            1024,
-            false),
+            augmentingLength),
     m_bound(getBound(fieldSize, codewordLength, augmentingLength)),
     m_realTrellis(
             true,
@@ -228,7 +224,6 @@ typename gr::gs::Detector<Symbol>::sptr gr::gs::Detector<Symbol>::make(
         const unsigned augmentingLength,
         const double noise,
         const std::string& alignmentTag,
-        const double minCorrelation,
         const double nodeDiscardMetric)
 {
     return gnuradio::get_initial_sptr(
@@ -238,7 +233,6 @@ typename gr::gs::Detector<Symbol>::sptr gr::gs::Detector<Symbol>::make(
                 augmentingLength,
                 noise,
                 alignmentTag,
-                minCorrelation,
                 nodeDiscardMetric));
 }
 
@@ -253,7 +247,7 @@ void gr::gs::Implementations::Detector_impl<Symbol>::Trellis::append(
     for(auto& source: m_head)
     {
         m_mapper.weightings(
-                source.second->rds(),
+                source.second->m_rds,
                 m_codewordPosition,
                 weightings,
                 m_real);
@@ -336,7 +330,7 @@ void gr::gs::Implementations::Detector_impl<Symbol>::Trellis::Node::close(
     if(m_source)
         m_source->close(depth+1);
 
-    if(depth >= m_trellis.m_history)
+    if(depth >= 1)
         m_source.reset();
 }
 
@@ -351,7 +345,6 @@ gr::gs::Implementations::Detector_impl<Symbol>::Trellis::Trellis(
     m_real(real),
     m_constellation(mapper.constellation(real)),
     m_mapper(mapper),
-    m_history(mapper.history()),
     m_codewordLength(codewordLength),
     m_codewordPosition(0),
     m_bound(bound),
@@ -362,13 +355,6 @@ gr::gs::Implementations::Detector_impl<Symbol>::Trellis::Trellis(
     std::shared_ptr<Node> node(new Node(*this, 0, set));
     node->m_metric = 0;
     m_head[0] = node;
-    for(unsigned i=0; i<m_mapper.history()-1; ++i)
-    {
-        std::shared_ptr<Node> newNode(new Node(*this, 0, set));
-        newNode->m_metric=0;
-        node->m_source = newNode;
-        node = newNode;
-    }
     set->clear();
 }
 
@@ -411,35 +397,6 @@ gr::gs::Implementations::Detector_impl<Symbol>::Trellis::Node::~Node()
     m_set->erase(this);
     if(m_set->size()==1)
         (*m_set->begin())->close(0);
-}
-
-template<typename Symbol>
-typename gr::gs::Implementations::Detector_impl<Symbol>::Trellis::RDSiterator
-gr::gs::Implementations::Detector_impl<Symbol>::Trellis::Node::rds() const
-{
-    return RDSiterator(this);
-}
-
-template<typename Symbol> int
-gr::gs::Implementations::Detector_impl<Symbol>::Trellis::RDSiterator::operator*(
-        ) const
-{
-    return m_node->m_rds;
-}
-
-template<typename Symbol>
-typename gr::gs::Implementations::Detector_impl<Symbol>::Trellis::RDSiterator&
-gr::gs::Implementations::Detector_impl<Symbol>::Trellis::RDSiterator::operator--()
-{
-    m_node = m_node->m_source.get();
-    return *this;
-}
-
-template<typename Symbol>
-gr::gs::Implementations::Detector_impl<Symbol>::Trellis::RDSiterator::RDSiterator(
-        const Node* node):
-    m_node(node)
-{
 }
 
 template<typename Symbol>

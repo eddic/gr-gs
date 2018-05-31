@@ -2,11 +2,11 @@
  * @file      Entropy_impl.cpp
  * @brief     Defines the "Entropy" GNU Radio block implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      December 29, 2017
- * @copyright Copyright &copy; 2017 Eddie Carle. This project is released under
+ * @date      May 31, 2018
+ * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
-/* Copyright (C) 2017 Eddie Carle
+/* Copyright (C) 2018 Eddie Carle
  *
  * This file is part of the Guided Scrambling GNU Radio Module
  *
@@ -26,6 +26,7 @@
  */
 
 #include <cmath>
+#include <numeric>
 
 #include "Entropy_impl.hpp"
 
@@ -37,7 +38,7 @@ int gr::gs::Implementations::Entropy_impl<Symbol>::work(
 {
     const Symbol* input = reinterpret_cast<const Symbol*>(input_items[0]);
     float* output = reinterpret_cast<float*>(output_items[0]);
-    unsigned outputted=0;
+    float* const outputEnd = output+noutput_items;
 
     // Get our codeword lined up
     if(!m_aligned)
@@ -57,43 +58,52 @@ int gr::gs::Implementations::Entropy_impl<Symbol>::work(
             const size_t offset = tag->offset - this->nitems_read(0);
             input += offset;
             output += offset;
-            noutput_items -= offset;
         }
         m_aligned = true;
     }
 
-    while(noutput_items-outputted >= m_mapper.inputSize())
+    Symbol real;
+    Symbol imag;
+    float realProbability;
+    float imagProbability;
+    std::vector<double> realWeightings(m_mapper.constellation(true).size());
+    std::vector<double> imagWeightings(m_mapper.constellation(false).size());
+
+    while(output < outputEnd)
     {
-        m_mapper.collapseConstellation(
-                m_realSymbols.get(),
-                m_imagSymbols.get(),
-                input,
-                windowSize + m_mapper.history());
+        m_mapper.collapseConstellation(real, imag, *input);
 
-        m_mapper.map(
-                m_realSymbols.get(),
-                m_started,
-                m_realProbabilities.get(),
+        m_mapper.weightings(
+                m_realRDS,
                 m_codewordPosition,
+                realWeightings,
                 true);
-        m_mapper.map(
-                m_imagSymbols.get(),
-                m_started,
-                m_imagProbabilities.get(),
+        realProbability = realWeightings[real] / std::accumulate(
+                realWeightings.cbegin(),
+                realWeightings.cend(),
+                static_cast<double>(0));
+
+        m_mapper.weightings(
+                m_imagRDS,
                 m_codewordPosition,
+                imagWeightings,
                 false);
+        imagProbability = imagWeightings[imag] / std::accumulate(
+                imagWeightings.cbegin(),
+                imagWeightings.cend(),
+                static_cast<double>(0));
 
-        for(unsigned i=0; i<windowSize; ++i)
-            output[i] =
-                -std::log2(m_realProbabilities[i] * m_imagProbabilities[i]);
+        *output = -std::log2(realProbability * imagProbability);
 
-        m_codewordPosition = (m_codewordPosition+windowSize)%m_codewordLength;
-        input += windowSize;
-        outputted += windowSize;
-        m_started = true;
+        if(++m_codewordPosition == m_codewordLength)
+            m_codewordPosition=0;
+        ++output;
+        ++input;
+        m_realRDS += m_mapper.constellation(true)[real];
+        m_imagRDS += m_mapper.constellation(false)[imag];
     }
 
-    return outputted;
+    return noutput_items;
 }
 
 template<typename Symbol>
@@ -101,7 +111,6 @@ gr::gs::Implementations::Entropy_impl<Symbol>::Entropy_impl(
         const unsigned int fieldSize,
         const unsigned int codewordLength,
         const unsigned int augmentingLength,
-        const double minCorrelation,
         const std::string& alignmentTag):
     gr::sync_block("Entropy",
         io_signature::make(1, 1 ,sizeof(Symbol)),
@@ -110,23 +119,14 @@ gr::gs::Implementations::Entropy_impl<Symbol>::Entropy_impl(
     m_aligned(alignmentTag.empty()),
     m_codewordLength(codewordLength),
     m_codewordPosition(0),
-    m_rds(GuidedScrambling::startingRDS),
+    m_realRDS(0),
+    m_imagRDS(0),
     m_mapper(
             fieldSize,
             codewordLength,
-            augmentingLength,
-            minCorrelation,
-            windowSize,
-            false),
-    m_started(false),
-    m_realSymbols(new Symbol[windowSize]),
-    m_imagSymbols(new Symbol[windowSize]),
-    m_realProbabilities(new float[windowSize]),
-    m_imagProbabilities(new float[windowSize])
+            augmentingLength)
 {
     this->enable_update_rate(false);
-    this->set_history(m_mapper.history()+1);
-    this->set_min_noutput_items(windowSize);
 }
 
 template<typename Symbol>
@@ -134,7 +134,6 @@ typename gr::gs::Entropy<Symbol>::sptr gr::gs::Entropy<Symbol>::make(
         const unsigned int fieldSize,
         const unsigned int codewordLength,
         const unsigned int augmentingLength,
-        const double minCorrelation,
         const std::string& alignmentTag)
 {
     return gnuradio::get_initial_sptr(
@@ -142,7 +141,6 @@ typename gr::gs::Entropy<Symbol>::sptr gr::gs::Entropy<Symbol>::make(
                 fieldSize,
                 codewordLength,
                 augmentingLength,
-                minCorrelation,
                 alignmentTag));
 }
 

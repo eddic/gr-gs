@@ -4,7 +4,7 @@
     <key>gr_gs_Detector</key>
     <category>[gr-gs]/Guided Scrambling</category>
     <import>import gr_gs as gs</import>
-    <make>gs.Detector_$(symbolType.fcn)($fieldSize, $codewordLength, $augmentingLength, $noisePower, $alignmentTag, $minCorrelation, $nodeDiscardMetric)</make>
+    <make>gs.Detector_$(symbolType.fcn)($fieldSize, $codewordLength, $augmentingLength, $noisePower, $alignmentTag, $nodeDiscardMetric)</make>
     <callback>set_noisePower($noisePower)</callback>
 	<param>
 		<name>Symbol Type</name>
@@ -67,13 +67,6 @@
         <key>alignmentTag</key>
         <value></value>
         <type>string</type>
-        <hide>part</hide>
-    </param>
-    <param>
-        <name>Minimum Correlation</name>
-        <key>minCorrelation</key>
-        <value>0.01</value>
-        <type>float</type>
         <hide>part</hide>
     </param>
     <param>
