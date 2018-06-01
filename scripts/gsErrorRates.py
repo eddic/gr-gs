@@ -28,7 +28,7 @@ class gs_stats(gr.top_block):
         # Variables
         ##################################################
         scramblingPolynomial = scrambler
-        constellation = gs.defaultConstellation(fieldSize)
+        constellation = gs.defaultConstellation_f(fieldSize)
         constellationObj = digital.constellation_calcdist((constellation), (range(fieldSize)), 0, 1).base()
 
         self.maxErrors = maxErrors
@@ -46,7 +46,7 @@ class gs_stats(gr.top_block):
         self.bareDetector = digital.constellation_decoder_cb(constellationObj)
         self.bareErrorRate = gs.ErrorCount_bf(False, '', 0, 0)
 
-        self.guidedScrambler = gs.GuidedScrambler_bb(fieldSize, codewordLength, augmentingLength, continuous, (scramblingPolynomial), 0, (constellation), 'MSW', '')
+        self.guidedScrambler = gs.GuidedScrambler_bb(fieldSize, codewordLength, augmentingLength, continuous, (scramblingPolynomial), 0, 'MSW', '')
         self.gsSymbolMapper = gs.SymbolMapper_bc((constellation))
         self.gsChannelNoise = analog.noise_source_c(analog.GR_GAUSSIAN, np.sqrt(noisePower), 0)
         self.gsNoiseAdder = blocks.add_vcc(1)
