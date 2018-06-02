@@ -107,7 +107,7 @@ int gr::gs::Implementations::Detector_impl<Symbol>::general_work(
                 imag != imags.end() &&
                 outputted < static_cast<unsigned>(noutput_items))
         {
-            *output++ = m_mapper.decollapseConstellation(*real++, *imag++);
+            *output++ = m_mapper.decollapseConstellationPoint(*real++, *imag++);
             ++outputted;
         }
 
@@ -144,41 +144,6 @@ void gr::gs::Implementations::Detector_impl<Symbol>::forecast(
 }
 
 template<typename Symbol>
-unsigned gr::gs::Implementations::Detector_impl<Symbol>::getBound(
-        const unsigned fieldSize,
-        const unsigned codewordLength,
-        const unsigned augmentingLength)
-{
-    const auto distribution = Data::distribution(
-            fieldSize,
-            codewordLength,
-            augmentingLength);
-
-    std::array<double, distributionDataWidth> collapsed;
-    for(unsigned real=0; real<distributionDataWidth; ++real)
-        for(unsigned position=0; position<codewordLength; ++position)
-            for(unsigned imag=0; imag<distributionDataWidth; ++imag)
-                collapsed[real] += distribution[position][real][imag];
-
-    int minimum=0, maximum=0;
-    for(unsigned i=0; i<distributionDataWidth; ++i)
-    {
-        if(minimum==0)
-        {
-            if(collapsed[i] > 1e-20)
-                minimum=i;
-        }
-        else if(maximum==0 && collapsed[i] < 1e-20)
-            maximum=i;
-    }
-
-    minimum -= distributionDataWidth/2;
-    maximum -= distributionDataWidth/2;
-
-    return std::max(maximum, std::abs(minimum))+1;
-}
-
-template<typename Symbol>
 gr::gs::Implementations::Detector_impl<Symbol>::Detector_impl(
         const unsigned fieldSize,
         const unsigned codewordLength,
@@ -197,20 +162,17 @@ gr::gs::Implementations::Detector_impl<Symbol>::Detector_impl(
             fieldSize,
             codewordLength,
             augmentingLength),
-    m_bound(getBound(fieldSize, codewordLength, augmentingLength)),
     m_realTrellis(
             true,
             m_mapper,
             codewordLength,
             noise,
-            m_bound,
             nodeDiscardMetric),
     m_imagTrellis(
             false,
             m_mapper,
             codewordLength,
             noise,
-            m_bound,
             nodeDiscardMetric)
 {
     this->set_relative_rate(1);
@@ -249,8 +211,7 @@ void gr::gs::Implementations::Detector_impl<Symbol>::Trellis::append(
         m_mapper.weightings(
                 source.second->m_rds,
                 m_codewordPosition,
-                weightings,
-                m_real);
+                weightings);
         const double sum = std::accumulate(
                     weightings.cbegin(),
                     weightings.cend(),
@@ -265,7 +226,7 @@ void gr::gs::Implementations::Detector_impl<Symbol>::Trellis::append(
         {
             const int rds = source.second->m_rds + m_constellation[symbol];
 
-            if(static_cast<unsigned>(std::abs(rds)) > m_bound)
+            if(static_cast<unsigned>(std::abs(rds)) > m_mapper.maxRDS)
                 continue;
 
             auto& destination = head[rds];
@@ -340,14 +301,12 @@ gr::gs::Implementations::Detector_impl<Symbol>::Trellis::Trellis(
         const ProbabilityMapper<Symbol>& mapper,
         const unsigned codewordLength,
         const double noisePower,
-        const unsigned bound,
         const double nodeDiscardMetric):
     m_real(real),
-    m_constellation(mapper.constellation(real)),
+    m_constellation(mapper.collapsed()),
     m_mapper(mapper),
     m_codewordLength(codewordLength),
     m_codewordPosition(0),
-    m_bound(bound),
     m_noisePower(noisePower),
     m_nodeDiscardMetric(nodeDiscardMetric)
 {

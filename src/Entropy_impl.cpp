@@ -66,18 +66,18 @@ int gr::gs::Implementations::Entropy_impl<Symbol>::work(
     Symbol imag;
     float realProbability;
     float imagProbability;
-    std::vector<double> realWeightings(m_mapper.constellation(true).size());
-    std::vector<double> imagWeightings(m_mapper.constellation(false).size());
+    std::vector<double> realWeightings(m_mapper.collapsed().size());
+    std::vector<double> imagWeightings(m_mapper.collapsed().size());
 
     while(output < outputEnd)
     {
-        m_mapper.collapseConstellation(real, imag, *input);
+        real = m_mapper.realConstellationPoint(*input);
+        imag = m_mapper.imagConstellationPoint(*input);
 
         m_mapper.weightings(
                 m_realRDS,
                 m_codewordPosition,
-                realWeightings,
-                true);
+                realWeightings);
         realProbability = realWeightings[real] / std::accumulate(
                 realWeightings.cbegin(),
                 realWeightings.cend(),
@@ -86,8 +86,7 @@ int gr::gs::Implementations::Entropy_impl<Symbol>::work(
         m_mapper.weightings(
                 m_imagRDS,
                 m_codewordPosition,
-                imagWeightings,
-                false);
+                imagWeightings);
         imagProbability = imagWeightings[imag] / std::accumulate(
                 imagWeightings.cbegin(),
                 imagWeightings.cend(),
@@ -99,8 +98,8 @@ int gr::gs::Implementations::Entropy_impl<Symbol>::work(
             m_codewordPosition=0;
         ++output;
         ++input;
-        m_realRDS += m_mapper.constellation(true)[real];
-        m_imagRDS += m_mapper.constellation(false)[imag];
+        m_realRDS += m_mapper.collapsed()[real];
+        m_imagRDS += m_mapper.collapsed()[imag];
     }
 
     return noutput_items;

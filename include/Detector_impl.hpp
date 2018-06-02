@@ -134,15 +134,6 @@ namespace gr
                 //! The probability mapping object
                 const ProbabilityMapper<Symbol> m_mapper;
 
-                //! RDS state bound
-                const unsigned m_bound;
-
-                //! Get the RDS bound of the code
-                static inline unsigned getBound(
-                        const unsigned fieldSize,
-                        const unsigned codewordLength,
-                        const unsigned augmentingLength);
-
                 //! Trellis for guided scrambling detection
                 class Trellis
                 {
@@ -156,7 +147,6 @@ namespace gr
                      * @param [in] noise This noise power level (or variance) is
                      *                   required to perform accurate MAP
                      *                   detection.
-                     * @param [in] bound The upper bound of our RDS state.
                      * @param [in] nodeDiscardMetric This defines how
                      *                               aggressively we will
                      *                               discard trellis nodes.
@@ -171,7 +161,6 @@ namespace gr
                             const ProbabilityMapper<Symbol>& mapper,
                             const unsigned codewordLength,
                             const double noisePower,
-                            const unsigned bound,
                             const double nodeDiscardMetric);
 
                     void insert(const Complex* input, size_t size);
@@ -255,9 +244,6 @@ namespace gr
 
                     //! Our position in the codeword
                     unsigned m_codewordPosition;
-
-                    //! Upper bound to the RDS states
-                    const unsigned m_bound;
 
                     //! Current noise power level
                     double m_noisePower;

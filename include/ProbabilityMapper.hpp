@@ -60,11 +60,8 @@ namespace gr
                 //! Our constellation pattern
                 std::vector<ComplexInteger> m_constellation;
 
-                //! Our collapsed real constellation
-                std::vector<int> m_realConstellation;
-
-                //! Our collapsed imaginary constellation
-                std::vector<int> m_imagConstellation;
+                //! Our collapsed constellation
+                std::vector<int> m_collapsed;
 
                 //! Maps constellation points to collapsed real points
                 std::vector<Symbol> m_constellationToReal;
@@ -89,6 +86,12 @@ namespace gr
                         int value,
                         double mean,
                         double variance) const;
+
+                //! Get the maximum RDS value
+                static inline unsigned getMaxRDS(
+                        const unsigned fieldSize,
+                        const unsigned codewordLength,
+                        const unsigned augmentingLength);
 
             public:
                 //! Build our probability mapper
@@ -122,31 +125,28 @@ namespace gr
                     return m_constellation;
                 }
 
-                const std::vector<int>& constellation(
-                        const bool real) const
+                const std::vector<int>& collapsed() const
                 {
-                    if(real)
-                        return m_realConstellation;
-                    else
-                        return m_imagConstellation;
+                    return m_collapsed;
                 }
 
-                inline void collapseConstellation(
-                        Symbol& real,
-                        Symbol& imag,
-                        const Symbol point) const
+                inline Symbol realConstellationPoint(const Symbol point) const
                 {
-                    real = m_constellationToReal[point];
-                    imag = m_constellationToImag[point];
+                    return m_constellationToReal[point];
                 }
 
-                inline Symbol decollapseConstellation(
+                inline Symbol imagConstellationPoint(const Symbol point) const
+                {
+                    return m_constellationToImag[point];
+                }
+
+                inline Symbol decollapseConstellationPoint(
                         const Symbol real,
                         const Symbol imag) const
                 {
                     return m_collapsedToConstellation[
                         real
-                        +imag*m_realConstellation.size()];
+                        +imag*m_collapsed.size()];
                 }
 
                 //! Calculate the probability weightings
@@ -162,8 +162,9 @@ namespace gr
                 void weightings(
                         const int rds,
                         const unsigned codewordPosition,
-                        std::vector<double>& weightings,
-                        const bool real) const;
+                        std::vector<double>& weightings) const;
+
+                const unsigned maxRDS;
             };
         }
     }
