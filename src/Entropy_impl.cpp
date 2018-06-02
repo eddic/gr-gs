@@ -26,7 +26,6 @@
  */
 
 #include <cmath>
-#include <numeric>
 
 #include "Entropy_impl.hpp"
 
@@ -62,37 +61,20 @@ int gr::gs::Implementations::Entropy_impl<Symbol>::work(
         m_aligned = true;
     }
 
-    Symbol real;
-    Symbol imag;
-    float realProbability;
-    float imagProbability;
-    std::vector<double> realWeightings(m_mapper.collapsed().size());
-    std::vector<double> imagWeightings(m_mapper.collapsed().size());
-
     while(output < outputEnd)
     {
-        real = m_mapper.realConstellationPoint(*input);
-        imag = m_mapper.imagConstellationPoint(*input);
+        const Symbol real = m_mapper.realConstellationPoint(*input);
+        const Symbol imag = m_mapper.imagConstellationPoint(*input);
 
-        m_mapper.weightings(
-                m_realRDS,
-                m_codewordPosition,
-                realWeightings);
-        realProbability = realWeightings[real] / std::accumulate(
-                realWeightings.cbegin(),
-                realWeightings.cend(),
-                static_cast<double>(0));
-
-        m_mapper.weightings(
-                m_imagRDS,
-                m_codewordPosition,
-                imagWeightings);
-        imagProbability = imagWeightings[imag] / std::accumulate(
-                imagWeightings.cbegin(),
-                imagWeightings.cend(),
-                static_cast<double>(0));
-
-        *output = -std::log2(realProbability * imagProbability);
+        *output = -std::log2(
+                m_mapper.probability(
+                    m_codewordPosition,
+                    m_realRDS,
+                    real) * 
+                m_mapper.probability(
+                    m_codewordPosition,
+                    m_imagRDS,
+                    imag));
 
         if(++m_codewordPosition == m_codewordLength)
             m_codewordPosition=0;

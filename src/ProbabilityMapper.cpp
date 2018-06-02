@@ -39,11 +39,11 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
         const unsigned fieldSize,
         const unsigned codewordLength,
         const unsigned augmentingLength):
-    m_taps(codewordLength),
-    m_variances(codewordLength),
-    m_codewordLength(codewordLength),
     maxRDS(getMaxRDS(fieldSize, codewordLength, augmentingLength))
 {
+    std::vector<double> taps(codewordLength);
+    std::vector<double> variances(codewordLength);
+
     // Setup constellation stuff
     {
         const auto constellation = gr::gs::defaultConstellation_i(fieldSize);
@@ -85,10 +85,11 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
 
     const unsigned covarianceIndex = autocovarianceDataLength-2;
 
+    // Build taps and variances
     for(unsigned position=0; position<codewordLength; ++position)
     {
-        double& variance = m_variances[position];
-        double& tap = m_taps[position];
+        double& variance = variances[position];
+        double& tap = taps[position];
 
         variance = (
                 autocovariance[position].back()[0][0]
@@ -110,41 +111,54 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
         if(variance < 0)
             throw;
     }
-}
 
-template<typename Symbol>
-void gr::gs::Implementations::ProbabilityMapper<Symbol>::weightings(
-        const int rds,
-        const unsigned codewordPosition,
-        std::vector<double>& weightings) const
-{
-    const auto& constellation = m_collapsed;
-    const double& variance = m_variances[codewordPosition];
-    const double mean = static_cast<double>(rds) * m_taps[codewordPosition];
-
-    if(variance == 0)
+    // Build transition matrix
+    m_probabilities.resize(codewordLength);
+    for(unsigned position=0; position<codewordLength; ++position)
     {
-        for(Symbol symbol=0; symbol<constellation.size(); ++symbol)
+        m_probabilities[position].resize(maxRDS*2-1);
+        for(unsigned rdsIndex=0; rdsIndex < maxRDS*2-1; ++rdsIndex)
         {
-            if(rds+constellation[symbol] == mean)
-                weightings[symbol] = 1.0;
+            m_probabilities[position][rdsIndex].resize(fieldSize);
+
+            const int rds = static_cast<int>(rdsIndex)-maxRDS;
+            const double& variance = variances[position];
+            const double mean = static_cast<double>(rds) * taps[position];
+
+            if(variance == 0)
+            {
+                for(Symbol symbol=0; symbol<m_collapsed.size(); ++symbol)
+                {
+                    if(rds+m_collapsed[symbol] == mean)
+                        m_probabilities[position][rdsIndex][symbol] = 1.0;
+                    else
+                        m_probabilities[position][rdsIndex][symbol] = 0.0;
+                }
+            }
             else
-                weightings[symbol] = 0.0;
+            {
+                double sum=0;
+                for(Symbol symbol=0; symbol<m_collapsed.size(); ++symbol)
+                {
+                    m_probabilities[position][rdsIndex][symbol] = gaussian(
+                            rds+m_collapsed[symbol],
+                            mean,
+                            variance);
+                    sum += m_probabilities[position][rdsIndex][symbol];
+                }
+
+                for(Symbol symbol=0; symbol<fieldSize; ++symbol)
+                    m_probabilities[position][rdsIndex][symbol] /= sum;
+            }
         }
     }
-    else
-        for(Symbol symbol=0; symbol<constellation.size(); ++symbol)
-            weightings[symbol] = gaussian(
-                    rds+constellation[symbol],
-                    mean,
-                    variance);
 }
 
 template<typename Symbol>
 double gr::gs::Implementations::ProbabilityMapper<Symbol>::gaussian(
         int value,
         double mean,
-        double variance) const
+        double variance)
 {
     return std::exp(-std::pow(static_cast<double>(value)-mean, 2)/(2*variance));
 }

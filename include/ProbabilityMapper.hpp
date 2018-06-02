@@ -72,26 +72,23 @@ namespace gr
                 //! Maps collapsed real/imag points constellation points
                 std::vector<Symbol> m_collapsedToConstellation;
 
-                //! Taps for mean RDS calculation
-                std::vector<double> m_taps;
-
-                //! Variances at each codeword position
-                std::vector<double> m_variances;
-
-                //! Our codeword length
-                const unsigned m_codewordLength;
-
                 //! Compute a Gaussian curve
-                inline double gaussian(
+                static inline double gaussian(
                         int value,
                         double mean,
-                        double variance) const;
+                        double variance);
 
                 //! Get the maximum RDS value
                 static inline unsigned getMaxRDS(
                         const unsigned fieldSize,
                         const unsigned codewordLength,
                         const unsigned augmentingLength);
+
+                //! Probabilities associated with all transitions
+                std::vector<
+                    std::vector<
+                        std::vector<
+                            double>>> m_probabilities;
 
             public:
                 //! Build our probability mapper
@@ -107,23 +104,6 @@ namespace gr
                         const unsigned fieldSize,
                         const unsigned codewordLength,
                         const unsigned augmentingLength);
-
-                //! View the variance at a specific position
-                const double& variance(unsigned position) const
-                {
-                    return m_variances.at(position);
-                }
-
-                //! View the mean calculating tap at a specific position
-                const double& tap(unsigned position) const
-                {
-                    return m_taps.at(position);
-                }
-
-                const std::vector<ComplexInteger>& constellation() const
-                {
-                    return m_constellation;
-                }
 
                 const std::vector<int>& collapsed() const
                 {
@@ -149,20 +129,16 @@ namespace gr
                         +imag*m_collapsed.size()];
                 }
 
-                //! Calculate the probability weightings
-                /*!
-                 * @param [in] rds The previous RDS value
-                 * @param [in] codewordPosition Symbol's position in the
-                 *                              codeword.
-                 * @param [out] Probability weightings by symbol
-                 * @param [in] real Set to true if we're working on the real
-                 *                  axis. False means we're working on the
-                 *                  imaginary axis.
-                 */
-                void weightings(
-                        const int rds,
+                inline float probability(
                         const unsigned codewordPosition,
-                        std::vector<double>& weightings) const;
+                        const int rds,
+                        const Symbol symbol) const
+                {
+                    return m_probabilities
+                        [codewordPosition]
+                        [static_cast<unsigned>(rds+maxRDS)]
+                        [symbol];
+                }
 
                 const unsigned maxRDS;
             };

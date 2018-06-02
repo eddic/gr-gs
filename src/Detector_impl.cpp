@@ -32,7 +32,6 @@
 #include <gnuradio/io_signature.h>
 #include <algorithm>
 #include <limits>
-#include <numeric>
 
 template<typename Symbol>
 double gr::gs::Implementations::Detector_impl<Symbol>::noisePower() const
@@ -204,21 +203,8 @@ void gr::gs::Implementations::Detector_impl<Symbol>::Trellis::append(
 {
     std::map<int, std::shared_ptr<Node>> head;
     std::shared_ptr<std::set<Node*>> set(new std::set<Node*>);
-    std::vector<double> weightings(m_constellation.size());
 
     for(auto& source: m_head)
-    {
-        m_mapper.weightings(
-                source.second->m_rds,
-                m_codewordPosition,
-                weightings);
-        const double sum = std::accumulate(
-                    weightings.cbegin(),
-                    weightings.cend(),
-                    static_cast<double>(0));
-        for(auto& weighting: weightings)
-            weighting /= sum;
-
         for(
                 Symbol symbol=0;
                 symbol<m_constellation.size();
@@ -235,7 +221,11 @@ void gr::gs::Implementations::Detector_impl<Symbol>::Trellis::append(
 
             const double metric = source.second->m_metric
                 + *(distances+symbol)
-                - m_noisePower*std::log(weightings[symbol]);
+                - m_noisePower*std::log(
+                        m_mapper.probability(
+                            m_codewordPosition,
+                            source.second->m_rds,
+                            symbol));
 
             if(metric < destination->m_metric)
             {
@@ -244,7 +234,6 @@ void gr::gs::Implementations::Detector_impl<Symbol>::Trellis::append(
                 destination->m_symbol = symbol;
             }
         }
-    }
 
     m_head.swap(head);
 
