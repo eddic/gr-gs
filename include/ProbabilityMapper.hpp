@@ -2,7 +2,7 @@
  * @file      ProbabilityMapper.hpp
  * @brief     Declares the ProbabilityMapper class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 31, 2018
+ * @date      June 5, 2018
  * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -50,7 +50,7 @@ namespace gr
              *
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date   May 31, 2018
+             * @date   June 5, 2018
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -136,7 +136,7 @@ namespace gr
                 {
                     return m_probabilities
                         [codewordPosition]
-                        [static_cast<unsigned>(rds+maxRDS)]
+                        [static_cast<unsigned>(rds)+maxRDS]
                         [symbol];
                 }
 

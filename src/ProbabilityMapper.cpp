@@ -2,7 +2,7 @@
  * @file      ProbabilityMapper.cpp
  * @brief     Defines the ProbabilityMapper class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      January 6, 2018
+ * @date      June 5, 2018
  * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -116,8 +116,8 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
     m_probabilities.resize(codewordLength);
     for(unsigned position=0; position<codewordLength; ++position)
     {
-        m_probabilities[position].resize(maxRDS*2-1);
-        for(unsigned rdsIndex=0; rdsIndex < maxRDS*2-1; ++rdsIndex)
+        m_probabilities[position].resize(maxRDS*2+1);
+        for(unsigned rdsIndex=0; rdsIndex < maxRDS*2+1; ++rdsIndex)
         {
             m_probabilities[position][rdsIndex].resize(fieldSize);
 
