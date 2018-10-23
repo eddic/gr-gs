@@ -116,6 +116,9 @@ namespace gr
                 void set_noisePower(const double noise);
 
             private:
+                //! The field size
+                const unsigned m_fieldSize;
+
                 //! Let's be thread safe
                 mutable std::mutex m_mutex;
 

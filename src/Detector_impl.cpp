@@ -95,19 +95,38 @@ int gr::gs::Implementations::Detector_impl<Symbol>::general_work(
     if(m_aligned)
     {
         m_realTrellis.insert(input, inputSize);
-        m_imagTrellis.insert(input, inputSize);
-
         auto reals = m_realTrellis.output();
         auto real = reals.begin();
-        auto imags = m_imagTrellis.output();
-        auto imag = imags.begin();
-        while(
-                real != reals.end() &&
-                imag != imags.end() &&
-                outputted < static_cast<unsigned>(noutput_items))
+
+        if(m_fieldSize > 2)
         {
-            *output++ = m_mapper.decollapseConstellationPoint(*real++, *imag++);
-            ++outputted;
+            m_imagTrellis.insert(input, inputSize);
+            auto imags = m_imagTrellis.output();
+            auto imag = imags.begin();
+            while(
+                    real != reals.end() &&
+                    imag != imags.end() &&
+                    outputted < static_cast<unsigned>(noutput_items))
+            {
+                *output++ = m_mapper.decollapseConstellationPoint(*real++, *imag++);
+                ++outputted;
+            }
+
+            imags.erase(
+                    imags.begin(),
+                    imag);
+            if(!imags.empty())
+                m_imagTrellis.putBack(std::move(imags));
+        }
+        else
+        {
+            while(
+                    real != reals.end() &&
+                    outputted < static_cast<unsigned>(noutput_items))
+            {
+                *output++ = *real++;
+                ++outputted;
+            }
         }
 
         reals.erase(
@@ -115,12 +134,6 @@ int gr::gs::Implementations::Detector_impl<Symbol>::general_work(
                 real);
         if(!reals.empty())
             m_realTrellis.putBack(std::move(reals));
-
-        imags.erase(
-                imags.begin(),
-                imag);
-        if(!imags.empty())
-            m_imagTrellis.putBack(std::move(imags));
     }
 
     this->consume_each(ninput_items[0]);
@@ -132,9 +145,9 @@ void gr::gs::Implementations::Detector_impl<Symbol>::forecast(
         int noutput_items,
         gr_vector_int& ninput_items_required)
 {
-    const unsigned outputSize = std::min(
+    const unsigned outputSize = m_fieldSize>2?std::min(
             m_realTrellis.outputSize(),
-            m_imagTrellis.outputSize());
+            m_imagTrellis.outputSize()):m_realTrellis.outputSize();
 
     if(outputSize >= static_cast<unsigned>(noutput_items))
         ninput_items_required[0] = 0;
@@ -153,6 +166,7 @@ gr::gs::Implementations::Detector_impl<Symbol>::Detector_impl(
     gr::block("Guided Scrambling Detector",
         io_signature::make(1,1,sizeof(gr::gs::Complex)),
         io_signature::make(1,1,sizeof(Symbol))),
+    m_fieldSize(fieldSize),
     m_noisePower(noise),
     m_alignmentTag(pmt::string_to_symbol(alignmentTag)),
     m_aligned(alignmentTag.empty()),

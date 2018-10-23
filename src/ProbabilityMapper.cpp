@@ -50,31 +50,40 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
         m_constellation.reserve(constellation.size());
         m_constellation.assign(constellation.begin(), constellation.end());
 
-        std::set<int> collapsed;
-        for(const auto& point: m_constellation)
-            collapsed.insert(point.real);
-        m_collapsed.reserve(collapsed.size());
-        m_collapsed.assign(collapsed.begin(), collapsed.end());
-
-        m_collapsedToConstellation.resize(m_constellation.size());
-        m_constellationToReal.resize(m_constellation.size());
-        m_constellationToImag.resize(m_constellation.size());
-        for(Symbol symbol=0; symbol<m_constellation.size(); ++symbol)
+        if(fieldSize>2)
         {
-            const auto& point = m_constellation[symbol];
-            const Symbol realSymbol = std::find(
-                    m_collapsed.cbegin(),
-                    m_collapsed.cend(),
-                    point.real)-m_collapsed.cbegin();
-            const Symbol imagSymbol = std::find(
-                    m_collapsed.cbegin(),
-                    m_collapsed.cend(),
-                    point.imag)-m_collapsed.cbegin();
+            std::set<int> collapsed;
+            for(const auto& point: m_constellation)
+                collapsed.insert(point.real);
+            m_collapsed.reserve(collapsed.size());
+            m_collapsed.assign(collapsed.begin(), collapsed.end());
 
-            m_constellationToReal[symbol] = realSymbol;
-            m_constellationToImag[symbol] = imagSymbol;
-            m_collapsedToConstellation[
-                realSymbol + imagSymbol*m_collapsed.size()] = symbol;
+            m_collapsedToConstellation.resize(m_constellation.size());
+            m_constellationToReal.resize(m_constellation.size());
+            m_constellationToImag.resize(m_constellation.size());
+            for(Symbol symbol=0; symbol<m_constellation.size(); ++symbol)
+            {
+                const auto& point = m_constellation[symbol];
+                const Symbol realSymbol = std::find(
+                        m_collapsed.cbegin(),
+                        m_collapsed.cend(),
+                        point.real)-m_collapsed.cbegin();
+                const Symbol imagSymbol = std::find(
+                        m_collapsed.cbegin(),
+                        m_collapsed.cend(),
+                        point.imag)-m_collapsed.cbegin();
+
+                m_constellationToReal[symbol] = realSymbol;
+                m_constellationToImag[symbol] = imagSymbol;
+                m_collapsedToConstellation[
+                    realSymbol + imagSymbol*m_collapsed.size()] = symbol;
+            }
+        }
+        else
+        {
+            m_collapsed.reserve(m_constellation.size());
+            for(const auto& point: m_constellation)
+                m_collapsed.push_back(point.real);
         }
     }
 
@@ -93,17 +102,24 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
 
         variance = (
                 autocovariance[position].back()[0][0]
-                +autocovariance[position].back()[1][1])/2;
+                +autocovariance[position].back()[1][1]);
         if(variance == 0)
             continue;
 
-        const double& covariance = (
+        double covariance = (
                 autocovariance[position][covarianceIndex][0][0]
-                +autocovariance[position][covarianceIndex][1][1])/2;
+                +autocovariance[position][covarianceIndex][1][1]);
         const unsigned pastPosition = (position==0?codewordLength:position)-1;
-        const double& pastVariance = (
+        double pastVariance = (
                 autocovariance[pastPosition].back()[0][0]
-                +autocovariance[pastPosition].back()[1][1])/2;
+                +autocovariance[pastPosition].back()[1][1]);
+
+        if(fieldSize>2)
+        {
+            variance /= 2;
+            covariance /= 2;
+            pastVariance /= 2;
+        }
 
         tap = covariance / pastVariance;
         variance -= tap * covariance;
@@ -175,10 +191,11 @@ unsigned gr::gs::Implementations::ProbabilityMapper<Symbol>::getMaxRDS(
             augmentingLength);
 
     std::array<double, distributionDataWidth> collapsed;
+    collapsed.fill(0);
     for(unsigned real=0; real<distributionDataWidth; ++real)
         for(unsigned position=0; position<codewordLength; ++position)
             for(unsigned imag=0; imag<distributionDataWidth; ++imag)
-                collapsed[real] += distribution[position][real][imag];
+                collapsed[real] += distribution[position][imag][real];
 
     int minimum=0, maximum=0;
     for(unsigned i=0; i<distributionDataWidth; ++i)
