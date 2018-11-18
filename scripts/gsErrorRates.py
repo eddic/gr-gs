@@ -55,7 +55,7 @@ class gs_stats(gr.top_block):
         self.mlDetector = digital.constellation_decoder_cb(constellationObj)
         self.mlErrorRate = gs.ErrorCount_bf(False, '', 0, 0)
 
-        self.mapDetector = gs.Detector_cb(fieldSize, codewordLength, augmentingLength, noisePower)
+        self.mapDetector = gs.Detector_cb(fieldSize, codewordLength, augmentingLength, noisePower, "", 20)
         self.mapErrorRate = gs.ErrorCount_bf(False, '', maxErrors, maxSymbols)
 
         self.descrambler = gs.Descrambler_bb(fieldSize, codewordLength, augmentingLength, continuous, (scramblingPolynomial), '')
