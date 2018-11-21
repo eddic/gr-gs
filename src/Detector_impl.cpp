@@ -3,7 +3,7 @@
  * @brief     Defines the "Guided Scrambling Detector" GNU Radio block
  *            implementation
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      May 31, 2018
+ * @date      November 21, 2018
  * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -229,17 +229,20 @@ void gr::gs::Implementations::Detector_impl<Symbol>::Trellis::append(
             if(static_cast<unsigned>(std::abs(rds)) > m_mapper.maxRDS)
                 continue;
 
-            auto& destination = head[rds];
-            if(!destination)
-                destination.reset(new Node(*this, rds, set));
+            const double information = m_mapper.information(
+                    m_codewordPosition,
+                    source.second->m_rds,
+                    symbol);
+            if(std::isinf(information))
+                continue;
 
             const double metric = source.second->m_metric
                 + *(distances+symbol)
-                - m_noisePower*std::log(
-                        m_mapper.probability(
-                            m_codewordPosition,
-                            source.second->m_rds,
-                            symbol));
+                + m_noisePower*information;
+
+            auto& destination = head[rds];
+            if(!destination)
+                destination.reset(new Node(*this, rds, set));
 
             if(metric < destination->m_metric)
             {

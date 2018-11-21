@@ -2,7 +2,7 @@
  * @file      ProbabilityMapper.cpp
  * @brief     Defines the ProbabilityMapper class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      June 5, 2018
+ * @date      November 21, 2018
  * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -130,41 +130,43 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
 
     // Build transition matrix
     m_probabilities.resize(codewordLength);
+    m_informations.resize(codewordLength);
     for(unsigned position=0; position<codewordLength; ++position)
     {
         m_probabilities[position].resize(maxRDS*2+1);
+        m_informations[position].resize(maxRDS*2+1);
         for(unsigned rdsIndex=0; rdsIndex < maxRDS*2+1; ++rdsIndex)
         {
             m_probabilities[position][rdsIndex].resize(fieldSize);
+            m_informations[position][rdsIndex].resize(fieldSize);
 
             const int rds = static_cast<int>(rdsIndex)-maxRDS;
             const double& variance = variances[position];
             const double mean = static_cast<double>(rds) * taps[position];
+            double sum=0;
 
-            if(variance == 0)
+            for(Symbol symbol=0; symbol<m_collapsed.size(); ++symbol)
             {
-                for(Symbol symbol=0; symbol<m_collapsed.size(); ++symbol)
-                {
-                    if(rds+m_collapsed[symbol] == mean)
-                        m_probabilities[position][rdsIndex][symbol] = 1.0;
-                    else
-                        m_probabilities[position][rdsIndex][symbol] = 0.0;
-                }
+                double& probability(
+                        m_probabilities[position][rdsIndex][symbol]);
+                probability = gaussian(
+                        rds+m_collapsed[symbol],
+                        mean,
+                        variance);
+                if(std::isnan(probability))
+                    probability = (rds+m_collapsed[symbol] == 0)?1.0:0.0;
+
+                sum += probability;
             }
-            else
-            {
-                double sum=0;
-                for(Symbol symbol=0; symbol<m_collapsed.size(); ++symbol)
-                {
-                    m_probabilities[position][rdsIndex][symbol] = gaussian(
-                            rds+m_collapsed[symbol],
-                            mean,
-                            variance);
-                    sum += m_probabilities[position][rdsIndex][symbol];
-                }
 
-                for(Symbol symbol=0; symbol<fieldSize; ++symbol)
-                    m_probabilities[position][rdsIndex][symbol] /= sum;
+            for(Symbol symbol=0; symbol<fieldSize; ++symbol)
+            {
+                double& probability(
+                        m_probabilities[position][rdsIndex][symbol]);
+                if(sum>0.0)
+                    probability /= sum;
+                m_informations[position][rdsIndex][symbol]
+                    = -std::log(probability);
             }
         }
     }
