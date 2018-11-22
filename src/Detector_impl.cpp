@@ -229,16 +229,16 @@ void gr::gs::Implementations::Detector_impl<Symbol>::Trellis::append(
             if(static_cast<unsigned>(std::abs(rds)) > m_mapper.maxRDS)
                 continue;
 
-            const double information = m_mapper.information(
+            const double nats = m_mapper.nats(
                     m_codewordPosition,
                     source.second->m_rds,
                     symbol);
-            if(std::isinf(information))
+            if(std::isinf(nats))
                 continue;
 
             const double metric = source.second->m_metric
                 + *(distances+symbol)
-                + m_noisePower*information;
+                + m_noisePower*nats;
 
             auto& destination = head[rds];
             if(!destination)

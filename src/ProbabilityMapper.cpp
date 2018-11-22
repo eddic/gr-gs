@@ -2,7 +2,7 @@
  * @file      ProbabilityMapper.cpp
  * @brief     Defines the ProbabilityMapper class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      November 21, 2018
+ * @date      November 22, 2018
  * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -130,15 +130,18 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
 
     // Build transition matrix
     m_probabilities.resize(codewordLength);
-    m_informations.resize(codewordLength);
+    m_nats.resize(codewordLength);
+    m_bits.resize(codewordLength);
     for(unsigned position=0; position<codewordLength; ++position)
     {
         m_probabilities[position].resize(maxRDS*2+1);
-        m_informations[position].resize(maxRDS*2+1);
+        m_nats[position].resize(maxRDS*2+1);
+        m_bits[position].resize(maxRDS*2+1);
         for(unsigned rdsIndex=0; rdsIndex < maxRDS*2+1; ++rdsIndex)
         {
             m_probabilities[position][rdsIndex].resize(fieldSize);
-            m_informations[position][rdsIndex].resize(fieldSize);
+            m_nats[position][rdsIndex].resize(fieldSize);
+            m_bits[position][rdsIndex].resize(fieldSize);
 
             const int rds = static_cast<int>(rdsIndex)-maxRDS;
             const double& variance = variances[position];
@@ -165,8 +168,10 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
                         m_probabilities[position][rdsIndex][symbol]);
                 if(sum>0.0)
                     probability /= sum;
-                m_informations[position][rdsIndex][symbol]
+                m_nats[position][rdsIndex][symbol]
                     = -std::log(probability);
+                m_bits[position][rdsIndex][symbol]
+                    = -std::log2(probability);
             }
         }
     }
