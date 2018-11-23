@@ -58,7 +58,7 @@ namespace gr
             {
             private:
                 //! Our constellation pattern
-                std::vector<ComplexInteger> m_constellation;
+                const std::vector<ComplexInteger> m_constellation;
 
                 //! Our collapsed constellation
                 std::vector<int> m_collapsed;

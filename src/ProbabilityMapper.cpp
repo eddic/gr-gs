@@ -39,6 +39,7 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
         const unsigned fieldSize,
         const unsigned codewordLength,
         const unsigned augmentingLength):
+    m_constellation(gr::gs::defaultConstellation_i(fieldSize)),
     maxRDS(getMaxRDS(fieldSize, codewordLength, augmentingLength))
 {
     std::vector<double> taps(codewordLength);
@@ -46,10 +47,6 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
 
     // Setup constellation stuff
     {
-        const auto constellation = gr::gs::defaultConstellation_i(fieldSize);
-        m_constellation.reserve(constellation.size());
-        m_constellation.assign(constellation.begin(), constellation.end());
-
         if(fieldSize>2)
         {
             std::set<int> collapsed;
@@ -93,6 +90,44 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
             augmentingLength);
 
     const unsigned covarianceIndex = autocovarianceDataLength-2;
+
+    /*
+    // Build transition matrix for GF(2) and GF(4)
+    if(fieldSize == 2 || fieldSize == 4)
+    {
+        std::vector<std::vector<double>> collapsed;
+        {
+            const auto distribution = Data::distribution(
+                    fieldSize,
+                    codewordLength,
+                    augmentingLength);
+
+            collapsed.reserve(codewordLength);
+            for(const auto& dist: distribution)
+            {
+                std::vector<double> oneSided(maxRDS, 0);
+                for(unsigned i=0; i<distributionDataWidth; ++i)
+                {
+                    const int rds = static_cast<int>(i)-distributionDataWidth/2;
+                    const unsigned rdsMagnitude
+                        = static_cast<unsigned>(std::abs(i));
+                    for(unsigned j=0; j<distributionDataWidth; ++j)
+                        oneSided[rdsMagnitude] += dist[j][i];
+                }
+
+                for(auto i=onSided.begin()+1; i!=oneSided.end(); ++i)
+                    *i /= 2;
+
+                collapsed.push_back(std::move(oneSided));
+            }
+        }
+
+        std::vector
+        for(unsigned position=0; position<codewordLength; ++position)
+        {
+
+        }
+    }*/
 
     // Build taps and variances
     for(unsigned position=0; position<codewordLength; ++position)
