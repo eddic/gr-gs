@@ -2,7 +2,7 @@
  * @file      ProbabilityMapper.hpp
  * @brief     Declares the ProbabilityMapper class
  * @author    Eddie Carle &lt;eddie@isatec.ca&gt;
- * @date      November 21, 2018
+ * @date      November 22, 2018
  * @copyright Copyright &copy; 2018 Eddie Carle. This project is released under
  *            the GNU General Public License Version 3.
  */
@@ -50,7 +50,7 @@ namespace gr
              *
              * @tparam Symbol Base type to use for symbol type. Can be unsigned
              *                char, unsigned short, or unsigned int.
-             * @date   November 21, 2018
+             * @date   November 22, 2018
              * @author Eddie Carle &lt;eddie@isatec.ca&gt;
              */
             template<typename Symbol>
@@ -90,11 +90,17 @@ namespace gr
                         std::vector<
                             double>>> m_probabilities;
 
-                //! Informations associated with all transitions
+                //! Nats of informations associated with all transitions
                 std::vector<
                     std::vector<
                         std::vector<
-                            double>>> m_informations;
+                            double>>> m_nats;
+
+                //! Bits of informations associated with all transitions
+                std::vector<
+                    std::vector<
+                        std::vector<
+                            double>>> m_bits;
 
             public:
                 //! Build our probability mapper
@@ -135,6 +141,7 @@ namespace gr
                         +imag*m_collapsed.size()];
                 }
 
+                //! Probability associated with transition
                 inline double probability(
                         const unsigned codewordPosition,
                         const int rds,
@@ -142,18 +149,31 @@ namespace gr
                 {
                     return m_probabilities
                         [codewordPosition]
-                        [static_cast<unsigned>(rds)+maxRDS]
+                        [static_cast<unsigned>(rds+maxRDS)]
                         [symbol];
                 }
 
-                inline double information(
+                //! Nats of informations associated with transition
+                inline double nats(
                         const unsigned codewordPosition,
                         const int rds,
                         const Symbol symbol) const
                 {
-                    return m_informations
+                    return m_nats
                         [codewordPosition]
-                        [static_cast<unsigned>(rds)+maxRDS]
+                        [static_cast<unsigned>(rds+maxRDS)]
+                        [symbol];
+                }
+
+                //! Bits of informations associated with transition
+                inline double bits(
+                        const unsigned codewordPosition,
+                        const int rds,
+                        const Symbol symbol) const
+                {
+                    return m_bits
+                        [codewordPosition]
+                        [static_cast<unsigned>(rds+maxRDS)]
                         [symbol];
                 }
 
