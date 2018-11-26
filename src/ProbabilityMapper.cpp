@@ -90,8 +90,10 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
             augmentingLength);
 
     const unsigned covarianceIndex = autocovarianceDataLength-2;
+    m_probabilities.resize(codewordLength);
+    m_nats.resize(codewordLength);
+    m_bits.resize(codewordLength);
 
-    /*
     // Build transition matrix for GF(2) and GF(4)
     if(fieldSize == 2 || fieldSize == 4)
     {
@@ -105,29 +107,86 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
             collapsed.reserve(codewordLength);
             for(const auto& dist: distribution)
             {
-                std::vector<double> oneSided(maxRDS, 0);
+                std::vector<double> oneSided(distributionDataWidth/2+1, 0);
                 for(unsigned i=0; i<distributionDataWidth; ++i)
                 {
                     const int rds = static_cast<int>(i)-distributionDataWidth/2;
                     const unsigned rdsMagnitude
-                        = static_cast<unsigned>(std::abs(i));
+                        = static_cast<unsigned>(std::abs(rds));
                     for(unsigned j=0; j<distributionDataWidth; ++j)
                         oneSided[rdsMagnitude] += dist[j][i];
                 }
 
-                for(auto i=onSided.begin()+1; i!=oneSided.end(); ++i)
+                for(auto i = oneSided.begin()+1; i != oneSided.end(); ++i)
                     *i /= 2;
 
                 collapsed.push_back(std::move(oneSided));
             }
         }
 
-        std::vector
+        for(unsigned i=0; i<collapsed.size(); ++i)
+        {
+            for(unsigned j=0; j<collapsed[i].size(); ++j)
+            {
+                if(collapsed[i][j] == 0) continue;
+            }
+        }
+
         for(unsigned position=0; position<codewordLength; ++position)
         {
+            const unsigned pastPosition
+                = (position==0?codewordLength:position)-1;
+            const std::vector<double>& evens
+                = position%2?collapsed[position]:collapsed[pastPosition];
+            const std::vector<double>& odds
+                = position%2?collapsed[pastPosition]:collapsed[position];
 
+            std::vector<double> joints;
+            joints.reserve(evens.size());
+            joints.push_back(evens[0]/2);
+            for(unsigned rds=1; rds<evens.size(); ++rds)
+            {
+                const double& probability = rds%2?odds[rds]:evens[rds];
+                if(probability==0)
+                    break;
+                joints.push_back(probability-joints.back());
+            }
+
+            m_probabilities[position].resize(maxRDS*2+1);
+            m_nats[position].resize(maxRDS*2+1);
+            m_bits[position].resize(maxRDS*2+1);
+            for(unsigned i=0; i<maxRDS*2+1; ++i)
+            {
+                const int rds = static_cast<int>(i)-maxRDS;
+                const int rdsMagnitude = static_cast<unsigned>(std::abs(rds));
+                const double& probability=collapsed[pastPosition][rdsMagnitude];
+
+                m_probabilities[position][i].resize(2, 0);
+                m_nats[position][i].resize(2);
+                m_bits[position][i].resize(2);
+
+                for(int dest=0; dest<2; ++dest)
+                {
+                    if(probability)
+                    {
+                        if(rds==0)
+                            m_probabilities[position][i][dest] =
+                                joints[0]/probability;
+                        else
+                            m_probabilities[position][i][dest] =
+                                joints[rdsMagnitude-1+(rds>0?dest:1-dest)]/probability;
+                    }
+                    m_nats[position][i][dest]
+                        = -std::log(m_probabilities[position][i][dest]);
+                    m_bits[position][i][dest]
+                        = -std::log2(m_probabilities[position][i][dest]);
+
+                }
+            }
         }
-    }*/
+
+        return;
+    }
 
     // Build taps and variances
     for(unsigned position=0; position<codewordLength; ++position)
@@ -164,7 +223,6 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
     }
 
     // Build transition matrix
-    m_probabilities.resize(codewordLength);
     m_nats.resize(codewordLength);
     m_bits.resize(codewordLength);
     for(unsigned position=0; position<codewordLength; ++position)
@@ -174,9 +232,9 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
         m_bits[position].resize(maxRDS*2+1);
         for(unsigned rdsIndex=0; rdsIndex < maxRDS*2+1; ++rdsIndex)
         {
-            m_probabilities[position][rdsIndex].resize(fieldSize);
-            m_nats[position][rdsIndex].resize(fieldSize);
-            m_bits[position][rdsIndex].resize(fieldSize);
+            m_probabilities[position][rdsIndex].resize(m_collapsed.size());
+            m_nats[position][rdsIndex].resize(m_collapsed.size());
+            m_bits[position][rdsIndex].resize(m_collapsed.size());
 
             const int rds = static_cast<int>(rdsIndex)-maxRDS;
             const double& variance = variances[position];
@@ -197,7 +255,7 @@ gr::gs::Implementations::ProbabilityMapper<Symbol>::ProbabilityMapper(
                 sum += probability;
             }
 
-            for(Symbol symbol=0; symbol<fieldSize; ++symbol)
+            for(Symbol symbol=0; symbol<m_collapsed.size(); ++symbol)
             {
                 double& probability(
                         m_probabilities[position][rdsIndex][symbol]);

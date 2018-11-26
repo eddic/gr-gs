@@ -121,7 +121,7 @@ def processArguments():
     parser.add_argument('-c', '--codewordLength', required=True, type=int)
     parser.add_argument('-a', '--augmentingLength', required=True, type=int)
     parser.add_argument('-e', '--maxErrors', type=float, default=1e4, help='default: 1e4')
-    parser.add_argument('-s', '--maxSymbols', type=float, default=1e10, help='default: 1e10')
+    parser.add_argument('-s', '--maxSymbols', type=float, default=5e10, help='default: 5e10')
     parser.add_argument('-r', '--minErrorRate', type=float, default=1e-7, help='default: 1e-7')
 
     return parser.parse_args()
