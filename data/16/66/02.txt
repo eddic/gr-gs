@@ -1,0 +1,7 @@
+Symbols: 1e+10
+Date: January 19, 2019 at 14:03 MST
+Selection Method: MSW
+Constellation Power: 9.7980546799428900e+00
+Distribution CRC: 0x782ade2e
+Autocovariance CRC: 0x0a398f6e
+PSD CRC: 0xad8687a6
