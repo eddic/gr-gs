@@ -147,6 +147,18 @@ def getData(
     raise exceptions.Exception(
         "CRC32 failed on {:s} data for {:s}".format(key, path))
 
+def constellationPower(fieldSize, codewordLength, augmentingLength):
+    import os
+    metaPath = os.path.join(
+            dataPath,
+            "{:02d}".format(fieldSize),
+            "{:02d}".format(codewordLength),
+            "{:02d}.txt".format(augmentingLength))
+    metaFile = open(metaPath, 'r')
+    for line in metaFile.readlines():
+        line = line.split(': ')
+        if line[0] == 'Constellation Power':
+            return float(line[1])
 
 def distributionData(fieldSize, codewordLength, augmentingLength):
     return getData(
